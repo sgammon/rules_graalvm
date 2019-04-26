@@ -9,6 +9,7 @@ build --worker_sandboxing
 build --verbose_failures
 
 test  --test_output=all
+test  --test_env=PATH
 
 common:v0.24 --config=noop
 
