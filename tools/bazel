@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+default_bazel_version='0.24.1'
+
+if [ -z "$OVERRIDE_BAZEL_VERSION" ]; then
+    bazel_version="$default_bazel_version"
+else
+    bazel_version="$OVERRIDE_BAZEL_VERSION"
+fi
+
+case "$bazel_version" in
+    'host')
+        bazel_version=$("$BAZEL_REAL" version | awk '/Build label/ {print $3}' | cut -d '-' -f 1)
+        bazel="$BAZEL_REAL"
+        ;;
+    '0.24.1')
+        darwin_sha='5fe570423945424a8c44b35c6d171fdde92e9ed90c3c321b83f2e380bcc966b9'
+        linux_sha='cf8210e538c37f195298905301a1221ca5b6a5a6658ccd1c4369a867aa2339c3'
+        ;;
+    *)
+        echo "The requested Bazel version '$bazel_version' is not supported"
+        exit 1
+        ;;
+esac
+
+if [ -z "$bazel" ]; then
+    bazel_bin_loc=~/.bazel_binaries
+    mkdir -p $bazel_bin_loc
+    bazel=$bazel_bin_loc/$bazel_version/bin/bazel-real
+fi
+
+if ! [ -f "$bazel" ]; then
+    case $(uname -s) in
+        Darwin)
+            platform='darwin'
+            sha=$darwin_sha
+            ;;
+        Linux)
+            platform='linux'
+            sha=$linux_sha
+            ;;
+        *)
+            echo 'Your OS is not supported.'
+            exit 1
+            ;;
+    esac
+    remote_source=https://github.com/bazelbuild/bazel/releases/download
+    installer_name="bazel-$bazel_version-installer-$platform-x86_64.sh"
+    url="$remote_source/$bazel_version/$installer_name"
+    (
+        tmp_dir=$(mktemp -d)
+        trap 'rm -rf $tmp_dir' EXIT
+        cd "$tmp_dir"
+        (>&2 echo "downloading installer from")
+        (>&2 echo "$url")
+        curl -o installer.sh -L "$url"
+        generated_sha=$(shasum -a 256 installer.sh | awk '{print $1}')
+        if [ "$generated_sha" != "$sha" ]; then
+            echo "Sha 256 does not match, expected: $sha"
+            echo "But found $generated_sha"
+            echo "Recommend you: update the sha to the expected"
+            echo "and then re-run this script"
+            exit 1
+        fi
+        chmod +x installer.sh
+        ./installer.sh --base=$bazel_bin_loc/"$bazel_version" --bin=$bazel_bin_loc/"$bazel_version"/bin_t
+    )
+fi
+
+extra_command_args=()
+
+IFS=. read -r major minor _ < <(echo "$bazel_version")
+extra_command_args+=("--config=v$major.$minor")
+
+for (( i=1; i<=$#; i++ ))
+do
+    case "${!i}" in
+        -*)
+            ;;
+        *)
+            n=$((i + 1))
+            set -- "${@:1:$i}" "${extra_command_args[@]}" "${@:$n}"
+            break
+            ;;
+    esac
+done
+
+abs_path() {
+    perl -MCwd -le '
+    for (@ARGV) {
+      if ($p = Cwd::abs_path $_) {
+        print $p;
+      } else {
+        warn "abs_path: $_: $!\n";
+        $ret = 1;
+      }
+    }
+    exit $ret' "$@"
+}
+root_workspace=$(cd "$(dirname "$(abs_path "$0")")"/..; pwd)
+workspace=$(cd "$(dirname "$0")"/..; pwd)
+
+if [ "$workspace" != "$root_workspace" ]; then
+    set -- --bazelrc="$root_workspace"/.bazelrc "$@"
+fi
+
+disk_cache="$root_workspace"/.bazel_cache
+disk_cache_rc="$disk_cache"/bazelrc
+mkdir -p "$disk_cache"
+cat > "$disk_cache_rc" <<EOF
+build --disk_cache=$disk_cache
+EOF
+set -- --bazelrc="$disk_cache_rc" "$@"
+
+(>&2 echo :: exec "$bazel" "$@")
+exec "$bazel" "$@"
