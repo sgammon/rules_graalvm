@@ -18,6 +18,8 @@ jobs:
     - stage: build
       <<: *osx
       script: ./tools/bazel run //tasks:ci
+    - <<: *linux
+      script: ./tools/bazel run //tasks:ci
 
 before_install:
   - git fetch --tags

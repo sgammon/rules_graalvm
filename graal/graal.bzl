@@ -41,7 +41,7 @@ graal_binary = rule(
         "main_class": attr.string(),
         "_graal": attr.label(
             cfg = "host",
-            default = "@graal_osx//:bin/native-image",
+            default = "@graal//:bin/native-image",
             allow_files = True,
             executable = True,
         ),
@@ -51,3 +51,4 @@ graal_binary = rule(
     },
     executable = True,
 )
+
