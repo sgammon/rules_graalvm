@@ -24,7 +24,7 @@ def _graal_binary_implementation(ctx):
     if ctx.attr.reflection_configuration != None:
         args.add("-H:ReflectionConfigurationFiles={path}".format(path=ctx.file.reflection_configuration.path))
         classpath_depset = depset([ctx.file.reflection_configuration], transitive=[classpath_depset])
-    print(args)
+
     ctx.actions.run(
         inputs = classpath_depset,
         outputs = [ctx.outputs.bin],
