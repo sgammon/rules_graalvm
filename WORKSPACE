@@ -3,11 +3,11 @@ workspace(name = "rules_graal")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-load("//graal:graal_bindist.bzl", "graal_bindist_repository")
+load("@rules_graal//graal:graal_bindist.bzl", "graal_bindist_repository")
 
 graal_bindist_repository(
     name = "graal",
-    version = "1.0.0-rc16",
+    version = "19.0.0",
 )
 
 git_repository(

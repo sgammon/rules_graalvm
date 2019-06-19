@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-default_bazel_version='0.24.1'
+default_bazel_version='0.26.1'
 
 if [ -z "$OVERRIDE_BAZEL_VERSION" ]; then
     bazel_version="$default_bazel_version"
@@ -16,6 +16,10 @@ case "$bazel_version" in
     '0.24.1')
         darwin_sha='5fe570423945424a8c44b35c6d171fdde92e9ed90c3c321b83f2e380bcc966b9'
         linux_sha='cf8210e538c37f195298905301a1221ca5b6a5a6658ccd1c4369a867aa2339c3'
+        ;;
+    '0.26.1')
+        darwin_sha='d0ceb4845a72507438ff173b54850c344ae41be8b6da69d0e663e4680be68ede'
+        linux_sha='488d6b7223a1b3db965b8831c562aba61229a690aad38d75cd8f43012fc04fe4'
         ;;
     *)
         echo "The requested Bazel version '$bazel_version' is not supported"

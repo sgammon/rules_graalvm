@@ -13,11 +13,11 @@ git_repository(
     remote = "git://github.com/andyscott/rules_graal",
 )
 
-load("//graal:graal_bindist.bzl", "graal_bindist_repository")
+load("@rules_graal//graal:graal_bindist.bzl", "graal_bindist_repository")
 
 graal_bindist_repository(
     name = "graal",
-    version = "1.0.0-rc16",
+    version = "19.0.0",
 )
 ```
 

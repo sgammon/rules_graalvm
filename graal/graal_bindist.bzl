@@ -1,17 +1,17 @@
 _graal_urls = [
-    "https://github.com/oracle/graal/releases/download/vm-{version}/graalvm-ce-{version}-{platform}.tar.gz",
+    "https://github.com/oracle/graal/releases/download/vm-{version}/graalvm-ce-{platform}-{version}.tar.gz",
 ]
 
 _graal_archive_internal_prefixs = {
-    "macos-amd64": "graalvm-ce-{version}/Contents/Home",
+    "darwin-amd64": "graalvm-ce-{version}/Contents/Home",
     "linux-amd64": "graalvm-ce-{version}",
 }
 
 _graal_version_configs = {
-    "1.0.0-rc16": {
+    "19.0.0": {
         "sha": {
-            "macos-amd64": "e464bb24daafc5994412d115a7aa292d3fc3f9826f627832aa18197814bb4fb0",
-            "linux-amd64": "2333a2a9a9e2352d4b92acda92f3ff747aa6e1987140300af7c875d82648e904",
+            "darwin-amd64": "fc652566e61b9b774c120da1aea0ae3e28f198d55a297524dcc97b9a83525a79",
+            "linux-amd64": "7ad124cdb19cbaa962f6d2f26d1e3eccfeb93afabbf8e81cb65976519f15730c",
         },
     },
 }
@@ -20,7 +20,7 @@ def _get_platform(ctx):
     if ctx.os.name == "linux":
         return "linux-amd64"
     elif ctx.os.name == "mac os x":
-        return "macos-amd64"
+        return "darwin-amd64"
     else:
         fail("Unsupported operating system: " + ctx.os.name)
 
@@ -41,6 +41,10 @@ def _graal_bindist_repository_impl(ctx):
         sha256 = sha,
         stripPrefix = archive_internal_prefix,
     )
+    exec_result = ctx.execute(["bin/gu", "install", "native-image"], quiet=False)
+    if exec_result.return_code != 0:
+        fail("Unable to install native image:\n{stdout}\n{stderr}".format(stdout=exec_result.stdout, stderr=exec_result.stderr))
+
     ctx.file("BUILD", """exports_files(glob(["**/*"]))""")
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")".format(name = ctx.name))
 

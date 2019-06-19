@@ -15,6 +15,16 @@ def _graal_binary_implementation(ctx):
     args.add("-H:Class=%s" % ctx.attr.main_class)
     args.add("-H:Name=%s" % ctx.outputs.bin.path)
 
+    if len(ctx.attr.native_image_features) > 0:
+        args.add("-H:Features={entries}".format(entries=",".join(ctx.attr.native_image_features)))
+
+    if len(ctx.attr.initialize_at_build_time) > 0:
+        args.add("--initialize-at-build-time={entries}".format(entries=",".join(ctx.attr.initialize_at_build_time)))
+
+    if ctx.attr.reflection_configuration != None:
+        args.add("-H:ReflectionConfigurationFiles={path}".format(path=ctx.file.reflection_configuration.path))
+        classpath_depset = depset([ctx.file.reflection_configuration], transitive=[classpath_depset])
+    print(args)
     ctx.actions.run(
         inputs = classpath_depset,
         outputs = [ctx.outputs.bin],
@@ -38,7 +48,10 @@ graal_binary = rule(
         "deps": attr.label_list(
             allow_files = True,
         ),
+        "reflection_configuration": attr.label(mandatory=False, allow_single_file=True),
         "main_class": attr.string(),
+        "initialize_at_build_time": attr.string_list(),
+        "native_image_features": attr.string_list(),
         "_graal": attr.label(
             cfg = "host",
             default = "@graal//:bin/native-image",
