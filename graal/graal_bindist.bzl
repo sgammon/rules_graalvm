@@ -78,11 +78,11 @@ def _graal_bindist_repository_impl(ctx):
     #Download graal
     config = _graal_version_configs[version]
     if edition == "ce":
-      if fingerprint_overrides == None:
+      if fingerprint_overrides == None or len(fingerprint_overrides) == 0:
         sha = config["sha"]["%s-ce" % java_version][platform]
       else:
         sha = fingerprint_overrides[java_version][platform]
-      if url_template_override == None:
+      if url_template_override == "DEFAULT":
         urls = [config["url_template"].format(**format_args)]
       else:
         urls = [url_template_override.format(**format_args)]
@@ -107,7 +107,7 @@ def _graal_bindist_repository_impl(ctx):
     # download native image
     native_image_config = _graal_native_image_version_configs[version]
     native_image_sha = native_image_config["sha"][java_version][platform]
-    native_image_urls = [url.format(**format_args) for url in native_image_config["urls"]]
+    native_image_urls = native_image_config["url_template"].format(**format_args)
 
     ctx.download(
         url = native_image_urls,
@@ -127,7 +127,7 @@ graal_bindist_repository = repository_rule(
         "version": attr.string(mandatory = True),
         "java_version": attr.string(mandatory = True),
         "edition": attr.string(mandatory = False, default="ce"),
-        "url_template": attr.string(mandatory = False),
+        "url_template": attr.string(mandatory = False, default="DEFAULT"),
         "fingerprints": attr.string_dict(mandatory = False),
     },
     implementation = _graal_bindist_repository_impl,

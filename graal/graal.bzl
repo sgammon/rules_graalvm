@@ -29,10 +29,14 @@ def _graal_binary_implementation(ctx):
         requested_features = ctx.features,
         unsupported_features = ctx.disabled_features,
     )
-    c_compiler_path = cc_common.get_tool_for_action(
-        feature_configuration = feature_configuration,
-        action_name = C_COMPILE_ACTION_NAME,
-    )
+
+    if ctx.attr.c_compiler_path != None and len(ctx.attr.c_compiler_path) > 0:
+        c_compiler_path = ctx.attr.c_compiler_path
+    else:
+        c_compiler_path = cc_common.get_tool_for_action(
+            feature_configuration = feature_configuration,
+            action_name = C_COMPILE_ACTION_NAME,
+        )
     ld_executable_path = cc_common.get_tool_for_action(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
@@ -82,6 +86,13 @@ def _graal_binary_implementation(ctx):
         args.add("-H:ReflectionConfigurationFiles={path}".format(path=ctx.file.reflection_configuration.path))
         classpath_depset = depset([ctx.file.reflection_configuration], transitive=[classpath_depset])
 
+    if ctx.attr.debug:
+        args.add("-H:+ReportExceptionStackTraces")
+
+    if ctx.attr.extra_args != None:
+        for arg in ctx.attr.extra_args:
+            args.add(arg)
+
 
     ctx.actions.run(
         inputs = classpath_depset,
@@ -107,6 +118,9 @@ graal_binary = rule(
         "deps": attr.label_list(
             allow_files = True,
         ),
+        "debug": attr.bool(),
+        "c_compiler_path": attr.string(),
+        "extra_args": attr.string_list(),
         "reflection_configuration": attr.label(mandatory=False, allow_single_file=True),
         "main_class": attr.string(),
         "initialize_at_build_time": attr.string_list(),
@@ -128,4 +142,3 @@ graal_binary = rule(
     executable = True,
     fragments = ["cpp"],
 )
-
