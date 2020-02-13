@@ -102,11 +102,9 @@ def _graal_binary_implementation(ctx):
 
     if ctx.attr.reflection_configuration != None:
         args.add("-H:ReflectionConfigurationFiles={path}".format(path=ctx.file.reflection_configuration.path))
-        classpath_depset = [ctx.file.reflection_configuration]
-        classpath_transitive = [classpath_depset]
+        input_depset = depset([ctx.file.reflection_configuration] + configsets, transitive=[classpath_depset])
     else:
-        classpath_depset = []
-        classpath_transitive = []
+        input_depset = depset(configsets, transitive=[])
 
     if ctx.attr.debug:
         args.add("-H:+ReportExceptionStackTraces")
@@ -116,7 +114,7 @@ def _graal_binary_implementation(ctx):
             args.add(arg)
 
     ctx.actions.run(
-        inputs = depset(classpath_depset + configsets, transitive=classpath_transitive),
+        inputs = input_depset,
         outputs = [ctx.outputs.bin],
         arguments = [args],
         executable = graal,
