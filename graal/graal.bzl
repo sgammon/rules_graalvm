@@ -76,6 +76,24 @@ def _graal_binary_implementation(ctx):
     args.add("-H:Name=%s" % ctx.outputs.bin.path)
     args.add("-H:CCompilerPath=%s" % c_compiler_path)
 
+    configsets = []
+    if len(ctx.attr.configsets) > 0:
+        for configset in ctx.attr.configsets:
+            config_files = configset.files.to_list()
+
+            # verify expected number of config files per group (4)
+            if len(config_files) > 4 or len(config_files) < 4:
+                fail("Must specify exactly 4 files per native binary configset.")
+
+            # verify that all config files in each group reside in the same directory
+            dirname = config_files[0].dirname
+            for file in config_files:
+                if file.dirname != dirname:
+                    fail("All native binary config files must reside in the same directory.")
+                configsets.append(file)
+
+            args.add("-H:ConfigurationResourceRoots=%s" % dirname)
+
     if len(ctx.attr.native_image_features) > 0:
         args.add("-H:Features={entries}".format(entries=",".join(ctx.attr.native_image_features)))
 
@@ -84,7 +102,11 @@ def _graal_binary_implementation(ctx):
 
     if ctx.attr.reflection_configuration != None:
         args.add("-H:ReflectionConfigurationFiles={path}".format(path=ctx.file.reflection_configuration.path))
-        classpath_depset = depset([ctx.file.reflection_configuration], transitive=[classpath_depset])
+        classpath_depset = [ctx.file.reflection_configuration]
+        classpath_transitive = [classpath_depset]
+    else:
+        classpath_depset = []
+        classpath_transitive = []
 
     if ctx.attr.debug:
         args.add("-H:+ReportExceptionStackTraces")
@@ -93,9 +115,8 @@ def _graal_binary_implementation(ctx):
         for arg in ctx.attr.extra_args:
             args.add(arg)
 
-
     ctx.actions.run(
-        inputs = classpath_depset,
+        inputs = depset(classpath_depset + configsets, transitive=classpath_transitive),
         outputs = [ctx.outputs.bin],
         arguments = [args],
         executable = graal,
@@ -116,6 +137,9 @@ graal_binary = rule(
     implementation = _graal_binary_implementation,
     attrs = {
         "deps": attr.label_list(
+            allow_files = True,
+        ),
+        "configsets": attr.label_list(
             allow_files = True,
         ),
         "debug": attr.bool(),
