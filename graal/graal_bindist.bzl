@@ -25,6 +25,20 @@ _graal_version_configs = {
                 "linux-amd64": "691f0577c75c4ba0fb50916087925e6eb8a5a73de51994a37eee022d1e2c9e7d",
             },
         },
+    },
+    "20.0.0": {
+        "url_template": "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/graalvm-{edition}-java{java_version}-{platform}-{version}.tar.gz",
+        "sha": {
+            "8-ce": {
+                "darwin-amd64": "e3d35fdfe4f62022c42029c052f2b8277b3d896496cf45c2e82d251f5d49701a",
+                "linux-amd64": "16ef8d89f014b4d295b7ca0c54343eab3c7d24e18b2d376665f5b12bb643723d",
+            },
+            "11-ce": {
+                "darwin-amd64": "8ba1205bb08cab04f1efc72423674d5816efbc3b22e482709c508788d87a692a",
+                "linux-aarch64": "dd230410722d3a7ac25c1318adccddec3f5d85af92aef5906a8e2d755bb2168a",
+                "linux-amd64": "d16c4a340a4619d98936754caeb6f49ee7a61d809c5a270e192b91cbc474c726",
+            },
+        },
     }
 }
 
@@ -48,6 +62,20 @@ _graal_native_image_version_configs = {
             "11": {
                 "darwin-amd64": "6bd2bace9773a2ac7ff8182a36f84507678e71f94bf3f0c4646a091100644e13",
                 "linux-amd64": "fef2e2c71a5408855026e022ae15fda50cb52769aa7d0ec008837f49196ee16a",
+            },
+        },
+    },
+    "20.0.0": {
+        "url_template": "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar",
+        "sha": {
+            "8": {
+                "darwin-amd64": "e42f59bc774b06ebbd8f7defe4460ac5a84aa20d60676f900c7e83b22ef3d4a5",
+                "linux-amd64": "9aee17470ce750eb2454625988c59de86a79b14b811e78085553385bfa7adaff",
+            },
+            "11": {
+                "darwin-amd64": "f7b53adde9c92fe1fac120eb45bb2fe9aab4000bfd9073673d62bcd6b40999af",
+                "linux-amd64": "5e110d42a818b14324779b1d3e6ecfc50065ab9cd90e2e6905be5f922500d8c3",
+                "linux-aarch64": "a796fcfdf8b01ff1eaf74d5603182b548f39bca0e4c54ca1682db8a2fcc338b7",
             },
         },
     }
