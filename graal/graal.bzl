@@ -65,12 +65,18 @@ def _graal_binary_implementation(ctx):
     env = {}
     env["PATH"] = ctx.configuration.host_path_separator.join(paths)
 
+    binary = ctx.actions.declare_file("%s-bin" % ctx.attr.name)
+
     args = ctx.actions.args()
     args.add("--no-server")
+    args.add("--no-fallback")
     args.add("-cp", ":".join([f.path for f in classpath_depset.to_list()]))
     args.add("-H:Class=%s" % ctx.attr.main_class)
-    args.add("-H:Name=%s" % ctx.outputs.bin.path)
+    args.add("-H:Name=%s" % binary.path)
     args.add("-H:CCompilerPath=%s" % c_compiler_path)
+    args.add("-H:+ReportExceptionStackTraces")
+    for arg in ctx.attr.graal_extra_args:
+        args.add(arg)
 
     if len(ctx.attr.native_image_features) > 0:
         args.add("-H:Features={entries}".format(entries=",".join(ctx.attr.native_image_features)))
@@ -89,15 +95,15 @@ def _graal_binary_implementation(ctx):
 
     ctx.actions.run(
         inputs = classpath_depset,
-        outputs = [ctx.outputs.bin],
+        outputs = [binary],
         arguments = [args],
         executable = graal,
         env = env,
     )
 
     return [DefaultInfo(
-        executable = ctx.outputs.bin,
-        files = depset(),
+        executable = binary,
+        files = depset([binary]),
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,
@@ -126,9 +132,7 @@ graal_binary = rule(
             default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")
         ),
         "data": attr.label_list(allow_files = True),
-    },
-    outputs = {
-        "bin": "%{name}-bin",
+	"graal_extra_args": attr.string_list()
     },
     executable = True,
     fragments = ["cpp"],
