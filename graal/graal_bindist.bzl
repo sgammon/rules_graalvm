@@ -39,7 +39,20 @@ _graal_version_configs = {
                 "linux-amd64": "d16c4a340a4619d98936754caeb6f49ee7a61d809c5a270e192b91cbc474c726",
             },
         },
-    }
+    },
+    "20.1.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/graalvm-ce-java{java_version}-{platform}-{version}.tar.gz"],
+        "sha": {
+            "8": {
+                "darwin-amd64": "3b9fd8ce84c9162a188fde88907c66990db22af0ff6ae2c04430113253a9a634",
+                "linux-amd64": "4fac212b37cd548831fd6587dd4d59dc068068815aa20323b47fde9529d6bb6e",
+            },
+            "11": {
+                "darwin-amd64": "04efcb7bdd2e94715d0f3fddcc754594da032887e6aec94a3701bd4774d1a92e",
+                "linux-amd64": "18f2dc19652c66ccd5bd54198e282db645ea894d67357bf5e4121a9392fc9394",
+            }
+        }
+    },
 }
 
 _graal_native_image_version_configs = {
