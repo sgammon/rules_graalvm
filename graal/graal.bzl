@@ -29,10 +29,15 @@ def _graal_binary_implementation(ctx):
         requested_features = ctx.features,
         unsupported_features = ctx.disabled_features,
     )
-    c_compiler_path = cc_common.get_tool_for_action(
-        feature_configuration = feature_configuration,
-        action_name = C_COMPILE_ACTION_NAME,
-    )
+
+    if ctx.attr.c_compiler_path != None and len(ctx.attr.c_compiler_path) > 0:
+        c_compiler_path = ctx.attr.c_compiler_path
+    else:
+        c_compiler_path = cc_common.get_tool_for_action(
+            feature_configuration = feature_configuration,
+            action_name = C_COMPILE_ACTION_NAME,
+        )
+
     ld_executable_path = cc_common.get_tool_for_action(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
@@ -78,6 +83,26 @@ def _graal_binary_implementation(ctx):
     for arg in ctx.attr.graal_extra_args:
         args.add(arg)
 
+    base_depsets = []
+    configsets = []
+    if len(ctx.attr.configsets) > 0:
+        for configset in ctx.attr.configsets:
+            config_files = configset.files.to_list()
+
+            # verify expected number of config files per group (4)
+            if len(config_files) > 4 or len(config_files) < 4:
+                fail("Must specify exactly 4 files per native binary configset.")
+
+            # verify that all config files in each group reside in the same directory
+            dirname = config_files[0].dirname
+            for file in config_files:
+                if file.dirname != dirname:
+                    fail("All native binary config files must reside in the same directory.")
+                configsets.append(file)
+
+            args.add("-H:ConfigurationResourceRoots=%s" % dirname)
+        base_depsets.append(configsets)
+
     if len(ctx.attr.native_image_features) > 0:
         args.add("-H:Features={entries}".format(entries=",".join(ctx.attr.native_image_features)))
 
@@ -94,7 +119,7 @@ def _graal_binary_implementation(ctx):
         args.add("-H:+JNI")
 
     ctx.actions.run(
-        inputs = classpath_depset,
+        inputs = classpath_depset + base_depsets,
         outputs = [binary],
         arguments = [args],
         executable = graal,
@@ -117,6 +142,11 @@ graal_binary = rule(
         "deps": attr.label_list(
             allow_files = True,
         ),
+        "configsets": attr.label_list(
+            allow_files = True,
+        ),
+        "debug": attr.bool(),
+        "c_compiler_path": attr.string(),
         "reflection_configuration": attr.label(mandatory=False, allow_single_file=True),
         "jni_configuration": attr.label(mandatory=False, allow_single_file=True),
         "main_class": attr.string(),
