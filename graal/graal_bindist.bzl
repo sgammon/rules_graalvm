@@ -181,6 +181,9 @@ def _graal_bindist_repository_impl(ctx):
     exec_result = ctx.execute(["bin/gu", "install", "--local-file", "wasm-installer.jar"], quiet=False)
     if exec_result.return_code != 0:
         fail("Unable to install WASM tool:\n{stdout}\n{stderr}".format(stdout=exec_result.stdout, stderr=exec_result.stderr))
+    exec_result = ctx.execute(["bin/gu", "rebuild-images"], quiet=False)
+    if exec_result.return_code != 0:
+        fail("Unable to rebuild Graal images:\n{stdout}\n{stderr}".format(stdout=exec_result.stdout, stderr=exec_result.stderr))
 
     ctx.file("BUILD", """exports_files(glob(["**/*"]))""")
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")".format(name = ctx.name))
