@@ -93,7 +93,7 @@ _graal_native_image_version_configs = {
         },
     },
     "20.1.0": {
-        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/graalvm-ce-java{java_version}-{platform}-{version}.tar.gz"],
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar"],
         "sha": {
             "8": {
                 "darwin-amd64": "3b9fd8ce84c9162a188fde88907c66990db22af0ff6ae2c04430113253a9a634",
