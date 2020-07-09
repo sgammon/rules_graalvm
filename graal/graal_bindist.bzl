@@ -107,6 +107,22 @@ _graal_native_image_version_configs = {
     },
 }
 
+_graal_wasm_version_configs = {
+    "20.1.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/wasm-installable-svm-java{java_version}-{platform}-{version}.jar"],
+        "sha": {
+            "8": {
+                "darwin-amd64": "6f1fbe88dbe80dcb658119b692e34bcacefbf884bae18ab49e5d047da6c330b7",
+                "linux-amd64": "911ab2f86ac5c797665c6687a54382596f6c563eb3cad9b3a6ba3246f4e92bc5",
+            },
+            "11": {
+                "darwin-amd64": "31a04a9c976fd08c368129a3f727128f7eb33fb3d7faee14df86b453563a01cc",
+                "linux-amd64": "cb23ae8f420032359a504b060bb60315b2d0ff20ae096e2d169b8f6edfde15f5",
+            }
+        }
+    },
+}
+
 def _get_platform(ctx):
     if ctx.os.name == "linux":
         return "linux-amd64"
@@ -137,23 +153,38 @@ def _graal_bindist_repository_impl(ctx):
         stripPrefix = archive_internal_prefix,
     )
 
-    # download native image
+    # download native image JAR
     native_image_config = _graal_native_image_version_configs[version]
     native_image_sha = native_image_config["sha"][java_version][platform]
     native_image_urls = [url.format(**format_args) for url in native_image_config["urls"]]
 
+    # download WASM JAR
+    wasm_config = _graal_wasm_version_configs[version]
+    wasm_sha = wasm_config["sha"][java_version][platform]
+    wasm_urls = [url.format(**format_args) for url in wasm_config["urls"]]
+
     ctx.download(
         url = native_image_urls,
         sha256 = native_image_sha,
-        output = "native-image-installer.jar"
+        output = "native-image-installer.jar",
+    )
+
+    ctx.download(
+        url = wasm_urls,
+        sha256 = wasm_sha,
+        output = "wasm-installer.jar",
     )
 
     exec_result = ctx.execute(["bin/gu", "install", "--local-file", "native-image-installer.jar"], quiet=False)
     if exec_result.return_code != 0:
         fail("Unable to install native image:\n{stdout}\n{stderr}".format(stdout=exec_result.stdout, stderr=exec_result.stderr))
+    exec_result = ctx.execute(["bin/gu", "install", "--local-file", "wasm-installer.jar"], quiet=False)
+    if exec_result.return_code != 0:
+        fail("Unable to install WASM tool:\n{stdout}\n{stderr}".format(stdout=exec_result.stdout, stderr=exec_result.stderr))
 
     ctx.file("BUILD", """exports_files(glob(["**/*"]))""")
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")".format(name = ctx.name))
+
 
 graal_bindist_repository = repository_rule(
     attrs = {
