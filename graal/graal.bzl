@@ -83,7 +83,7 @@ def _graal_binary_implementation(ctx):
     for arg in ctx.attr.graal_extra_args:
         args.add(arg)
 
-    base_depsets = []
+    base_depset = None
     configsets = []
     if len(ctx.attr.configsets) > 0:
         for configset in ctx.attr.configsets:
@@ -101,7 +101,7 @@ def _graal_binary_implementation(ctx):
                 configsets.append(file)
 
             args.add("-H:ConfigurationResourceRoots=%s" % dirname)
-        base_depsets.append(configsets)
+        base_depset = configsets
 
     if len(ctx.attr.native_image_features) > 0:
         args.add("-H:Features={entries}".format(entries=",".join(ctx.attr.native_image_features)))
@@ -119,7 +119,7 @@ def _graal_binary_implementation(ctx):
         args.add("-H:+JNI")
 
     ctx.actions.run(
-        inputs = classpath_depset + base_depsets,
+        inputs = base_depset != None and depset([classpath_depset, base_depset]) or classpath_depset,
         outputs = [binary],
         arguments = [args],
         executable = graal,
