@@ -79,7 +79,7 @@ _graal_native_image_version_configs = {
         },
     },
     "20.0.0": {
-        "url_template": "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar",
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar"],
         "sha": {
             "8": {
                 "darwin-amd64": "e42f59bc774b06ebbd8f7defe4460ac5a84aa20d60676f900c7e83b22ef3d4a5",
@@ -96,12 +96,12 @@ _graal_native_image_version_configs = {
         "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar"],
         "sha": {
             "8": {
-                "darwin-amd64": "3b9fd8ce84c9162a188fde88907c66990db22af0ff6ae2c04430113253a9a634",
-                "linux-amd64": "4fac212b37cd548831fd6587dd4d59dc068068815aa20323b47fde9529d6bb6e",
+                "darwin-amd64": "a8f975e276485d09d073b3534dcb955cb5e8740292e294cd7a1b4f83c6991e21",
+                "linux-amd64": "20dfff539bbae464b6d07303cca6f85534a66344b3bd14dff2bb5d09572b815d",
             },
             "11": {
-                "darwin-amd64": "04efcb7bdd2e94715d0f3fddcc754594da032887e6aec94a3701bd4774d1a92e",
-                "linux-amd64": "18f2dc19652c66ccd5bd54198e282db645ea894d67357bf5e4121a9392fc9394",
+                "darwin-amd64": "ebf81045af7408e0eddf879f3ccf0171377e219155bbbe78ed9182c2a290b346",
+                "linux-amd64": "dfee7b7872bc4448ce6df6732adcd01e2758de1133233dabf921d8e98f5f79c9",
             }
         }
     },
