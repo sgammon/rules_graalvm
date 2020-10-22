@@ -19,7 +19,6 @@ def _graal_binary_implementation(ctx):
     classpath_depset = depset(transitive = [
         dep[JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
-        if JavaInfo in dep
     ])
 
     cc_toolchain = find_cpp_toolchain(ctx)
@@ -114,9 +113,7 @@ def _graal_binary_implementation(ctx):
 graal_binary = rule(
     implementation = _graal_binary_implementation,
     attrs = {
-        "deps": attr.label_list(
-            allow_files = True,
-        ),
+        "deps": attr.label_list(providers = [[JavaInfo]]),
         "reflection_configuration": attr.label(mandatory=False, allow_single_file=True),
         "jni_configuration": attr.label(mandatory=False, allow_single_file=True),
         "main_class": attr.string(),
