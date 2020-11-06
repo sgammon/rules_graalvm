@@ -147,6 +147,19 @@ _graal_wasm_version_configs = {
             }
         }
     },
+    "20.2.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/wasm-installable-svm-java{java_version}-{platform}-{version}.jar"],
+        "sha": {
+            "8": {
+                "darwin-amd64": "75d9b0ec960804cfd196caaabeb0ca3f094a02aa621b54cd20d7523cd5fda3d5",
+                "linux-amd64": "c6ac9cd98de8685ea913d07ebce59fc901104c02a7683e08641ef933ab6227af",
+            },
+            "11": {
+                "darwin-amd64": "f07182c354b137262d793a4558a7437f800c63fb189000e395081341926ebcfe",
+                "linux-amd64": "05736786a605b40e83b47062ae6ee03499395943c3df45059200fe2dafee5c83",
+            }
+        }
+    },
 }
 
 def _get_platform(ctx):
