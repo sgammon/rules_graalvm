@@ -25,7 +25,20 @@ _graal_version_configs = {
                 "linux-amd64": "691f0577c75c4ba0fb50916087925e6eb8a5a73de51994a37eee022d1e2c9e7d",
             },
         },
-    }
+    },
+    "20.2.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/graalvm-ce-java{java_version}-{platform}-{version}.tar.gz"],
+        "sha": {
+            "8": {
+                "darwin-amd64": "a1f524788354cfd2434566f0de972372f4a7743919bae49a9d508f2080385e7b",
+                "linux-amd64": "60951c774c708caeebd1fa3886c05aa1260d81c7595ede0c9c3e689be7fcc4e8",
+            },
+            "11": {
+                "darwin-amd64": "e9df2caace6f90fcfbc623c184ef1bbb053de20eb4cf5b002d708c609340ba7a",
+                "linux-amd64": "5db74b5b8888712d2ac3cd7ae2a8361c2aa801bc94c801f5839351aba5064e29",
+            },
+        },
+    },
 }
 
 _graal_native_image_version_configs = {
@@ -50,7 +63,20 @@ _graal_native_image_version_configs = {
                 "linux-amd64": "fef2e2c71a5408855026e022ae15fda50cb52769aa7d0ec008837f49196ee16a",
             },
         },
-    }
+    },
+    "20.2.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar"],
+        "sha": {
+            "8": {
+                "darwin-amd64": "4852abafe92e13cb6bf655bba4ba36721b93324ccc6777504f34c70094c583fb",
+                "linux-amd64": "6b5403e27282847acce180f0ae9637c3f26678f27047bbd5dfed92a5bef73ab2",
+            },
+            "11": {
+                "darwin-amd64": "d60c321d6e680028f37954121eeebff0839a0a49a4436e5b41c636c3dd951de3",
+                "linux-amd64": "92b429939f12434575e4d586f79c5b686d322f29211d1608ed6055a97a35925c",
+            },
+        },
+    },
 }
 
 def _get_platform(ctx):
@@ -91,12 +117,12 @@ def _graal_bindist_repository_impl(ctx):
     ctx.download(
         url = native_image_urls,
         sha256 = native_image_sha,
-        output = "native-image-installer.jar"
+        output = "native-image-installer.jar",
     )
 
-    exec_result = ctx.execute(["bin/gu", "install", "--local-file", "native-image-installer.jar"], quiet=False)
+    exec_result = ctx.execute(["bin/gu", "install", "--local-file", "native-image-installer.jar"], quiet = False)
     if exec_result.return_code != 0:
-        fail("Unable to install native image:\n{stdout}\n{stderr}".format(stdout=exec_result.stdout, stderr=exec_result.stderr))
+        fail("Unable to install native image:\n{stdout}\n{stderr}".format(stdout = exec_result.stdout, stderr = exec_result.stderr))
 
     ctx.file("BUILD", """exports_files(glob(["**/*"]))""")
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")".format(name = ctx.name))
