@@ -77,6 +77,9 @@ def _graal_binary_implementation(ctx):
     for arg in ctx.attr.graal_extra_args:
         args.add(arg)
 
+    args.add_joined(ctx.attr.c_compiler_option,
+                    join_with = " ",
+                    format_joined="-H:CCompilerOption=%s")
     if len(ctx.attr.native_image_features) > 0:
         args.add("-H:Features={entries}".format(entries=",".join(ctx.attr.native_image_features)))
 
@@ -129,9 +132,9 @@ graal_binary = rule(
             default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")
         ),
         "data": attr.label_list(allow_files = True),
-	"graal_extra_args": attr.string_list()
+	    "graal_extra_args": attr.string_list(),
+        "c_compiler_option": attr.string_list()
     },
     executable = True,
     fragments = ["cpp"],
 )
-
