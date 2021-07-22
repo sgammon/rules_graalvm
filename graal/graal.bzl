@@ -73,7 +73,6 @@ def _graal_binary_implementation(ctx):
     args.add("-H:-CheckToolchain")
     args.add("-H:Class=%s" % ctx.attr.main_class)
     args.add("-H:Name=%s" % binary.path)
-    args.add("-H:CCompilerPath=%s" % c_compiler_path)
     args.add("-H:+ReportExceptionStackTraces")
     for arg in ctx.attr.graal_extra_args:
         args.add(arg)
