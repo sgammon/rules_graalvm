@@ -109,7 +109,7 @@ def _graal_binary_implementation(ctx):
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,
-            files = [],
+            files = [binary],
         ),
     )]
 
