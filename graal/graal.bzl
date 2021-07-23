@@ -86,6 +86,9 @@ def _graal_binary_implementation(ctx):
     if len(ctx.attr.initialize_at_build_time) > 0:
         args.add("--initialize-at-build-time={entries}".format(entries=",".join(ctx.attr.initialize_at_build_time)))
 
+    if len(ctx.attr.initialize_at_run_time) > 0:
+        args.add("--initialize-at-run-time={entries}".format(entries=",".join(ctx.attr.initialize_at_run_time)))
+
     if ctx.attr.reflection_configuration != None:
         args.add("-H:ReflectionConfigurationFiles={path}".format(path=ctx.file.reflection_configuration.path))
         classpath_depset = depset([ctx.file.reflection_configuration], transitive=[classpath_depset])
@@ -109,7 +112,7 @@ def _graal_binary_implementation(ctx):
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,
-            files = [binary],
+            files = [],
         ),
     )]
 
@@ -121,6 +124,7 @@ graal_binary = rule(
         "jni_configuration": attr.label(mandatory=False, allow_single_file=True),
         "main_class": attr.string(),
         "initialize_at_build_time": attr.string_list(),
+        "initialize_at_run_time": attr.string_list(),
         "native_image_features": attr.string_list(),
         "_graal": attr.label(
             cfg = "host",
