@@ -52,6 +52,19 @@ _graal_version_configs = {
             },
         },
     },
+    "21.3.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/graalvm-ce-java{java_version}-{platform}-{version}.tar.gz"],
+        "sha": {
+            "11": {
+                "darwin-amd64": "6c2bf7f6e5fab901e8a2284a0dbec6ce214bde65aa80cfeb90bfef8eabb5f862",
+                "linux-amd64": "3a1bc8eaf0518c128aaacb987ceb0b0e288776f48af630c11c01fd31122d93fa",
+            },
+            "17": {
+                "darwin-amd64": "60236506920cc84a07ea7602f4514d05da2c07c7176e0634652f8a9c5ad677aa",
+                "linux-amd64": "11d8039e0a7a31b799a6f20a0e806e4128730e9a2595a7ffdec1443539d4c3f6",
+            }
+        },
+    }
 }
 
 _graal_native_image_version_configs = {
@@ -101,6 +114,19 @@ _graal_native_image_version_configs = {
                 "darwin-amd64": "68d95999312e96c8cd070a8ba1d9724bc4d4fbe03e29da2c392e021a5f393fb5",
                 "linux-amd64": "c70b00b4eabcc0140505acab756c394a88be7980634706cce11f53e09658707c",
             },
+        },
+    },
+    "21.3.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar"],
+        "sha": {
+            "11": {
+                "darwin-amd64": "038ac1168b909cfb5e4d6437ee02a5aa8126cbb835aba7a3e6ab72042162e8d5",
+                "linux-amd64": "8958d4e0cad07340db0cf9e871776809e2f08fe0c93960f728fec75c4a96764f",
+            },
+            "17": {
+                "darwin-amd64": "80ac09d45f8822413b9f16297da60da196013bbcfbc4bc7721f1257885ebe063",
+                "linux-amd64": "df488a04b5405c6443c90e94710cd3bd2be9adcb3768f91429aa494168d52440",
+            }
         },
     },
 }
