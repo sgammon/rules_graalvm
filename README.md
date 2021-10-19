@@ -22,8 +22,8 @@ load("@rules_graal//graal:graal_bindist.bzl", "graal_bindist_repository")
 
 graal_bindist_repository(
     name = "graal",
-    java_version = "8", # 11 is also a valid option.
-    version = "19.3.1",
+    java_version = "11",  # 17 is also a valid option. 8 is an option in earlier versions.
+    version = "21.3.0",
 )
 ```
 
