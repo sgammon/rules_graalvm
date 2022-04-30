@@ -80,6 +80,23 @@ _graal_version_configs = {
             },
         },
     },
+    "22.1.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/graalvm-ce-java{java_version}-{platform}-{version}.tar.gz"],
+        "sha": {
+            "11": {
+                "darwin-aarch64": "06bc19a0b1e93aa3df5e15c08e97f8cef624cb6070eeae40a69a51ec7fd41152",
+                "darwin-amd64": "c4c9df94ca47b83b582758b87d39042732ba0193fc63f1ab93f6818005a1fe6b",
+                "linux-aarch64": "050a4d471247d91935f7f485e92d678f0163e1d6209e26e8fe75d7c924f73e71",
+                "linux-amd64": "78c628707007bb97b09562932ee16f50beb1c3fa4a36e4311a0465a4a718e683",
+            },
+            "17": {
+                "darwin-aarch64": "06075cd390bd261721392cd6fd967b1d28c0500d1b5625272ea906038e5cd533",
+                "darwin-amd64": "b9327fa73531a822d9a27d25980396353869eefbd73fdcef89b4fceb9f529c75",
+                "linux-aarch64": "05128e361ed44beebc89495faaa504b0b975bf93aa5e512e217b3cf5e42dfada",
+                "linux-amd64": "f11d46098efbf78465a875c502028767e3de410a31e45d92a9c5cf5046f42aa2",
+            },
+        },
+    },
 }
 
 _graal_native_image_version_configs = {
@@ -158,7 +175,24 @@ _graal_native_image_version_configs = {
                 "linux-amd64": "8c25f650d58c2649c97061cb806dfaec9e685d5d2b80afc7cf72fe61d6891831",
             },
         },
-    }
+    },
+    "22.1.0": {
+        "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar"],
+        "sha": {
+            "11": {
+                "darwin-aarch64": "21f84ccf7b979dccc9091032fe76b5737b38e0092f282107cef75143dadb3bdb",
+                "darwin-amd64": "e0758687f4bd46f15fcee9b0a5bdd65d702ec81c41d465ee7229d3f4465bcf13",
+                "linux-aarch64": "12715793b223ce1db7ec7d0a339f0b578a0c9fb6dcc6607044e5af4fd33b25a7",
+                "linux-amd64": "36e4a2a9a73a19b03883f9e783bc8bde7c214bb0fa4b617379cb81798de425bf",
+            },
+            "17": {
+                "darwin-aarch64": "beabecdd5b87e7536772d4dfe70abf4c5dd9847e87615464cf309138d21c39af",
+                "darwin-amd64": "e6bfe208bb28cd1d98da55e00fa705890a7f69286b919947b07d18cc9bb9c270",
+                "linux-aarch64": "6e10f6953ec8b9509c7a7d0194d57f265cf2a05dcb8f3272a6a8e847bda49cda",
+                "linux-amd64": "d81eecea15ebbf4f24850860c14104eaf6f8ae74574330e22afac533b8f96738",
+            },
+        },
+    },
 }
 
 def _get_platform(ctx):
@@ -175,7 +209,7 @@ def _get_platform(ctx):
         return "linux-%s" % arch
     elif ctx.os.name == "mac os x":
         if arch == "arm64" or arch == "aarch64":
-            print("GraalVM has no distribution yet for ARM-based macOS. Using `amd64` instead.")
+            return "darwin-aarch64"
         return "darwin-amd64"
     else:
         fail("Unsupported operating system: " + ctx.os.name)
