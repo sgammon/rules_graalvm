@@ -1,5 +1,6 @@
 _graal_archive_internal_prefixs = {
     "darwin-amd64": "graalvm-ce-java{java_version}-{version}/Contents/Home",
+    "darwin-aarch64": "graalvm-ce-java{java_version}-{version}/Contents/Home",
     "linux-amd64": "graalvm-ce-java{java_version}-{version}",
 }
 
@@ -209,6 +210,11 @@ def _get_platform(ctx):
         return "linux-%s" % arch
     elif ctx.os.name == "mac os x":
         if arch == "arm64" or arch == "aarch64":
+            if ctx.attr.version != "22.1.0":
+                fail(
+                    "GraalVM has `aarch64` distributions for macOS starting with v22.1.0. " +
+                    "Please upgrade or use `amd64`."
+                )
             return "darwin-aarch64"
         return "darwin-amd64"
     else:
