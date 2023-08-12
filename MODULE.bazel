@@ -1,0 +1,144 @@
+"Defines the GraalVM Rules for Bazel module."
+
+module(
+    name = "rules_graalvm",
+    version = "0.9.0",
+)
+
+GRAALVM_SDK_VERSION = "23.0.1"
+
+bazel_dep(
+    name = "platforms",
+    version = "0.0.7",
+)
+
+bazel_dep(
+    name = "bazel_skylib",
+    version = "1.4.2",
+)
+
+bazel_dep(
+    name = "bazel_features",
+    version = "0.2.0",
+)
+
+bazel_dep(
+    name = "rules_cc",
+    version = "0.0.8",
+)
+
+bazel_dep(
+    name = "rules_java",
+    version = "6.5.0",
+)
+
+bazel_dep(
+    name = "rules_license",
+    version = "0.0.7",
+)
+
+bazel_dep(
+    name = "aspect_bazel_lib",
+    version = "1.33.0",
+)
+
+bazel_dep(
+    name = "rules_jvm_external",
+    version = "5.3",
+)
+
+bazel_dep(
+    name = "protobuf",
+    version = "21.7",
+    repo_name = "com_google_protobuf",
+)
+
+## Dependencies: Dev
+
+bazel_dep(
+    name = "rules_go",
+    version = "0.41.0",
+    dev_dependency = True,
+    repo_name = "io_bazel_rules_go"
+)
+
+bazel_dep(
+    name = "gazelle",
+    version = "0.32.0",
+    dev_dependency = True,
+    repo_name = "bazel_gazelle",
+)
+
+bazel_dep(
+    name = "rules_bazel_integration_test",
+    version = "0.15.0",
+    dev_dependency = True,
+)
+
+bazel_dep(
+    name = "stardoc",
+    version = "0.5.4",
+    dev_dependency = True,
+    repo_name = "io_bazel_stardoc",
+)
+
+bazel_dep(
+    name = "bazel_skylib_gazelle_plugin",
+    version = "1.4.2",
+    dev_dependency = True,
+)
+
+bazel_dep(
+    name = "contrib_rules_jvm",
+    version = "0.13.0",
+    dev_dependency = True,
+)
+
+bazel_dep(
+    name = "apple_rules_lint",
+    version = "0.3.2",
+    dev_dependency = True,
+)
+
+bazel_dep(
+    name = "buildifier_prebuilt",
+    version = "6.1.2.1",
+    dev_dependency = True,
+)
+
+################################################################################
+# rules_jvm_external
+################################################################################
+
+MAVEN_ARTIFACTS = [
+    "org.graalvm.nativeimage:svm:%s" % GRAALVM_SDK_VERSION,
+    "org.graalvm.sdk:graal-sdk:%s" % GRAALVM_SDK_VERSION,
+]
+
+MAVEN_REPOSITORIES = [
+    "https://maven.pkg.st",
+    "https://maven.google.com",
+    "https://repo1.maven.org/maven2",
+]
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+
+maven.install(
+    name = "maven_gvm",
+    artifacts = MAVEN_ARTIFACTS,
+    repositories = MAVEN_REPOSITORIES,
+    lock_file = "//:maven_install.json",
+)
+
+use_repo(
+    maven,
+    "maven_gvm",
+    "unpinned_maven_gvm",
+)
+
+################################################################################
+# linting
+################################################################################
+
+linter = use_extension("@apple_rules_lint//lint:extensions.bzl", "linter")
+linter.register(name = "java-checkstyle")

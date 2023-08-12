@@ -1,0 +1,5 @@
+build:dev --config=buildless
+build:dev --config=buildbuddy
+build:dev --config=disk-cache
+
+build:dev --lockfile_mode=update
