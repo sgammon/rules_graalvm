@@ -11,9 +11,10 @@ jobs:
             fail-fast: false
             matrix:
                 runner: [ubuntu-latest, windows-latest, macos-latest]
+                bzlmod: [false]
                 include:
                     - runner: ubuntu-latest
-                      label: Ubuntu
+                      label: Ubuntu / Standard
                       labs: false
                     - runner: ubuntu-latest
                       label: Ubuntu / Bzlmod
@@ -34,3 +35,4 @@ jobs:
             label: ${{ matrix.label }}
             bzlmod: ${{ matrix.bzlmod }}
             labs: ${{ matrix.labs }}
+
