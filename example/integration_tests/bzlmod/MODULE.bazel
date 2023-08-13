@@ -17,7 +17,7 @@ bazel_dep(
 
 local_path_override(
     module_name = "rules_graalvm",
-    path = "../..",
+    path = "../../..",
 )
 
 gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")

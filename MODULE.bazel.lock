@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "6ed7671e2df32e1059871436f14f0b8420ac45c9f4dd6a5586008ee969ef40bc",
+  "moduleFileHash": "618d7112f0da53485db4528465e4f51516c4653069d5247a66abbaf819446878",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -54,25 +54,27 @@
           "hasNonDevUseExtension": true
         },
         {
-          "extensionBzlFile": "@apple_rules_lint//lint:extensions.bzl",
-          "extensionName": "linter",
+          "extensionBzlFile": ":extensions.bzl",
+          "extensionName": "graalvm",
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 143,
-            "column": 23
+            "line": 139,
+            "column": 20
           },
-          "imports": {},
+          "imports": {
+            "graalvm": "graalvm"
+          },
           "devImports": [],
           "tags": [
             {
-              "tagName": "register",
-              "attributeValues": {"name":"--java-checkstyle"},
+              "tagName": "graalvm",
+              "attributeValues": {"name":"--graalvm","version":"--20.0.2","distribution":"--oracle","java_version":"--20"},
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 144,
-                "column": 16
+                "line": 141,
+                "column": 12
               }
             }
           ],
@@ -3341,6 +3343,22 @@
           "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
           "ruleClassName": "http_file",
           "attributes": {"name":"--buildifier_prebuilt~6.1.2.1~buildifier_prebuilt_deps_extension~buildifier_linux_arm64","urls":["--https://github.com/bazelbuild/buildtools/releases/download/v6.1.2/buildifier-linux-arm64"],"downloaded_file_path":"--buildifier","executable":true,"sha256":"--0ba6e8e3208b5a029164e542ddb5509e618f87b639ffe8cc2f54770022853080"}
+        }
+      }
+    },
+    "//:extensions.bzl%graalvm": {
+      "bzlTransitiveDigest": "yKSZqFgZDsBQJ7idxvtiuwWuk7K9Ym2V3xNPD2f4I4c=",
+      "envVariables": {},
+      "generatedRepoSpecs": {
+        "graalvm": {
+          "bzlFile": "@@//internal:graalvm_bindist.bzl",
+          "ruleClassName": "_graalvm_bindist_repository",
+          "attributes": {"name":"--_main~graalvm~graalvm","version":"--20.0.2","java_version":"--20","distribution":"--oracle","components":[],"setup_actions":[],"enable_toolchain":true,"toolchain_config":"--graalvm_toolchain_config_repo","sha256":"--"}
+        },
+        "graalvm_toolchain_config_repo": {
+          "bzlFile": "@@//internal:graalvm_bindist.bzl",
+          "ruleClassName": "_toolchain_config",
+          "attributes": {"name":"--_main~graalvm~graalvm_toolchain_config_repo","build_file":"--\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"gvm\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain:graalvm\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"native_image\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain:graalvm_native_image\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n"}
         }
       }
     }
