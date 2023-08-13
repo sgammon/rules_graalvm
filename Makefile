@@ -23,6 +23,7 @@ CP ?= $(shell which cp)
 MV ?= $(shell which mv)
 RM ?= $(shell which rm)
 GIT ?= $(shell which git)
+PNPM ?= $(shell which pnpm)
 BAZEL ?= $(shell which bazel)
 MKDIR ?= $(shell which mkdir)
 
@@ -68,7 +69,12 @@ all: build test docs
 # Targets: Build/Test
 #
 
-build:  ## Build all targets.
+deps: node_modules
+
+node_modules:
+	$(RULE)$(PNPM) install
+
+build: deps  ## Build all targets.
 	$(RULE)$(BAZEL) $(_STARTUP) build $(TARGETS) $(_ARGS)
 
 test:  ## Run all tests.

@@ -15,6 +15,8 @@ local_repository(
     path = "../..",
 )
 
+#---SNIP--- Below here is re-used in the workspace snippet published on releases
+
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 
 graalvm_repository(
