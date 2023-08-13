@@ -47,7 +47,7 @@ jobs:
                       label: Ubuntu
                       labs: false
                     - runner: ubuntu-latest
-                      label: Ubuntu / Bzlmod
+                      label: Ubuntu - Bzlmod
                       bzlmod: true
                       labs: true
                     - runner: windows-latest

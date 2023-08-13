@@ -14,10 +14,10 @@ jobs:
                 bzlmod: [false]
                 include:
                     - runner: ubuntu-latest
-                      label: Ubuntu / Standard
+                      label: Ubuntu - Standard
                       labs: false
                     - runner: ubuntu-latest
-                      label: Ubuntu / Bzlmod
+                      label: Ubuntu - Bzlmod
                       bzlmod: true
                       labs: true
                     - runner: windows-latest
