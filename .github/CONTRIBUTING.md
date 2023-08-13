@@ -41,8 +41,11 @@ distclean                      Clean and expunge; drops all state and kills work
 docs                           Build docs.
 forceclean                     Clean, expunge, reset, and drop all ignored files (DANGEROUS).
 help                           Show this help message.
+lint-format                    Run the lint formatter.
+lint                           Run the lint checker.
 reset                          Clean, expunge, and perform a hard Git reset (DANGEROUS).
 test                           Run all tests.
+yamllint                       Run yamllint.
 ```
 
 There are some top-level build variables which configure the `Makefile` (defaults listed):

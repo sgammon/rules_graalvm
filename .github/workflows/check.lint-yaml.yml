@@ -35,34 +35,14 @@ permissions:
   contents: read
 
 jobs:
-  ## Task: Lint workflows in this respository with YAMLLint
-  lint-workflows-yaml:
-    name: "Workflows"
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
-    permissions:
-      contents: "read"
-      id-token: "write"
-      checks: "write"
-      pull-requests: "read"
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
-        with:
-          egress-policy: audit
-      - name: "Setup: Checkout"
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
-      - name: "Lint: YAML"
-        uses: karancode/yamllint-github-action@master
-        with:
-          yamllint_file_or_dir: ".github/workflows"
-          yamllint_strict: false
-          yamllint_comment: true
-        env:
-          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ## Task: Lint workflows via Actionlint
+  lint-workflows:
+    name: "Lint: Workflows"
+    uses: elide-dev/build-infra/.github/workflows/check.actions-lint.ci.yml@c54d8227f4bd37839a67ab9cb71fb59a0d197aee
 
   ## Task: Lint Bazel Central Registry config files
   lint-bcr-yaml:
-    name: "BCR"
+    name: "Lint: BCR"
     runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
     permissions:
       contents: "read"
@@ -80,14 +60,13 @@ jobs:
         uses: karancode/yamllint-github-action@master
         with:
           yamllint_file_or_dir: ".bcr"
-          yamllint_strict: false
-          yamllint_comment: true
+          yamllint_config_filepath: "./.github/.yamllint.yml"
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ## Task: Lint Bazel CI config files
   lint-bazelci-yaml:
-    name: "Bazel CI"
+    name: "Lint: Bazel CI"
     runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
     permissions:
       contents: "read"
@@ -105,7 +84,6 @@ jobs:
         uses: karancode/yamllint-github-action@master
         with:
           yamllint_file_or_dir: ".bazelci"
-          yamllint_strict: false
-          yamllint_comment: true
+          yamllint_config_filepath: "./.github/.yamllint.yml"
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}

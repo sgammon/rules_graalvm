@@ -26,6 +26,7 @@ GIT ?= $(shell which git)
 PNPM ?= $(shell which pnpm)
 BAZEL ?= $(shell which bazel)
 MKDIR ?= $(shell which mkdir)
+YAMLLINT ?= $(shell which yamllint)
 
 # --------------------------------------------------------
 
@@ -106,6 +107,19 @@ config:  ## Show current build configuration.
 	@echo "$(_ARGS)"
 
 
+# Targets: Linting
+#
+
+lint: deps  ## Run the lint checker.
+	$(RULE)$(PNPM) run lint:check
+
+lint-format: deps  ## Run the lint formatter.
+	$(RULE)$(PNPM) run lint:format
+
+yamllint: deps  ## Run yamllint.
+	$(RULE)$(YAMLLINT) -c .github/.yamllint.yml .bcr .github/workflows .bazelci -s
+
+
 # Targets: Clean
 #
 
@@ -127,5 +141,4 @@ help:  ## Show this help message.
 	$(info GraalVM Rules for Bazel:)
 	@grep -E '^[a-z1-9A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: all build test docs clean distclean reset forceclean
-
+.PHONY: all build test docs clean distclean reset forceclean lint lint-format yamllint config args deps

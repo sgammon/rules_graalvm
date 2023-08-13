@@ -1,0 +1,13 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    name: "Release: BCR"
+    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v2
+    with:
+      release_files: rules_graalvm-*.tar.gz

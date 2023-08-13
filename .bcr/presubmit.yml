@@ -1,3 +1,4 @@
+---
 bcr_test_module:
   module_path: "example/integration_tests/bzlmod"
   matrix:
