@@ -13,7 +13,7 @@ _graal_archive_internal_prefixes = {
 _graal_v2_archive_internal_prefixes = {
     "macos": "Contents/Home",
     "linux": "",
-    "windows": ""
+    "windows": "",
 }
 
 _graal_version_configs = {
@@ -75,7 +75,7 @@ _graal_version_configs = {
             "17": {
                 "darwin-amd64": "60236506920cc84a07ea7602f4514d05da2c07c7176e0634652f8a9c5ad677aa",
                 "linux-amd64": "11d8039e0a7a31b799a6f20a0e806e4128730e9a2595a7ffdec1443539d4c3f6",
-            }
+            },
         },
     },
     "22.0.0.2": {
@@ -117,13 +117,13 @@ _graal_version_configs = {
                 "macos-x64": "da3c52cc68ce0fb4dcc27dba3c59beadafb7588fec9e9d2812f5bc7c7d00ab63",
                 "linux-x64": "0e638d2b7406fabc15a1079fc65431a4f33f6f754da77e4073de8433b40e7c4a",
                 "linux-aarch64": "506c99fef656653ccbc57facb9f200303bfcc21ea29679e7391046d0990493da",
-                "windows-x64": "ce02ce51f3339895cfeef5afe5e6caf6a61a165534a4995981de837f4da2e3c6"
+                "windows-x64": "ce02ce51f3339895cfeef5afe5e6caf6a61a165534a4995981de837f4da2e3c6",
             },
             "17": {
                 "macos-x64": "470d538e34dc168255ee8ceadca74aab4b028ec6c699c4bd8e0226b0a7d3f155",
                 "linux-x64": "e5a5868c9b498643fadebfba2040e4d9a19a13ea58ec77cec8d64ab6ee691d1e",
-                "windows-x64": "23fcc0ef9d245fc087d2bcefb321d2ef13a87dd10bfc04b2a98c55db7b401732"
-            }
+                "windows-x64": "23fcc0ef9d245fc087d2bcefb321d2ef13a87dd10bfc04b2a98c55db7b401732",
+            },
         },
     },
     "oracle-17.0.7": {
@@ -131,45 +131,45 @@ _graal_version_configs = {
         "prefix": {
             "macos": "graalvm-jdk-17.0.8+9.1",
             "linux": "graalvm-jdk-17.0.8+9.1",
-            "windows": "graalvm-jdk-17.0.8+9.1"
+            "windows": "graalvm-jdk-17.0.8+9.1",
         },
         "sha256": {
             "macos-x64": "325c1c5adce1e8b569e87f1e4dffe852f73e7c25e720ea15977f2ca1d7dba1bb",
             "macos-aarch64": "c73d2917c1b681679d90a7e3851b553c328e4028137e19adb301040fe0d43cfd",
             "linux-x64": "2d6696aa209daa098c51fefc51906aa7bf0dbe28dcc560ef738328352564181b",
             "linux-aarch64": "10cb0b61571befb20bf7c11ac4e10ff4e4801065a64ae425b39f34d401e352b1",
-            "windows-x64": "ea90259f08c7e358bed62c2b48d68d295aa7be38ab3cb922d74bab284e717f64"
-        }
+            "windows-x64": "ea90259f08c7e358bed62c2b48d68d295aa7be38ab3cb922d74bab284e717f64",
+        },
     },
     "oracle-20.0.1": {
         "urls": ["https://download.oracle.com/graalvm/{java_version}/archive/graalvm-jdk-{version}_{platform}_bin.{archive}"],
         "prefix": {
             "macos": "graalvm-jdk-20.0.1+9.1",
             "linux": "graalvm-jdk-20.0.1+9.1",
-            "windows": "graalvm-jdk-20.0.1+9.1"
+            "windows": "graalvm-jdk-20.0.1+9.1",
         },
         "sha256": {
             "macos-x64": "b6f14aae4f9d6a1514446f6f2b83685e796ec083a205b613a9873b29454333ef",
             "macos-aarch64": "b94877df825ccefbe8b6751e087d54aa9b8129f9d2919d29ea18e00900392da1",
             "linux-x64": "0aef42ae97bc98acbd11dce81018a7916250fced6ee9f95a934816813e48e4f4",
             "linux-aarch64": "890596363a864bdbe55c6a9678a87384e62660056b6951c385cceaae4807fbb8",
-            "windows-x64": "d5b915df33d0f959d2d51e67eb1bfa94666443b6e66fa5c7be2b4933ece3cf61"
-        }
+            "windows-x64": "d5b915df33d0f959d2d51e67eb1bfa94666443b6e66fa5c7be2b4933ece3cf61",
+        },
     },
     "oracle-20.0.2": {
         "urls": ["https://download.oracle.com/graalvm/{java_version}/archive/graalvm-jdk-{version}_{platform}_bin.{archive}"],
         "prefix": {
             "macos": "graalvm-jdk-20.0.2+9.1",
             "linux": "graalvm-jdk-20.0.2+9.1",
-            "windows": "graalvm-jdk-20.0.2+9.1"
+            "windows": "graalvm-jdk-20.0.2+9.1",
         },
         "sha256": {
             "macos-x64": "72c74c3702437824cba3db3435897cce3643e9443acac59f6cfd43f9444b1004",
             "macos-aarch64": "f1b1068672feef3dc66cba8ccccc14d623b26e284870a156bb10ea3ea51af706",
             "linux-x64": "242862bfd2fd2633950a8d85dd1fb4d0307c35cbc7445089aa593a931c8b17db",
             "linux-aarch64": "890596363a864bdbe55c6a9678a87384e62660056b6951c385cceaae4807fbb8",
-            "windows-x64": "3ec83085b54a8de7d0c0ca893d225718cf6ff514f406af6d31a615da63ae9019"
-        }
+            "windows-x64": "3ec83085b54a8de7d0c0ca893d225718cf6ff514f406af6d31a615da63ae9019",
+        },
     },
     "oracle-latest": {
         "urls": ["https://download.oracle.com/graalvm/{java_version}/latest/graalvm-jdk-{java_version}_{platform}_bin.{archive}"],
@@ -184,8 +184,8 @@ _graal_version_configs = {
             "linux-x64": None,
             "linux-aarch64": None,
             "windows-x64": None,
-        }
-    }
+        },
+    },
 }
 
 _graal_native_image_version_configs = {
@@ -247,7 +247,7 @@ _graal_native_image_version_configs = {
             "17": {
                 "darwin-amd64": "80ac09d45f8822413b9f16297da60da196013bbcfbc4bc7721f1257885ebe063",
                 "linux-amd64": "df488a04b5405c6443c90e94710cd3bd2be9adcb3768f91429aa494168d52440",
-            }
+            },
         },
     },
     "22.0.0.2": {
@@ -289,16 +289,16 @@ _graal_native_image_version_configs = {
                 "darwin-amd64": "ae542383b033576e26d0431b0b62b4f7c048fee3b209dad2a257c4ae6345f1fb",
                 "linux-amd64": "7093522c446e16e7d3db81fbec858ef487709d6f58fe1ee3b654676629d786aa",
                 "linux-aarch64": "6594b5b5558542cd3f30f235967209809924ea2d3fbb75e9a43db7035370416b",
-                "windows-amd64": "b6be28b7841a5e1e7221c4dd96e5cd6dfcf5d99152564e08e43f02b4b891982c"
+                "windows-amd64": "b6be28b7841a5e1e7221c4dd96e5cd6dfcf5d99152564e08e43f02b4b891982c",
             },
             "17": {
                 "darwin-amd64": "f3325ba7fbbcb865c3cc38ee531398482344fae2dd364073391568b0e5b0a77a",
                 "linux-amd64": "c70dedcf87f4aad917a5e35a972e7b1bd33f91d4eec35c4dfa4cb4123ad06a2a",
                 "linux-aarch64": "20f69183baeabc3270d056f3caa57bdccb3b0ea130e8773725130f2e60184563",
-                "windows-amd64": "b6be28b7841a5e1e7221c4dd96e5cd6dfcf5d99152564e08e43f02b4b891982c"
-            }
+                "windows-amd64": "b6be28b7841a5e1e7221c4dd96e5cd6dfcf5d99152564e08e43f02b4b891982c",
+            },
         },
-    }
+    },
 }
 
 def _get_platform(ctx, newdist):
@@ -314,15 +314,14 @@ def _get_platform(ctx, newdist):
             return "darwin-amd64"
         else:
             fail("Unsupported operating system: " + ctx.os.name)
+    elif ctx.os.name == "linux":
+        return ("linux-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "linux", "tar.gz")
+    elif ctx.os.name == "mac os x":
+        return ("macos-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "macos", "tar.gz")
+    elif "windows" in ctx.os.name:
+        return ("windows-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "windows", "zip")
     else:
-        if ctx.os.name == "linux":
-            return ("linux-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "linux", "tar.gz")
-        elif ctx.os.name == "mac os x":
-            return ("macos-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "macos", "tar.gz")
-        elif "windows" in ctx.os.name:
-            return ("windows-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "windows", "zip")
-        else:
-            fail("Unsupported operating system: " + ctx.os.name)
+        fail("Unsupported operating system: " + ctx.os.name)
 
 def _check_version(version, java_version, newdist):
     java_version_numeric = int(java_version)
@@ -333,10 +332,11 @@ def _check_version(version, java_version, newdist):
 
     if newdist:
         # rule 1: java less than 17 is not supported in the new distribution
-        if java_version_numeric < 17: fail("Modern GraalVM distribution not available for Java version: '%s'" % java_version)
+        if java_version_numeric < 17:
+            fail("Modern GraalVM distribution not available for Java version: '%s'" % java_version)
 
-    else:
-        if gvm_version_major and gvm_version_major > 22: fail("Legacy GraalVM distributions not available at version '%s'" % version)
+    elif gvm_version_major and gvm_version_major > 22:
+        fail("Legacy GraalVM distributions not available at version '%s'" % version)
 
 def _toolchain_config_impl(ctx):
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
@@ -354,7 +354,7 @@ def _graal_postinstall_actions(ctx):
                 fail("Unable to run GraalVM setup action '{cmd}':\n{stdout}\n{stderr}".format(
                     cmd = action,
                     stdout = exec_result.stdout,
-                    stderr = exec_result.stderr
+                    stderr = exec_result.stderr,
                 ))
 
 def _graal_bindist_repository_impl(ctx):
@@ -366,7 +366,7 @@ def _graal_bindist_repository_impl(ctx):
             "version": version,
             "platform": platform,
             "java_version": java_version,
-            "archive": archive
+            "archive": archive,
         }
 
         _check_version(ctx.attr.version, ctx.attr.java_version, False)
@@ -430,14 +430,17 @@ def _graal_bindist_repository_impl(ctx):
             "version": version,
             "platform": platform,
             "java_version": java_version,
-            "archive": archive
+            "archive": archive,
         }
 
         # download graal
         config = _graal_version_configs[dist_tag]
         if platform not in config["sha256"]:
             fail("Platform %s not supported at GraalVM version '%s' (distribution '%s'). Available: %s." % (
-                platform, version, distribution, ", ".join(config["sha256"].keys())
+                platform,
+                version,
+                distribution,
+                ", ".join(config["sha256"].keys()),
             ))
 
         sha = None
@@ -485,18 +488,21 @@ alias(
     visibility = ["//visibility:public"],
 )
         """.format(
-            repo = ctx.attr.toolchain_config
+            repo = ctx.attr.toolchain_config,
         )
 
-        ctx.file("BUILD.bazel", """
+        ctx.file(
+            "BUILD.bazel",
+            """
 exports_files(glob(["**/*"]))
 
 %s
 %s
 """ % (
-        ctx.attr.enable_toolchain and toolchain_aliases_template or "",
-        _JDK_BUILD_TEMPLATE.format(RUNTIME_VERSION = java_version)),
-    )
+                ctx.attr.enable_toolchain and toolchain_aliases_template or "",
+                _JDK_BUILD_TEMPLATE.format(RUNTIME_VERSION = java_version),
+            ),
+        )
 
         ctx.file("WORKSPACE.bazel", """
 workspace(name = \"{name}\")
@@ -529,18 +535,17 @@ _toolchain_config = repository_rule(
 )
 
 def graalvm_repository(
-    name,
-    java_version,
-    version = "latest",
-    distribution = "oracle",
-    toolchain = True,
-    toolchain_prefix = "graalvm",
-    target_compatible_with = [],
-    components = [],
-    setup_actions = [],
-    register_all = False,
-    **kwargs):
-
+        name,
+        java_version,
+        version = "latest",
+        distribution = "oracle",
+        toolchain = True,
+        toolchain_prefix = "graalvm",
+        target_compatible_with = [],
+        components = [],
+        setup_actions = [],
+        register_all = False,
+        **kwargs):
     """Declare a GraalVM distribution repository, and optionally a Java toolchain to match.
 
     To register and use the GraalVM distribution as a toolchain, follow the Toolchains guide in the docs
@@ -555,7 +560,7 @@ def graalvm_repository(
 
     When installing the `latest` version of GraalVM, it is probably ideal to provide your own `sha256`.
     In this case, the `rules_graalvm` package does not provide an SHA256 hash otherwise.
-    
+
     Args:
         name: Name of the VM repository.
         java_version: Java version to use/declare.
@@ -628,12 +633,12 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 """.format(
-            prefix = toolchain_prefix or "graalvm",
-            version = java_version,
-            target_compatible_with = target_compatible_with,
-            toolchain = "@{repo}//:jdk".format(repo = name),
-        ),
-    )
+                prefix = toolchain_prefix or "graalvm",
+                version = java_version,
+                target_compatible_with = target_compatible_with,
+                toolchain = "@{repo}//:jdk".format(repo = name),
+            ),
+        )
 
     if not register_all:
         # register a specific GraalVM version at the host OS/arch pair

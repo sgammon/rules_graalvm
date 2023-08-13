@@ -5,6 +5,5 @@ load(
     _graalvm_repository = "graalvm_repository",
 )
 
-
 ## Exports
 graalvm_repository = _graalvm_repository
