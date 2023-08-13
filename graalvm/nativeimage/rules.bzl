@@ -106,6 +106,8 @@ def _graal_binary_implementation(ctx):
         outputs = [binary],
         arguments = [args],
         executable = graal,
+        mnemonic = "NativeImage",
+        progress_message = "Compiling %{label} with native-image",
         env = env,
     )
 
