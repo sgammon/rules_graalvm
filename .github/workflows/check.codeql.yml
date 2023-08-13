@@ -1,6 +1,7 @@
+---
 name: "CodeQL"
 
-on:
+"on":
   push:
     branches: ["main"]
   pull_request:
@@ -25,7 +26,8 @@ jobs:
       matrix:
         language: ["java"]
         # CodeQL supports [ $supported-codeql-languages ]
-        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+        # Learn more about CodeQL language support at:
+        # https://aka.ms/codeql-docs/language-support
 
     steps:
       - name: Harden Runner
