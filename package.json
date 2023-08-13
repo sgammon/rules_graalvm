@@ -1,0 +1,28 @@
+{
+  "name": "rules_graalvm",
+  "version": "1.0.0",
+  "description": "GraalVM Rules for Bazel",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "pnpm run lint:check",
+    "lint:check": "prettier . --check",
+    "lint:format": "prettier . --write",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "graalvm",
+    "bazel",
+    "native-image"
+  ],
+  "author": "Sam Gammon (github.com/sgammon)",
+  "license": "Apache 2.0",
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.0",
+    "prettier": "3.0.1",
+    "prettier-plugin-java": "2.2.0"
+  }
+}

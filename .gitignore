@@ -22,3 +22,4 @@ local.bazelrc
 /.vscode/
 /bazel.iml
 .bazel_cache
+node_modules/

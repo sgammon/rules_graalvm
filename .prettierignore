@@ -1,0 +1,4 @@
+bazel-*
+external
+node_modules
+pnpm-lock.yaml
