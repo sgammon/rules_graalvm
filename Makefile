@@ -82,7 +82,11 @@ test:  ## Run all tests.
 	$(RULE)$(BAZEL) $(_STARTUP) $(TEST_TASK) $(TESTS) $(_ARGS)
 
 docs:  ## Build docs.
-
+	@echo "Building docs..."
+	$(RULE)$(BAZEL) $(_STARTUP) build //docs/... \
+		&& $(CP) -fv bazel-bin/graalvm/*.md ./docs/api/ \
+		&& $(CHMOD) -R 755 docs/api/;
+	@echo "Docs rebuilt."
 
 # Targets: Diagnosis
 #
