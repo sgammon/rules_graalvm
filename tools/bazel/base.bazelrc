@@ -1,0 +1,3 @@
+
+build --collect_code_coverage
+build --instrumentation_filter="//graalvm"

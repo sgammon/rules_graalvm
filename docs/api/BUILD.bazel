@@ -1,0 +1,11 @@
+"Aliases to documentation targets for the package API."
+
+alias(
+    name = "defs",
+    actual = "//graalvm:defs_doc",
+)
+
+alias(
+    name = "repositories",
+    actual = "//graalvm:repositories_doc",
+)

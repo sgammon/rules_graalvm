@@ -1,0 +1,3 @@
+build:buildbuddy --bes_results_url=https://app.buildbuddy.io/invocation/
+build:buildbuddy --bes_backend=grpcs://remote.buildbuddy.io
+build:buildbuddy --build_metadata=REPO_URL=https://github.com/sgammon/rules_graalvm

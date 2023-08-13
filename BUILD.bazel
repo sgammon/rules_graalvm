@@ -1,0 +1,30 @@
+"Bazel Rules for GraalVM"
+
+load(
+    "@bazel_gazelle//:def.bzl",
+    "gazelle",
+)
+load(
+    "@buildifier_prebuilt//:rules.bzl",
+    "buildifier",
+)
+
+buildifier(
+    name = "buildifier.check",
+    exclude_patterns = [
+        "./.git/*",
+        "./bazel-*/*",
+    ],
+    lint_mode = "warn",
+    mode = "diff",
+)
+
+exports_files([
+    "maven_install.json",
+    "WORKSPACE.bazel",
+])
+
+# gazelle:prefix github.com/sgammon/rules_graalvm
+gazelle(
+    name = "gazelle",
+)

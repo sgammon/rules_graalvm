@@ -1,0 +1,14 @@
+
+# Example `local.bazelrc` file
+#
+# This file should be used by an individual developer to declare local settings. This is
+# where you should put your BuildBuddy and Buildless API keys, as applicable.
+#
+# Bzlmod mode is enabled, but only during development, for now.
+
+build --config=dev
+build --config=bzlmod
+
+build --remote_header=x-buildbuddy-api-key=
+build --remote_header=x-api-key=
+

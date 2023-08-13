@@ -1,16 +1,29 @@
-common --announce_rc
+common:verbose --announce_rc
+
+# Import Aspect bazelrc presets
+import %workspace%/.aspect/bazelrc/bazel7.bazelrc
+import %workspace%/.aspect/bazelrc/convenience.bazelrc
+import %workspace%/.aspect/bazelrc/correctness.bazelrc
+import %workspace%/.aspect/bazelrc/debug.bazelrc
+import %workspace%/.aspect/bazelrc/performance.bazelrc
+
+# Import project-level presets
+import %workspace%/tools/bazel/base.bazelrc
+import %workspace%/tools/bazel/bazel7.bazelrc
+import %workspace%/tools/bazel/buildbuddy.bazelrc
+import %workspace%/tools/bazel/cache.bazelrc
+import %workspace%/tools/bazel/ci.bazelrc
+import %workspace%/tools/bazel/bzlmod.bazelrc
+import %workspace%/tools/bazel/profiles.bazelrc
+import %workspace%/tools/bazel/dev.bazelrc
+import %workspace%/tools/bazel/java.bazelrc
+
 common --color=auto
 
-build --experimental_strict_action_env
-build --worker_max_instances=4
 build --worker_sandboxing
 build --verbose_failures
 
-test  --test_output=all
-test  --test_env=PATH
-
-common:v0.24 --config=noop
-common:v0.26 --config=noop
-
 # pick something trivial as a "noop"
 common:noop --logging=3
+
+try-import %workspace%/local.bazelrc

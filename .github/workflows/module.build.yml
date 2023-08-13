@@ -1,0 +1,74 @@
+name: "Build"
+
+on:
+    workflow_dispatch:
+      inputs:
+        ## Runner to use
+        runner:
+          description: "Runner"
+          type: string
+          default: 'ubuntu-latest'
+
+        ## Whether to build with bzlmod
+        bzlmod:
+          description: "Enable Bzlmod"
+          type: boolean
+          default: false
+    workflow_call:
+      inputs:
+        runner:
+          description: "Runner"
+          type: string
+          default: 'ubuntu-latest'
+        label:
+          description: "Label"
+          type: string
+          default: 'Ubuntu'
+        bzlmod:
+          description: "Enable Bzlmod"
+          type: boolean
+          default: false
+        labs:
+          description: "Skip Failures"
+          type: boolean
+          default: false
+      secrets:
+        BUILDBUDDY_APIKEY:
+          required: true
+        BUILDLESS_APIKEY:
+          required: true
+
+jobs:
+    build:
+        name: "Build: ${{ inputs.label || 'Rules' }}"
+        runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+        continue-on-error: ${{ inputs.labs }}
+        steps:
+            - name: "Setup: Checkout"
+              uses: actions/checkout@v3
+            - name: "Setup: msbuild"
+              uses: microsoft/setup-msbuild@v1.1
+              if: ${{ contains(inputs.runner, 'windows') }}
+            - name: "Setup: Bazel"
+              uses: bazelbuild/setup-bazelisk@v2
+            - name: "Setup: Cache"
+              uses: actions/cache@v3
+              with:
+                path: "~/.cache/bazel"
+                key: bazel-v2
+            - name: "Configure: Bazel"
+              shell: bash
+              run: |
+                echo "build --remote_header=x-buildbuddy-api-key=${{ secrets.BUILDBUDDY_APIKEY }}" >> local.bazelrc
+                echo "build --remote_header=x-api-key=${{ secrets.BUILDLESS_APIKEY }}" >> local.bazelrc
+            - name: "Configure: Bzlmod"
+              if: ${{ inputs.bzlmod }}
+              run: |
+                echo "build --config=bzlmod" >> local.bazelrc
+            - name: "Build: Example"
+              continue-on-error: ${{ inputs.labs }}
+              shell: bash
+              run: |
+                bazel build \
+                    --config=ci \
+                    //...

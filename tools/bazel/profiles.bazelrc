@@ -1,0 +1,13 @@
+
+# Mode: Debug
+build:debug --sandbox_debug
+build:debug --verbose_failures
+build:debug --compilation_mode=dbg
+
+# Mode: Release
+build:release --stamp
+build:release --strip=always
+build:release --compilation_mode=opt
+
+# Mode: Fastbuild
+build:fastbuild --compilation_mode=fastbuild
