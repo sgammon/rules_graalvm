@@ -1,0 +1,24 @@
+matrix:
+  platform:
+    - ubuntu2004
+    - macos
+    - windows
+
+tasks:
+  build:
+    build_targets:
+    - "..."
+  build:
+    test_targets:
+    - "..."
+
+bcr_test_module:
+  module_path: "example/integration_tests/bzlmod"
+  matrix:
+    platform: ["debian10", "macos", "ubuntu2004", "windows"]
+  tasks:
+    build_bzlmod_test:
+      name: "Build test module"
+      platform: ${{ platform }}
+      build_targets:
+        - "//..."
