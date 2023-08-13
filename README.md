@@ -14,49 +14,91 @@ Use [GraalVM](https://graalvm.org) from Bazel, with support for:
 
 ## Installation
 
-**Via `WORKSPACE`:**
+**Via `WORKSPACE.bazel`:**
 ```starlark
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
 http_archive(
     name = "rules_graalvm",
-    sha256 = "<sha256 sum>",
-    strip_prefix = "rules_graalvm-<commit>",
+    sha256 = "96323ac1b7a5b9db1ae1a388c5ed1fb830d4628d3ab4b7f09538558321e03111",
+    strip_prefix = "rules_graalvm-0.9.0",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/archive/<commit>.tar.gz",
+        "https://github.com/sgammon/rules_graalvm/archive/v0.9.0.tar.gz",
     ],
 )
-
+```
+```starlark
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
-
+```
+```starlark
 graalvm_repository(
-    name = "graalvm",         # anything you want
-    version = "20.0.2",       # exact version of a GraalVM CE or Oracle GVM release
-    distribution = "oracle",  # required for newer GVM releases (`oracle`, `ce`, or `community`)
-    java_version = "20",      # java language version to use/declare
+    name = "graalvm",
+    components = [
+       # if you need components like `js` or `wasm`, add them here
+    ],
+    distribution = "oracle",  # `oracle`, `ce`, or `community`
+    java_version = "20",  # `17`, `20`, or `21`, as supported by the version provided
+    version = "20.0.2",  # earlier version format like `22.x` also supported
 )
 ```
 
-**Via `MODULE.bazel`:**
+**Or, via `MODULE.bazel`:**
+
+> [!IMPORTANT]  
+> To use Bzlmod with `rules_graalvm`, you will need the `archive_override` below (until this package is made available on BCR).
+
 ```starlark
-# Coming soon.
+bazel_dep(name = "rules_graalvm", version = "0.9.0")
+```
+```starlark
+# Until we ship to BCR:
+archive_override(
+    module_name = "rules_graalvm",
+    urls = ["https://github.com/sgammon/rules_graalvm/archive/v0.9.0.tar.gz"],
+    strip_prefix = "rules_graalvm-0.9.0",
+    integrity = "sha256-ljI6wbeludsa4aOIxe0fuDDUYo06tLfwlThVgyHgMRE=",
+)
+```
+```starlark
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+
+gvm.graalvm(
+    name = "graalvm",
+    version = "20.0.2",  # earlier version format like `22.x` also supported
+    distribution = "oracle",  # `oracle`, `ce`, or `community`
+    java_version = "20",  # `17`, `20`, or `21`, as supported by the version provided
+    components = [
+       # if you need components like `js` or `wasm`, add them here
+    ],
+)
+use_repo(
+    gvm,
+    "graalvm",
+)
 ```
 
 ## Usage: Java Toolchains
 
 You can use the `graalvm_repository` as a Java toolchain, by registering it like below:
 
-**In `WORKSPACE.bazel`:**
+**From `WORKSPACE.bazel`:**
 ```starlark
-# Coming soon.
+# graalvm_repository(...)
+```
+```starlark
+register_toolchains("@graalvm//:toolchain")
 ```
 
-**Or, in a `.bazelrc` file:**
+**From `.bazelrc`:**
 ```
-# Coming soon.
+build --extra_toolchains=@graalvm//:toolchain
+build --java_runtime_version=graalvm_20
 ```
+
+> [!NOTE]  
+> If you name your repository `example` and set the Java version to `21`, your `java_runtime_version` would be `example_21`.
 
 ## Usage: Build a native binary
+
+This example is present in the repository at `//example/native`. You can build it in your own workspace with `bazel build @rules_graalvm//example/native`.
 
 **In a `BUILD.bazel` file:**
 ```python
