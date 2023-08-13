@@ -88,3 +88,43 @@ jobs:
                     ${{ inputs.coverage && 'coverage' || 'test' }} \
                     --config=ci \
                     //...
+
+    integration-tests:
+        name: "Test: ${{ matrix.label }} (${{ inputs.label || 'Rules' }})"
+        runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+        continue-on-error: ${{ inputs.labs || matrix.labs }}
+        strategy:
+          fail-fast: false
+          matrix:
+              label: ["BCR"]
+              target: ["//sample"]
+              action: ["build"]
+              directory: ["./example/integration_tests/bzlmod"]
+              labs: [false]
+        steps:
+            - name: "Setup: Checkout"
+              uses: actions/checkout@v3
+            - name: "Setup: msbuild"
+              uses: microsoft/setup-msbuild@v1.1
+              if: ${{ contains(inputs.runner, 'windows') }}
+            - name: "Setup: Bazel"
+              uses: bazelbuild/setup-bazelisk@v2
+            - name: "Setup: Cache"
+              uses: actions/cache@v3
+              with:
+                path: "~/.cache/bazel"
+                key: bazel-v2
+            - name: "Configure: Bazel"
+              shell: bash
+              run: |
+                echo "build --remote_header=x-buildbuddy-api-key=${{ secrets.BUILDBUDDY_APIKEY }}" >> local.bazelrc
+                echo "build --remote_header=x-api-key=${{ secrets.BUILDLESS_APIKEY }}" >> local.bazelrc
+            - name: "Build: ${{ matrix.label }}"
+              continue-on-error: ${{ inputs.labs }}
+              working-directory: ${{ matrix.directory }}
+              shell: bash
+              run: |
+                bazel \
+                    ${{ matrix.action || 'build' }} \
+                    ${{ matrix.target || '//...' }}
+

@@ -1,0 +1,12 @@
+license-check: true
+vulnerability-check: true
+fail-on-severity: "low"
+
+allow-licenses:
+  - GPL-3.0
+  - BSD-3-Clause
+  - MIT
+  - Apache-2.0
+
+allow-ghsas: []
+
