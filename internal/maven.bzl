@@ -7,7 +7,7 @@ load(
 
 def graalvm(artifact, repository = "@maven", version = None, group = None):
     """Return an artifact coordinate for GraalVM Maven artifact.
-    
+
     Args:
         artifact: Group and name of the artifact, separated with `:`.
         repository: Name of the Maven Bazel repository to pull from; defaults to
