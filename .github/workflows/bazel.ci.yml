@@ -20,19 +20,11 @@ jobs:
     with:
       folders: |
         [
-          ".",
-          "test"
+          "."
         ]
       exclude: |
         [
-          {"folder": ".", "bzlmodEnabled": false},
-          {"bazelversion": "7.0.0-pre.20230724.1", "bzlmodEnabled": true},
-          {"bazelversion": "7.0.0-pre.20230724.1", "os": "macos-latest"},
-          {"bazelversion": "7.0.0-pre.20230724.1", "os": "windows-latest"},
-          {"bazelversion": "6.3.2", "bzlmodEnabled": true},
-          {"bazelversion": "6.3.2", "os": "macos-latest"},
-          {"bazelversion": "6.3.2", "os": "windows-latest"},
           {"bazelversion": "5.4.0", "bzlmodEnabled": true},
           {"bazelversion": "5.4.0", "os": "macos-latest"},
-          {"bazelversion": "5.4.0", "os": "windows-latest"},
+          {"bazelversion": "5.4.0", "os": "windows-latest"}
         ]

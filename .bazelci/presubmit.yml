@@ -9,7 +9,6 @@ tasks:
   build:
     build_targets:
       - "..."
-  test:
     test_targets:
       - "..."
 

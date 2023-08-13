@@ -39,6 +39,10 @@ jobs:
   lint-workflows:
     name: "Lint: Workflows"
     uses: elide-dev/build-infra/.github/workflows/check.actions-lint.ci.yml@c54d8227f4bd37839a67ab9cb71fb59a0d197aee
+    permissions:
+      checks: write
+      pull-requests: read
+      id-token: write
 
   ## Task: Lint Bazel Central Registry config files
   lint-bcr-yaml:
