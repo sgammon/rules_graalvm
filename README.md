@@ -9,16 +9,16 @@
 
 > Latest release: `0.9.0`
 
-> [!IMPORTANT]  
-> Currently in beta. Will probably break
+> **Important**
+> Currently in beta. Feedback welcome but will probably break your build.
 
-Use [GraalVM](https://graalvm.org) from Bazel, with support for:
+Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with support for:
 
 - [Building native image binaries](./docs/native-image.md)
 - [Installing components with `gu`](./docs/components.md)
 - [Using GraalVM as a Bazel Java toolchain](./docs/toolchain.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./docs/modern-bazel.md)
-- Support for macOS, Linux, Windows
+- Support for macOS, Linux, Windows (including `native-image`!)
 - Support for latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
 ## Installation
@@ -52,7 +52,7 @@ graalvm_repository(
 **Or, via `MODULE.bazel`:**
 
 > [!IMPORTANT]  
-> To use Bzlmod with `rules_graalvm`, you will need the `archive_override` below (until this package is made available on BCR).
+> To use Bzlmod with `rules_graalvm`, you will need the `archive_override` below (until we go live on BCR).
 
 ```starlark
 bazel_dep(name = "rules_graalvm", version = "0.9.0")
@@ -102,7 +102,7 @@ build --extra_toolchains=@graalvm//:toolchain
 build --java_runtime_version=graalvm_20
 ```
 
-> [!NOTE]  
+> **Note**
 > If you name your repository `example` and set the Java version to `21`, your `java_runtime_version` would be `example_21`.
 
 ## Usage: Build a native binary
