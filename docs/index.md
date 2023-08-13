@@ -3,13 +3,13 @@
 
 > Latest release: `0.9.0`
 
-These rules let you use [GraalVM](https://graalvm.org) from Bazel, with support for:
+These rules let you use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with support for:
 
 - [Building native image binaries](./native-image.md)
 - [Installing components with `gu`](./components.md)
 - [Using GraalVM as a Bazel Java toolchain](./toolchain.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./modern-bazel.md)
-- Support for macOS, Linux, Windows
+- Support for macOS, Linux, Windows (including `native-image`!)
 - Support for latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
 ## Installation
@@ -17,7 +17,7 @@ These rules let you use [GraalVM](https://graalvm.org) from Bazel, with support 
 > API docs for [`graalvm_repository`](./api/repositories.md)
 
 **Via `WORKSPACE.bazel`:**
-```starlark
+```python
 http_archive(
     name = "rules_graalvm",
     sha256 = "96323ac1b7a5b9db1ae1a388c5ed1fb830d4628d3ab4b7f09538558321e03111",
@@ -27,10 +27,10 @@ http_archive(
     ],
 )
 ```
-```starlark
+```python
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 ```
-```starlark
+```python
 graalvm_repository(
     name = "graalvm",
     components = [
@@ -44,13 +44,13 @@ graalvm_repository(
 
 **Or, via `MODULE.bazel`:**
 
-> [!IMPORTANT]  
+> **Important**
 > To use Bzlmod with `rules_graalvm`, you will need the `archive_override` below (until this package is made available on BCR).
 
-```starlark
+```python
 bazel_dep(name = "rules_graalvm", version = "0.9.0")
 ```
-```starlark
+```python
 # Until we ship to BCR:
 archive_override(
     module_name = "rules_graalvm",
@@ -59,7 +59,7 @@ archive_override(
     integrity = "sha256-ljI6wbeludsa4aOIxe0fuDDUYo06tLfwlThVgyHgMRE=",
 )
 ```
-```starlark
+```python
 gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 
 gvm.graalvm(
@@ -89,10 +89,10 @@ These rules are [documented](https://sgammon.github.io/rules_graalvm); you can f
 You can use the `graalvm_repository` as a Java toolchain, by registering it like below:
 
 **From `WORKSPACE.bazel`:**
-```starlark
+```python
 # graalvm_repository(...)
 ```
-```starlark
+```python
 register_toolchains("@graalvm//:toolchain")
 ```
 
