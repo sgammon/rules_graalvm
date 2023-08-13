@@ -1,0 +1,9 @@
+
+load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
+
+graalvm_repository(
+    name = "graalvm",
+    version = "20.0.2",
+    distribution = "oracle",
+    java_version = "20",
+)

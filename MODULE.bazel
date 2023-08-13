@@ -135,10 +135,3 @@ use_repo(
     "maven_gvm",
     "unpinned_maven_gvm",
 )
-
-################################################################################
-# linting
-################################################################################
-
-linter = use_extension("@apple_rules_lint//lint:extensions.bzl", "linter")
-linter.register(name = "java-checkstyle")

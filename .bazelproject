@@ -1,0 +1,22 @@
+directories:
+  .
+  .github
+  docs
+  example
+  graalvm
+  internal
+  tools
+
+workspace_type: java
+java_language_level: 17
+derive_targets_from_directories: false
+
+build_flags:
+  --config=dev
+
+test_sources:
+  tests/*
+
+additional_languages:
+  java
+  javascript
