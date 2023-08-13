@@ -1,4 +1,9 @@
 
+   Bazel Rules for GraalVM
+   Copyright (c) 2023, Sam Gammon
+   Released under the Apache 2.0 license, enclosed below.
+
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
