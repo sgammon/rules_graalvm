@@ -1,4 +1,3 @@
-
 # GraalVM Rules for Bazel
 
 > Latest release: `0.9.0`
@@ -17,6 +16,7 @@ These rules let you use [GraalVM](https://graalvm.org) from [Bazel](https://baze
 > API docs for [`graalvm_repository`](./api/repositories.md)
 
 **Via `WORKSPACE.bazel`:**
+
 ```python
 http_archive(
     name = "rules_graalvm",
@@ -27,9 +27,11 @@ http_archive(
     ],
 )
 ```
+
 ```python
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 ```
+
 ```python
 graalvm_repository(
     name = "graalvm",
@@ -50,6 +52,7 @@ graalvm_repository(
 ```python
 bazel_dep(name = "rules_graalvm", version = "0.9.0")
 ```
+
 ```python
 # Until we ship to BCR:
 archive_override(
@@ -59,6 +62,7 @@ archive_override(
     integrity = "sha256-ljI6wbeludsa4aOIxe0fuDDUYo06tLfwlThVgyHgMRE=",
 )
 ```
+
 ```python
 gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 
@@ -89,14 +93,17 @@ These rules are [documented](https://sgammon.github.io/rules_graalvm); you can f
 You can use the `graalvm_repository` as a Java toolchain, by registering it like below:
 
 **From `WORKSPACE.bazel`:**
+
 ```python
 # graalvm_repository(...)
 ```
+
 ```python
 register_toolchains("@graalvm//:toolchain")
 ```
 
 **From `.bazelrc`:**
+
 ```
 build --extra_toolchains=@graalvm//:toolchain
 build --java_runtime_version=graalvm_20
@@ -109,6 +116,7 @@ Read more in the [Toolchain Guide](./toolchain.md).
 > API docs for [`native_image`](./api/defs.md)
 
 **In a `BUILD.bazel` file:**
+
 ```python
 load("@rules_java//java:defs.bzl", "java_library")
 load("@rules_graalvm//graalvm:defs.bzl", "native_image")

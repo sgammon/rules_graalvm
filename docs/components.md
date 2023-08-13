@@ -1,4 +1,3 @@
-
 ## Installing and using GraalVM components
 
 Some GraalVM distributions make available _components_, which include language implementations, tooling, and other utilities. Your project may need one or more GraalVM components installed in order to build or run correctly.
@@ -10,6 +9,7 @@ By default, no components are installed beyond what is present in a given distri
 ### Installing components
 
 **In your `WORKSPACE.bazel`:**
+
 ```starlark
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 
@@ -34,12 +34,12 @@ This snippet assumes you've [set up the rules](../README.md).
 > [!IMPORTANT]  
 > If you declare `components`, make sure to declare the full set you need, including any that may be installed in the base distribution.
 
-
 ### After-install actions
 
 With certain GraalVM components or project configurations, you may need to run post-installation actions with the GraalVM Updater tool (`gu`):
 
 **In your `WORKSPACE.bazel`:**
+
 ```starlark
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 

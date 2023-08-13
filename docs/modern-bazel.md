@@ -1,4 +1,3 @@
-
 ## Usage from modern Bazel
 
 See instructions below for installation and use of `rules_graalvm` on Bazel 6 or newer, via Bazel Modules:
@@ -10,6 +9,7 @@ bazel_dep(name = "rules_graalvm", version = "<version>")
 ```
 
 **Toolchain registration in `WORKSPACE.bzlmod` (optional):**
+
 ```starlark
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 

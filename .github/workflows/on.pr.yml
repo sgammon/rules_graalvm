@@ -1,38 +1,37 @@
 name: "PR"
 
 on:
-    pull_request: {}
+  pull_request: {}
 
 jobs:
-    test:
-        name: "Test (${{ matrix.label }})"
-        uses: ./.github/workflows/module.test.yml
-        strategy:
-            fail-fast: false
-            matrix:
-                runner: [ubuntu-latest, windows-latest, macos-latest]
-                bzlmod: [false]
-                include:
-                    - runner: ubuntu-latest
-                      label: Ubuntu - Standard
-                      labs: false
-                    - runner: ubuntu-latest
-                      label: Ubuntu - Bzlmod
-                      bzlmod: true
-                      labs: true
-                    - runner: windows-latest
-                      label: Windows
-                      bzlmod: false
-                      labs: true
-                    - runner: macos-latest
-                      label: macOS
-                      bzlmod: false
-                      labs: false
+  test:
+    name: "Test (${{ matrix.label }})"
+    uses: ./.github/workflows/module.test.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, windows-latest, macos-latest]
+        bzlmod: [false]
+        include:
+          - runner: ubuntu-latest
+            label: Ubuntu - Standard
+            labs: false
+          - runner: ubuntu-latest
+            label: Ubuntu - Bzlmod
+            bzlmod: true
+            labs: true
+          - runner: windows-latest
+            label: Windows
+            bzlmod: false
+            labs: true
+          - runner: macos-latest
+            label: macOS
+            bzlmod: false
+            labs: false
 
-        secrets: inherit
-        with:
-            runner: ${{ matrix.runner }}
-            label: ${{ matrix.label }}
-            bzlmod: ${{ matrix.bzlmod }}
-            labs: ${{ matrix.labs }}
-
+    secrets: inherit
+    with:
+      runner: ${{ matrix.runner }}
+      label: ${{ matrix.label }}
+      bzlmod: ${{ matrix.bzlmod }}
+      labs: ${{ matrix.labs }}
