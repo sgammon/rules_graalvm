@@ -43,7 +43,7 @@ jobs:
   ## Task: Lint Bazel Central Registry config files
   lint-bcr-yaml:
     name: "Lint: BCR"
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: "read"
       id-token: "write"
@@ -67,7 +67,7 @@ jobs:
   ## Task: Lint Bazel CI config files
   lint-bazelci-yaml:
     name: "Lint: Bazel CI"
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: "read"
       id-token: "write"

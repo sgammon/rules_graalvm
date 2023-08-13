@@ -1,7 +1,8 @@
+---
 name: Bazel CI
 
 # Controls when the action will run.
-on:
+"on":
   push:
     branches: [main]
   pull_request:
