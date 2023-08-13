@@ -1,4 +1,3 @@
-
 ## Using GraalVM as a toolchain with Bazel
 
 > [!NOTE]  
@@ -16,6 +15,7 @@ Java toolchains in Bazel are typically used to select a particular JDK to run ag
 After you've installed `rules_graalvm` and declared a `graalvm_repository`, you can register GraalVM as a Java toolchain using the `:all` target at the repository root:
 
 **In your `WORKSPACE.bazel`:**
+
 ```starlark
 # ...
 
@@ -25,6 +25,7 @@ register_toolchains("@graalvm//:toolchain")
 ```
 
 **Or, in a `bazel.rc`:**
+
 ```
 build --extra_toolchains=@graalvm//:toolchain
 ```
@@ -43,6 +44,7 @@ You can select GraalVM as the **tooling toolchain**, the **runtime toolchain**, 
 Set **`tool_java_language_version`** to the version matching your GraalVM JDK declared in `graalvm_repository`.
 
 **In a `bazel.rc`:**
+
 ```
 build --tool_java_language_version=20
 build --extra_toolchains=@graalvm//:bootstrap_runtime_toolchain
@@ -53,6 +55,7 @@ build --extra_toolchains=@graalvm//:bootstrap_runtime_toolchain
 Set **`java_runtime_version`** to the version matching your GraalVM JDK declared in `graalvm_repository`.
 
 **In a `bazel.rc`:**
+
 ```
 build --java_language_version=20
 build --java_runtime_version=graalvm_20

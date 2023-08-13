@@ -1,4 +1,3 @@
-
 ## GraalVM Rules for Bazel: Contribution Guide
 
 This codebase is a conventional Bazel 6 or Bazel 7 codebase, with support for [Bzlmod](https://docs.bazel.build/versions/5.0.0/bzlmod.html). To use it, you build and test from [Bazel](https://bazel.build).
@@ -29,6 +28,7 @@ On this project, you can build with Bazel directly (using the wrappers, etc), or
 ### Using the `Makefile`
 
 Run `make help` to see available tasks, as the `Makeile` is self-documenting:
+
 ```
 ➜  rules_graalvm git:(main) make help
 
@@ -46,6 +46,7 @@ test                           Run all tests.
 ```
 
 There are some top-level build variables which configure the `Makefile` (defaults listed):
+
 ```
 CI ?= no          # Turns on CI build settings.
 DEBUG ?= no       # Turns on `verbose_failures`, `sandbox_debug`, etc.
@@ -60,6 +61,7 @@ CONFIGS ?=        # Additional Bazel `--config=` names to pass.
 ```
 
 Checking the current build configuration with the `Makefile`:
+
 ```
 ➜  rules_graalvm git:(main) make config
 
@@ -103,11 +105,13 @@ Makes sense, checks out. You can pass these `Args` and `Targets` yourself direct
 ### Using Bazel
 
 To build directly using Bazel, it's pretty easy:
+
 ```
 bazel build //...
 ```
 
 To run tests:
+
 ```
 bazel test //...
 ```
@@ -119,12 +123,14 @@ The Bazel build will look for a user configuration at `local.bazelrc` at the roo
 This is the best way to configure things like [Buildless](https://less.build) and [BuildBuddy](https://buildbuddy.io), both of which we use on this project. You can use them if you want.
 
 There is a sample configuration at `local.bazelrc.inert`. You can use it like this:
+
 ```
 cp local.bazelrc.inert local.bazelrc
 # now edit it lol
 ```
 
 You will want to add your own API keys, of course. The default configuration is sufficient from there. If you want to, say, enable Bzlmod locally for all your builds, you can add:
+
 ```
 build --config=bzlmod
 ```

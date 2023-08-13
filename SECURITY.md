@@ -10,10 +10,10 @@ in a developer's Bazel workspace.
 
 All versions of this package are supported as of the `v0.9.0` release.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.9.0+  | :white_check_mark: Yep |
-| `rules_graal` | :x: Deprecated |
+| Version       | Supported              |
+| ------------- | ---------------------- |
+| 0.9.0+        | :white_check_mark: Yep |
+| `rules_graal` | :x: Deprecated         |
 
 ## Reporting a Vulnerability
 
