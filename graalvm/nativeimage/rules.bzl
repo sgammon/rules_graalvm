@@ -134,7 +134,7 @@ native_image = rule(
         "native_features": attr.string_list(),
         "graalvm": attr.label(
             cfg = "exec",
-            default = "@graalvm//:bin/native-image",
+            default = Label("@graalvm//:bin/native-image"),
             allow_files = True,
             executable = True,
         ),

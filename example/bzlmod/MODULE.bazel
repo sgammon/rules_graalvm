@@ -19,3 +19,16 @@ local_path_override(
     module_name = "rules_graalvm",
     path = "../..",
 )
+
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+
+gvm.graalvm(
+    name = "graalvm",
+    version = "20.0.2",
+    distribution = "oracle",
+    java_version = "20",
+)
+use_repo(
+    gvm,
+    "graalvm",
+)

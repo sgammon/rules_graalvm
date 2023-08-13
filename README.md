@@ -31,7 +31,7 @@ load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 
 graalvm_repository(
     name = "graalvm",         # anything you want
-    version = "20.0.1",       # exact version of a GraalVM CE or Oracle GVM release
+    version = "20.0.2",       # exact version of a GraalVM CE or Oracle GVM release
     distribution = "oracle",  # required for newer GVM releases (`oracle`, `ce`, or `community`)
     java_version = "20",      # java language version to use/declare
 )

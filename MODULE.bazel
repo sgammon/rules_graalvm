@@ -135,3 +135,16 @@ use_repo(
     "maven_gvm",
     "unpinned_maven_gvm",
 )
+
+gvm = use_extension(":extensions.bzl", "graalvm")
+
+gvm.graalvm(
+    name = "graalvm",
+    version = "20.0.2",
+    distribution = "oracle",
+    java_version = "20",
+)
+use_repo(
+    gvm,
+    "graalvm",
+)

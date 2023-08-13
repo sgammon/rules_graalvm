@@ -1,5 +1,7 @@
 "Defines toolchain types for GraalVM."
 
+package(default_visibility = ["//visibility:public"])
+
 # Toolchain type: `graalvm`
 #
 # Describes a regular GraalVM toolchain; this type is satisfied by either GraalVM Community Edition
