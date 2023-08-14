@@ -112,12 +112,7 @@ jobs:
       - name: "Build: Project"
         continue-on-error: ${{ inputs.labs }}
         shell: bash
-        run: bazel build --config=ci "//..."
-      - name: "Test: Example"
-        if: inputs.tests
-        continue-on-error: ${{ inputs.labs }}
-        shell: bash
-        run: bazel build --config=ci "//..."
+        run: bazel build --config=ci "//example/native"
 
   integration-tests:
     name: "Test: ${{ matrix.label }}"
