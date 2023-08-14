@@ -8,6 +8,7 @@ build:debug --compilation_mode=dbg
 build:release --stamp
 build:release --strip=always
 build:release --compilation_mode=opt
+build:release --workspace_status_command=$(pwd)/tools/scripts/workspace.sh
 
 # Mode: Fastbuild
 build:fastbuild --compilation_mode=fastbuild
