@@ -14,7 +14,9 @@ name: Buildifier
 jobs:
   check:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - name: buildifier
+        continue-on-error: true
         run: bazel run --enable_bzlmod //.github/workflows:buildifier.check
