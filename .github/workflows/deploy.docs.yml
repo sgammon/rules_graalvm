@@ -25,6 +25,7 @@ concurrency:
 jobs:
   build:
     name: "Build: Docs"
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
@@ -41,6 +42,7 @@ jobs:
           source: ./docs
           destination: ./_site
       - name: "Artifact: Upload"
+        continue-on-error: true
         uses: actions/upload-pages-artifact@a753861a5debcf57bf8b404356158c8e1e33150c # v2.0.0
 
   deploy:
@@ -50,6 +52,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    continue-on-error: true
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
@@ -57,4 +60,5 @@ jobs:
           egress-policy: audit
       - name: "Deploy: GitHub Pages"
         id: deployment
+        continue-on-error: true
         uses: actions/deploy-pages@9dbe3824824f8a1377b8e298bafde1a50ede43e5 # v2.0.4
