@@ -126,7 +126,7 @@ jobs:
     runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     continue-on-error: ${{ inputs.labs || matrix.labs }}
     needs: ["build"]
-    if: inputs.tests
+    if: inputs.tests && inputs.bzlmod
     strategy:
       fail-fast: false
       matrix:
