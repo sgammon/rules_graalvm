@@ -47,61 +47,25 @@ jobs:
             label: Ubuntu / Bazel 7
             labs: false
             bazelversion: 7.0.0-pre.20230724.1
+            bazel_config: bazel7
           - runner: ubuntu-latest
             label: Ubuntu / Bzlmod 7
             bzlmod: true
             labs: true
             bazelversion: 7.0.0-pre.20230724.1
+            bazel_config: bazel7
           - runner: windows-latest
             label: Windows / Bazel 7
             bzlmod: false
             labs: true
             bazelversion: 7.0.0-pre.20230724.1
+            bazel_config: bazel7
           - runner: macos-latest
             label: macOS / Bazel 7
             bzlmod: false
             labs: false
             bazelversion: 7.0.0-pre.20230724.1
-          - runner: ubuntu-latest
-            label: Ubuntu / Bazel 6
-            labs: false
-            bazelversion: 6.3.2
-            bazel_config: bazel6
-          - runner: ubuntu-latest
-            label: Ubuntu / Bzlmod 6
-            bzlmod: true
-            labs: true
-            bazelversion: 6.3.2
-            bazel_config: bazel6
-          - runner: windows-latest
-            label: Windows / Bazel 6
-            bzlmod: false
-            labs: true
-            bazelversion: 6.3.2
-            bazel_config: bazel6
-          - runner: macos-latest
-            label: macOS / Bazel 6
-            bzlmod: false
-            labs: false
-            bazelversion: 6.3.2
-            bazel_config: bazel6
-          - runner: ubuntu-latest
-            label: Ubuntu / Bazel 5
-            labs: true
-            bazelversion: 5.4.0
-            bazel_config: bazel5
-          - runner: windows-latest
-            label: Windows / Bazel 5
-            bzlmod: false
-            labs: true
-            bazelversion: 5.4.0
-            bazel_config: bazel5
-          - runner: macos-latest
-            label: macOS / Bazel 5
-            bzlmod: false
-            labs: true
-            bazelversion: 5.4.0
-            bazel_config: bazel5
+            bazel_config: bazel7
 
     secrets: inherit
     with:

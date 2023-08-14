@@ -99,12 +99,6 @@ jobs:
         with:
           path: "~/.cache/bazel"
           key: bazel-v2
-      - name: "Configure: Bazel Version"
-        shell: bash
-        if: inputs.bazel_version != '' && inputs.bazel_config != ''
-        run: |
-          echo "${{ inputs.bazel_version }}" > .bazelversion
-          echo "import %workspace%/tools/bazel/${{ inputs.bazel_config }}.bazelrc" > version.bazelrc
       - name: "Configure: Bazel Services"
         shell: bash
         if: contains(env.BUILDLESS_APIKEY || '', 'user_')
@@ -126,11 +120,11 @@ jobs:
         run: bazel build --config=ci "//..."
 
   integration-tests:
-    name: "${{ matrix.label }}"
+    name: "Test: ${{ matrix.label }}"
     runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     continue-on-error: ${{ inputs.labs || matrix.labs }}
     needs: ["build"]
-    if: inputs.tests && inputs.bzlmod
+    if: inputs.tests && (inputs.bazel_config == 'bazel7' || inputs.bazel_config == 'bazel6')
     strategy:
       fail-fast: false
       matrix:
@@ -162,7 +156,13 @@ jobs:
         run: |
           echo "${{ inputs.bazel_version }}" > .bazelversion
           echo "import %workspace%/tools/bazel/${{ inputs.bazel_config }}.bazelrc" > version.bazelrc
-      - name: "Build: ${{ matrix.label }}"
+      - name: "Configure: Bazel Services"
+        shell: bash
+        if: contains(env.BUILDLESS_APIKEY || '', 'user_')
+        run: |
+          echo "build --remote_header=x-buildbuddy-api-key=${{ secrets.BUILDBUDDY_APIKEY }}" >> local.bazelrc
+          echo "build --remote_header=x-api-key=${{ secrets.BUILDLESS_APIKEY }}" >> local.bazelrc
+      - name: "Test: ${{ matrix.label }}"
         continue-on-error: ${{ inputs.labs }}
         working-directory: ${{ matrix.directory }}
         shell: bash

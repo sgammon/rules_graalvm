@@ -32,7 +32,5 @@ MAVEN_REPOSITORIES = [
 ]
 
 GRAALVM_COMPONENTS = [
-    "js",
     "native-image",
-    "wasm",
 ]
