@@ -15,6 +15,19 @@ name: "Build"
         description: "Enable Bzlmod"
         type: boolean
         default: false
+
+      ## Bazel version to use
+      bazel_version:
+        description: "Bazel version"
+        type: string
+        default: "7.0.0-pre.20230724.1"
+
+      ## Configuration profile to use
+      bazel_config:
+        description: "Bazel profile"
+        type: string
+        default: "bazel7"
+
   workflow_call:
     inputs:
       runner:
@@ -33,11 +46,22 @@ name: "Build"
         description: "Skip Failures"
         type: boolean
         default: false
+      bazel_version:
+        description: "Bazel version"
+        type: string
+        default: "7.0.0-pre.20230724.1"
+      bazel_config:
+        description: "Bazel profile"
+        type: string
+        default: "bazel7"
     secrets:
+      ## Secrets: BuildBuddy API key
       BUILDBUDDY_APIKEY:
-        required: true
+        required: false
+
+      ## Secrets: Buildless API key
       BUILDLESS_APIKEY:
-        required: true
+        required: false
 
 jobs:
   build:
@@ -61,8 +85,15 @@ jobs:
         with:
           path: "~/.cache/bazel"
           key: bazel-v2
-      - name: "Configure: Bazel"
+      - name: "Configure: Bazel Version"
         shell: bash
+        if: inputs.bazel_version != '' && inputs.bazel_config != ''
+        run: |
+          echo "${{ inputs.bazel_version }}" > .bazelversion
+          echo "import %workspace%/tools/bazel/${{ inputs.bazel_config }}.bazelrc" > version.bazelrc
+      - name: "Configure: Bazel Services"
+        shell: bash
+        if: contains(env.BUILDLESS_APIKEY || '', 'user_')
         run: |
           echo "build --remote_header=x-buildbuddy-api-key=${{ secrets.BUILDBUDDY_APIKEY }}" >> local.bazelrc
           echo "build --remote_header=x-api-key=${{ secrets.BUILDLESS_APIKEY }}" >> local.bazelrc
