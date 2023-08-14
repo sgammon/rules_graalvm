@@ -342,14 +342,17 @@ def _toolchain_config_impl(ctx):
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
     ctx.file("BUILD.bazel", ctx.attr.build_file)
 
-def _graal_postinstall_actions(ctx):
+def _graal_postinstall_actions(ctx, os):
+    cmd = "bin/gu"
+    if os == "windows":
+        cmd = "bin\\gu.cmd"
     if ctx.attr.setup_actions and len(ctx.attr.setup_actions) > 0:
         for action in ctx.attr.setup_actions:
             if not action.startsWith("gu "):
                 fail("GraalVM setup action did not start with 'gu'. Please only run GraalVM updater commands.")
 
             action_cmd = action.replace("gu ", "").split(" ")
-            exec_result = ctx.execute(["bin/gu"] + action_cmd, quiet = False)
+            exec_result = ctx.execute([cmd] + action_cmd, quiet = False)
             if exec_result.return_code != 0:
                 fail("Unable to run GraalVM setup action '{cmd}':\n{stdout}\n{stderr}".format(
                     cmd = action,
@@ -394,13 +397,17 @@ def _graal_bindist_repository_impl(ctx):
             output = "native-image-installer.jar",
         )
 
-        exec_result = ctx.execute(["bin/gu", "install", "--local-file", "native-image-installer.jar"], quiet = False)
+        cmd = "bin/gu"
+        if os == "windows":
+            cmd = "bin\\gu.cmd"
+
+        exec_result = ctx.execute([cmd, "install", "--local-file", "native-image-installer.jar"], quiet = False)
         if exec_result.return_code != 0:
             fail("Unable to install native image:\n{stdout}\n{stderr}".format(stdout = exec_result.stdout, stderr = exec_result.stderr))
 
         ctx.file("BUILD", """exports_files(glob(["**/*"]))""")
         ctx.file("WORKSPACE", "workspace(name = \"{name}\")".format(name = ctx.name))
-        _graal_postinstall_actions(ctx)
+        _graal_postinstall_actions(ctx, os)
 
     else:
         platform, os, archive = _get_platform(ctx, True)
@@ -460,11 +467,40 @@ def _graal_bindist_repository_impl(ctx):
             stripPrefix = effective_prefix,
         )
 
+        cmd = "bin/gu"
+        image_exe = "bin/native-image"
+        java_exe = "bin/java"
+        javac_exe = "bin/javac"
+        js_exe = "bin/js"
+        polyglot_exe = "bin/polyglot"
+        wasm_exe = "bin/wasm"
+        python_exe = "bin/python"
+        ruby_exe = "bin/ruby"
+        lli_exe = "bin/lli"
+        if os == "windows":
+            cmd = "bin\\gu.cmd"
+            image_exe = "bin\\native-image.cmd"
+            java_exe = "bin\\java.exe"
+            javac_exe = "bin\\javac.exe"
+            js_exe = "bin\\js.exe"
+            polyglot_exe = "bin\\polyglot.exe"
+            wasm_exe = "bin\\wasm.exe"
+            python_exe = "bin\\python.exe"
+            ruby_exe = "bin\\ruby.exe"
+            lli_exe = "bin\\lli.exe"
+
         if ctx.attr.components and len(ctx.attr.components) > 0:
             ctx.report_progress("Downloading GraalVM components")
-            exec_result = ctx.execute(["bin/gu", "install"] + ctx.attr.components, quiet = False)
+            exec_result = ctx.execute([cmd, "install"] + ctx.attr.components, quiet = False)
             if exec_result.return_code != 0:
                 fail("Unable to install GraalVM components:\n{stdout}\n{stderr}".format(stdout = exec_result.stdout, stderr = exec_result.stderr))
+
+        if ctx.name in ["native-image", "toolchain_native_image", "toolchain_gvm", "entry", "bootstrap_runtime_toolchain", "toolchain", "jdk", "jre", "jre-lib"]:
+            fail("Cannot use name '%s' for repository name: It will clash with other targets" % ctx.name)
+
+        ctx_alias = ctx.name
+        if ctx.name == "graalvm":
+            ctx_alias = "gvm_entry"
 
         toolchain_aliases_template = """
 alias(
@@ -478,9 +514,61 @@ alias(
     visibility = ["//visibility:public"],
 )
 alias(
+    name = "entry",
+    actual = ":bin/java",
+)
+alias(
+    name = "graalvm",
+    actual = ":entry",
+)
+alias(
+    name = "{name}",
+    actual = ":entry",
+)
+alias(
     name = "toolchain_gvm",
     actual = "@{repo}//:gvm",
     visibility = ["//visibility:public"],
+)
+alias(
+    name = "native-image",
+    actual = ":native-image-bin",
+)
+alias(
+    name = "java",
+    actual = ":java-bin",
+)
+alias(
+    name = "gu",
+    actual = ":gu-bin",
+)
+alias(
+    name = "javac",
+    actual = ":javac-bin",
+)
+alias(
+    name = "js",
+    actual = ":js-bin",
+)
+alias(
+    name = "wasm",
+    actual = ":wasm-bin",
+)
+alias(
+    name = "python",
+    actual = ":python-bin",
+)
+alias(
+    name = "ruby",
+    actual = ":ruby-bin",
+)
+alias(
+    name = "lli",
+    actual = ":lli-bin",
+)
+alias(
+    name = "polyglot",
+    actual = ":polyglot-bin",
 )
 alias(
     name = "toolchain_native_image",
@@ -488,7 +576,9 @@ alias(
     visibility = ["//visibility:public"],
 )
         """.format(
+            name = ctx_alias,
             repo = ctx.attr.toolchain_config,
+            native_image_exe = image_exe,
         )
 
         ctx.file(
@@ -496,19 +586,78 @@ alias(
             """
 exports_files(glob(["**/*"]))
 
-%s
-%s
-""" % (
-                ctx.attr.enable_toolchain and toolchain_aliases_template or "",
-                _JDK_BUILD_TEMPLATE.format(RUNTIME_VERSION = java_version),
-            ),
-        )
+alias(
+    name = "native-image-bin",
+    actual = ":{native_image_exe}",
+)
+
+alias(
+    name = "java-bin",
+    actual = ":{java_exe}",
+)
+
+alias(
+    name = "javac-bin",
+    actual = ":{javac_exe}",
+)
+
+alias(
+    name = "gu-bin",
+    actual = ":{gu_exe}",
+)
+
+alias(
+    name = "polyglot-bin",
+    actual = ":{polyglot_exe}",
+)
+
+alias(
+    name = "js-bin",
+    actual = ":{js_exe}",
+)
+
+alias(
+    name = "wasm-bin",
+    actual = ":{wasm_exe}",
+)
+
+alias(
+    name = "python-bin",
+    actual = ":{python_exe}",
+)
+
+alias(
+    name = "ruby-bin",
+    actual = ":{ruby_exe}",
+)
+
+alias(
+    name = "lli-bin",
+    actual = ":{lli_exe}",
+)
+
+{toolchain}
+{aliases}
+""".format(
+            toolchain = _JDK_BUILD_TEMPLATE.format(RUNTIME_VERSION = java_version),
+            aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
+            native_image_exe = image_exe,
+            java_exe = java_exe,
+            javac_exe = javac_exe,
+            polyglot_exe = polyglot_exe,
+            js_exe = js_exe,
+            wasm_exe = wasm_exe,
+            python_exe = python_exe,
+            ruby_exe = ruby_exe,
+            lli_exe = lli_exe,
+            gu_exe = cmd,
+        ))
 
         ctx.file("WORKSPACE.bazel", """
 workspace(name = \"{name}\")
 """.format(name = ctx.name))
 
-        _graal_postinstall_actions(ctx)
+        _graal_postinstall_actions(ctx, os)
         # Done.
 
 _graalvm_bindist_repository = repository_rule(
