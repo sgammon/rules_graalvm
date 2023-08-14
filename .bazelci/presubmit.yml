@@ -1,11 +1,16 @@
 ---
 matrix:
-  platform:
-    - ubuntu2004
-    - macos
+  bazel_version: ["5.4.0", "6.3.2", "7.0.0-pre.20230724.1"]
+  unix_platform: ["centos7", "debian10", "macos", "ubuntu2004"]
+
+validate_config: 1
+buildifier: latest
 
 tasks:
   build:
+    include_json_profile:
+      - build
+      - test
     build_targets:
       - "..."
     test_targets:

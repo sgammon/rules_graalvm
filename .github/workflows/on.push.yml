@@ -5,6 +5,12 @@ name: "CI"
   push:
     branches:
       - main
+    paths:
+      - docs/**/*.*
+      - example/**/*.*
+      - graalvm/**/*.*
+      - internal/**/*.*
+      - tools/**/*.*
 
 jobs:
   build:

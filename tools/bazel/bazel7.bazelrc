@@ -1,1 +1,3 @@
+import %workspace%/.aspect/bazelrc/bazel7.bazelrc
+
 build --remote_build_event_upload=minimal
