@@ -73,9 +73,13 @@ name: "Build"
       BUILDLESS_APIKEY:
         required: false
 
+env:
+  BUILDLESS_APIKEY: ${{ secrets.BUILDLESS_APIKEY }}
+  BUILDBUDDY_APIKEY: ${{ secrets.BUILDBUDDY_APIKEY }}
+
 jobs:
   build:
-    name: "Build: ${{ inputs.label || 'Rules' }}"
+    name: "Build"
     runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     continue-on-error: ${{ inputs.labs }}
     steps:
@@ -122,7 +126,7 @@ jobs:
         run: bazel build --config=ci "//..."
 
   integration-tests:
-    name: "Test: ${{ matrix.label }} (${{ inputs.label || 'Rules' }})"
+    name: "${{ matrix.label }}"
     runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     continue-on-error: ${{ inputs.labs || matrix.labs }}
     needs: ["build"]
