@@ -1,0 +1,15 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+ 
+  <groupId>dev.elide</groupId>
+  <artifactId>rules_graalvm</artifactId>
+  <version>0.9.0</version>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.graalvm.sdk</groupId>
+      <artifactId>graal-sdk</artifactId>
+      <version>23.0.1</version>
+    </dependency>
+  </dependencies>
+</project>
