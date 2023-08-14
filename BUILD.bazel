@@ -19,6 +19,12 @@ buildifier(
     mode = "diff",
 )
 
+buildifier(
+    name = "buildifier.format",
+    exclude_patterns = ["./.git/*"],
+    lint_mode = "fix",
+)
+
 exports_files([
     "maven_install.json",
     "WORKSPACE.bazel",
