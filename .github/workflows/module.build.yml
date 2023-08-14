@@ -16,6 +16,12 @@ name: "Build"
         type: boolean
         default: false
 
+      ## Whether to run tests
+      tests:
+        description: "Run Tests"
+        type: boolean
+        default: true
+
       ## Bazel version to use
       bazel_version:
         description: "Bazel version"
@@ -42,6 +48,10 @@ name: "Build"
         description: "Enable Bzlmod"
         type: boolean
         default: false
+      tests:
+        description: "Run Tests"
+        type: boolean
+        default: true
       labs:
         description: "Skip Failures"
         type: boolean
@@ -98,10 +108,58 @@ jobs:
           echo "build --remote_header=x-buildbuddy-api-key=${{ secrets.BUILDBUDDY_APIKEY }}" >> local.bazelrc
           echo "build --remote_header=x-api-key=${{ secrets.BUILDLESS_APIKEY }}" >> local.bazelrc
       - name: "Configure: Bzlmod"
-        if: ${{ inputs.bzlmod }}
+        if: inputs.bzlmod
         run: |
           echo "build --config=bzlmod" >> local.bazelrc
-      - name: "Build: Example"
+      - name: "Build: Project"
         continue-on-error: ${{ inputs.labs }}
         shell: bash
         run: bazel build --config=ci "//..."
+      - name: "Test: Example"
+        if: inputs.tests
+        continue-on-error: ${{ inputs.labs }}
+        shell: bash
+        run: bazel build --config=ci "//..."
+
+  integration-tests:
+    name: "Test: ${{ matrix.label }} (${{ inputs.label || 'Rules' }})"
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    continue-on-error: ${{ inputs.labs || matrix.labs }}
+    needs: ["build"]
+    if: inputs.tests
+    strategy:
+      fail-fast: false
+      matrix:
+        label: ["BCR"]
+        target: ["//sample"]
+        action: ["build"]
+        directory: ["./example/integration_tests/bzlmod"]
+        labs: [false]
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
+        with:
+          egress-policy: audit
+      - name: "Setup: Checkout"
+        uses: actions/checkout@v3
+      - name: "Setup: msbuild"
+        uses: microsoft/setup-msbuild@v1.1
+        if: ${{ contains(inputs.runner, 'windows') }}
+      - name: "Setup: Bazel"
+        uses: bazelbuild/setup-bazelisk@v2
+      - name: "Setup: Cache"
+        uses: actions/cache@v3
+        with:
+          path: "~/.cache/bazel"
+          key: bazel-v2
+      - name: "Configure: Bazel Version"
+        shell: bash
+        if: inputs.bazel_version != '' && inputs.bazel_config != ''
+        run: |
+          echo "${{ inputs.bazel_version }}" > .bazelversion
+          echo "import %workspace%/tools/bazel/${{ inputs.bazel_config }}.bazelrc" > version.bazelrc
+      - name: "Build: ${{ matrix.label }}"
+        continue-on-error: ${{ inputs.labs }}
+        working-directory: ${{ matrix.directory }}
+        shell: bash
+        run: bazel ${{ matrix.action || 'build' }} "${{ matrix.target || '//...' }}"
