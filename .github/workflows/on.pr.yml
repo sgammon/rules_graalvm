@@ -33,7 +33,7 @@ jobs:
           config-file: "./.github/dependency-review-config.yml"
 
   test:
-    name: "Test (${{ matrix.label }})"
+    name: "Test"
     uses: ./.github/workflows/module.build.yml
     strategy:
       fail-fast: false
@@ -43,57 +43,64 @@ jobs:
         bazelversion: ["7.0.0-pre.20230724.1", "6.3.2", "5.4.0"]
         include:
           - runner: ubuntu-latest
-            label: Ubuntu - Bazel 7
+            label: Ubuntu / Bazel 7
             labs: false
             bazelversion: 7.0.0-pre.20230724.1
           - runner: ubuntu-latest
-            label: Ubuntu - Bzlmod 7
+            label: Ubuntu / Bzlmod 7
             bzlmod: true
             labs: true
             bazelversion: 7.0.0-pre.20230724.1
           - runner: windows-latest
-            label: Windows - Bazel 7
+            label: Windows / Bazel 7
             bzlmod: false
             labs: true
             bazelversion: 7.0.0-pre.20230724.1
           - runner: macos-latest
-            label: macOS - Bazel 7
+            label: macOS / Bazel 7
             bzlmod: false
             labs: false
             bazelversion: 7.0.0-pre.20230724.1
           - runner: ubuntu-latest
-            label: Ubuntu - Bazel 6
+            label: Ubuntu / Bazel 6
             labs: false
             bazelversion: 6.3.2
+            bazel_config: bazel6
           - runner: ubuntu-latest
-            label: Ubuntu - Bzlmod 6
+            label: Ubuntu / Bzlmod 6
             bzlmod: true
             labs: true
             bazelversion: 6.3.2
+            bazel_config: bazel6
           - runner: windows-latest
-            label: Windows - Bazel 6
+            label: Windows / Bazel 6
             bzlmod: false
             labs: true
             bazelversion: 6.3.2
+            bazel_config: bazel6
           - runner: macos-latest
-            label: macOS - Bazel 6
+            label: macOS / Bazel 6
             bzlmod: false
             labs: false
             bazelversion: 6.3.2
+            bazel_config: bazel6
           - runner: ubuntu-latest
-            label: Ubuntu - Bazel 5
+            label: Ubuntu / Bazel 5
             labs: true
             bazelversion: 5.4.0
+            bazel_config: bazel5
           - runner: windows-latest
-            label: Windows - Bazel 5
+            label: Windows / Bazel 5
             bzlmod: false
             labs: true
             bazelversion: 5.4.0
+            bazel_config: bazel5
           - runner: macos-latest
-            label: macOS - Bazel 5
+            label: macOS / Bazel 5
             bzlmod: false
             labs: true
             bazelversion: 5.4.0
+            bazel_config: bazel5
 
     secrets: inherit
     with:
