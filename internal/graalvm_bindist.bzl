@@ -478,16 +478,16 @@ def _graal_bindist_repository_impl(ctx):
         ruby_exe = "bin/ruby"
         lli_exe = "bin/lli"
         if os == "windows":
-            cmd = "bin\\gu.cmd"
-            image_exe = "bin\\native-image.cmd"
-            java_exe = "bin\\java.exe"
-            javac_exe = "bin\\javac.exe"
-            js_exe = "bin\\js.exe"
-            polyglot_exe = "bin\\polyglot.exe"
-            wasm_exe = "bin\\wasm.exe"
-            python_exe = "bin\\python.exe"
-            ruby_exe = "bin\\ruby.exe"
-            lli_exe = "bin\\lli.exe"
+            cmd = "bin/gu.cmd"
+            image_exe = "bin/native-image.cmd"
+            java_exe = "bin/java.exe"
+            javac_exe = "bin/javac.exe"
+            js_exe = "bin/js.exe"
+            polyglot_exe = "bin/polyglot.exe"
+            wasm_exe = "bin/wasm.exe"
+            python_exe = "bin/python.exe"
+            ruby_exe = "bin/ruby.exe"
+            lli_exe = "bin/lli.exe"
 
         if ctx.attr.components and len(ctx.attr.components) > 0:
             ctx.report_progress("Downloading GraalVM components")
