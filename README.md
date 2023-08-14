@@ -1,5 +1,8 @@
 # rules_graal
 
+> [!WARNING]
+> This repository covers GraalVM releases up to the recent distribution change with Oracle GraalVM / GraalVM CE, and Bazel up to Bazel 6. If you need newer releases, try [`rules_graalvm`](https://github.com/sgammon/rules_graalvm).
+
 Turn a JVM binary into a native binary.
 
 ## Usage
