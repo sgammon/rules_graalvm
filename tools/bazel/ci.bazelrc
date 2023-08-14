@@ -1,5 +1,3 @@
-build:ci --stamp
 build:ci --build_metadata=ROLE=CI
 build:ci --build_metadata=VISIBILITY=PUBLIC
-build:ci --workspace_status_command=$(pwd)/tools/scripts/workspace.sh
 build:ci --lockfile_mode=error
