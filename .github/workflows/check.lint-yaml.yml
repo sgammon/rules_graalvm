@@ -62,7 +62,7 @@ jobs:
       - name: "Setup: Checkout"
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
       - name: "Lint: YAML"
-        uses: karancode/yamllint-github-action@master
+        uses: karancode/yamllint-github-action@0a904064817924fc6fb449a32f67f25bfacc48ae # master
         with:
           yamllint_file_or_dir: ".bcr"
           yamllint_config_filepath: "./.github/.yamllint.yml"
@@ -86,7 +86,7 @@ jobs:
       - name: "Setup: Checkout"
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
       - name: "Lint: YAML"
-        uses: karancode/yamllint-github-action@master
+        uses: karancode/yamllint-github-action@0a904064817924fc6fb449a32f67f25bfacc48ae # master
         with:
           yamllint_file_or_dir: ".bazelci"
           yamllint_config_filepath: "./.github/.yamllint.yml"
