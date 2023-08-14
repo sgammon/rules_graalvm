@@ -1,3 +1,4 @@
 import %workspace%/.aspect/bazelrc/bazel7.bazelrc
 
 build --remote_build_event_upload=minimal
+build --noexperimental_check_external_repository_files

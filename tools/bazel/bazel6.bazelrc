@@ -1,1 +1,2 @@
 build --experimental_remote_build_event_upload=minimal
+build --noexperimental_check_external_repository_files
