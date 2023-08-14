@@ -34,7 +34,7 @@ jobs:
 
   test:
     name: "Test (${{ matrix.label }})"
-    uses: ./.github/workflows/module.test.yml
+    uses: ./.github/workflows/module.build.yml
     strategy:
       fail-fast: false
       matrix:

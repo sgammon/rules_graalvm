@@ -2,6 +2,7 @@
 name: "CI"
 
 "on":
+  ## Events: Pushes on Main
   push:
     branches:
       - main
@@ -14,7 +15,7 @@ name: "CI"
 
 jobs:
   build:
-    name: "Build"
+    name: "Build (${{ matrix.label }})"
     uses: ./.github/workflows/module.build.yml
     strategy:
       fail-fast: false
@@ -22,41 +23,13 @@ jobs:
         runner: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - runner: ubuntu-latest
-            label: Ubuntu
+            label: Ubuntu - Standard
             bzlmod: true
-            labs: false
-          - runner: windows-latest
-            label: Windows
-            bzlmod: false
-            labs: true
-          - runner: macos-latest
-            label: macOS
-            bzlmod: false
-            labs: false
-
-    secrets: inherit
-    with:
-      runner: ${{ matrix.runner }}
-      label: ${{ matrix.label }}
-      bzlmod: ${{ matrix.bzlmod }}
-      labs: ${{ matrix.labs }}
-
-  test:
-    name: "Test"
-    needs: ["build"]
-    uses: ./.github/workflows/module.test.yml
-    strategy:
-      fail-fast: false
-      matrix:
-        runner: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - runner: ubuntu-latest
-            label: Ubuntu
             labs: false
           - runner: ubuntu-latest
             label: Ubuntu - Bzlmod
             bzlmod: true
-            labs: true
+            labs: false
           - runner: windows-latest
             label: Windows
             bzlmod: false
@@ -72,3 +45,4 @@ jobs:
       label: ${{ matrix.label }}
       bzlmod: ${{ matrix.bzlmod }}
       labs: ${{ matrix.labs }}
+      tests: true
