@@ -122,6 +122,9 @@ use_repo(
 gvm = use_extension(":extensions.bzl", "graalvm")
 gvm.graalvm(
     name = "graalvm",
+    components = [
+        "js",
+    ],
     distribution = "oracle",
     java_version = "20",
     version = "20.0.2",
