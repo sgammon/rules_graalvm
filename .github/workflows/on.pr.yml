@@ -2,9 +2,13 @@
 name: "PR"
 
 "on":
+  ## Run on PR filings
   pull_request:
     branches:
       - main
+
+  ## Run on PR queue check requests
+  merge_group: {}
 
 jobs:
   dependency-review:
