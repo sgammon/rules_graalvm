@@ -17,6 +17,21 @@ name: "PR"
   merge_group: {}
 
 jobs:
+  dependency-graph:
+    name: "Dependency Graph"
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
+        with:
+          egress-policy: audit
+      - name: "Setup: Checkout"
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+      - name: "Report: Dependency Graph"
+        continue-on-error: true
+        uses: advanced-security/maven-dependency-submission-action@v3
+
   dependency-review:
     name: "Dependency Review"
     runs-on: ubuntu-latest
