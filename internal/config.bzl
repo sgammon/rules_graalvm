@@ -31,4 +31,6 @@ MAVEN_REPOSITORIES = [
     "https://repo1.maven.org/maven2",
 ]
 
-GRAALVM_COMPONENTS = []
+GRAALVM_COMPONENTS = [
+    "js",
+]
