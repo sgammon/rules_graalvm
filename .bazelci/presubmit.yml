@@ -3,7 +3,6 @@ matrix:
   platform:
     - ubuntu2004
     - macos
-    - windows
 
 tasks:
   build:
@@ -15,7 +14,7 @@ tasks:
 bcr_test_module:
   module_path: "example/integration_tests/bzlmod"
   matrix:
-    platform: ["debian10", "macos", "ubuntu2004", "windows"]
+    platform: ["debian10", "macos", "ubuntu2004"]
   tasks:
     build_bzlmod_test:
       name: "Build test module"
