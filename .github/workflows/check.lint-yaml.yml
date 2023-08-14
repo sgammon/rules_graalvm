@@ -43,6 +43,7 @@ jobs:
       checks: write
       pull-requests: read
       id-token: write
+      contents: read
 
   ## Task: Lint Bazel Central Registry config files
   lint-bcr-yaml:
