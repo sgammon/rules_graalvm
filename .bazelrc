@@ -1,7 +1,6 @@
 common:verbose --announce_rc
 
 # Import Aspect bazelrc presets
-import %workspace%/.aspect/bazelrc/bazel7.bazelrc
 import %workspace%/.aspect/bazelrc/convenience.bazelrc
 import %workspace%/.aspect/bazelrc/correctness.bazelrc
 import %workspace%/.aspect/bazelrc/debug.bazelrc
@@ -9,7 +8,6 @@ import %workspace%/.aspect/bazelrc/performance.bazelrc
 
 # Import project-level presets
 import %workspace%/tools/bazel/base.bazelrc
-import %workspace%/tools/bazel/bazel7.bazelrc
 import %workspace%/tools/bazel/buildbuddy.bazelrc
 import %workspace%/tools/bazel/cache.bazelrc
 import %workspace%/tools/bazel/ci.bazelrc
@@ -27,3 +25,4 @@ build --verbose_failures
 common:noop --logging=3
 
 try-import %workspace%/local.bazelrc
+try-import %workspace%/version.bazelrc

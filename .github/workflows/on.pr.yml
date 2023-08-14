@@ -6,6 +6,12 @@ name: "PR"
   pull_request:
     branches:
       - main
+    paths:
+      - docs/**/*.*
+      - example/**/*.*
+      - graalvm/**/*.*
+      - internal/**/*.*
+      - tools/**/*.*
 
   ## Run on PR queue check requests
   merge_group: {}

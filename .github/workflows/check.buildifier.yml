@@ -6,8 +6,22 @@ name: Buildifier
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [main]
+    paths:
+      - docs/**/*.*
+      - example/**/*.*
+      - graalvm/**/*.*
+      - internal/**/*.*
+      - tools/**/*.*
+
   pull_request:
     branches: [main]
+    paths:
+      - docs/**/*.*
+      - example/**/*.*
+      - graalvm/**/*.*
+      - internal/**/*.*
+      - tools/**/*.*
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 

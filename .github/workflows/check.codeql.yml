@@ -4,8 +4,20 @@ name: "CodeQL"
 "on":
   push:
     branches: ["main"]
+    paths:
+      - docs/**/*.*
+      - example/**/*.*
+      - graalvm/**/*.*
+      - internal/**/*.*
+      - tools/**/*.*
   pull_request:
     branches: ["main"]
+    paths:
+      - docs/**/*.*
+      - example/**/*.*
+      - graalvm/**/*.*
+      - internal/**/*.*
+      - tools/**/*.*
   schedule:
     - cron: "0 0 * * 1"
 
