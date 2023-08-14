@@ -129,7 +129,7 @@ jobs:
       fail-fast: false
       matrix:
         label: ["BCR"]
-        target: ["//sample"]
+        target: ["sample"]
         action: ["build"]
         directory: ["./example/integration_tests/bzlmod"]
         labs: [false]

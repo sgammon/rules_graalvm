@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "6be84de15badc5396a07a1fb21af5fcef4bac5f5368efd8aeb1b098effc794bb",
+  "moduleFileHash": "da0cfa558e7a652d5a0080c5868f465dc6740ea481e76dc2ecc58631c2fffc00",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -14,7 +14,7 @@
   },
   "localOverrideHashes": {
     "bazel_tools": "6dc722d59f08f40b58c8202f8e4a67b08a6af4f242cc00688e683e72cd9087f6",
-    "rules_graalvm": "618d7112f0da53485db4528465e4f51516c4653069d5247a66abbaf819446878"
+    "rules_graalvm": "12c44e04b6f7ef89525db362f856460d7ff277138179f9aa3bed852439584fe6"
   },
   "moduleDepGraph": {
     "<root>": {
@@ -31,7 +31,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 23,
+            "line": 21,
             "column": 20
           },
           "imports": {
@@ -41,11 +41,11 @@
           "tags": [
             {
               "tagName": "graalvm",
-              "attributeValues": {"name":"--graalvm","version":"--20.0.2","distribution":"--oracle","java_version":"--20"},
+              "attributeValues": {"name":"--graalvm","distribution":"--oracle","java_version":"--20","version":"--20.0.2"},
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 25,
+                "line": 22,
                 "column": 12
               }
             }
@@ -313,7 +313,7 @@
           "usingModule": "rules_graalvm@_",
           "location": {
             "file": "@@rules_graalvm~override//:MODULE.bazel",
-            "line": 124,
+            "line": 109,
             "column": 22
           },
           "imports": {
@@ -324,11 +324,11 @@
           "tags": [
             {
               "tagName": "install",
-              "attributeValues": {"name":"--maven_gvm","artifacts":["--org.graalvm.nativeimage:svm:23.0.1","--org.graalvm.sdk:graal-sdk:23.0.1"],"repositories":["--https://maven.pkg.st","--https://maven.google.com","--https://repo1.maven.org/maven2"],"lock_file":"--//:maven_install.json"},
+              "attributeValues": {"name":"--maven_gvm","artifacts":["--org.graalvm.nativeimage:svm:23.0.1","--org.graalvm.sdk:graal-sdk:23.0.1"],"lock_file":"--//:maven_install.json","repositories":["--https://maven.pkg.st","--https://maven.google.com","--https://repo1.maven.org/maven2"]},
               "devDependency": false,
               "location": {
                 "file": "@@rules_graalvm~override//:MODULE.bazel",
-                "line": 126,
+                "line": 110,
                 "column": 14
               }
             }
@@ -342,7 +342,7 @@
           "usingModule": "rules_graalvm@_",
           "location": {
             "file": "@@rules_graalvm~override//:MODULE.bazel",
-            "line": 139,
+            "line": 122,
             "column": 20
           },
           "imports": {
@@ -352,11 +352,11 @@
           "tags": [
             {
               "tagName": "graalvm",
-              "attributeValues": {"name":"--graalvm","version":"--20.0.2","distribution":"--oracle","java_version":"--20"},
+              "attributeValues": {"name":"--graalvm","distribution":"--oracle","java_version":"--20","version":"--20.0.2"},
               "devDependency": false,
               "location": {
                 "file": "@@rules_graalvm~override//:MODULE.bazel",
-                "line": 141,
+                "line": 123,
                 "column": 12
               }
             }
@@ -1155,7 +1155,7 @@
       }
     },
     "@rules_graalvm~override//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "yKSZqFgZDsBQJ7idxvtiuwWuk7K9Ym2V3xNPD2f4I4c=",
+      "bzlTransitiveDigest": "XL2gg8eqwCzRKsgdlxCJ533/zTBnhHcCD4ve9I79d0Y=",
       "envVariables": {},
       "generatedRepoSpecs": {
         "graalvm": {
