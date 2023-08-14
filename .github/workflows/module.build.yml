@@ -74,7 +74,4 @@ jobs:
       - name: "Build: Example"
         continue-on-error: ${{ inputs.labs }}
         shell: bash
-        run: |
-          bazel build \
-              --config=ci \
-              //...
+        run: bazel build --config=ci "//..."
