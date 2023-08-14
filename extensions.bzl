@@ -11,13 +11,13 @@ def _gvm_impl(mctx):
     selected = None
     all_components = []
     for mod in mctx.modules:
-      for gvm in mod.tags.graalvm:
-        selected = gvm
-        if len(gvm.components) > 0:
-          all_components += [i for i in gvm.components if not i in all_components]
-      for extra_component in mod.tags.component:
-        if extra_component.name not in all_components:
-          all_components.append(extra_component.name)
+        for gvm in mod.tags.graalvm:
+            selected = gvm
+            if len(gvm.components) > 0:
+                all_components += [i for i in gvm.components if not i in all_components]
+        for extra_component in mod.tags.component:
+            if extra_component.name not in all_components:
+                all_components.append(extra_component.name)
 
     graalvm_repository(
         name = selected.name,
@@ -29,7 +29,6 @@ def _gvm_impl(mctx):
         setup_actions = selected.setup_actions,
         sha256 = selected.sha256,
     )
-
 
 _graalvm = tag_class(attrs = {
     "name": attr.string(mandatory = True),
@@ -43,13 +42,13 @@ _graalvm = tag_class(attrs = {
 })
 
 _component = tag_class(attrs = {
-  "name": attr.string(mandatory = True),
+    "name": attr.string(mandatory = True),
 })
 
 graalvm = module_extension(
-  implementation = _gvm_impl,
-  tag_classes = {
-    "graalvm": _graalvm,
-    "component": _component,
-  },
+    implementation = _gvm_impl,
+    tag_classes = {
+        "graalvm": _graalvm,
+        "component": _component,
+    },
 )

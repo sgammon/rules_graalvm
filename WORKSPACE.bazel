@@ -1,7 +1,7 @@
 workspace(name = "rules_graalvm")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("//internal:config.bzl", "RULES_JVM_EXTERNAL_TAG", "RULES_JVM_EXTERNAL_SHA", "PROTOBUF_VERSION", "PROTOBUF_SHA")
+load("//internal:config.bzl", "PROTOBUF_SHA", "PROTOBUF_VERSION", "RULES_JVM_EXTERNAL_SHA", "RULES_JVM_EXTERNAL_TAG")
 
 http_archive(
     name = "com_google_protobuf",
@@ -28,19 +28,19 @@ http_archive(
 
 http_archive(
     name = "rules_java",
+    sha256 = "160d1ebf33763124766fb35316329d907ca67f733238aa47624a8e3ff3cf2ef4",
     urls = [
         "https://github.com/bazelbuild/rules_java/releases/download/6.5.0/rules_java-6.5.0.tar.gz",
     ],
-    sha256 = "160d1ebf33763124766fb35316329d907ca67f733238aa47624a8e3ff3cf2ef4",
 )
 
 http_archive(
     name = "platforms",
+    sha256 = "3a561c99e7bdbe9173aa653fd579fe849f1d8d67395780ab4770b1f381431d51",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
         "https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
     ],
-    sha256 = "3a561c99e7bdbe9173aa653fd579fe849f1d8d67395780ab4770b1f381431d51",
 )
 
 http_archive(
@@ -60,7 +60,6 @@ http_archive(
         "https://github.com/bazelbuild/rules_go/releases/download/v0.41.0/rules_go-v0.41.0.zip",
     ],
 )
-
 
 http_archive(
     name = "bazel_gazelle",
@@ -91,16 +90,16 @@ http_archive(
 
 http_archive(
     name = "rules_cc",
-    urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.8/rules_cc-0.0.8.tar.gz"],
     sha256 = "ae46b722a8b8e9b62170f83bfb040cbf12adb732144e689985a66b26410a7d6f",
     strip_prefix = "rules_cc-0.0.8",
+    urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.8/rules_cc-0.0.8.tar.gz"],
 )
 
 http_archive(
     name = "rules_jvm_external",
-    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
     sha256 = RULES_JVM_EXTERNAL_SHA,
-    url = "https://github.com/bazelbuild/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG)
+    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
+    url = "https://github.com/bazelbuild/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG),
 )
 
 http_archive(
@@ -112,8 +111,8 @@ http_archive(
 
 http_archive(
     name = "apple_rules_lint",
-    strip_prefix = "apple_rules_lint-0.3.2",
     sha256 = "7c3cc45a95e3ef6fbc484a4234789a027e11519f454df63cbb963ac499f103f9",
+    strip_prefix = "apple_rules_lint-0.3.2",
     url = "https://github.com/apple/apple_rules_lint/archive/refs/tags/0.3.2.tar.gz",
 )
 
@@ -188,7 +187,7 @@ load("//internal:repositories.bzl", "rules_graalvm_repositories")
 
 rules_graalvm_repositories()
 
-load("//internal:setup.bzl", "rules_graalvm_workspace", "rules_graalvm_toolchains")
+load("//internal:setup.bzl", "rules_graalvm_toolchains", "rules_graalvm_workspace")
 
 rules_graalvm_toolchains()
 
