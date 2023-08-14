@@ -40,8 +40,8 @@ jobs:
       matrix:
         runner: [ubuntu-latest, windows-latest, macos-latest]
         bzlmod: [false]
-        bazelversion: ["7.0.0-pre.20230724.1", "6.3.2", "5.4.0"]
-        bazel_config: ["bazel7", "bazel6", "bazel5"]
+        bazelversion: ["7.0.0-pre.20230724.1"]
+        bazel_config: ["bazel7"]
         include:
           - runner: ubuntu-latest
             label: Ubuntu / Bazel 7
