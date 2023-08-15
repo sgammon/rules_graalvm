@@ -1,11 +1,11 @@
+"Provides `bzl_library` definitions for GraalVM repository and target rules."
+
 load(
     "@bazel_skylib//:bzl_library.bzl",
     "bzl_library",
 )
-load(
-    "@io_bazel_stardoc//stardoc:stardoc.bzl",
-    "stardoc",
-)
+
+package(default_visibility = ["//visibility:public"])
 
 exports_files([
     "defs.bzl",
@@ -28,28 +28,6 @@ bzl_library(
     srcs = [
         "repositories.bzl",
     ],
-    deps = [
-        "//internal:bindist",
-        "//internal:tooling",
-    ],
-)
-
-stardoc(
-    name = "defs_doc",
-    out = "defs.md",
-    input = "defs.bzl",
-    visibility = ["//docs:__subpackages__"],
-    deps = [
-        "//graalvm/nativeimage:rules",
-        "//internal:tooling",
-    ],
-)
-
-stardoc(
-    name = "repositories_doc",
-    out = "repositories.md",
-    input = "repositories.bzl",
-    visibility = ["//docs:__subpackages__"],
     deps = [
         "//internal:bindist",
         "//internal:tooling",
