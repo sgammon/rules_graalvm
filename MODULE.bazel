@@ -124,7 +124,6 @@ gvm.graalvm(
     name = "graalvm",
     components = [
         "js",
-        "llvm",
     ],
     distribution = "oracle",
     java_version = "20",

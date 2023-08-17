@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "ae269a2cd1b0820e7d11990966be99f07910487763f285e389cb9631863b61d4",
+  "moduleFileHash": "96405475bbc9a4f0ca424897ef85d572869e3b9459b47df1fca42c9d02522a49",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -69,7 +69,7 @@
           "tags": [
             {
               "tagName": "graalvm",
-              "attributeValues": {"name":"--graalvm","components":["--js","--llvm"],"distribution":"--oracle","java_version":"--20","version":"--20.0.2"},
+              "attributeValues": {"name":"--graalvm","components":["--js"],"distribution":"--oracle","java_version":"--20","version":"--20.0.2"},
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
@@ -3115,14 +3115,14 @@
       }
     },
     "//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "a2h9ZgQjwz7NEmKhW6sy6YsR0DIjJEGI4qPkIfj7nXM=",
+      "bzlTransitiveDigest": "03IUz+//jUQoQJlwRHTx5csQe58/RKbgS9YDaudIcNc=",
       "accumulatedFileDigests": {},
       "envVariables": {},
       "generatedRepoSpecs": {
         "graalvm": {
           "bzlFile": "@@//internal:graalvm_bindist.bzl",
           "ruleClassName": "_graalvm_bindist_repository",
-          "attributes": {"name":"--_main~graalvm~graalvm","version":"--20.0.2","java_version":"--20","distribution":"--oracle","components":["--js","--llvm"],"setup_actions":[],"enable_toolchain":true,"toolchain_config":"--graalvm_toolchain_config_repo","sha256":"--"}
+          "attributes": {"name":"--_main~graalvm~graalvm","version":"--20.0.2","java_version":"--20","distribution":"--oracle","components":["--js"],"setup_actions":[],"enable_toolchain":true,"toolchain_config":"--graalvm_toolchain_config_repo","sha256":"--"}
         },
         "graalvm_toolchain_config_repo": {
           "bzlFile": "@@//internal:graalvm_bindist.bzl",
