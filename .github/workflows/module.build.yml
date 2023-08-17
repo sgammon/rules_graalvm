@@ -128,6 +128,21 @@ jobs:
         action: ["build"]
         directory: ["./example/integration_tests/bzlmod"]
         labs: [false]
+        include:
+          # Test: BCR Sample
+          - label: BCR
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bzlmod"
+            labs: false
+
+          # Test: Workspace Sample
+          - label: Workspace
+            target: sample
+            action: build
+            directory: "./example/integration_tests/workspace"
+            labs: false
+
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
