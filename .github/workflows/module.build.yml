@@ -118,7 +118,6 @@ jobs:
     name: "Test: ${{ matrix.label }}"
     runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     continue-on-error: ${{ inputs.labs || matrix.labs }}
-    needs: ["build"]
     if: inputs.tests && (inputs.bazel_config == 'bazel7' || inputs.bazel_config == 'bazel6')
     strategy:
       fail-fast: false

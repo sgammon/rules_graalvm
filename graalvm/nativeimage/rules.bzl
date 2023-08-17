@@ -72,8 +72,10 @@ def _graal_binary_implementation(ctx):
     args.add("-cp", ":".join([f.path for f in classpath_depset.to_list()]))
     args.add("-H:-CheckToolchain")
     args.add("-H:Class=%s" % ctx.attr.main_class)
-    args.add("-H:Name=%s" % binary.path)
+    args.add("-H:Name=%s" % binary.basename)
+    args.add("-H:Path=%s" % binary.dirname)
     args.add("-H:+ReportExceptionStackTraces")
+
     for arg in ctx.attr.extra_args:
         args.add(arg)
 
