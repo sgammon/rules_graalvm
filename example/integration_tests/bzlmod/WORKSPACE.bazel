@@ -1,19 +1,13 @@
 workspace(name = "rules_graalvm_sample")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-http_archive(
-    name = "rules_java",
-    sha256 = "160d1ebf33763124766fb35316329d907ca67f733238aa47624a8e3ff3cf2ef4",
-    urls = [
-        "https://github.com/bazelbuild/rules_java/releases/download/6.5.0/rules_java-6.5.0.tar.gz",
-    ],
-)
-
 local_repository(
     name = "rules_graalvm",
     path = "../..",
 )
+
+load("@rules_graalvm//graalvm:workspace.bzl", "rules_graalvm_repositories")
+
+rules_graalvm_repositories()
 
 #---SNIP--- Below here is re-used in the workspace snippet published on releases
 
