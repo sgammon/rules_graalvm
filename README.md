@@ -18,7 +18,7 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Installing components with `gu`](./docs/components.md)
 - [Using GraalVM as a Bazel Java toolchain](./docs/toolchain.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./docs/modern-bazel.md)
-- [Run GraalVM binaries directly](./docs/binary-targets.md)
+- [Run tools from GraalVM directly](./docs/binary-targets.md)
 - Support for macOS, Linux, Windows (including `native-image`!)
 - Support for latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
@@ -126,7 +126,7 @@ load("@rules_graalvm//graalvm:defs.bzl", "native_image")
 
 java_library(
     name = "main",
-    srcs = glob(["Main.java"]),
+    srcs = ["Main.java"],
 )
 
 native_image(
@@ -135,6 +135,12 @@ native_image(
     main_class = "Main",
 )
 ```
+
+## Known issues
+
+- Windows builds usually don't work
+- Hermeticity is broken by component downloads
+- Does not use CC toolchains correctly yet
 
 ## Acknowledgements
 
