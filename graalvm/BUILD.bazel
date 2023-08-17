@@ -33,3 +33,10 @@ bzl_library(
         "//internal:tooling",
     ],
 )
+
+bzl_library(
+    name = "workspace",
+    srcs = [
+        "workspace.bzl",
+    ],
+)

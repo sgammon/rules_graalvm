@@ -21,6 +21,23 @@ stardoc(
     input = "//graalvm:repositories.bzl",
     deps = [
         "//internal:bindist",
+        "//internal:deps",
         "//internal:tooling",
+        "//internal:jdk_build_file",
+        "@bazel_skylib//lib:paths",
+        "@bazel_skylib//lib:shell",
+        "@bazel_skylib//lib:structs",
+        "@bazel_skylib//lib:new_sets",
+        "@bazel_skylib//lib:versions",
+    ],
+)
+
+stardoc(
+    name = "workspace",
+    out = "workspace.md",
+    input = "//graalvm:workspace.bzl",
+    deps = [
+        "//internal:deps",
+        "@bazel_tools//tools:bzl_srcs",
     ],
 )

@@ -1,7 +1,11 @@
 "Describes binary distribution coordinates for GraalVM releases."
 
 load(
-    "@rules_java//toolchains:jdk_build_file.bzl",
+    "@bazel_skylib//lib:versions.bzl",
+    "versions",
+)
+load(
+    "//internal:jdk_build_file.bzl",
     _JDK_BUILD_TEMPLATE = "JDK_BUILD_TEMPLATE",
 )
 
@@ -301,6 +305,15 @@ _graal_native_image_version_configs = {
     },
 }
 
+_COMPONENTS = struct(**{
+    "WASM": "wasm",
+    "JS": "js",
+    "RUBY": "ruby",
+    "PYTHON": "python",
+    "ESPRESSO": "espresso",
+    "LLVM": "llvm",
+})
+
 def _get_platform(ctx, newdist):
     arch_labels = {
         "x86_64": "x64",
@@ -359,6 +372,34 @@ def _graal_postinstall_actions(ctx, os):
                     stdout = exec_result.stdout,
                     stderr = exec_result.stderr,
                 ))
+
+def _relative_binpath(tail, name, tail_override = None):
+    return "bin/%s%s" % (name, tail_override or tail)
+
+def _render_alias(name, actual):
+    return """
+alias(
+    name = "{name}",
+    actual = "{actual}",
+)
+""".format(
+        name = name,
+        actual = actual,
+    )
+
+def _render_bin_alias(name, actual):
+    return _render_alias(name, ":bin-%s" % actual)
+
+def _render_bin_target(name, path):
+    return """
+alias(
+    name = "bin-{name}",
+    actual = ":{path}",
+)
+""".format(
+        name = name,
+        path = path,
+    )
 
 def _graal_bindist_repository_impl(ctx):
     if ctx.attr.distribution == None:
@@ -467,33 +508,41 @@ def _graal_bindist_repository_impl(ctx):
             stripPrefix = effective_prefix,
         )
 
-        cmd = "bin/gu"
-        image_exe = "bin/native-image"
-        java_exe = "bin/java"
-        javac_exe = "bin/javac"
-        js_exe = "bin/js"
-        polyglot_exe = "bin/polyglot"
-        wasm_exe = "bin/wasm"
-        python_exe = "bin/python"
-        ruby_exe = "bin/ruby"
-        lli_exe = "bin/lli"
+        bin_tail = ""
+        shell_tail = ""
         if os == "windows":
-            cmd = "bin/gu.cmd"
-            image_exe = "bin/native-image.cmd"
-            java_exe = "bin/java.exe"
-            javac_exe = "bin/javac.exe"
-            js_exe = "bin/js.exe"
-            polyglot_exe = "bin/polyglot.exe"
-            wasm_exe = "bin/wasm.exe"
-            python_exe = "bin/python.exe"
-            ruby_exe = "bin/ruby.exe"
-            lli_exe = "bin/lli.exe"
+            bin_tail = "exe"
+            shell_tail = "cmd"
 
+        # pluck `gu` because we need to use it
+        gu_cmd = _relative_binpath(bin_tail, "gu", shell_tail)
+        _bin_paths = [
+            ("gu", gu_cmd),
+            ("native-image", _relative_binpath(bin_tail, "native-image", shell_tail)),
+            ("java", _relative_binpath(bin_tail, "java")),
+            ("javac", _relative_binpath(bin_tail, "javac")),
+            ("polyglot", _relative_binpath(bin_tail, "polyglot")),
+            ("js", _relative_binpath(bin_tail, "js")),
+        ]
+
+        _conditional_paths = [
+            (_COMPONENTS.WASM, "wasm", _relative_binpath(bin_tail, "wasm")),
+            (_COMPONENTS.PYTHON, "python", _relative_binpath(bin_tail, "python")),
+            (_COMPONENTS.RUBY, "ruby", _relative_binpath(bin_tail, "ruby")),
+            (_COMPONENTS.LLVM, "lli", _relative_binpath(bin_tail, "lli")),
+        ]
+
+        all_components = []
         if ctx.attr.components and len(ctx.attr.components) > 0:
             ctx.report_progress("Downloading GraalVM components")
-            exec_result = ctx.execute([cmd, "install"] + ctx.attr.components, quiet = False)
+            exec_result = ctx.execute([gu_cmd, "install"] + ctx.attr.components, quiet = False)
             if exec_result.return_code != 0:
                 fail("Unable to install GraalVM components:\n{stdout}\n{stderr}".format(stdout = exec_result.stdout, stderr = exec_result.stderr))
+
+            all_components.extend(ctx.attr.components)
+            _bin_paths.extend(
+                [(n, v) for (k, n, v) in _conditional_paths if k in all_components]
+            )
 
         if ctx.name in ["native-image", "toolchain_native_image", "toolchain_gvm", "entry", "bootstrap_runtime_toolchain", "toolchain", "jdk", "jre", "jre-lib"]:
             fail("Cannot use name '%s' for repository name: It will clash with other targets" % ctx.name)
@@ -502,17 +551,27 @@ def _graal_bindist_repository_impl(ctx):
         if ctx.name == "graalvm":
             ctx_alias = "gvm_entry"
 
-        toolchain_aliases_template = """
-alias(
-    name = "toolchain",
-    actual = "@{repo}//:toolchain",
-    visibility = ["//visibility:public"],
-)
+        ## render bin targets and aliases
+        rendered_bin_targets = "\n".join([_render_bin_target(n, p) for (n, p) in _bin_paths])
+        rendered_bin_aliases = "\n".join([_render_bin_alias(n, n) for (n, p) in _bin_paths])
+
+        bootstrap_toolchain_alias = """
 alias(
     name = "bootstrap_runtime_toolchain",
     actual = "@{repo}//:bootstrap_runtime_toolchain",
     visibility = ["//visibility:public"],
 )
+""".format(
+            repo = ctx.attr.toolchain_config,
+        )
+
+        # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
+        # it doesn't yet exist in Bazel's internals.
+        if not versions.is_at_least("7", versions.get()):
+            bootstrap_toolchain_alias = ""
+
+        toolchain_aliases_template = """
+# Entry Aliases
 alias(
     name = "entry",
     actual = ":bin/java",
@@ -525,60 +584,32 @@ alias(
     name = "{name}",
     actual = ":entry",
 )
+
+# Toolchains
+alias(
+    name = "toolchain",
+    actual = "@{repo}//:toolchain",
+    visibility = ["//visibility:public"],
+)
+{bootstrap_toolchain_alias}
 alias(
     name = "toolchain_gvm",
     actual = "@{repo}//:gvm",
     visibility = ["//visibility:public"],
 )
 alias(
-    name = "native-image",
-    actual = ":native-image-bin",
-)
-alias(
-    name = "java",
-    actual = ":java-bin",
-)
-alias(
-    name = "gu",
-    actual = ":gu-bin",
-)
-alias(
-    name = "javac",
-    actual = ":javac-bin",
-)
-alias(
-    name = "js",
-    actual = ":js-bin",
-)
-alias(
-    name = "wasm",
-    actual = ":wasm-bin",
-)
-alias(
-    name = "python",
-    actual = ":python-bin",
-)
-alias(
-    name = "ruby",
-    actual = ":ruby-bin",
-)
-alias(
-    name = "lli",
-    actual = ":lli-bin",
-)
-alias(
-    name = "polyglot",
-    actual = ":polyglot-bin",
-)
-alias(
     name = "toolchain_native_image",
     actual = "@{repo}//:native_image",
     visibility = ["//visibility:public"],
 )
+
+# Tool Aliases
+{rendered_bin_aliases}
         """.format(
             name = ctx_alias,
             repo = ctx.attr.toolchain_config,
-            native_image_exe = image_exe,
+            bootstrap_toolchain_alias = bootstrap_toolchain_alias,
+            rendered_bin_aliases = rendered_bin_aliases,
         )
 
         ctx.file(
@@ -586,71 +617,18 @@ alias(
             """
 exports_files(glob(["**/*"]))
 
-alias(
-    name = "native-image-bin",
-    actual = ":{native_image_exe}",
-)
+# Tool Targets
+{rendered_bin_targets}
 
-alias(
-    name = "java-bin",
-    actual = ":{java_exe}",
-)
-
-alias(
-    name = "javac-bin",
-    actual = ":{javac_exe}",
-)
-
-alias(
-    name = "gu-bin",
-    actual = ":{gu_exe}",
-)
-
-alias(
-    name = "polyglot-bin",
-    actual = ":{polyglot_exe}",
-)
-
-alias(
-    name = "js-bin",
-    actual = ":{js_exe}",
-)
-
-alias(
-    name = "wasm-bin",
-    actual = ":{wasm_exe}",
-)
-
-alias(
-    name = "python-bin",
-    actual = ":{python_exe}",
-)
-
-alias(
-    name = "ruby-bin",
-    actual = ":{ruby_exe}",
-)
-
-alias(
-    name = "lli-bin",
-    actual = ":{lli_exe}",
-)
-
+# Toolchain
 {toolchain}
+
+# Aliases
 {aliases}
 """.format(
             toolchain = _JDK_BUILD_TEMPLATE.format(RUNTIME_VERSION = java_version),
             aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
-            native_image_exe = image_exe,
-            java_exe = java_exe,
-            javac_exe = javac_exe,
-            polyglot_exe = polyglot_exe,
-            js_exe = js_exe,
-            wasm_exe = wasm_exe,
-            python_exe = python_exe,
-            ruby_exe = ruby_exe,
-            lli_exe = lli_exe,
-            gu_exe = cmd,
+            rendered_bin_targets = rendered_bin_targets,
         ))
 
         ctx.file("WORKSPACE.bazel", """
@@ -724,6 +702,29 @@ def graalvm_repository(
         **kwargs: Passed to the underlying bindist repository rule.
     """
 
+    # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
+    # it doesn't yet exist in Bazel's internals.
+    bootstrap_runtime_toolchain = ""
+    if versions.is_at_least("7", versions.get()):
+        bootstrap_runtime_toolchain = """
+toolchain(
+    name = "bootstrap_runtime_toolchain",
+    # These constraints are not required for correctness, but prevent fetches of remote JDK for
+    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in
+    # the same configuration, this constraint will not result in toolchain resolution failures.
+    exec_compatible_with = {target_compatible_with},
+    target_settings = [":version_or_prefix_version_setting"],
+    toolchain_type = "@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type",
+    toolchain = "{toolchain}",
+    visibility = ["//visibility:public"],
+)
+""".format(
+            prefix = toolchain_prefix or "graalvm",
+            version = java_version,
+            target_compatible_with = target_compatible_with,
+            toolchain = "@{repo}//:jdk".format(repo = name),
+        )
+
     if toolchain:
         _toolchain_config(
             name = name + "_toolchain_config_repo",
@@ -770,22 +771,13 @@ toolchain(
     toolchain = "{toolchain}",
     visibility = ["//visibility:public"],
 )
-toolchain(
-    name = "bootstrap_runtime_toolchain",
-    # These constraints are not required for correctness, but prevent fetches of remote JDK for
-    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in
-    # the same configuration, this constraint will not result in toolchain resolution failures.
-    exec_compatible_with = {target_compatible_with},
-    target_settings = [":version_or_prefix_version_setting"],
-    toolchain_type = "@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type",
-    toolchain = "{toolchain}",
-    visibility = ["//visibility:public"],
-)
+{bootstrap_runtime_toolchain}
 """.format(
                 prefix = toolchain_prefix or "graalvm",
                 version = java_version,
                 target_compatible_with = target_compatible_with,
                 toolchain = "@{repo}//:jdk".format(repo = name),
+                bootstrap_runtime_toolchain = bootstrap_runtime_toolchain,
             ),
         )
 
