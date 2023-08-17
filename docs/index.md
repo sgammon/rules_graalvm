@@ -8,6 +8,7 @@ These rules let you use [GraalVM](https://graalvm.org) from [Bazel](https://baze
 - [Installing components with `gu`](./components.md)
 - [Using GraalVM as a Bazel Java toolchain](./toolchain.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./modern-bazel.md)
+- [Run GraalVM binaries directly](./binary-targets.md)
 - Support for macOS, Linux, Windows (including `native-image`!)
 - Support for latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
