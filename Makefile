@@ -85,7 +85,7 @@ test:  ## Run all tests.
 docs:  ## Build docs.
 	@echo "Building docs..."
 	$(RULE)$(BAZEL) $(_STARTUP) build //docs/... \
-		&& $(CP) -fv bazel-bin/graalvm/*.md ./docs/api/ \
+		&& $(CP) -fv bazel-bin/docs/api/*.md ./docs/api/ \
 		&& $(CHMOD) -R 755 docs/api/;
 	@echo "Docs rebuilt."
 
