@@ -5,6 +5,10 @@ load(
     "versions",
 )
 load(
+    "@bazel_skylib//lib:paths.bzl",
+    "paths",
+)
+load(
     "//internal:jdk_build_file.bzl",
     _JDK_BUILD_TEMPLATE = "JDK_BUILD_TEMPLATE",
 )
@@ -356,9 +360,9 @@ def _toolchain_config_impl(ctx):
     ctx.file("BUILD.bazel", ctx.attr.build_file)
 
 def _graal_postinstall_actions(ctx, os):
-    cmd = "bin/gu"
+    cmd = paths.join("bin", "gu")
     if os == "windows":
-        cmd = "bin\\gu.cmd"
+        cmd = paths.join("bin", "gu.cmd")
     if ctx.attr.setup_actions and len(ctx.attr.setup_actions) > 0:
         for action in ctx.attr.setup_actions:
             if not action.startsWith("gu "):
@@ -377,7 +381,7 @@ def _relative_binpath(tail, name, tail_override = None):
     tail_fmt = ""
     if len(tail) > 0 or (tail_override != None and len(tail_override) > 0):
         tail_fmt = tail_override or tail
-    return "bin/%s%s" % (name, tail_fmt)
+    return paths.join("bin", "%s%s" % (name, tail_fmt))
 
 def _render_alias(name, actual):
     return """
@@ -441,9 +445,9 @@ def _graal_bindist_repository_impl(ctx):
             output = "native-image-installer.jar",
         )
 
-        cmd = "bin/gu"
+        cmd = paths.join("bin", "gu")
         if os == "windows":
-            cmd = "bin\\gu.cmd"
+            cmd = paths.join("bin", "gu.cmd")
 
         exec_result = ctx.execute([cmd, "install", "--local-file", "native-image-installer.jar"], quiet = False)
         if exec_result.return_code != 0:
@@ -514,8 +518,8 @@ def _graal_bindist_repository_impl(ctx):
         bin_tail = ""
         shell_tail = ""
         if os == "windows":
-            bin_tail = "exe"
-            shell_tail = "cmd"
+            bin_tail = ".exe"
+            shell_tail = ".cmd"
 
         # pluck `gu` because we need to use it
         gu_cmd = _relative_binpath(bin_tail, "gu", shell_tail)
@@ -558,6 +562,10 @@ def _graal_bindist_repository_impl(ctx):
         rendered_bin_targets = "\n".join([_render_bin_target(n, p) for (n, p) in _bin_paths])
         rendered_bin_aliases = "\n".join([_render_bin_alias(n, n) for (n, p) in _bin_paths])
 
+        _bin_paths_map = {}
+        _bin_paths_map.update(_bin_paths)
+        rendered_bin_paths = struct(**_bin_paths_map)
+
         bootstrap_toolchain_alias = """
 alias(
     name = "bootstrap_runtime_toolchain",
@@ -577,7 +585,7 @@ alias(
 # Entry Aliases
 alias(
     name = "entry",
-    actual = ":bin/java",
+    actual = ":{bin_java_path}",
 )
 alias(
     name = "graalvm",
@@ -613,6 +621,7 @@ alias(
             repo = ctx.attr.toolchain_config,
             bootstrap_toolchain_alias = bootstrap_toolchain_alias,
             rendered_bin_aliases = rendered_bin_aliases,
+            bin_java_path = rendered_bin_paths.java,
         )
 
         ctx.file(
