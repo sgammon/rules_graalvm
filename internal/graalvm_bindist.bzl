@@ -374,7 +374,10 @@ def _graal_postinstall_actions(ctx, os):
                 ))
 
 def _relative_binpath(tail, name, tail_override = None):
-    return "bin/%s%s" % (name, tail_override or tail)
+    tail_fmt = ""
+    if len(tail) > 0 or (tail_override != None and len(tail_override) > 0):
+        tail_fmt = tail_override or tail
+    return "bin/%s%s" % (name, tail_fmt)
 
 def _render_alias(name, actual):
     return """
