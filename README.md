@@ -18,6 +18,7 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Installing components with `gu`](./docs/components.md)
 - [Using GraalVM as a Bazel Java toolchain](./docs/toolchain.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./docs/modern-bazel.md)
+- [Run GraalVM binaries directly](./docs/binary-targets.md)
 - Support for macOS, Linux, Windows (including `native-image`!)
 - Support for latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
