@@ -25,7 +25,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_java",
-    version = "6.5.0",
+    version = "6.4.0",
 )
 bazel_dep(
     name = "rules_license",
@@ -124,6 +124,7 @@ gvm.graalvm(
     name = "graalvm",
     components = [
         "js",
+        "llvm",
     ],
     distribution = "oracle",
     java_version = "20",

@@ -13,6 +13,7 @@ package(default_visibility = [
 exports_files([
     "config.bzl",
     "graalvm_bindist.bzl",
+    "jdk_build_file.bzl",
     "maven.bzl",
 ])
 
@@ -36,6 +37,11 @@ bzl_library(
 )
 
 bzl_library(
+    name = "deps",
+    srcs = ["deps.bzl"],
+)
+
+bzl_library(
     name = "bindist",
     srcs = ["graalvm_bindist.bzl"],
     deps = [
@@ -51,4 +57,9 @@ bzl_library(
         ":config",
         ":tooling",
     ],
+)
+
+bzl_library(
+    name = "jdk_build_file",
+    srcs = ["jdk_build_file.bzl"],
 )

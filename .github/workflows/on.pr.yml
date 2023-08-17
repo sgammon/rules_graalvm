@@ -58,6 +58,7 @@ jobs:
         bazelversion: ["7.0.0-pre.20230724.1"]
         bazel_config: ["bazel7"]
         include:
+          # Bazel 7
           - runner: ubuntu-latest
             label: Ubuntu / Bazel 7
             labs: false
@@ -81,6 +82,31 @@ jobs:
             labs: false
             bazelversion: 7.0.0-pre.20230724.1
             bazel_config: bazel7
+
+          # Bazel 6
+          - runner: ubuntu-latest
+            label: Ubuntu / Bazel 6
+            labs: false
+            bazelversion: 6.3.2
+            bazel_config: bazel6
+          - runner: ubuntu-latest
+            label: Ubuntu / Bzlmod 6
+            bzlmod: true
+            labs: true
+            bazelversion: 6.3.2
+            bazel_config: bazel6
+          - runner: windows-latest
+            label: Windows / Bazel 6
+            bzlmod: false
+            labs: true
+            bazelversion: 6.3.2
+            bazel_config: bazel6
+          - runner: macos-latest
+            label: macOS / Bazel 6
+            bzlmod: false
+            labs: false
+            bazelversion: 6.3.2
+            bazel_config: bazel6
 
     secrets: inherit
     with:

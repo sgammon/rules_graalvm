@@ -33,4 +33,5 @@ MAVEN_REPOSITORIES = [
 
 GRAALVM_COMPONENTS = [
     "js",
+    "llvm",
 ]
