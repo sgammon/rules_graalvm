@@ -380,7 +380,7 @@ def _graal_postinstall_actions(ctx, os):
 def _relative_binpath(tail, name, tail_override = None):
     tail_fmt = ""
     if len(tail) > 0 or (tail_override != None and len(tail_override) > 0):
-        tail_fmt = tail_override or tail
+        tail_fmt = ".%s" % (tail_override or tail)
     return paths.join("bin", "%s%s" % (name, tail_fmt))
 
 def _render_alias(name, actual):
@@ -518,8 +518,8 @@ def _graal_bindist_repository_impl(ctx):
         bin_tail = ""
         shell_tail = ""
         if os == "windows":
-            bin_tail = ".exe"
-            shell_tail = ".cmd"
+            bin_tail = "exe"
+            shell_tail = "cmd"
 
         # pluck `gu` because we need to use it
         gu_cmd = _relative_binpath(bin_tail, "gu", shell_tail)
