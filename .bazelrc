@@ -16,6 +16,7 @@ import %workspace%/tools/bazel/profiles.bazelrc
 import %workspace%/tools/bazel/dev.bazelrc
 import %workspace%/tools/bazel/labs.bazelrc
 import %workspace%/tools/bazel/strict.bazelrc
+import %workspace%/tools/bazel/hermetic.bazelrc
 import %workspace%/tools/bazel/java.bazelrc
 
 common --color=auto

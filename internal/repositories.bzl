@@ -10,6 +10,7 @@ load(
     "GRAALVM_VERSION",
     "MAVEN_ARTIFACTS",
     "MAVEN_REPOSITORIES",
+    "LLVM_VERSION",
 )
 load(
     "@buildifier_prebuilt//:deps.bzl",
@@ -20,9 +21,18 @@ load(
     "bazel_skylib_workspace",
 )
 load(
+    "@rules_cc//cc:repositories.bzl",
+    "rules_cc_dependencies",
+    "rules_cc_toolchains",
+)
+load(
     "@rules_java//java:repositories.bzl",
     "rules_java_dependencies",
     "rules_java_toolchains",
+)
+load(
+    "@rules_python//python:repositories.bzl",
+    "py_repositories",
 )
 load(
     "@//graalvm:repositories.bzl",
@@ -70,8 +80,16 @@ load(
     "lint_setup",
 )
 load(
+    "@com_grail_bazel_toolchain//toolchain:deps.bzl",
+    llvm_toolchains = "bazel_toolchain_dependencies",
+)
+load(
     "@hermetic_cc_toolchain//toolchain:defs.bzl",
     zig_toolchains = "toolchains",
+)
+load(
+    "@com_grail_bazel_toolchain//toolchain:rules.bzl",
+    "llvm_toolchain",
 )
 
 def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linters = True):
@@ -87,9 +105,24 @@ def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linter
             "java-spotbugs": "//java:spotbugs-config",
         })
 
+    # rules_cc
+
+    rules_cc_dependencies()
+
+    rules_cc_toolchains()
+
     # Zig
 
     zig_toolchains()
+
+    # LLVM
+
+    llvm_toolchains()
+
+    llvm_toolchain(
+        name = "llvm",
+        llvm_version = LLVM_VERSION,
+    )
 
     # Go
 
@@ -119,6 +152,10 @@ def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linter
     rules_java_dependencies()
 
     rules_java_toolchains()
+
+    # Python
+
+    py_repositories()
 
     # GraalVM
 

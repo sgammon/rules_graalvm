@@ -12,6 +12,14 @@ load(
     "C_COMPILE_ACTION_NAME",
 )
 
+_DEFAULT_REPO = "@graalvm"
+_RULES_REPO = "@rules_graalvm"
+
+_NATIVE_IMAGE_TOOLCHAIN = "%s//:toolchain_native_image" % _DEFAULT_REPO
+_NATIVE_IMAGE_TOOLCHAIN_TYPE = "%s//graalvm/toolchain:graalvm_native_image" % _RULES_REPO
+_BAZEL_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:toolchain_type"
+_BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
+
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image
     graal_inputs, _, _ = ctx.resolve_command(tools = [graal_attr])
@@ -52,29 +60,46 @@ def _graal_binary_implementation(ctx):
         tool_dir, _, _ = tool_path.rpartition("/")
         path_set[tool_dir] = None
 
+    env = {}
     paths = sorted(path_set.keys())
     if ctx.configuration.host_path_separator == ":":
-        # HACK: ":" is a proxy for a UNIX-like host.
-        # The tools returned above may be bash scripts that reference commands
-        # in directories we might not otherwise include. For example,
-        # on macOS, wrapped_ar calls dirname.
-        if "/bin" not in path_set:
-            paths.append("/bin")
-            if "/usr/bin" not in path_set:
-                paths.append("/usr/bin")
-    env = {}
-    env["PATH"] = ctx.configuration.host_path_separator.join(paths)
+       # HACK: ":" is a proxy for a UNIX-like host.
+       # The tools returned above may be bash scripts that reference commands
+       # in directories we might not otherwise include. For example,
+       # on macOS, wrapped_ar calls dirname.
+       if "/bin" not in path_set:
+           paths.append("/bin")
+           if "/usr/bin" not in path_set:
+               paths.append("/usr/bin")
 
+    # fix: make sure to include VS install dir on windows
+    if "VSINSTALLDIR" in ctx.configuration.default_shell_env:
+        vs_install = ctx.configuration.default_shell_env["VSINSTALLDIR"]
+        if vs_install != None and len(vs_install) > 0:
+            env["VSINSTALLDIR"] = vs_install
+
+    # fix: make sure to include SDKROOT on macos
+    if "SDKROOT" in ctx.configuration.default_shell_env:
+        sdkroot = ctx.configuration.default_shell_env["SDKROOT"]
+        if sdkroot != None and len(sdkroot) > 0:
+            env["SDKROOT"] = sdkroot
+
+    # seal paths with hack above
+    env["PATH"] = ctx.configuration.host_path_separator.join(paths)
     binary = ctx.actions.declare_file("%s-bin" % ctx.attr.name)
 
     args = ctx.actions.args()
     args.add("--no-fallback")
     args.add("-cp", ":".join([f.path for f in classpath_depset.to_list()]))
-    args.add("-H:-CheckToolchain")
+    args.add("--native-compiler-path=%s" % c_compiler_path)
+
     args.add("-H:Class=%s" % ctx.attr.main_class)
     args.add("-H:Name=%s" % binary.basename)
     args.add("-H:Path=%s" % binary.dirname)
     args.add("-H:+ReportExceptionStackTraces")
+
+    if not ctx.attr.check_toolchains:
+        args.add("-H:-CheckToolchain")
 
     for arg in ctx.attr.extra_args:
         args.add(arg)
@@ -112,7 +137,12 @@ def _graal_binary_implementation(ctx):
         executable = graal,
         mnemonic = "NativeImage",
         progress_message = "Compiling native image %{label}",
+        use_default_shell_env = False,
         env = env,
+        toolchain = Label(_NATIVE_IMAGE_TOOLCHAIN_TYPE),
+        tools = [
+            ctx.attr._cc_toolchain.files,
+        ],
     )
 
     return [DefaultInfo(
@@ -138,17 +168,29 @@ native_image = rule(
         "native_features": attr.string_list(),
         "native_image": attr.label(
             cfg = "exec",
-            default = Label("@graalvm//:native-image"),
+            default = Label("%s//:native-image" % _DEFAULT_REPO),
             allow_files = True,
             executable = True,
         ),
         "_cc_toolchain": attr.label(
-            default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),
+            default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
         ),
+        "native_image_toolchain": attr.label(
+            default = Label(_NATIVE_IMAGE_TOOLCHAIN),
+        ),
+        "check_toolchains": attr.bool(default = False),
         "data": attr.label_list(allow_files = True),
         "extra_args": attr.string_list(),
         "c_compiler_option": attr.string_list(),
     },
     executable = True,
-    fragments = ["cpp"],
+    fragments = [
+        "cpp",
+        "java",
+        "platform",
+    ],
+    toolchains = [
+        _BAZEL_CPP_TOOLCHAIN,
+        _NATIVE_IMAGE_TOOLCHAIN_TYPE,
+    ],
 )
