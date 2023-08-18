@@ -1,6 +1,10 @@
 "Second-stage setup code for the GraalVM Rules project."
 
 load(
+    "//internal:config.bzl",
+    "PYTHON_VERSION",
+)
+load(
     "@rules_jvm_external//:setup.bzl",
     "rules_jvm_external_setup",
 )
@@ -20,24 +24,38 @@ load(
     "@buildifier_prebuilt//:defs.bzl",
     "buildifier_prebuilt_register_toolchains",
 )
+load(
+    "@llvm//:toolchains.bzl",
+    "llvm_register_toolchains",
+)
+load(
+    "@rules_python//python:repositories.bzl",
+    "python_register_toolchains",
+)
 
-def _rules_graalvm_toolchains():
+def _rules_graalvm_toolchains(enable_zig = True, enable_llvm = True):
     """Register toolchains for use in the GraalVM Rules codebase."""
 
     native.register_toolchains(
         "@graalvm//:toolchain",
     )
-
     native.register_toolchains(
-        "@zig_sdk//toolchain:linux_amd64_gnu.2.28",
-        "@zig_sdk//toolchain:linux_arm64_gnu.2.28",
-        "@zig_sdk//toolchain:darwin_amd64",
-        "@zig_sdk//toolchain:darwin_arm64",
-        "@zig_sdk//toolchain:windows_amd64",
-        "@zig_sdk//toolchain:windows_arm64",
+        "@graalvm//:toolchain_native_image",
     )
+    if enable_llvm:
+        llvm_register_toolchains()
 
-def _rules_graalvm_setup_workspace(gazelle = True, maven = False):
+    if enable_zig:
+        native.register_toolchains(
+            "@zig_sdk//toolchain:linux_amd64_gnu.2.28",
+            "@zig_sdk//toolchain:linux_arm64_gnu.2.28",
+            "@zig_sdk//toolchain:darwin_amd64",
+            "@zig_sdk//toolchain:darwin_arm64",
+            "@zig_sdk//toolchain:windows_amd64",
+            "@zig_sdk//toolchain:windows_arm64",
+        )
+
+def _rules_graalvm_setup_workspace(gazelle = True, maven = False, python = True):
     """Perform second-stage setup of the GraalVM Rules codebase."""
 
     # Rules JVM External
@@ -51,6 +69,14 @@ def _rules_graalvm_setup_workspace(gazelle = True, maven = False):
     # Buildifier
 
     buildifier_prebuilt_register_toolchains()
+
+    # Python
+
+    if python:
+        python_register_toolchains(
+            name = "python",
+            python_version = PYTHON_VERSION,
+        )
 
     if gazelle:
         # Bazel Skylib: Gazelle Plugin

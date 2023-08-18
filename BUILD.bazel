@@ -8,6 +8,18 @@ load(
     "@buildifier_prebuilt//:rules.bzl",
     "buildifier",
 )
+load(
+    "@rules_python//python:pip.bzl",
+    "compile_pip_requirements",
+)
+
+compile_pip_requirements(
+    name = "python_requirements",
+    extra_args = ["--allow-unsafe"],
+    requirements_in = ":requirements.txt",
+    requirements_txt = ":requirements_lock.txt",
+    tags = ["manual"],
+)
 
 buildifier(
     name = "buildifier.check",
@@ -28,9 +40,16 @@ buildifier(
 exports_files([
     "maven_install.json",
     "WORKSPACE.bazel",
+    "requirements.txt",
+    "requirements_lock.txt",
 ])
 
 # gazelle:prefix github.com/sgammon/rules_graalvm
 gazelle(
     name = "gazelle",
+)
+
+alias(
+    name = "generator",
+    actual = "//tools/scripts/mapping_generator",
 )

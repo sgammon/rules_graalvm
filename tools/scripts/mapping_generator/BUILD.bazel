@@ -1,0 +1,25 @@
+load(
+    "@rules_python//python:defs.bzl",
+    "py_binary",
+)
+load(
+    "@pip//:requirements.bzl",
+    "requirement",
+)
+
+py_binary(
+    name = "main",
+    srcs = [
+        "main.py",
+    ],
+    deps = [
+        requirement("pygithub"),
+        requirement("semver"),
+    ],
+)
+
+alias(
+    name = "mapping_generator",
+    actual = "main",
+    visibility = ["@//:__pkg__"],
+)
