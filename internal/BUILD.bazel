@@ -42,11 +42,26 @@ bzl_library(
 )
 
 bzl_library(
+    name = "bindist_map",
+    srcs = ["graalvm_bindist_map.bzl"],
+)
+
+bzl_library(
+    name = "bindist_map_legacy",
+    srcs = ["graalvm_bindist_legacy.bzl"],
+    deps = [
+        # Nothing.
+    ],
+)
+
+bzl_library(
     name = "bindist",
     srcs = ["graalvm_bindist.bzl"],
     deps = [
         ":java_toolchains",
         ":tooling",
+        ":bindist_map",
+        ":bindist_map_legacy",
     ],
 )
 
