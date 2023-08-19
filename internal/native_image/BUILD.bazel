@@ -8,8 +8,7 @@ load(
     "//internal/native_image:settings.bzl",
     "GraalVMLibC",
     "GraalVMCompilerBackend",
-    "DEFAULT_LIBC",
-    "DEFAULT_COMPILER",
+    "DEFAULTS",
     "native_image_info",
     "native_image_settings",
 )
@@ -25,7 +24,7 @@ string_flag(
         GraalVMLibC.GLIBC,
         GraalVMLibC.MUSL,
     ],
-    build_setting_default = DEFAULT_LIBC,
+    build_setting_default = DEFAULTS.LIBC,
 )
 
 string_flag(
@@ -34,7 +33,7 @@ string_flag(
         GraalVMCompilerBackend.NATIVE,
         GraalVMCompilerBackend.LLVM,
     ],
-    build_setting_default = DEFAULT_COMPILER,
+    build_setting_default = DEFAULTS.COMPILER_BACKEND,
 )
 
 native_image_info(
@@ -45,6 +44,7 @@ native_image_info(
 
 native_image_settings(
     name = "defaults",
-    libc = DEFAULT_LIBC,
-    compiler_backend = DEFAULT_COMPILER,
+    libc = DEFAULTS.LIBC,
+    opt = DEFAULTS.BUILD_OPT,
+    compiler_backend = DEFAULTS.COMPILER_BACKEND,
 )
