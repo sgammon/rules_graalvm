@@ -50,10 +50,10 @@ load(
     "@io_bazel_stardoc//:setup.bzl",
     "stardoc_repositories",
 )
-# load(
-#     "@rules_jvm_external//:defs.bzl",
-#     "maven_install",
-# )
+load(
+    "@rules_jvm_external//:defs.bzl",
+    "maven_install",
+)
 load(
     "@io_bazel_rules_go//go:deps.bzl",
     "go_register_toolchains",
@@ -184,13 +184,13 @@ def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linter
 
     stardoc_repositories()
 
-    # if maven:
-    #     maven_install(
-    #         name = "maven_gvm",
-    #         artifacts = MAVEN_ARTIFACTS,
-    #         repositories = MAVEN_REPOSITORIES,
-    #         maven_install_json = "//:maven_install.json",
-    #         generate_compat_repositories = True,
-    #     )
+    if maven:
+        maven_install(
+            name = "maven_gvm",
+            artifacts = MAVEN_ARTIFACTS,
+            repositories = MAVEN_REPOSITORIES,
+            maven_install_json = "//:maven_install.json",
+            generate_compat_repositories = True,
+        )
 
 rules_graalvm_repositories = _setup_rules_graalvm_repositories
