@@ -8,6 +8,7 @@ build:labs --experimental_use_windows_sandbox=auto
 
 build:labs --incompatible_strict_action_env
 
+build:labs --spawn_strategy=worker,sandboxed,local
 build:labs --dynamic_local_strategy=worker,sandboxed,standalone
 
 build:labs-broken --experimental_worker_strict_flagfiles
