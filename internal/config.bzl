@@ -48,5 +48,29 @@ MAVEN_REPOSITORIES = [
 ]
 
 GRAALVM_COMPONENTS = [
-    "js",
+    # None.
 ]
+
+TARGET_JAVA_VERSIONS = [
+    "8",
+    "11",
+    "17",
+    "19",
+    "20",
+    "21",
+]
+
+GRAALVM_KNOWN_RELEASES = [
+    "20.0.2",
+    "17.0.8",
+]
+
+GRAALVM_KNOWN_DISTS = [
+    "oracle",
+    "ce",
+]
+
+GRAALVM_KNOWN = struct(
+    RELEASES = GRAALVM_KNOWN_RELEASES,
+    DISTS = GRAALVM_KNOWN_DISTS,
+)

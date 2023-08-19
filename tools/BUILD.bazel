@@ -1,0 +1,80 @@
+"Bazel Rules for GraalVM"
+
+load(
+    "@buildifier_prebuilt//:rules.bzl",
+    "buildifier",
+)
+load(
+    "@rules_python//python:pip.bzl",
+    pip_requirements = "compile_pip_requirements",
+)
+load(
+    "@bazel_skylib//rules:run_binary.bzl",
+    run = "run_binary",
+)
+load(
+    "//internal:config.bzl",
+    "GRAALVM_KNOWN",
+)
+
+package(default_visibility = [
+    "@//:__pkg__",
+])
+
+exports_files([
+    "graalvm_bindist_stamp.txt",
+])
+
+pip_requirements(
+    name = "python_requirements",
+    extra_args = ["--allow-unsafe"],
+    requirements_in = "//:requirements.txt",
+    requirements_txt = "//:requirements_lock.txt",
+    tags = [
+        "manual",
+        "requires-network",
+    ],
+)
+
+buildifier(
+    name = "buildifier.check",
+    exclude_patterns = [
+        "./.git/*",
+        "./bazel-*/*",
+    ],
+    lint_mode = "warn",
+    mode = "diff",
+    tags = ["manual"],
+)
+
+buildifier(
+    name = "buildifier.format",
+    exclude_patterns = ["./.git/*"],
+    lint_mode = "fix",
+    tags = ["manual"],
+)
+
+run(
+    name = "generator.update",
+    tool = "//tools/scripts/mapping_generator",
+    args = (
+        ["--tags"] + GRAALVM_KNOWN.RELEASES +
+        ["--distributions"] + GRAALVM_KNOWN.DISTS
+    ),
+    srcs = [
+        "//internal:graalvm_bindist_map.bzl",
+    ],
+    env = {
+        "BAZEL_MAPPINGS_UPDATE": "1",
+        "BAZEL_MAPPINGS_SRC": "$(location //internal:graalvm_bindist_map.bzl)",
+        "BAZEL_BINDIST_STAMP": "$(location graalvm_bindist_stamp.sh)",
+    },
+    outs = [
+        "graalvm_bindist_stamp.sh",
+    ],
+    tags = [
+        "no-cache",
+        "no-sandbox",
+        "requires-network",
+    ],
+)

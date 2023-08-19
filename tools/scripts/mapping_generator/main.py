@@ -7,7 +7,7 @@
   Generates Starlark SHA256 mappings for GraalVM artifacts.
 """
 
-import sys, time, os, logging, argparse, itertools
+import sys, time, os, stat, logging, argparse, itertools
 
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -429,7 +429,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '-d', '--dist',
+    '-d', '--distributions',
     nargs = "*",
     help = "Distributions to generate mappings for; accepts ORACLE and COMMUNITY. Defaults to both.",
     choices = DEFAULT_DISTRIBUTIONS,
@@ -936,7 +936,7 @@ def say(*args):
 def build_auth():
     """Build auth credentials for use with the GitHub API, if applicable."""
 
-    token = os.environ["GITHUB_TOKEN"]
+    token = os.environ.get("GITHUB_TOKEN")
     if token is not None and len(token) > 0:
         logger.debug("GITHUB_TOKEN environment variable found; using it")
         return Auth.Token(token)
@@ -1091,7 +1091,7 @@ def determine_versions(args, distributions, platforms):
 def determine_distributions(args):
     """Determine the set of distribution types we should generate release mappings for."""
 
-    all_dists = args.dist or []
+    all_dists = args.distributions or []
 
     if len(all_dists) == 0:
         logger.debug(
@@ -1321,9 +1321,7 @@ def download_text(args, url, sanitize = True):
 def emit_rendered_mappings(target, rendered):
     """Write the rendered final mappings to the provided stream or file target."""
     # make sure to prime the pipe and include a final newline
-    print("", flush = True, file = target)
     print(rendered, flush = True, file = target)
-    print("\n", flush = True, file = target)
 
 def print_report(args, javas, platforms, distributions, versions, components, skipped_targets, all_targets):
     """Print a simple report before we proceed with action.
@@ -1402,6 +1400,7 @@ def generate(args):
 
     logger.debug("Preparing GitHub authorization")
     client = Github(auth = build_auth())
+    timestamp = datetime.now()
 
     # determine the set of versions, platforms, and distribution types we should generate
     # mappings for, either via provided args, or via the set of known defaults.
@@ -1590,8 +1589,7 @@ def generate(args):
     ],
   },"""
 
-    mapping_file_template = """
-"Binary mappings for GraalVM distribution artifacts."
+    mapping_file_template = """"Binary mappings for GraalVM distribution artifacts."
 
 # ! THIS FILE IS GENERATED. DO NOT EDIT. !
 
@@ -1706,8 +1704,7 @@ DistributionComponent = _DistributionComponent
 # buildifier: disable=name-conventions
 AlignedVersions = _AlignedVersions
 generate_distribution_coordinate = _generate_distribution_coordinate
-resolve_distribution_artifact = _resolve_distribution_artifact
-"""
+resolve_distribution_artifact = _resolve_distribution_artifact"""
 
     rendered_mappings = {}
     for (task, (download, sha, result)) in registered_hashes.items():
@@ -1737,15 +1734,19 @@ resolve_distribution_artifact = _resolve_distribution_artifact
 
     # render the final file
     rendered_mappings_file = mapping_file_template % (
-        datetime.now().isoformat(), # timestamp
+        timestamp.isoformat(), # timestamp
         os.environ.get("USER", "Sandboxed user"), # timestamp
         "\n".join(sorted_mappings),  # mappings
     )
 
     outstream = sys.stdout
     if not args.no_render:
-        if args.out and args.out != "-":
-            target_file = os.path.abspath(args.out)
+        bazel_mappings_update = os.environ.get("BAZEL_MAPPINGS_UPDATE")
+        bazel_mappings_target = os.environ.get("BAZEL_MAPPINGS_SRC")
+        bazel_stamp_file = os.environ.get("BAZEL_BINDIST_STAMP")
+
+        if args.out and args.out != "-" or (bazel_mappings_update == "1"):
+            target_file = bazel_mappings_target or os.path.abspath(args.out)
             logger.debug("Writing output to file '%s'" % target_file)
             try:
                 with open(target_file, "w") as outfile:
@@ -1756,6 +1757,24 @@ resolve_distribution_artifact = _resolve_distribution_artifact
             except IOError as e:
                 logger.error("Failed to write to output file.", e)
                 sys.exit(3)
+
+            if bazel_stamp_file is not None:
+                try:
+                    # write stamp file
+                    stamp_abs = os.path.abspath(bazel_stamp_file)
+                    say(colorize(grey, "Writing to Bazel stamp file '%s'..." % stamp_abs))
+                    with open(stamp_abs, 'w') as stampfile:
+                        stampfile.writelines([
+                            "#!/bin/env bash\n",
+                            "echo \"Updated mappings at: %s\";\n" % timestamp.isoformat(),
+                        ])
+
+                    st = os.stat(stamp_abs)
+                    os.chmod(stamp_abs, st.st_mode | stat.S_IEXEC)
+
+                except IOError as e:
+                    logger.error("Failed to write to Bazel stamp file. Bazel build may fail.", e)
+
         else:
             logger.debug("Writing rendered output to stdout, as no file was provided")
             say(colorize(grey, "Emitting rendered file to stdout."))
@@ -1769,7 +1788,9 @@ def invoke():
     """Run the mappings generator."""
 
     try:
-        generate(args = parser.parse_args())
+        generate(
+            args = parser.parse_args(),
+        )
     except KeyboardInterrupt as e:
         say(colorize(yellow, "Exiting on keyboard interrupt."))
 

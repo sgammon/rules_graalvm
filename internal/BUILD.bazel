@@ -8,6 +8,7 @@ load(
 package(default_visibility = [
     "//docs:__subpackages__",
     "//graalvm:__subpackages__",
+    "//tools:__subpackages__",
 ])
 
 exports_files([
