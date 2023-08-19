@@ -1,14 +1,12 @@
 build:labs --experimental_platforms_api
 build:labs --experimental_local_lockfree_output
 build:labs --experimental_worker_multiplex_sandboxing
-build:labs --experimental_worker_sandbox_hardening
 build:labs --experimental_bzl_visibility
 build:labs --experimental_cc_shared_library
 build:labs --experimental_disable_external_package
 build:labs --experimental_strict_java_deps=error
 build:labs --experimental_use_sandboxfs=auto
 build:labs --experimental_use_windows_sandbox=auto
-build:labs --experimental_worker_for_repo_fetching=platform
 
 build:labs --incompatible_strict_action_env
 

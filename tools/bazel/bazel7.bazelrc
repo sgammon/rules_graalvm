@@ -3,3 +3,13 @@ import %workspace%/.aspect/bazelrc/bazel7.bazelrc
 build --remote_build_event_upload=minimal
 build --noexperimental_check_external_repository_files
 build --extra_toolchains=@graalvm//:bootstrap_runtime_toolchain
+
+build:labs --experimental_worker_sandbox_hardening
+build:labs --experimental_worker_for_repo_fetching=platform
+
+build:strict --incompatible_depset_for_java_output_source_jars
+build:strict --incompatible_auto_exec_groups
+build:strict --incompatible_disallow_sdk_frameworks_attributes
+build:strict --incompatible_objc_alwayslink_by_default
+build:strict --incompatible_python_disable_py2
+build:strict --incompatible_remote_disallow_symlink_in_tree_artifact
