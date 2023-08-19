@@ -16,6 +16,11 @@ py_binary(
         requirement("pygithub"),
         requirement("semver"),
     ],
+    tags = [
+        "manual",
+        "no-sandbox",
+        "requires-network",
+    ],
 )
 
 alias(
