@@ -1,0 +1,14 @@
+"Defines toolchain types for GraalJs."
+
+package(default_visibility = ["//visibility:public"])
+
+# Toolchain type: `graaljs`
+#
+# Describes a `js` binary made available as part of a GraalVM installation of any type. This
+# tool may be installed via the GraalVM Updater or provided otherwise.
+toolchain_type(name = "graaljs")
+
+alias(
+    name = "toolchain_type",
+    actual = "graaljs",
+)

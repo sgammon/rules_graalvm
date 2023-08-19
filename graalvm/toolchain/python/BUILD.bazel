@@ -1,0 +1,14 @@
+"Defines toolchain types for GraalPython."
+
+package(default_visibility = ["//visibility:public"])
+
+# Toolchain type: `graalpython`
+#
+# Describes a `python` binary made available as part of a GraalVM installation of any type. This
+# tool may be installed via the GraalVM Updater or provided otherwise.
+toolchain_type(name = "graalpython")
+
+alias(
+    name = "toolchain_type",
+    actual = "graalpython",
+)
