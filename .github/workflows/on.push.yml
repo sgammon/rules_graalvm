@@ -45,10 +45,6 @@ jobs:
             label: Ubuntu - Bzlmod
             bzlmod: true
             labs: false
-          - runner: windows-latest
-            label: Windows
-            bzlmod: false
-            labs: true
           - runner: macos-latest
             label: macOS
             bzlmod: false
