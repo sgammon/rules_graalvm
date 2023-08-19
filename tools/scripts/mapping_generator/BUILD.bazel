@@ -26,5 +26,8 @@ py_binary(
 alias(
     name = "mapping_generator",
     actual = "main",
-    visibility = ["@//:__pkg__"],
+    visibility = [
+        "@//:__pkg__",
+        "@//tools:__pkg__",
+    ],
 )
