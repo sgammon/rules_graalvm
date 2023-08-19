@@ -1,13 +1,11 @@
 build:strict --incompatible_allow_tags_propagation
 build:strict --incompatible_always_check_depset_elements
 build:strict --incompatible_always_include_files_in_data
-build:strict --incompatible_auto_exec_groups
 build:strict --incompatible_avoid_conflict_dlls
 build:strict --incompatible_check_sharding_support
 build:strict --incompatible_check_testonly_for_output_files
 build:strict --incompatible_config_setting_private_default_visibility
 build:strict --incompatible_default_to_explicit_init_py
-build:strict --incompatible_depset_for_java_output_source_jars
 build:strict --incompatible_depset_for_libraries_to_link_getter
 build:strict --incompatible_disable_expand_if_all_available_in_flag_set
 build:strict --incompatible_disable_native_android_rules
@@ -16,7 +14,6 @@ build:strict --incompatible_disable_starlark_host_transitions
 build:strict --incompatible_disable_target_provider_fields
 build:strict --incompatible_disallow_legacy_javainfo
 build:strict --incompatible_disallow_legacy_py_provider
-build:strict --incompatible_disallow_sdk_frameworks_attributes
 build:strict --incompatible_disallow_symlink_file_to_dir
 build:strict --incompatible_do_not_split_linking_cmdline
 build:strict --incompatible_dont_emit_static_libgcc
@@ -36,13 +33,10 @@ build:strict --incompatible_make_thinlto_command_lines_standalone
 build:strict --incompatible_merge_genfiles_directory
 build:strict --incompatible_new_actions_api
 build:strict --incompatible_no_attr_license
-build:strict --incompatible_objc_alwayslink_by_default
 build:strict --incompatible_package_group_has_public_syntax
 build:strict --incompatible_py2_outputs_are_suffixed
 build:strict --incompatible_py3_is_default
-build:strict --incompatible_python_disable_py2
 build:strict --incompatible_remote_dangling_symlinks
-build:strict --incompatible_remote_disallow_symlink_in_tree_artifact
 build:strict --incompatible_remote_downloader_send_all_headers
 build:strict --incompatible_remote_output_paths_relative_to_input_root
 build:strict --incompatible_remote_results_ignore_disk
