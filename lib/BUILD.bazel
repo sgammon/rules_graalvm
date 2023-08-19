@@ -13,29 +13,46 @@ package(default_visibility = [
 bzl_library(
     name = "defs",
     srcs = [
-        "defs.bzl",
+        "//graalvm:defs.bzl",
     ],
     deps = [
-        "//graalvm/nativeimage:rules",
-        "//internal:tooling",
+        "//lib/nativeimage:rules",
+        ":tooling",
     ],
 )
 
 bzl_library(
     name = "repositories",
     srcs = [
-        "repositories.bzl",
+        "//graalvm:repositories.bzl",
     ],
     deps = [
-        "//internal:bindist",
-        "//internal:tooling",
+        ":bindist",
+        ":tooling",
+    ],
+)
+
+bzl_library(
+    name = "toolchain",
+    srcs = [
+        "//internal:toolchain.bzl",
+    ],
+)
+
+bzl_library(
+    name = "graal_legacy",
+    srcs = [
+        "//graal:graal.bzl",
     ],
 )
 
 bzl_library(
     name = "workspace",
     srcs = [
-        "workspace.bzl",
+        "//graalvm:workspace.bzl",
+    ],
+    deps = [
+        ":toolchain",
     ],
 )
 

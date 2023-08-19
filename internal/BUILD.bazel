@@ -15,4 +15,5 @@ exports_files([
     "graalvm_bindist_legacy.bzl",
     "jdk_build_file.bzl",
     "maven.bzl",
+    "toolchain.bzl",
 ])

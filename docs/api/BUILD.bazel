@@ -22,6 +22,7 @@ stardoc(
     input = "//graalvm:defs.bzl",
     deps = [
         "//lib/nativeimage:rules",
+        "//lib/nativeimage:internals",
         "//lib:tooling",
     ],
 )
@@ -49,6 +50,8 @@ stardoc(
     input = "//graalvm:workspace.bzl",
     deps = [
         "//lib:deps",
+        "//lib:tooling",
+        "//lib:toolchain",
         ":repo_tools",
     ],
 )
