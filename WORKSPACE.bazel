@@ -233,6 +233,10 @@ load("//internal:deps.bzl", rules_graalvm_dependencies = "rules_graalvm_reposito
 
 rules_graalvm_dependencies()
 
+load("@rules_java//java:repositories.bzl", "remote_jdk19_repos")
+
+remote_jdk19_repos()
+
 # Provide a repository hint for Gazelle to inform it that the go package
 # github.com/bazelbuild/rules_go is available from io_bazel_rules_go and it
 # doesn't need to duplicatively fetch it.
