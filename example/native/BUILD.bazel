@@ -25,6 +25,7 @@ native_image(
     name = "main-native",
     main_class = "Main",
     deps = [":java"],
+    native_image_tool = "@graalvm//:native-image",
 )
 
 alias(
