@@ -1,0 +1,14 @@
+"Defines toolchain types for GraalVM."
+
+package(default_visibility = ["//visibility:public"])
+
+# Toolchain type: `gvm`
+#
+# Describes a regular GraalVM toolchain; this type is satisfied by either GraalVM Community Edition
+# or a distribution of Oracle GraalVM.
+toolchain_type(name = "gvm")
+
+alias(
+    name = "toolchain_type",
+    actual = "gvm",
+)
