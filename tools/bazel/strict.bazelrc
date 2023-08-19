@@ -19,8 +19,6 @@ build:strict --incompatible_do_not_split_linking_cmdline
 build:strict --incompatible_dont_emit_static_libgcc
 build:strict --incompatible_dont_enable_host_nonhost_crosstool_features
 build:strict --incompatible_dont_use_javasourceinfoprovider
-build:strict --incompatible_enable_android_toolchain_resolution
-build:strict --incompatible_enable_apple_toolchain_resolution
 build:strict --incompatible_enforce_config_setting_visibility
 build:strict --incompatible_exclusive_test_sandboxed
 build:strict --incompatible_existing_rules_immutable_view
