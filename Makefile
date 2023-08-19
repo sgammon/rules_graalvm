@@ -12,8 +12,9 @@ RELEASE ?= no
 VERBOSE ?= no
 BZLMOD ?= no
 COVERAGE ?= yes
-TARGETS ?= //...
-TESTS ?= //...
+TARGETS ?= //graalvm/...
+DOCS ?= //docs/api:all
+TESTS ?= //.aspect/...
 ARGS ?=
 CONFIGS ?=
 
@@ -84,7 +85,7 @@ test:  ## Run all tests.
 
 docs:  ## Build docs.
 	@echo "Building docs..."
-	$(RULE)$(BAZEL) $(_STARTUP) build //docs/... \
+	$(RULE)$(BAZEL) $(_STARTUP) build $(DOCS) \
 		&& $(CP) -fv bazel-bin/docs/api/*.md ./docs/api/ \
 		&& $(CHMOD) -R 755 docs/api/;
 	@echo "Docs rebuilt."
