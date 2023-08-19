@@ -39,19 +39,33 @@ _COMPONENTS = struct(**{
     "LLVM": "llvm",
 })
 
+_LEGACY_X86_TAG = "amd64"
+_NONLEGACY_X86_TAG = "x64"
+_LEGACY_DARWIN_TAG = "darwin"
+_NONLEGACY_DARWIN_TAG = "macos"
+
+def _get_platform_legacy(ctx, legacy):
+    tag = not legacy and _NONLEGACY_X86_TAG or _LEGACY_X86_TAG
+
+    if ctx.os.name == "linux":
+        return ("linux-%s" % tag, "linux", "tar.gz")
+    elif ctx.os.name == "mac os x":
+        name = not legacy and _NONLEGACY_DARWIN_TAG or _LEGACY_DARWIN_TAG
+        return ("%s-%s" % (name, tag), "macos", "tar.gz")
+    else:
+        fail("Unsupported operating system: " + ctx.os.name)
+
 def _get_platform(ctx, newdist):
     arch_labels = {
         "x86_64": "x64",
         "amd64": "x64",
         "aarch64": "aarch64",
     }
-    if not newdist:
-        if ctx.os.name == "linux":
-            return "linux-amd64"
-        elif ctx.os.name == "mac os x":
-            return "darwin-amd64"
-        else:
-            fail("Unsupported operating system: " + ctx.os.name)
+
+    # fix: before bazel5, the `arch` property did not exist on `repository_os`, so we need
+    # to do without it and simply assume `amd64`.
+    if not newdist or not versions.is_at_least("5", versions.get()):
+        return _get_platform_legacy(ctx, not newdist)
     elif ctx.os.name == "linux":
         return ("linux-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "linux", "tar.gz")
     elif ctx.os.name == "mac os x":
