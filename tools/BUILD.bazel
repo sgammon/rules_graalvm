@@ -78,6 +78,7 @@ run(
         "graalvm_bindist_stamp.sh",
     ],
     tags = [
+        "manual",
         "no-cache",
         "no-sandbox",
         "requires-network",

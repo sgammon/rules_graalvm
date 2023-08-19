@@ -6,4 +6,5 @@ exports_files([
     "defs.bzl",
     "repositories.bzl",
     "workspace.bzl",
+    "toolchain.bzl",
 ])

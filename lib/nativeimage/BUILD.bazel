@@ -13,5 +13,21 @@ package(default_visibility = [
 bzl_library(
     name = "rules",
     srcs = ["//graalvm/nativeimage:rules.bzl"],
-    deps = ["//lib:tooling"],
+    deps = [
+        ":settings",
+        "//lib:tooling",
+    ],
+)
+
+bzl_library(
+    name = "settings",
+    srcs = ["//internal/native_image:settings.bzl"],
+)
+
+bzl_library(
+    name = "internals",
+    srcs = ["//internal/native_image:rules.bzl"],
+    deps = [
+        "@bazel_skylib//:lib",
+    ],
 )

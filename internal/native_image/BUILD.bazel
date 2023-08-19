@@ -13,6 +13,11 @@ load(
     "native_image_settings",
 )
 
+exports_files([
+    "rules.bzl",
+    "settings.bzl",
+])
+
 string_flag(
     name = "libc",
     values = [

@@ -1,0 +1,5 @@
+"Defines library source targets for legacy Native Image rules."
+
+exports_files([
+    "graal.bzl",
+])
