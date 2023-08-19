@@ -189,8 +189,12 @@ native_image = rule(
         "java",
         "platform",
     ],
+    host_fragments = [
+        "java",
+        "platform",
+    ],
     toolchains = [
-        _BAZEL_CPP_TOOLCHAIN,
-        _NATIVE_IMAGE_TOOLCHAIN_TYPE,
+        config_common.toolchain_type(_BAZEL_CPP_TOOLCHAIN, mandatory = True),
+        config_common.toolchain_type(_NATIVE_IMAGE_TOOLCHAIN_TYPE, mandatory = True),
     ],
 )
