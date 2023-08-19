@@ -16,6 +16,13 @@ _DEFAULT_LIBC = _GraalVMLibC.GLIBC
 _DEFAULT_COMPILER = _GraalVMCompilerBackend.NATIVE
 _DEFAULT_BUILD_OPT = "2"  # fully optimize
 
+# buildifier: disable=name-conventions
+_DEFAULTS = struct(
+    LIBC = _DEFAULT_LIBC,
+    BUILD_OPT = _DEFAULT_BUILD_OPT,
+    COMPILER_BACKEND = _DEFAULT_COMPILER,
+)
+
 _NativeImageInfo = provider(
     fields = [
         "opt",
@@ -116,6 +123,7 @@ ALL_SETTINGS = _ALL_SETTINGS
 DEFAULT_LIBC = _DEFAULT_LIBC
 DEFAULT_COMPILER = _DEFAULT_COMPILER
 DEFAULT_BUILD_OPT = _DEFAULT_BUILD_OPT
+DEFAULTS = _DEFAULTS
 
 native_image_settings = _native_image_settings
 
