@@ -1,0 +1,19 @@
+"Versioned JVM platform definitions for GraalVM."
+
+load(
+    "//internal:config.bzl",
+    _TARGET_JAVA_VERSIONS = "TARGET_JAVA_VERSIONS",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+constraint_setting(
+    name = "java_version",
+)
+
+[
+    constraint_value(
+        name = "java%s" % i,
+        constraint_setting = ":java_version",
+    ) for i in _TARGET_JAVA_VERSIONS
+]
