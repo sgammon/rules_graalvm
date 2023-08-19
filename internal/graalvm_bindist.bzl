@@ -11,6 +11,7 @@ load(
 load(
     "//internal:jdk_build_file.bzl",
     _JDK_BUILD_TEMPLATE = "JDK_BUILD_TEMPLATE",
+    _JDK_BUILD_TEMPLATE_BAZEL5 = "JDK_BUILD_TEMPLATE_BAZEL5",
 )
 load(
     "//internal:graalvm_bindist_map.bzl",
@@ -303,6 +304,12 @@ alias(
         if not versions.is_at_least("7", versions.get()):
             bootstrap_toolchain_alias = ""
 
+        # bazel 6+ has support for the `version` attribute on the `java_runtime` rule. earlier
+        # versions do not, so we omit it.
+        toolchain_template = _JDK_BUILD_TEMPLATE
+        if not versions.is_at_least("6", versions.get()):
+            toolchain_template = _JDK_BUILD_TEMPLATE_BAZEL5
+
         toolchain_aliases_template = """
 # Entry Aliases
 alias(
@@ -360,7 +367,7 @@ exports_files(glob(["**/*"]))
 # Aliases
 {aliases}
 """.format(
-            toolchain = _JDK_BUILD_TEMPLATE.format(RUNTIME_VERSION = java_version),
+            toolchain = toolchain_template.format(RUNTIME_VERSION = java_version),
             aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
             rendered_bin_targets = rendered_bin_targets,
         ))

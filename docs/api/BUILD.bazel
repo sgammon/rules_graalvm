@@ -21,8 +21,8 @@ stardoc(
     out = "defs.md",
     input = "//graalvm:defs.bzl",
     deps = [
-        "//graalvm/nativeimage:rules",
-        "//internal:tooling",
+        "//lib/nativeimage:rules",
+        "//lib:tooling",
     ],
 )
 
@@ -31,10 +31,10 @@ stardoc(
     out = "repositories.md",
     input = "//graalvm:repositories.bzl",
     deps = [
-        "//internal:bindist",
-        "//internal:deps",
-        "//internal:tooling",
-        "//internal:jdk_build_file",
+        "//lib:bindist",
+        "//lib:deps",
+        "//lib:tooling",
+        "//lib:jdk_build_file",
         "@bazel_skylib//lib:paths",
         "@bazel_skylib//lib:shell",
         "@bazel_skylib//lib:structs",
@@ -48,7 +48,7 @@ stardoc(
     out = "workspace.md",
     input = "//graalvm:workspace.bzl",
     deps = [
-        "//internal:deps",
+        "//lib:deps",
         ":repo_tools",
     ],
 )

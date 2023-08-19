@@ -1,11 +1,7 @@
-"Bazel library targets for GraalVM rule internals."
-
-load(
-    "@bazel_skylib//:bzl_library.bzl",
-    "bzl_library",
-)
+"GraalVM Rules package internals."
 
 package(default_visibility = [
+    "//lib:__pkg__",
     "//docs:__subpackages__",
     "//graalvm:__subpackages__",
     "//tools:__subpackages__",
@@ -13,69 +9,10 @@ package(default_visibility = [
 
 exports_files([
     "config.bzl",
+    "deps.bzl",
     "graalvm_bindist.bzl",
+    "graalvm_bindist_map.bzl",
+    "graalvm_bindist_legacy.bzl",
     "jdk_build_file.bzl",
     "maven.bzl",
 ])
-
-bzl_library(
-    name = "tooling",
-    srcs = [
-        "@bazel_tools//tools:bzl_srcs",
-    ],
-)
-
-bzl_library(
-    name = "java_toolchains",
-    srcs = [
-        "@rules_java//toolchains:bzl_srcs",
-    ],
-)
-
-bzl_library(
-    name = "config",
-    srcs = ["config.bzl"],
-)
-
-bzl_library(
-    name = "deps",
-    srcs = ["deps.bzl"],
-)
-
-bzl_library(
-    name = "bindist_map",
-    srcs = ["graalvm_bindist_map.bzl"],
-)
-
-bzl_library(
-    name = "bindist_map_legacy",
-    srcs = ["graalvm_bindist_legacy.bzl"],
-    deps = [
-        # Nothing.
-    ],
-)
-
-bzl_library(
-    name = "bindist",
-    srcs = ["graalvm_bindist.bzl"],
-    deps = [
-        ":java_toolchains",
-        ":tooling",
-        ":bindist_map",
-        ":bindist_map_legacy",
-    ],
-)
-
-bzl_library(
-    name = "maven",
-    srcs = ["maven.bzl"],
-    deps = [
-        ":config",
-        ":tooling",
-    ],
-)
-
-bzl_library(
-    name = "jdk_build_file",
-    srcs = ["jdk_build_file.bzl"],
-)

@@ -1,6 +1,8 @@
 build --experimental_remote_build_event_upload=minimal
 build --noexperimental_check_external_repository_files
 
+build:bzlmod --enable_bzlmod
+
 build:dev --lockfile_mode=update
 
 build:labs --experimental_worker_multiplex_sandboxing

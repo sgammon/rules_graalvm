@@ -1,42 +1,9 @@
-"Provides `bzl_library` definitions for GraalVM repository and target rules."
-
-load(
-    "@bazel_skylib//:bzl_library.bzl",
-    "bzl_library",
-)
+"GraalVM Rules for Bazel."
 
 package(default_visibility = ["//visibility:public"])
 
 exports_files([
     "defs.bzl",
     "repositories.bzl",
+    "workspace.bzl",
 ])
-
-bzl_library(
-    name = "defs",
-    srcs = [
-        "defs.bzl",
-    ],
-    deps = [
-        "//graalvm/nativeimage:rules",
-        "//internal:tooling",
-    ],
-)
-
-bzl_library(
-    name = "repositories",
-    srcs = [
-        "repositories.bzl",
-    ],
-    deps = [
-        "//internal:bindist",
-        "//internal:tooling",
-    ],
-)
-
-bzl_library(
-    name = "workspace",
-    srcs = [
-        "workspace.bzl",
-    ],
-)
