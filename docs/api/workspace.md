@@ -22,3 +22,11 @@ can be omitted with the provided arguments.
 | :------------------------------------------------------------------------- | :--------------------------------------------- | :----------------- |
 | <a id="rules_graalvm_repositories-omit_rules_java"></a>omit_rules_java     | Omit the <code>rules_java</code> dependency.   | <code>False</code> |
 | <a id="rules_graalvm_repositories-omit_bazel_skylib"></a>omit_bazel_skylib | Omit the <code>bazel_skylib</code> dependency. | <code>False</code> |
+
+<a id="rules_graalvm_toolchains"></a>
+
+## rules_graalvm_toolchains
+
+<pre>
+rules_graalvm_toolchains()
+</pre>

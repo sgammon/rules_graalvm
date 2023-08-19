@@ -55,3 +55,19 @@ stardoc(
         ":repo_tools",
     ],
 )
+
+stardoc(
+    name = "toolchain",
+    out = "toolchain.md",
+    input = "//graalvm:toolchain.bzl",
+)
+
+stardoc(
+    name = "legacy",
+    out = "legacy.md",
+    input = "//graal:graal.bzl",
+    deps = [
+        "//lib/nativeimage:rules",
+        "//lib/nativeimage:internals",
+    ],
+)
