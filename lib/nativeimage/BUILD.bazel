@@ -28,6 +28,6 @@ bzl_library(
     name = "internals",
     srcs = ["//internal/native_image:rules.bzl"],
     deps = [
-        "@bazel_skylib//:lib",
+        "@bazel_skylib//lib:versions",
     ],
 )
