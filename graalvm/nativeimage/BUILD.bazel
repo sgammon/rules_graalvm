@@ -25,12 +25,6 @@ exports_files([
     "rules.bzl",
 ])
 
-bzl_library(
-    name = "rules",
-    srcs = ["rules.bzl"],
-    deps = ["//internal:tooling"],
-)
-
 string_flag(
     name = "opt",
     values = [

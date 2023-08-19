@@ -13,11 +13,6 @@ load(
     "native_image_settings",
 )
 
-package(default_visibility = [
-    "//graalvm/settings/native_image:__pkg__",
-    "//graalvm/settings/native_image:__subpackages__",
-])
-
 string_flag(
     name = "libc",
     values = [

@@ -20,11 +20,11 @@ load(
     "@bazel_skylib//:workspace.bzl",
     "bazel_skylib_workspace",
 )
-load(
-    "@rules_cc//cc:repositories.bzl",
-    "rules_cc_dependencies",
-    "rules_cc_toolchains",
-)
+# load(
+#     "@rules_cc//cc:repositories.bzl",
+#     "rules_cc_dependencies",
+#     "rules_cc_toolchains",
+# )
 load(
     "@rules_java//java:repositories.bzl",
     "rules_java_dependencies",
@@ -107,9 +107,9 @@ def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linter
 
     # rules_cc
 
-    rules_cc_dependencies()
+    # rules_cc_dependencies()
 
-    rules_cc_toolchains()
+    # rules_cc_toolchains()
 
     # Zig
 

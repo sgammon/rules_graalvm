@@ -1,0 +1,17 @@
+"Bazel library targets for Native Image rules."
+
+load(
+    "@bazel_skylib//:bzl_library.bzl",
+    "bzl_library",
+)
+
+package(default_visibility = [
+    "//lib:__subpackages__",
+    "//docs:__subpackages__",
+])
+
+bzl_library(
+    name = "rules",
+    srcs = ["//graalvm/nativeimage:rules.bzl"],
+    deps = ["//lib:tooling"],
+)

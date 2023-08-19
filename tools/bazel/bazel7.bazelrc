@@ -4,6 +4,8 @@ build --remote_build_event_upload=minimal
 build --noexperimental_check_external_repository_files
 build --extra_toolchains=@graalvm//:bootstrap_runtime_toolchain
 
+build:bzlmod --enable_bzlmod
+
 build:dev --lockfile_mode=update
 
 build:labs --experimental_worker_sandbox_hardening

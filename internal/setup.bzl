@@ -3,6 +3,7 @@
 load(
     "//internal:config.bzl",
     "PYTHON_VERSION",
+    FOREIGN_TOOLCHAINS = "ENABLE_FOREIGN_TOOLCHAINS",
 )
 load(
     "@rules_jvm_external//:setup.bzl",
@@ -33,7 +34,7 @@ load(
     "python_register_toolchains",
 )
 
-def _rules_graalvm_toolchains(enable_zig = True, enable_llvm = True):
+def _rules_graalvm_toolchains(enable_zig = FOREIGN_TOOLCHAINS, enable_llvm = FOREIGN_TOOLCHAINS):
     """Register toolchains for use in the GraalVM Rules codebase."""
 
     native.register_toolchains(
