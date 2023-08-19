@@ -1,10 +1,10 @@
-"Rules for building native binaries using the GraalVM `native-image` tool."
+"Rules for building native binaries using the GraalVM `native-image` tool on Bazel 5 and older."
 
 load(
     "//internal/native_image:rules.bzl",
+    _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
-    _NATIVE_IMAGE_TOOLCHAIN_TYPE = "NATIVE_IMAGE_TOOLCHAIN_TYPE",
     _graal_binary_implementation = "graal_binary_implementation",
 )
 
@@ -21,6 +21,7 @@ _native_image = rule(
         "native_features": attr.string_list(),
         "native_image_tool": attr.label(
             cfg = "exec",
+            default = Label("%s//:native-image" % _DEFAULT_GVM_REPO),
             allow_files = True,
             executable = True,
             mandatory = False,
@@ -29,7 +30,7 @@ _native_image = rule(
             default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
         ),
         "_legacy_rule": attr.bool(
-            default = False,
+            default = True,
         ),
         "check_toolchains": attr.bool(default = False),
         "data": attr.label_list(allow_files = True),
@@ -39,12 +40,9 @@ _native_image = rule(
     executable = True,
     fragments = [
         "cpp",
-        "java",
-        "platform",
     ],
     toolchains = [
-        config_common.toolchain_type(_BAZEL_CPP_TOOLCHAIN_TYPE, mandatory = True),
-        config_common.toolchain_type(_NATIVE_IMAGE_TOOLCHAIN_TYPE, mandatory = False),
+        _BAZEL_CPP_TOOLCHAIN_TYPE,
     ],
 )
 
