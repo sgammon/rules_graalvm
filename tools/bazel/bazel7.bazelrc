@@ -12,6 +12,7 @@ build:labs --experimental_worker_sandbox_hardening
 build:labs --experimental_worker_for_repo_fetching=platform
 build:labs --experimental_worker_multiplex_sandboxing
 build:labs --experimental_bzl_visibility
+build:labs --experimental_repository_resolved_file=MODULE-resolved.bzl
 
 build:strict --incompatible_depset_for_java_output_source_jars
 build:strict --incompatible_disallow_sdk_frameworks_attributes

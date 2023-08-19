@@ -5,7 +5,6 @@ build:labs --experimental_disable_external_package
 build:labs --experimental_strict_java_deps=error
 build:labs --experimental_use_sandboxfs=auto
 build:labs --experimental_use_windows_sandbox=auto
-
 build:labs --incompatible_strict_action_env
 
 build:labs --spawn_strategy=worker,sandboxed,local

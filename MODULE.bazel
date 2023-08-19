@@ -120,63 +120,79 @@ bazel_dep(
 # rules_jvm_external
 ################################################################################
 
-# MAVEN_ARTIFACTS = [
-#     "org.graalvm.nativeimage:svm:%s" % GRAALVM_SDK_VERSION,
-#     "org.graalvm.sdk:graal-sdk:%s" % GRAALVM_SDK_VERSION,
-# ]
+MAVEN_ARTIFACTS = [
+    "org.graalvm.nativeimage:svm:%s" % GRAALVM_SDK_VERSION,
+    "org.graalvm.sdk:graal-sdk:%s" % GRAALVM_SDK_VERSION,
+]
 
-# MAVEN_REPOSITORIES = [
-#     "https://maven.pkg.st",
-#     "https://maven.google.com",
-#     "https://repo1.maven.org/maven2",
-# ]
+MAVEN_REPOSITORIES = [
+    "https://maven.pkg.st",
+    "https://maven.google.com",
+    "https://repo1.maven.org/maven2",
+]
 
-# maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
-# maven.install(
-#     name = "maven_gvm",
-#     artifacts = MAVEN_ARTIFACTS,
-#     lock_file = "//:maven_install.json",
-#     repositories = MAVEN_REPOSITORIES,
-# )
-# use_repo(
-#     maven,
-#     "maven_gvm",
-#     "unpinned_maven_gvm",
-# )
+maven = use_extension(
+    "@rules_jvm_external//:extensions.bzl",
+    "maven",
+    dev_dependency = True,
+)
+maven.install(
+    name = "maven_gvm",
+    artifacts = MAVEN_ARTIFACTS,
+    lock_file = "//:maven_install.json",
+    repositories = MAVEN_REPOSITORIES,
+)
+use_repo(
+    maven,
+    "maven_gvm",
+    "unpinned_maven_gvm",
+)
 
 ################################################################################
 # rules_graalvm
 ################################################################################
 
-# gvm = use_extension(":extensions.bzl", "graalvm")
-# gvm.graalvm(
-#     name = "graalvm",
-#     components = GRAALVM_COMPONENTS,
-#     distribution = GRAALVM_DIST,
-#     java_version = JAVA_VERSION,
-#     version = GRAALVM_VERSION,
-# )
-# use_repo(
-#     gvm,
-#     "graalvm",
-# )
+gvm = use_extension(
+    ":extensions.bzl",
+    "graalvm",
+    dev_dependency = True,
+)
+gvm.graalvm(
+    name = "graalvm",
+    components = GRAALVM_COMPONENTS,
+    distribution = GRAALVM_DIST,
+    java_version = JAVA_VERSION,
+    version = GRAALVM_VERSION,
+)
+use_repo(
+    gvm,
+    "graalvm",
+)
 
 ################################################################################
 # rules_python
 ################################################################################
 
-# python = use_extension("@rules_python//python/extensions:python.bzl", "python")
-# python.toolchain(
-#     python_version = PYTHON_VERSION,
-#     is_default = True,
-# )
-# use_repo(python, "python_3_11", "python_versions")
+python = use_extension(
+    "@rules_python//python/extensions:python.bzl",
+    "python",
+    dev_dependency = True,
+)
+python.toolchain(
+    python_version = PYTHON_VERSION,
+    is_default = True,
+)
+use_repo(python, "python_3_11", "python_versions")
 
-# pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip = use_extension(
+    "@rules_python//python/extensions:pip.bzl",
+    "pip",
+    dev_dependency = True,
+)
 
-# pip.parse(
-#     hub_name = "pip",
-#     python_version = PYTHON_VERSION,
-#     requirements_lock = "@//:requirements_lock.txt",
-# )
-# use_repo(pip, "pip", "pip_311")
+pip.parse(
+    hub_name = "pip",
+    python_version = PYTHON_VERSION,
+    requirements_lock = "@//:requirements_lock.txt",
+)
+use_repo(pip, "pip", "pip_311")
