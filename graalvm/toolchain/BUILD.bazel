@@ -10,12 +10,3 @@ alias(
     name = "graalvm",
     actual = "//graalvm/toolchain/gvm:toolchain_type",
 )
-
-# Toolchain type: `graalvm_native_image`
-#
-# Describes a `native-image` binary made available as part of a GraalVM installation of any type.
-# This tool may be installed via the GraalVM Updater or provided otherwise.
-alias(
-    name = "graalvm_native_image",
-    actual = "//graalvm/toolchain/native_image:toolchain_type",
-)

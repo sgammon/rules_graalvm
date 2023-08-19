@@ -337,11 +337,6 @@ alias(
     actual = "@{repo}//:gvm",
     visibility = ["//visibility:public"],
 )
-alias(
-    name = "toolchain_native_image",
-    actual = "@{repo}//:native_image",
-    visibility = ["//visibility:public"],
-)
 
 # Tool Aliases
 {rendered_bin_aliases}
@@ -493,14 +488,6 @@ toolchain(
     target_compatible_with = {target_compatible_with},
     target_settings = [":version_or_prefix_version_setting"],
     toolchain_type = "@rules_graalvm//graalvm/toolchain:graalvm",
-    toolchain = "{toolchain}",
-    visibility = ["//visibility:public"],
-)
-toolchain(
-    name = "native_image",
-    target_compatible_with = {target_compatible_with},
-    target_settings = [":version_or_prefix_version_setting"],
-    toolchain_type = "@rules_graalvm//graalvm/toolchain:graalvm_native_image",
     toolchain = "{toolchain}",
     visibility = ["//visibility:public"],
 )
