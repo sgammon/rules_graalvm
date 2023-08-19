@@ -5,10 +5,6 @@ load(
     "find_cpp_toolchain",
 )
 load(
-    "@bazel_skylib//lib:versions.bzl",
-    "versions",
-)
-load(
     "@bazel_tools//tools/build_defs/cc:action_names.bzl",
     "CPP_LINK_DYNAMIC_LIBRARY_ACTION_NAME",
     "CPP_LINK_EXECUTABLE_ACTION_NAME",
@@ -164,7 +160,7 @@ def _graal_binary_implementation(ctx):
 
     # fix: on bazel4, the `tools` parameter is expected to be a `File or FilesToRunProvider`, whereas
     # on later versions it is expected to be a `depset`.
-    if not ctx.attr._legacy_rule and versions.is_at_least("5", versions.get()):
+    if not ctx.attr._legacy_rule:
         run_params["tools"] = [
             ctx.attr._cc_toolchain.files,
         ]
