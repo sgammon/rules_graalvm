@@ -90,12 +90,6 @@ jobs:
             bazelversion: 6.3.2
             bzlmod: false
             bazel_config: bazel6
-          - runner: windows-latest
-            label: Windows / Bazel 6
-            bzlmod: false
-            labs: true
-            bazelversion: 6.3.2
-            bazel_config: bazel6
           - runner: macos-latest
             label: macOS / Bazel 6
             bzlmod: false
