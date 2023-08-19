@@ -4,6 +4,10 @@ load(
     "@bazel_gazelle//:def.bzl",
     "gazelle",
 )
+load(
+    "@bazel_skylib//:bzl_library.bzl",
+    "bzl_library",
+)
 
 [
     alias(
@@ -24,6 +28,18 @@ exports_files([
     "requirements.txt",
     "requirements_lock.txt",
 ])
+
+bzl_library(
+    name = "lib",
+    deps = [
+        "//lib:%s" % target for target in [
+            "defs",
+            "toolchain",
+            "repositories",
+            "workspace",
+        ]
+    ],
+)
 
 # gazelle:prefix github.com/sgammon/rules_graalvm
 gazelle(
