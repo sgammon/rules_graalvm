@@ -22,7 +22,6 @@ import %workspace%/tools/bazel/java.bazelrc
 common --color=auto
 
 build --worker_sandboxing
-build --spawn_strategy=worker,sandboxed,local
 build --verbose_failures
 
 # pick something trivial as a "noop"

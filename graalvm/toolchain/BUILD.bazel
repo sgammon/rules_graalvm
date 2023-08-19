@@ -7,6 +7,6 @@ package(default_visibility = ["//visibility:public"])
 # Describes a regular GraalVM toolchain; this type is satisfied by either GraalVM Community Edition
 # or a distribution of Oracle GraalVM.
 alias(
-    name = "graalvm",
+    name = "toolchain",
     actual = "//graalvm/toolchain/gvm:toolchain_type",
 )

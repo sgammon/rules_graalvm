@@ -14,7 +14,7 @@ load(
 
 _RULES_REPO = "@rules_graalvm"
 
-_NATIVE_IMAGE_TOOLCHAIN_TYPE = "%s//graalvm/toolchain/native_image:toolchain_type" % _RULES_REPO
+_NATIVE_IMAGE_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
 
