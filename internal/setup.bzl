@@ -9,10 +9,10 @@ load(
     "@rules_jvm_external//:setup.bzl",
     "rules_jvm_external_setup",
 )
-load(
-    "@maven_gvm//:defs.bzl",
-    "pinned_maven_install",
-)
+# load(
+#     "@maven_gvm//:defs.bzl",
+#     "pinned_maven_install",
+# )
 load(
     "@contrib_rules_jvm//:setup.bzl",
     "contrib_rules_jvm_setup",
@@ -34,14 +34,14 @@ load(
     "python_register_toolchains",
 )
 
-def _rules_graalvm_toolchains(enable_zig = FOREIGN_TOOLCHAINS, enable_llvm = FOREIGN_TOOLCHAINS):
+def _rules_graalvm_toolchains(
+    repository = "@graalvm",
+    enable_zig = FOREIGN_TOOLCHAINS,
+    enable_llvm = FOREIGN_TOOLCHAINS):
     """Register toolchains for use in the GraalVM Rules codebase."""
 
     native.register_toolchains(
-        "@graalvm//:toolchain",
-    )
-    native.register_toolchains(
-        "@graalvm//:toolchain_native_image",
+        "%s//:toolchain" % repository,
     )
     if enable_llvm:
         llvm_register_toolchains()
@@ -83,9 +83,9 @@ def _rules_graalvm_setup_workspace(gazelle = True, maven = False, python = True)
         # Bazel Skylib: Gazelle Plugin
         bazel_skylib_gazelle_plugin_setup(register_go_toolchains = False)
 
-    if maven:
+    # if maven:
         # Maven: Pinned
-        pinned_maven_install()
+        # pinned_maven_install()
 
 rules_graalvm_toolchains = _rules_graalvm_toolchains
 rules_graalvm_workspace = _rules_graalvm_setup_workspace

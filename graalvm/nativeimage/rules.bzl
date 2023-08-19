@@ -12,16 +12,25 @@ load(
     "C_COMPILE_ACTION_NAME",
 )
 
-_DEFAULT_REPO = "@graalvm"
 _RULES_REPO = "@rules_graalvm"
 
-_NATIVE_IMAGE_TOOLCHAIN = "%s//:toolchain_native_image" % _DEFAULT_REPO
-_NATIVE_IMAGE_TOOLCHAIN_TYPE = "%s//graalvm/toolchain:graalvm_native_image" % _RULES_REPO
-_BAZEL_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:toolchain_type"
+_NATIVE_IMAGE_TOOLCHAIN_TYPE = "%s//graalvm/toolchain/native_image:toolchain_type" % _RULES_REPO
+_BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
 
 def _graal_binary_implementation(ctx):
-    graal_attr = ctx.attr.native_image
+    graal_attr = ctx.attr.native_image_tool
+    if graal_attr == None:
+        # resolve via toolchains
+        pass
+
+    if graal_attr == None:
+        # still failed to resolve: cannot resolve via either toolchains or attributes.
+        fail("""
+            No `native-image` tool found. Please either define a `native_image_tool` in your target,
+            or install a GraalVM `native-image` toolchain.
+        """)
+
     graal_inputs, _, _ = ctx.resolve_command(tools = [graal_attr])
     graal = graal_inputs[0]
 
@@ -139,7 +148,7 @@ def _graal_binary_implementation(ctx):
         progress_message = "Compiling native image %{label}",
         use_default_shell_env = False,
         env = env,
-        toolchain = Label(_NATIVE_IMAGE_TOOLCHAIN_TYPE),
+        # toolchain = Label(_NATIVE_IMAGE_TOOLCHAIN_TYPE),
         tools = [
             ctx.attr._cc_toolchain.files,
         ],
@@ -166,17 +175,14 @@ native_image = rule(
         "initialize_at_build_time": attr.string_list(),
         "initialize_at_run_time": attr.string_list(),
         "native_features": attr.string_list(),
-        "native_image": attr.label(
+        "native_image_tool": attr.label(
             cfg = "exec",
-            default = Label("%s//:native-image" % _DEFAULT_REPO),
             allow_files = True,
             executable = True,
+            mandatory = False,
         ),
         "_cc_toolchain": attr.label(
             default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
-        ),
-        "native_image_toolchain": attr.label(
-            default = Label(_NATIVE_IMAGE_TOOLCHAIN),
         ),
         "check_toolchains": attr.bool(default = False),
         "data": attr.label_list(allow_files = True),
@@ -190,7 +196,7 @@ native_image = rule(
         "platform",
     ],
     toolchains = [
-        config_common.toolchain_type(_BAZEL_CPP_TOOLCHAIN, mandatory = True),
-        config_common.toolchain_type(_NATIVE_IMAGE_TOOLCHAIN_TYPE, mandatory = True),
+        config_common.toolchain_type(_BAZEL_CPP_TOOLCHAIN_TYPE, mandatory = True),
+        config_common.toolchain_type(_NATIVE_IMAGE_TOOLCHAIN_TYPE, mandatory = False),
     ],
 )
