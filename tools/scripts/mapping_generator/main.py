@@ -46,6 +46,7 @@ class Component(Enum):
     PYTHON = "python"
     LLVM = "llvm"
     RUBY = "ruby"
+    ESPRESSO = "espresso"
 
     def label(self):
         """Return a human-readable label for this component."""
@@ -56,7 +57,8 @@ class Component(Enum):
             Component.WASM: "GraalWasm",
             Component.PYTHON: "GraalPython",
             Component.LLVM: "Sulong",
-            Component.RUBY: "TruffleRuby"
+            Component.RUBY: "TruffleRuby",
+            Component.ESPRESSO: "Espresso",
         }[self]
 
 class Platform(Enum):
@@ -177,6 +179,7 @@ DEFAULT_COMPONENTS = [
     Component.PYTHON,
     Component.LLVM,
     Component.RUBY,
+    Component.ESPRESSO,
 ]
 
 DEFAULT_PLATFORMS = [
