@@ -4,7 +4,7 @@
   Mappings Generator
   ------------------
 
-  Generates Starlark SHA256 mappings for GraalVM download artifacts.
+  Generates Starlark SHA256 mappings for GraalVM artifacts.
 """
 
 import sys, time, os, logging, argparse, itertools
@@ -206,6 +206,47 @@ TRANSITIONAL_RELEASES = [
     # None yet.
 ]
 
+JAVA_VERSION_TAGS = {
+    JavaVersion.JAVA_8: "@rules_graalvm//platform/jvm:java8",
+    JavaVersion.JAVA_11: "@rules_graalvm//platform/jvm:java11",
+    JavaVersion.JAVA_17: "@rules_graalvm//platform/jvm:java17",
+    JavaVersion.JAVA_19: "@rules_graalvm//platform/jvm:java19",
+    JavaVersion.JAVA_20: "@rules_graalvm//platform/jvm:java20",
+    JavaVersion.JAVA_21: "@rules_graalvm//platform/jvm:java21",
+}
+
+COMPONENT_TAGS = {
+    Component.PYTHON: ["@rules_graalvm//platform/engine/python"],
+    Component.RUBY: ["@rules_graalvm//platform/engine/ruby"],
+    Component.JS: ["@rules_graalvm//platform/engine/javascript"],
+    Component.ESPRESSO: ["@rules_graalvm//platform/engine/java"],
+    Component.WASM: ["@rules_graalvm//platform/engine/wasm"],
+    Component.LLVM: ["@rules_graalvm//platform/engine/llvm"],
+}
+
+PLATFORM_TAG_MAPPINGS = {
+    Platform.MACOS_AARCH64: [
+        "@platforms//cpu:aarch64",
+        "@platforms//os:macos",
+    ],
+    Platform.MACOS_X64: [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:macos",
+    ],
+    Platform.LINUX_AARCH64: [
+        "@platforms//cpu:aarch64",
+        "@platforms//os:linux",
+    ],
+    Platform.LINUX_X64: [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:linux",
+    ],
+    Platform.WINDOWS_X64: [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:windows",
+    ],
+}
+
 ALIGNMENT_VERSIONS = [
     # jvm version -- java version -- gvm version
     ("20.0.2", (JavaVersion.JAVA_20,), "23.0.1"),
@@ -235,10 +276,10 @@ ORACLE_DOWNLOAD_BASE_LATEST = "https://download.oracle.com/java/{java_version_ma
 ORACLE_DOWNLOAD_BASE_ARCHIVE = "https://download.oracle.com/java/{java_version_major}/archive/jdk-{java_version}_{platform}_bin.{ext}"
 
 # Latest download endpoint for Oracle GVM components
-ORACLE_DOWNLOAD_COMPONENT_LATEST = ""
+ORACLE_DOWNLOAD_COMPONENT_LATEST = "" # TODO
 
 # Archive download endpoint for Oracle GVM components
-ORACLE_DOWNLOAD_COMPONENT_ARCHIVE = ""
+ORACLE_DOWNLOAD_COMPONENT_ARCHIVE = "" # TODO
 
 # GitHub repo to pull CE releases from
 DEFAULT_COMMUNITY_REPO = "graalvm/graalvm-ce-builds"
@@ -706,7 +747,7 @@ class DownloadTarget:
 
         self.args = args
         self.platform = Platform(platform)
-        self.component = component
+        self.component = Component(component)
         self.jdk = jdk
         self.jvm = None
         self.latest = False
@@ -787,6 +828,20 @@ class DownloadTarget:
             ])))
             self.__cached_coordinate = "_".join(fragments)
         return self.__cached_coordinate
+
+    def constraints(self):
+        """Generate a set of Bazel Platforms constraints matching this target."""
+        tags = [] + (
+            PLATFORM_TAG_MAPPINGS[self.platform]
+        ) + [
+            JAVA_VERSION_TAGS[self.jdk]
+        ]
+
+        if self.component is not None and self.component != Component.BASE:
+            if self.component in COMPONENT_TAGS:
+                tags.extend(COMPONENT_TAGS[self.component])
+
+        return tags
 
     def description(self):
         """Generate a human-readable label describing this target."""
@@ -1295,8 +1350,7 @@ def print_report(args, javas, platforms, distributions, versions, components, sk
 
     if not args.quiet:
         highlight = lambda x: colorize(bold_white, x)
-        say(colorize(grey, """
-Generating mappings for product of:
+        say(colorize(grey, "Generating mappings for:") + """
 - Platforms: {platforms}
 - JDKs: {javas}
 - Components: {components}
@@ -1308,7 +1362,7 @@ Generating mappings for product of:
             distributions = ", ".join(map(highlight, distributions)),
             versions = ", ".join(map(highlight, versions)),
             components = ", ".join(map(highlight, components)),
-        )))
+        ))
         logger.debug("""
 Mapping rules:
 {mapping_rules}
@@ -1531,6 +1585,9 @@ def generate(args):
     # %s
     "url": "%s",
     "sha256": "%s",
+    "compatible_with": [
+%s
+    ],
   },"""
 
     mapping_file_template = """
@@ -1655,11 +1712,22 @@ resolve_distribution_artifact = _resolve_distribution_artifact
     rendered_mappings = {}
     for (task, (download, sha, result)) in registered_hashes.items():
         coordinate = task.coordinate()
+        tags = task.constraints()
+
+        # join tags into an array of strings, each on new lines, with padding
+        if len(tags) == 0:
+            raise NotImplementedError("Targets require constraints")
+        rendered_tags = "\n".join(map(
+            lambda x: "        \"%s\"," % x,
+            tags,
+        ))
+
         rendered_mappings[coordinate] = (mapping_template % (
             coordinate,
             task.description(),
             download,
             result,
+            rendered_tags,
         ))
 
     sorted_mappings = []
@@ -1677,10 +1745,11 @@ resolve_distribution_artifact = _resolve_distribution_artifact
     outstream = sys.stdout
     if not args.no_render:
         if args.out and args.out != "-":
-            logger.debug("Writing output to file '%s'" % args.out)
+            target_file = os.path.abspath(args.out)
+            logger.debug("Writing output to file '%s'" % target_file)
             try:
-                with open(os.path.abspath(), "w") as outfile:
-                    say(colorize(grey, "Writing mappings to output file '%s'..." % args.out))
+                with open(target_file, "w") as outfile:
+                    say(colorize(grey, "Writing mappings to output file '%s'..." % target_file))
                     emit_rendered_mappings(outfile, rendered_mappings_file)
                     logger.debug("Wrote to file successfully.")
 
