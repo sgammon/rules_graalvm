@@ -14,12 +14,57 @@ load(
 
 _RULES_REPO = "@rules_graalvm"
 _DEFAULT_GVM_REPO = "@graalvm"
-_NATIVE_IMAGE_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
+_GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
 
+_NATIVE_IMAGE_ATTRS = {
+    "deps": attr.label_list(
+        providers = [[JavaInfo]],
+    ),
+    "main_class": attr.string(
+        mandatory = True,
+    ),
+    "include_resources": attr.string(
+        mandatory = False,
+    ),
+    "reflection_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
+    "jni_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
+    "initialize_at_build_time": attr.string_list(
+        mandatory = False,
+    ),
+    "initialize_at_run_time": attr.string_list(
+        mandatory = False,
+    ),
+    "native_features": attr.string_list(
+        mandatory = False,
+    ),
+    "data": attr.label_list(
+        allow_files = True,
+    ),
+    "extra_args": attr.string_list(
+        mandatory = False,
+    ),
+    "check_toolchains": attr.bool(
+        default = False,
+    ),
+    "c_compiler_option": attr.string_list(
+        mandatory = False,
+    ),
+    "_cc_toolchain": attr.label(
+        default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
+    ),
+}
+
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
+
     if graal_attr == None:
         # resolve via toolchains
         pass
@@ -72,14 +117,14 @@ def _graal_binary_implementation(ctx):
     env = {}
     paths = sorted(path_set.keys())
     if ctx.configuration.host_path_separator == ":":
-       # HACK: ":" is a proxy for a UNIX-like host.
-       # The tools returned above may be bash scripts that reference commands
-       # in directories we might not otherwise include. For example,
-       # on macOS, wrapped_ar calls dirname.
-       if "/bin" not in path_set:
-           paths.append("/bin")
-           if "/usr/bin" not in path_set:
-               paths.append("/usr/bin")
+        # HACK: ":" is a proxy for a UNIX-like host.
+        # The tools returned above may be bash scripts that reference commands
+        # in directories we might not otherwise include. For example,
+        # on macOS, wrapped_ar calls dirname.
+        if "/bin" not in path_set:
+            paths.append("/bin")
+            if "/usr/bin" not in path_set:
+                paths.append("/usr/bin")
 
     # fix: make sure to include VS install dir on windows
     if "VSINSTALLDIR" in ctx.configuration.default_shell_env:
@@ -180,11 +225,11 @@ def _graal_binary_implementation(ctx):
         ),
     )]
 
-
 # Exports.
 RULES_REPO = _RULES_REPO
 DEFAULT_GVM_REPO = _DEFAULT_GVM_REPO
 BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 BAZEL_CPP_TOOLCHAIN_TYPE = _BAZEL_CPP_TOOLCHAIN_TYPE
-NATIVE_IMAGE_TOOLCHAIN_TYPE = _NATIVE_IMAGE_TOOLCHAIN_TYPE
+NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
+GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
 graal_binary_implementation = _graal_binary_implementation

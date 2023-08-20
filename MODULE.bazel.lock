@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "f5e7e70fead60f435e833360ee0f934a62c4c872e6d5b3f41c64923426d0f83c",
+  "moduleFileHash": "4bde7e25e2e7484f98b043772179526cb326af2fa599245e962ae4beb84a95ec",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -22,7 +22,9 @@
       "key": "<root>",
       "repoName": "rules_graalvm",
       "executionPlatformsToRegister": [],
-      "toolchainsToRegister": [],
+      "toolchainsToRegister": [
+        "@graalvm//:toolchain"
+      ],
       "extensionUsages": [
         {
           "extensionBzlFile": "@rules_jvm_external//:extensions.bzl",
@@ -92,7 +94,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 183,
+            "line": 184,
             "column": 23
           },
           "imports": {
@@ -110,7 +112,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 188,
+                "line": 189,
                 "column": 17
               }
             }
@@ -124,7 +126,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 194,
+            "line": 195,
             "column": 20
           },
           "imports": {
@@ -142,7 +144,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 200,
+                "line": 201,
                 "column": 10
               }
             }
@@ -156,7 +158,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 211,
+            "line": 212,
             "column": 21
           },
           "imports": {},
@@ -168,7 +170,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 217,
+                "line": 218,
                 "column": 15
               }
             }
@@ -182,7 +184,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 219,
+            "line": 220,
             "column": 20
           },
           "imports": {
@@ -198,7 +200,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 225,
+                "line": 226,
                 "column": 23
               }
             }
@@ -3801,7 +3803,7 @@
       }
     },
     "//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "Pwt+Trie+/gRY1rn+p2Nza+WEyOvenIj6Gfi5O4Ypms=",
+      "bzlTransitiveDigest": "i3yCeZw86CWMNqCTRm9kiDVGYKK5UuXLeGGvMU2gx9Q=",
       "envVariables": {},
       "generatedRepoSpecs": {
         "graalvm": {

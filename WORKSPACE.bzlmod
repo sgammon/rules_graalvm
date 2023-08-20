@@ -122,7 +122,7 @@ load("//internal:repositories.bzl", "rules_graalvm_repositories")
 
 rules_graalvm_repositories(maven = False)
 
-load("//internal:setup.bzl", "rules_graalvm_workspace", "rules_graalvm_toolchains")
+load("//internal:setup.bzl", "rules_graalvm_toolchains", "rules_graalvm_workspace")
 
 rules_graalvm_toolchains()
 
