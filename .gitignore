@@ -23,3 +23,6 @@ local.bazelrc
 /bazel.iml
 .bazel_cache
 node_modules/
+__pycache__
+*.pyc
+*.pyo
