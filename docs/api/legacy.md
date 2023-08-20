@@ -29,7 +29,7 @@ native_image(<a href="#native_image-name">name</a>, <a href="#native_image-c_com
 | <a id="native_image-initialize_at_build_time"></a>initialize_at_build_time |  -   | List of strings | optional | <code>[]</code> |
 | <a id="native_image-initialize_at_run_time"></a>initialize_at_run_time |  -   | List of strings | optional | <code>[]</code> |
 | <a id="native_image-jni_configuration"></a>jni_configuration |  -   | <a href="https://bazel.build/concepts/labels">Label</a> | optional | <code>None</code> |
-| <a id="native_image-main_class"></a>main_class |  -   | String | optional | <code>""</code> |
+| <a id="native_image-main_class"></a>main_class |  -   | String | required |  |
 | <a id="native_image-native_features"></a>native_features |  -   | List of strings | optional | <code>[]</code> |
 | <a id="native_image-native_image_tool"></a>native_image_tool |  -   | <a href="https://bazel.build/concepts/labels">Label</a> | optional | <code>@graalvm//:native-image</code> |
 | <a id="native_image-reflection_configuration"></a>reflection_configuration |  -   | <a href="https://bazel.build/concepts/labels">Label</a> | optional | <code>None</code> |

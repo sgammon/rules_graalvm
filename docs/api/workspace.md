@@ -2,6 +2,26 @@
 
 Bazel Workspace (non-Bzlmod) definitions.
 
+<a id="register_graalvm_toolchains"></a>
+
+## register_graalvm_toolchains
+
+<pre>
+register_graalvm_toolchains(<a href="#register_graalvm_toolchains-repository">repository</a>, <a href="#register_graalvm_toolchains-register_java_toolchain">register_java_toolchain</a>, <a href="#register_graalvm_toolchains-register_gvm_toolchain">register_gvm_toolchain</a>)
+</pre>
+
+Register GraalVM toolchains for Native Image and installed language components.
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="register_graalvm_toolchains-repository"></a>repository |  <p align="center"> - </p>   |  <code>"@graalvm"</code> |
+| <a id="register_graalvm_toolchains-register_java_toolchain"></a>register_java_toolchain |  <p align="center"> - </p>   |  <code>True</code> |
+| <a id="register_graalvm_toolchains-register_gvm_toolchain"></a>register_gvm_toolchain |  <p align="center"> - </p>   |  <code>False</code> |
+
+
 <a id="rules_graalvm_repositories"></a>
 
 ## rules_graalvm_repositories
@@ -24,17 +44,5 @@ can be omitted with the provided arguments.
 | :------------- | :------------- | :------------- |
 | <a id="rules_graalvm_repositories-omit_rules_java"></a>omit_rules_java |  Omit the <code>rules_java</code> dependency.   |  <code>False</code> |
 | <a id="rules_graalvm_repositories-omit_bazel_skylib"></a>omit_bazel_skylib |  Omit the <code>bazel_skylib</code> dependency.   |  <code>False</code> |
-
-
-<a id="rules_graalvm_toolchains"></a>
-
-## rules_graalvm_toolchains
-
-<pre>
-rules_graalvm_toolchains()
-</pre>
-
-
-
 
 
