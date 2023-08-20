@@ -1,0 +1,20 @@
+package(default_visibility = [
+    "@//:__pkg__",
+    "@//tools:__pkg__",
+    "@//tools:__subpackages__",
+])
+
+py_binary(
+    name = "generator",
+    srcs = [
+        "generator.py",
+    ],
+    deps = [
+        "//tools/scripts/mapping_generator",
+    ],
+    tags = [
+        "manual",
+        "no-sandbox",
+        "requires-network",
+    ],
+)
