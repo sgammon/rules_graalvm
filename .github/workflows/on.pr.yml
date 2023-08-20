@@ -62,31 +62,35 @@ jobs:
         bzlmod: [false]
         bazelversion: ["7.0.0-pre.20230724.1"]
         bazel_config: ["bazel7"]
+        main: [false]
         include:
           # Bazel 7
           - runner: ubuntu-latest
             label: Ubuntu / Bazel 7
             labs: false
+            main: false
             bazelversion: 7.0.0-pre.20230724.1
             bazel_config: bazel7
           - runner: ubuntu-latest
             label: Ubuntu / Bzlmod 7
             bzlmod: true
-            labs: true
-            bazelversion: 7.0.0-pre.20230724.1
-            bazel_config: bazel7
-          - runner: windows-latest
-            label: Windows / Bazel 7
-            bzlmod: false
-            labs: true
+            labs: false
+            main: true
             bazelversion: 7.0.0-pre.20230724.1
             bazel_config: bazel7
           - runner: macos-latest
             label: macOS / Bazel 7
-            bzlmod: false
+            bzlmod: true
             labs: false
+            main: true
             bazelversion: 7.0.0-pre.20230724.1
             bazel_config: bazel7
+          #          - runner: windows-latest
+          #            label: Windows / Bazel 7
+          #            bzlmod: false
+          #            labs: true
+          #            bazelversion: 7.0.0-pre.20230724.1
+          #            bazel_config: bazel7
 
           # Bazel 6
           - runner: ubuntu-latest
@@ -94,11 +98,13 @@ jobs:
             labs: false
             bazelversion: 6.3.2
             bzlmod: false
+            main: false
             bazel_config: bazel6
           - runner: macos-latest
             label: macOS / Bazel 6
             bzlmod: false
             labs: false
+            main: false
             bazelversion: 6.3.2
             bazel_config: bazel6
 
@@ -110,3 +116,4 @@ jobs:
       labs: ${{ matrix.labs }}
       bazel_version: ${{ matrix.bazelversion }}
       bazel_config: ${{ matrix.bazel_config }}
+      main: ${{ matrix.main }}
