@@ -1,21 +1,5 @@
 workspace(name = "rules_graalvm_sample")
 
-local_repository(
-    name = "rules_graalvm",
-    path = "../..",
-)
-
 load("@rules_graalvm//graalvm:workspace.bzl", "rules_graalvm_repositories")
 
 rules_graalvm_repositories()
-
-#---SNIP--- Below here is re-used in the workspace snippet published on releases
-
-load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
-
-graalvm_repository(
-    name = "graalvm",
-    distribution = "oracle",
-    java_version = "20",
-    version = "20.0.2",
-)
