@@ -1,0 +1,8 @@
+load(
+    ":native_rules_testsuite.bzl",
+    "testsuite",
+)
+
+testsuite(
+    name = "nativeimage",
+)
