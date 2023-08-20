@@ -9,7 +9,21 @@ package(default_visibility = [
 
 py_library(
     name = "tool",
-    srcs = glob(["*.py"]),
+    srcs = [
+        "artifact.py",
+        "cli.py",
+        "config.py",
+        "constants.py",
+        "definitions.py",
+        "downloader.py",
+        "generator.py",
+        "logger.py",
+        "matrix.py",
+        "oracle_gds.py",
+        "render.py",
+        "rule.py",
+        "versions.py",
+    ],
     deps = [
         requirement("pygithub"),
         requirement("semver"),
