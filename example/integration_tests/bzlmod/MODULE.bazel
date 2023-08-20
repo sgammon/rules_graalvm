@@ -11,7 +11,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_graalvm",
-    version = "0.9.0",
+    version = "0.0.0",
 )
 local_path_override(
     module_name = "rules_graalvm",
@@ -29,5 +29,4 @@ use_repo(
     gvm,
     "graalvm",
 )
-
-register_toolchains("@graalvm//:all")
+register_toolchains("@graalvm//:toolchain")

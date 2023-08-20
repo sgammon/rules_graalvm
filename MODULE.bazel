@@ -175,6 +175,10 @@ use_repo(
     gvm,
     "graalvm",
 )
+register_toolchains(
+    "@graalvm//:toolchain",
+    dev_dependency = True,
+)
 
 ################################################################################
 # rules_python
