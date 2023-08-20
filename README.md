@@ -18,8 +18,9 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Installing components with `gu`](./docs/components.md)
 - [Using GraalVM as a Bazel Java toolchain](./docs/toolchain.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./docs/modern-bazel.md)
+- [Support for Bazel 5 and Bazel 4, drop-in replacement for `rules_graal`](./legacy-bazel.md)
 - [Run tools from GraalVM directly](./docs/binary-targets.md)
-- Support for macOS, Linux, Windows (including `native-image`!)
+- Support for macOS, Linux, Windows, ~~Windows~~ (working on it)
 - Support for latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
 ## Installation
@@ -114,9 +115,9 @@ build --java_runtime_version=graalvm_20
 > **Note**
 > If you name your repository `example` and set the Java version to `21`, your `java_runtime_version` would be `example_21`.
 
-## Usage: Build a native binary
+## Build a native binary on Bazel 6+
 
-This example is present in the repository at `//example/native`. You can build it in your own workspace with `bazel build @rules_graalvm//example/native`.
+> API docs for [`native_image`](./api/defs.md)
 
 **In a `BUILD.bazel` file:**
 
@@ -126,7 +127,47 @@ load("@rules_graalvm//graalvm:defs.bzl", "native_image")
 
 java_library(
     name = "main",
-    srcs = ["Main.java"],
+    srcs = glob(["Main.java"]),
+)
+
+native_image(
+    name = "main-native",
+    deps = [":main"],
+    main_class = "Main",
+    native_image_tool = "@graalvm//:native-image",
+)
+```
+
+### Native image toolchains
+
+It is supported to specify the `native-image` tool as above, using the `native_image_tool` attribute
+on your target. In fact, you _must_ do this _unless_ you register the GraalVM toolchains as shown in
+the installation instructions.
+
+When using toolchains, the `native_image_tool` attribute can be omitted, which delegates to Bazel's
+toolchain system to resolve the tool:
+
+```python
+native_image(
+    name = "main-native",
+    deps = [":main"],
+    main_class = "Main",
+)
+```
+
+## Build a native binary on Bazel 4 and Bazel 5
+
+> API docs for legacy [`native_image`](./api/legacy.md) rule
+
+**In a `BUILD.bazel` file:**
+
+```python
+load("@rules_java//java:defs.bzl", "java_library")
+load("@rules_graalvm//graal:graal.bzl", "native_image")
+
+java_library(
+    name = "main",
+    srcs = glob(["Main.java"]),
 )
 
 native_image(
@@ -135,6 +176,10 @@ native_image(
     main_class = "Main",
 )
 ```
+
+**Note:** In the legacy rules, you don't have to specify `native_image_tool`, but on the other hand,
+the default target `@graalvm//:native-image` is hard-coded in. If you use a different repository name
+make sure to add the `native_image_tool` attribute to point to `@yourrepo//:native-image`.
 
 ## Known issues
 
