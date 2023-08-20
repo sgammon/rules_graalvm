@@ -33,10 +33,13 @@ def _gvm_impl(mctx):
         sha256 = selected.sha256,
     )
 
-    _extension_meta = {
-        "root_module_direct_dev_deps": [],
-        "root_module_direct_deps": [selected.name],
-    }
+    _extension_meta = {}
+    if not mctx.root_module_has_non_dev_dependency:
+        _extension_meta["root_module_direct_dev_deps"] = [selected.name]
+        _extension_meta["root_module_direct_deps"] = []
+    else:
+        _extension_meta["root_module_direct_deps"] = [selected.name]
+        _extension_meta["root_module_direct_dev_deps"] = []
 
     return mctx.extension_metadata(
         **_extension_meta
