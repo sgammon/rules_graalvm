@@ -3803,7 +3803,7 @@
       }
     },
     "//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "LtFYmk+bEY2EV2uZRbLRr73XR1Uvqh+bURQF7QJ8c+w=",
+      "bzlTransitiveDigest": "67Uy7RbBpdDGuZCYYMia9O/XOhOju9Sy1WI2zXZ5wOc=",
       "envVariables": {},
       "generatedRepoSpecs": {
         "graalvm": {
