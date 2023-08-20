@@ -1,0 +1,8 @@
+load(
+    ":analysis_tests.bzl",
+    "testsuite",
+)
+
+testsuite(
+    name = "sanity",
+)

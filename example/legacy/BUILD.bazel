@@ -4,7 +4,7 @@ load(
     "java_library",
 )
 load(
-    "@rules_graalvm//graalvm:defs.bzl",
+    "@rules_graalvm//graal:graal.bzl",
     "native_image",
 )
 
@@ -29,10 +29,9 @@ native_image(
     name = "main-native",
     main_class = "Main",
     deps = [":java"],
-    native_image_tool = "@graalvm//:native-image",
 )
 
 alias(
-    name = "native",
+    name = "legacy",
     actual = "main-native",
 )
