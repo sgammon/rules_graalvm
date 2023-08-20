@@ -14,9 +14,18 @@ derive_targets_from_directories: false
 build_flags:
   --config=dev
 
+targets:
+  //.aspect/...
+  //graalvm/...
+  //lib/...
+  //internal/...
+  //tools/...
+
 test_sources:
   tests/*
+  tools/scripts/mapping_generator_tests/*
 
 additional_languages:
   java
   javascript
+  python

@@ -7,7 +7,6 @@ build:strict --incompatible_depset_for_libraries_to_link_getter
 build:strict --incompatible_disable_expand_if_all_available_in_flag_set
 build:strict --incompatible_disable_native_android_rules
 build:strict --incompatible_disable_runtimes_filegroups
-build:strict --incompatible_disable_target_provider_fields
 build:strict --incompatible_disallow_legacy_javainfo
 build:strict --incompatible_disallow_legacy_py_provider
 build:strict --incompatible_do_not_split_linking_cmdline
@@ -43,6 +42,8 @@ build:strict --incompatible_use_platforms_repo_for_constraints
 build:strict --incompatible_use_python_toolchains
 build:strict --incompatible_validate_top_level_header_inclusions
 build:strict --incompatible_visibility_private_attributes_at_definition
+
+build:strict-noide --incompatible_disable_target_provider_fields
 
 build:strict-broken --incompatible_strict_action_env
 build:strict-broken --incompatible_disallow_empty_glob
