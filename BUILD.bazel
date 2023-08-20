@@ -27,6 +27,8 @@ exports_files([
     "WORKSPACE.bazel",
     "requirements.txt",
     "requirements_lock.txt",
+    "pnpm-lock.yaml",
+    ".bazelignore",
 ])
 
 bzl_library(
