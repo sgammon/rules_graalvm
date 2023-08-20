@@ -26,6 +26,10 @@ load(
 #     "rules_cc_toolchains",
 # )
 load(
+    "@bazel_features//:deps.bzl",
+    "bazel_features_deps",
+)
+load(
     "@rules_java//java:repositories.bzl",
     "rules_java_dependencies",
     "rules_java_toolchains",
@@ -183,6 +187,10 @@ def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linter
     # Stardoc
 
     stardoc_repositories()
+
+    # Features
+
+    bazel_features_deps()
 
     if maven:
         maven_install(

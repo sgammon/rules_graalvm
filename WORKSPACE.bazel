@@ -13,6 +13,7 @@ load(
     "HERMETIC_CC_TOOLCHAIN_SHA",
     "RULES_PYTHON_VERSION",
     "RULES_PYTHON_SHA",
+    "NODE_VERSION",
 )
 
 http_archive(
@@ -39,6 +40,13 @@ http_archive(
 )
 
 http_archive(
+    name = "aspect_rules_js",
+    sha256 = "7b2a4d1d264e105eae49a27e2e78065b23e2e45724df2251eacdd317e95bfdfd",
+    strip_prefix = "rules_js-1.31.0",
+    url = "https://github.com/aspect-build/rules_js/releases/download/v1.31.0/rules_js-v1.31.0.tar.gz",
+)
+
+http_archive(
     name = "rules_java",
     urls = [
         "https://github.com/bazelbuild/rules_java/releases/download/6.4.0/rules_java-6.4.0.tar.gz",
@@ -60,6 +68,13 @@ http_archive(
         "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
         "https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
     ],
+)
+
+http_archive(
+    name = "bazel_features",
+    sha256 = "f3082bfcdca73dc77dcd68faace806135a2e08c230b02b1d9fbdbd7db9d9c450",
+    strip_prefix = "bazel_features-0.1.0",
+    url = "https://github.com/bazel-contrib/bazel_features/releases/download/v0.1.0/bazel_features-v0.1.0.tar.gz",
 )
 
 http_archive(
@@ -112,6 +127,22 @@ http_archive(
     sha256 = "ae46b722a8b8e9b62170f83bfb040cbf12adb732144e689985a66b26410a7d6f",
     strip_prefix = "rules_cc-0.0.8",
     urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.8/rules_cc-0.0.8.tar.gz"],
+)
+
+http_archive(
+    name = "rules_license",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz",
+        "https://github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz",
+    ],
+    sha256 = "4531deccb913639c30e5c7512a054d5d875698daeb75d8cf90f284375fe7c360",
+)
+
+http_archive(
+    name = "rules_testing",
+    sha256 = "8df0a8eb21739ea4b0a03f5dc79e68e245a45c076cfab404b940cc205cb62162",
+    strip_prefix = "rules_testing-0.4.0",
+    url = "https://github.com/bazelbuild/rules_testing/releases/download/v0.4.0/rules_testing-v0.4.0.tar.gz",
 )
 
 http_archive(
@@ -207,10 +238,16 @@ http_archive(
 )
 
 # --------------------------------------------------------------------------------------------------------------
+# Setup, Part 1
 
 load("//internal:repositories.bzl", "rules_graalvm_repositories")
 
 rules_graalvm_repositories()
+
+# --------------------------------------------------------------------------------------------------------------
+# Dev Dependencies:
+
+# - Python
 
 load("@rules_python//python:pip.bzl", "pip_parse")
 
@@ -222,6 +259,34 @@ pip_parse(
 load("@pip//:requirements.bzl", "install_deps")
 
 install_deps()
+
+# - JavaScript
+
+load("@aspect_rules_js//js:repositories.bzl", "rules_js_dependencies")
+
+rules_js_dependencies()
+
+load("@rules_nodejs//nodejs:repositories.bzl", "nodejs_register_toolchains")
+
+nodejs_register_toolchains(
+    name = "nodejs",
+    node_version = NODE_VERSION,
+)
+
+load("@aspect_rules_js//npm:repositories.bzl", "npm_translate_lock")
+
+npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+
+load("@npm//:repositories.bzl", "npm_repositories")
+
+npm_repositories()
+
+# --------------------------------------------------------------------------------------------------------------
+# Setup, Part 2
 
 load("//internal:setup.bzl", "rules_graalvm_toolchains", "rules_graalvm_workspace")
 

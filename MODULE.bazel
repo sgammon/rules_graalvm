@@ -7,6 +7,7 @@ module(
 
 JAVA_VERSION = "20"
 PYTHON_VERSION = "3.11"
+NODE_VERSION = "20.5.0"
 
 GRAALVM_VERSION = "20.0.2"
 GRAALVM_DIST = "oracle"
@@ -24,10 +25,6 @@ bazel_dep(
 bazel_dep(
     name = "bazel_features",
     version = "0.2.0",
-)
-bazel_dep(
-    name = "rules_cc",
-    version = "0.0.8",
 )
 bazel_dep(
     name = "rules_java",
@@ -51,13 +48,28 @@ bazel_dep(
 ##
 
 bazel_dep(
+    name = "rules_cc",
+    version = "0.0.8",
+    dev_dependency = True,
+)
+bazel_dep(
     name = "rules_python",
     version = "0.24.0",
     dev_dependency = True,
 )
 bazel_dep(
+    name = "rules_testing",
+    version = "0.4.0",
+    dev_dependency = True,
+)
+bazel_dep(
     name = "aspect_rules_js",
     version = "1.31.0",
+    dev_dependency = True,
+)
+bazel_dep(
+    name = "rules_nodejs",
+    version = "5.8.2",
     dev_dependency = True,
 )
 bazel_dep(
@@ -196,3 +208,29 @@ pip.parse(
     requirements_lock = "@//:requirements_lock.txt",
 )
 use_repo(pip, "pip", "pip_311")
+
+################################################################################
+# rules_js
+################################################################################
+
+node = use_extension(
+    "@rules_nodejs//nodejs:extensions.bzl",
+    "node",
+    dev_dependency = True,
+)
+
+node.toolchain(node_version = NODE_VERSION)
+
+npm = use_extension(
+    "@aspect_rules_js//npm:extensions.bzl",
+    "npm",
+    dev_dependency = True,
+)
+
+npm.npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+
+use_repo(npm, "npm")
