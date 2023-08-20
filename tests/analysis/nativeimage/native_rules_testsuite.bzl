@@ -43,14 +43,13 @@ def _test_gvm_default_nativeimage_tool_impl(env, target):
         "tests/analysis/nativeimage/test_gvm_modern_nativeimage_native-bin",
     )
 
-
 ## Exports.
 def rules_graalvm_nativeimage_testsuite(name):
-  test_suite(
-    name = name,
-    tests = [
-        _test_gvm_modern_nativeimage,
-    ],
-  )
+    test_suite(
+        name = name,
+        tests = [
+            _test_gvm_modern_nativeimage,
+        ],
+    )
 
 testsuite = rules_graalvm_nativeimage_testsuite

@@ -6,8 +6,8 @@ load(
 )
 
 package(default_visibility = [
-    "//lib:__subpackages__",
     "//docs:__subpackages__",
+    "//lib:__subpackages__",
 ])
 
 bzl_library(
@@ -16,6 +16,7 @@ bzl_library(
     deps = [
         ":settings",
         "//lib:tooling",
+        "@bazel_skylib//lib:dicts",
     ],
 )
 
@@ -27,4 +28,12 @@ bzl_library(
 bzl_library(
     name = "internals",
     srcs = ["//internal/native_image:rules.bzl"],
+)
+
+bzl_library(
+    name = "toolchain",
+    srcs = ["//internal/native_image:toolchain.bzl"],
+    deps = [
+        "@bazel_skylib//lib:dicts",
+    ],
 )
