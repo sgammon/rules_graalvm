@@ -1,3 +1,3 @@
-
 build --collect_code_coverage
-build --instrumentation_filter="//graalvm"
+build --instrumentation_filter="^//tools/.*$"
+coverage --combined_report=lcov
