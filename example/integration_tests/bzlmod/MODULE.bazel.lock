@@ -1130,7 +1130,7 @@
       }
     },
     "@rules_graalvm~override//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "HcRWk7Xmv6RSMQQdCI0qcvJmFgOxKIUrfQqSqlOnHpg=",
+      "bzlTransitiveDigest": "67Uy7RbBpdDGuZCYYMia9O/XOhOju9Sy1WI2zXZ5wOc=",
       "envVariables": {},
       "generatedRepoSpecs": {
         "graalvm": {

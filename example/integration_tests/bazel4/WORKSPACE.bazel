@@ -9,15 +9,15 @@ local_repository(
 
 http_archive(
     name = "rules_java",
-    url = "https://github.com/bazelbuild/rules_java/releases/download/4.0.0/rules_java-4.0.0.tar.gz",
     sha256 = "34b41ec683e67253043ab1a3d1e8b7c61e4e8edefbcad485381328c934d072fe",
+    url = "https://github.com/bazelbuild/rules_java/releases/download/4.0.0/rules_java-4.0.0.tar.gz",
 )
 
-load("@rules_graalvm//graalvm:workspace.bzl", "rules_graalvm_repositories", "rules_graalvm_toolchains")
+load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains", "rules_graalvm_repositories")
 
 rules_graalvm_repositories(omit_rules_java = True)
 
-rules_graalvm_toolchains()
+register_graalvm_toolchains()
 
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 
