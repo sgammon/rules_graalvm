@@ -1,8 +1,11 @@
+"""
+Defines utilities and classes for working with downloaded artifacts and their hashes.
+"""
 
-from .definitions import *
 from .constants import *
 from .downloader import generate_base_download_urls, generate_component_download_urls
 from .versions import ParsedVersion
+
 
 class DownloadTarget:
     """Resolved target for download and inclusion in output mappings."""
@@ -55,13 +58,13 @@ class DownloadTarget:
             typelabel = "Component"
 
         return "{type}({distribution}, {version}, {platform}, java{java_major}{java}, {component})".format(
-            java_major = self.jdk,
-            type = typelabel,
-            java = self.jvm is not None and ("/%s" % self.jvm) or "",
-            distribution = str(self.distribution),
-            platform = str(self.platform),
-            component = str(self.component),
-            version = str(self.version or (self.latest and "latest")),
+            java_major=self.jdk,
+            type=typelabel,
+            java=self.jvm is not None and ("/%s" % self.jvm) or "",
+            distribution=str(self.distribution),
+            platform=str(self.platform),
+            component=str(self.component),
+            version=str(self.version or (self.latest and "latest")),
         )
 
     def generate_download_urls(self):

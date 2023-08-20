@@ -102,28 +102,47 @@ COMMUNITY_COMPONENT_REPOS = {
 }
 
 # Latest download endpoint for Oracle GVM
-ORACLE_DOWNLOAD_BASE_LATEST = "https://download.oracle.com/java/{java_version_major}/latest/jdk-{java_version}_{platform}_bin.{ext}"
+ORACLE_DOWNLOAD_BASE_LATEST = (
+  "https://download.oracle.com/java/{java_version_major}/latest/jdk-{java_version}_{platform}_bin.{ext}"
+)
 
 # Archive download endpoint for Oracle GVM
-ORACLE_DOWNLOAD_BASE_ARCHIVE = "https://download.oracle.com/java/{java_version_major}/archive/jdk-{java_version}_{platform}_bin.{ext}"
+ORACLE_DOWNLOAD_BASE_ARCHIVE = (
+    "https://download.oracle.com/java/{java_version_major}/archive/jdk-{java_version}_{platform}_bin.{ext}"
+)
 
 # Latest download endpoint for Oracle GVM components
-ORACLE_DOWNLOAD_COMPONENT_LATEST = "" # TODO
+ORACLE_DOWNLOAD_COMPONENT_LATEST = ""  # TODO
 
 # Archive download endpoint for Oracle GVM components
-ORACLE_DOWNLOAD_COMPONENT_ARCHIVE = "" # TODO
+ORACLE_DOWNLOAD_COMPONENT_ARCHIVE = ""  # TODO
 
 # GitHub repo to pull CE releases from
 DEFAULT_COMMUNITY_REPO = "graalvm/graalvm-ce-builds"
 
+# Base URL for CE downloads.
+COMMUNITY_REPO_BASE = "https://github.com/{repo}/releases/download"
+
 # GitHub repo download base for SDKs
-COMMUNITY_DOWNLOAD_BASE = "https://github.com/{repo}/releases/download/jdk-{java_version}/graalvm-community-jdk-{java_version}_{platform}_bin.{ext}"
+COMMUNITY_DOWNLOAD_BASE = (
+    "%s/jdk-{java_version}/graalvm-community-jdk-{java_version}_{platform}_bin.{ext}" % COMMUNITY_REPO_BASE
+)
 
 # GitHub repo download base for components
-COMMUNITY_DOWNLOAD_COMPONENT = "https://github.com/{repo}/releases/download/graal-{version}/{component}-installable-svm-java{java_version_major}-{platform}-{version}.{ext}"
+COMMUNITY_DOWNLOAD_COMPONENT = (
+    "%s/graal-{version}/{component}-installable-svm-java{java_version_major}-{platform}-{version}.{ext}" % (
+        COMMUNITY_REPO_BASE
+    )
+)
 
 # Transitional download URLs for CE SDKs
-COMMUNITY_DOWNLOAD_BASE_TRANSITIONAL = "https://github.com/{repo}/releases/download/vm-{version}/graalvm-ce-java{java_version_major}-{platform}-{version}.{ext}"
+COMMUNITY_DOWNLOAD_BASE_TRANSITIONAL = (
+    "%s/vm-{version}/graalvm-ce-java{java_version_major}-{platform}-{version}.{ext}" % COMMUNITY_REPO_BASE
+)
 
 # GitHub repo download base for components
-COMMUNITY_DOWNLOAD_COMPONENT_TRANSITIONAL = "https://github.com/{repo}/releases/download/vm-{version}/{component}-installable-svm-java{java_version_major}-{platform}-{version}.{ext}"
+COMMUNITY_DOWNLOAD_COMPONENT_TRANSITIONAL = (
+    "%s/vm-{version}/{component}-installable-svm-java{java_version_major}-{platform}-{version}.{ext}" % (
+        COMMUNITY_REPO_BASE
+    )
+)

@@ -7,48 +7,36 @@
   Generates Starlark SHA256 mappings for GraalVM artifacts.
 """
 
-import sys, time, os, itertools
-
+import time
+import itertools
 from datetime import datetime
 
-from .constants import *
-from .artifact import *
-from .definitions import *
 from .logger import *
 from .cli import *
-from .versions import *
 from .downloader import *
-from .oracle_gds import *
-from .github import *
 from .matrix import *
 from .render import *
 from .config import *
 
-# Download targets requiring auth
-_download_targets_requiring_auth = set()
 
 def generate(args):
     """Generate release mappings for the GraalVM Rules for Bazel.
     
-    This tool will use a `GITHUB_TOKEN` present in the environment to query GitHub for the
-    set of releases available for GraalVM. Then, it generates download URLs for each, with
-    knowledge about which versions support which JVM release versions, operating systems,
-    and architectures.
+    This tool will use a `GITHUB_TOKEN` present in the environment to query GitHub for the set of releases available for
+    GraalVM. Then, it generates download URLs for each, with knowledge about which versions support which JVM release
+    versions, operating systems, and architectures.
     
-    Then, downloads are performed against the `sha256` hash for each artifact. The results
-    are enclosed in a dict which can be dropped in to a Starlark file.
-    
+    Then, downloads are performed against the `sha256` hash for each artifact. The results are enclosed in a dict which
+    can be dropped in to a Starlark file.
+
     Args:
-        args: Parsed arguments from the command line.
+        :param args: Parsed arguments from the command line.
     """
 
-    global client
-    global _transitional_download_targets
-    global _download_targets_requiring_auth
-
     # respond to provided args, build client
-    exit = handle_flags(args)
-    if exit: sys.exit(0)  # the flags told us to exit
+    should_exit = handle_flags(args)
+    if should_exit:
+        sys.exit(0)  # the flags told us to exit
 
     logger.debug("Preparing GitHub authorization")
     initialize_github_client()
@@ -57,10 +45,10 @@ def generate(args):
     # determine the set of versions, platforms, and distribution types we should generate
     # mappings for, either via provided args, or via the set of known defaults.
     subject_distributions = determine_distributions(args)
-    subject_platforms = determine_platforms(args, subject_distributions)
-    subject_versions = determine_versions(args, subject_distributions, subject_platforms)
-    subject_javas = determine_javas(args, subject_distributions, subject_platforms, subject_versions)
-    subject_components = determine_components(args, subject_distributions, subject_platforms, subject_versions)
+    subject_javas = determine_javas(args)
+    subject_platforms = determine_platforms(args)
+    subject_components = determine_components(args)
+    subject_versions = determine_versions(args, subject_distributions)
 
     # if we should generate mappings for releases, include the symbolic `base` component
     base_components = [Component.BASE]
@@ -101,9 +89,11 @@ def generate(args):
         filter_supported_targets(args, all_targets)
     )
     if len(targets_requiring_auth) > 0:
-        _transitional_download_targets = targets_requiring_auth
+        for target in targets_requiring_auth:
+            register_transitional_target(target)
     if len(targets_requiring_transitional_urls) > 0:
-        _download_targets_requiring_auth = targets_requiring_transitional_urls
+        for target in targets_requiring_auth:
+            register_target_requiring_auth(target)
 
     # print a report showing our download targets
     print_report(
@@ -146,7 +136,7 @@ def generate(args):
         say(colorize(grey, "Validating %s artifact URLs..." % len(generated_tasks)))
         for (task, (download, sha)) in generated_tasks:
             failed = False
-            if not check_url_liveness(args, download):
+            if not check_url_liveness(download):
                 if args.keep_going:
                     say(colorize(yellow, "✗ URL not valid ") + ("%s " % task) + colorize(grey, download))
                     failed = True
@@ -154,7 +144,7 @@ def generate(args):
                     logger.error("Artifact URL liveness check failed: '%s'" % download)
                     sys.exit(2)
 
-            if not check_url_liveness(args, sha):
+            if not check_url_liveness(sha):
                 if args.keep_going:
                     say(colorize(yellow, "✗ SHA URL not valid ") + ("%s " % task) + colorize(grey, download))
                     failed = True
@@ -168,7 +158,6 @@ def generate(args):
             if not failed:
                 checked_tasks.append((task, (download, sha)))
 
-    check_status = ""
     if len(checked_tasks) == len(generated_tasks):
         check_status = colorize(green, "All targets are valid.")
     else:
@@ -198,17 +187,14 @@ def generate(args):
     failed_tasks = []
     registered_hashes = {}
     for (task, (download, sha)) in checked_tasks:
-        failed = False
-        # sanity check: should only be downloading sha256 files
+        # check: should only be downloading sha256 files
         if not sha.endswith(".sha256"):
-            import pdb; pdb.set_trace()
             raise NotImplementedError("Downloader should not be downloading full artifacts. Please report this.")
 
-        (result, err) = download_text(args, sha)
+        (result, err) = download_text(sha)
         if result is None:
             if args.keep_going:
                 failed_tasks.append((task, (download, sha)))
-                failed = True
                 say(colorize(bold_red, "✗ Download failed ") + ("%s " % task) + colorize(grey, err))
                 continue
             else:
@@ -259,8 +245,8 @@ def generate(args):
 
     # render the final file
     rendered_mappings_file = mapping_file_template % (
-        timestamp.isoformat(), # timestamp
-        os.environ.get("USER", "Sandboxed user"), # user
+        timestamp.isoformat(),  # timestamp
+        os.environ.get("USER", "Sandboxed user"),  # user
         "\n".join(sorted_mappings),  # mappings
     )
     write_rendered_mappings(
@@ -270,16 +256,17 @@ def generate(args):
     )
 
     say(colorize(green, "All done. Enjoy. 🎉🥳"))
-    print("", flush = True)  # terminate stream cleanly
+    print("", flush=True)  # terminate stream cleanly
+
 
 def invoke():
     """Run the mappings generator."""
 
     try:
-        generate(
-            args = parser.parse_args(),
-        )
-    except KeyboardInterrupt as e:
+        generate(args=parser.parse_args())
+    except KeyboardInterrupt:
         say(colorize(yellow, "Exiting on keyboard interrupt."))
 
-if __name__ == "__main__": invoke()
+
+if __name__ == "__main__":
+    invoke()
