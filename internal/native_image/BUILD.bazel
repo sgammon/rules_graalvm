@@ -6,45 +6,50 @@ load(
 )
 load(
     "//internal/native_image:settings.bzl",
-    "GraalVMLibC",
-    "GraalVMCompilerBackend",
     "DEFAULTS",
+    "GraalVMCompilerBackend",
+    "GraalVMLibC",
     "native_image_info",
     "native_image_settings",
 )
 
+package(default_visibility = [
+    "//visibility:public",
+])
+
 exports_files([
     "rules.bzl",
     "settings.bzl",
+    "toolchain.bzl",
 ])
 
 string_flag(
     name = "libc",
+    build_setting_default = DEFAULTS.LIBC,
     values = [
         GraalVMLibC.GLIBC,
         GraalVMLibC.MUSL,
     ],
-    build_setting_default = DEFAULTS.LIBC,
 )
 
 string_flag(
     name = "compiler_backend",
+    build_setting_default = DEFAULTS.COMPILER_BACKEND,
     values = [
         GraalVMCompilerBackend.NATIVE,
         GraalVMCompilerBackend.LLVM,
     ],
-    build_setting_default = DEFAULTS.COMPILER_BACKEND,
 )
 
 native_image_info(
     name = "settings",
-    libc = ":libc",
     compiler_backend = ":compiler_backend",
+    libc = ":libc",
 )
 
 native_image_settings(
     name = "defaults",
+    compiler_backend = DEFAULTS.COMPILER_BACKEND,
     libc = DEFAULTS.LIBC,
     opt = DEFAULTS.BUILD_OPT,
-    compiler_backend = DEFAULTS.COMPILER_BACKEND,
 )

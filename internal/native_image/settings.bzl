@@ -51,7 +51,9 @@ def _gvm_nativeimage_settings(ctx):
     """Generate Native Image tooling settings directly in an explicit target."""
 
     return _NativeImageInfo(
-        #
+        opt = ctx.attr.opt,
+        libc = ctx.attr.libc,
+        compiler_backend = ctx.attr.compiler_backend,
     )
 
 _native_image_info = rule(

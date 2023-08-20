@@ -3,17 +3,17 @@ workspace(name = "rules_graalvm")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load(
     "//internal:config.bzl",
+    "HERMETIC_CC_TOOLCHAIN_SHA",
+    "HERMETIC_CC_TOOLCHAIN_VERSION",
+    "LLVM_TOOLCHAIN_SHA",
+    "LLVM_TOOLCHAIN_TAG",
+    "NODE_VERSION",
     "PROTOBUF_SHA",
     "PROTOBUF_VERSION",
     "RULES_JVM_EXTERNAL_SHA",
     "RULES_JVM_EXTERNAL_TAG",
-    "LLVM_TOOLCHAIN_TAG",
-    "LLVM_TOOLCHAIN_SHA",
-    "HERMETIC_CC_TOOLCHAIN_VERSION",
-    "HERMETIC_CC_TOOLCHAIN_SHA",
-    "RULES_PYTHON_VERSION",
     "RULES_PYTHON_SHA",
-    "NODE_VERSION",
+    "RULES_PYTHON_VERSION",
 )
 
 http_archive(
@@ -48,10 +48,10 @@ http_archive(
 
 http_archive(
     name = "rules_java",
+    sha256 = "27abf8d2b26f4572ba4112ae8eb4439513615018e03a299f85a8460f6992f6a3",
     urls = [
         "https://github.com/bazelbuild/rules_java/releases/download/6.4.0/rules_java-6.4.0.tar.gz",
     ],
-    sha256 = "27abf8d2b26f4572ba4112ae8eb4439513615018e03a299f85a8460f6992f6a3",
 )
 
 http_archive(
@@ -131,11 +131,11 @@ http_archive(
 
 http_archive(
     name = "rules_license",
+    sha256 = "4531deccb913639c30e5c7512a054d5d875698daeb75d8cf90f284375fe7c360",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz",
         "https://github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz",
     ],
-    sha256 = "4531deccb913639c30e5c7512a054d5d875698daeb75d8cf90f284375fe7c360",
 )
 
 http_archive(
@@ -186,9 +186,9 @@ http_archive(
 
 http_archive(
     name = "com_grail_bazel_toolchain",
+    canonical_id = LLVM_TOOLCHAIN_TAG,
     sha256 = LLVM_TOOLCHAIN_SHA,
     strip_prefix = "bazel-toolchain-{tag}".format(tag = LLVM_TOOLCHAIN_TAG),
-    canonical_id = LLVM_TOOLCHAIN_TAG,
     url = "https://github.com/grailbio/bazel-toolchain/archive/refs/tags/{tag}.tar.gz".format(tag = LLVM_TOOLCHAIN_TAG),
 )
 
@@ -290,9 +290,13 @@ npm_repositories()
 
 load("//internal:setup.bzl", "rules_graalvm_toolchains", "rules_graalvm_workspace")
 
+rules_graalvm_workspace()
+
 rules_graalvm_toolchains()
 
-rules_graalvm_workspace()
+load("//internal:toolchain.bzl", "register_graalvm_toolchains")
+
+register_graalvm_toolchains()
 
 load("//internal:deps.bzl", rules_graalvm_dependencies = "rules_graalvm_repositories")
 
