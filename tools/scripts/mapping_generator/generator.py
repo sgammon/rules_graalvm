@@ -259,11 +259,11 @@ def generate(args):
     print("", flush=True)  # terminate stream cleanly
 
 
-def invoke():
+def invoke(args=None):
     """Run the mappings generator."""
 
     try:
-        generate(args=parser.parse_args())
+        generate(args=parser.parse_args(args or sys.argv))
     except KeyboardInterrupt:
         say(colorize(yellow, "Exiting on keyboard interrupt."))
 
