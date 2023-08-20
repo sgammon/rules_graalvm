@@ -1,3 +1,4 @@
+build:ci --config=buildless
 build:ci --build_metadata=ROLE=CI
 build:ci --build_metadata=VISIBILITY=PUBLIC
 build:ci-strict --lockfile_mode=error
