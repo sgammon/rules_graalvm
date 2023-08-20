@@ -12,7 +12,7 @@ load(
 bzl_library(
     name = "repo_tools",
     srcs = [
-        "@bazel_tools//tools:bzl_srcs"
+        "@bazel_tools//tools:bzl_srcs",
     ],
 )
 
@@ -21,9 +21,10 @@ stardoc(
     out = "defs.md",
     input = "//graalvm:defs.bzl",
     deps = [
-        "//lib/nativeimage:rules",
-        "//lib/nativeimage:internals",
         "//lib:tooling",
+        "//lib/nativeimage:internals",
+        "//lib/nativeimage:rules",
+        "@bazel_skylib//lib:paths",
     ],
 )
 
@@ -34,12 +35,12 @@ stardoc(
     deps = [
         "//lib:bindist",
         "//lib:deps",
-        "//lib:tooling",
         "//lib:jdk_build_file",
+        "//lib:tooling",
+        "@bazel_skylib//lib:new_sets",
         "@bazel_skylib//lib:paths",
         "@bazel_skylib//lib:shell",
         "@bazel_skylib//lib:structs",
-        "@bazel_skylib//lib:new_sets",
         "@bazel_skylib//lib:versions",
     ],
 )
@@ -49,10 +50,10 @@ stardoc(
     out = "workspace.md",
     input = "//graalvm:workspace.bzl",
     deps = [
-        "//lib:deps",
-        "//lib:tooling",
-        "//lib:toolchain",
         ":repo_tools",
+        "//lib:deps",
+        "//lib:toolchain",
+        "//lib:tooling",
     ],
 )
 
@@ -60,6 +61,9 @@ stardoc(
     name = "toolchain",
     out = "toolchain.md",
     input = "//graalvm:toolchain.bzl",
+    deps = [
+        "//lib:toolchain",
+    ],
 )
 
 stardoc(
@@ -67,7 +71,8 @@ stardoc(
     out = "legacy.md",
     input = "//graal:graal.bzl",
     deps = [
-        "//lib/nativeimage:rules",
         "//lib/nativeimage:internals",
+        "//lib/nativeimage:rules",
+        "@bazel_skylib//lib:dicts",
     ],
 )
