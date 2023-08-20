@@ -3,32 +3,36 @@ Defines the classes used for mapping generator artifact rules.
 """
 
 from abc import ABC, abstractmethod
-from enum import StrEnum as Enum
+from enum import StrEnum
 
 from .constants import *
 from .logger import logger
 from .versions import ParsedVersion
 
-class MappingRuleAction(Enum):
+
+class MappingRuleAction(StrEnum):
     """Enumerates the actions that can be taken on an artifact which matches a rule."""
 
     SKIP = "SKIP"
     REQUIRE_AUTH = "REQUIRE_AUTH"
     USE_TRANSITIONAL = "USE_TRANSITIONAL"
 
-class RuleMatchMode(Enum):
+
+class RuleMatchMode(StrEnum):
     """Match mode for rules."""
 
     ANY = "ANY"
     ALL = "ALL"
 
+
 def _setify(value):
     if isinstance(value, str):
-        return set([value])
+        return {value}
     elif isinstance(value, set):
         return value
     else:
         return set(value)
+
 
 class AbstractRule(ABC):
     """Concept of a rule."""
@@ -41,20 +45,21 @@ class AbstractRule(ABC):
     def actions(self, target):
         raise NotImplementedError("Must be implemented by subclass")
 
+
 class Rule(AbstractRule):
     """Specifies a rule which filters a download for some reason."""
 
     def __init__(self,
                  action,
                  mode,
-                 reason = None,
-                 version_min = None,
-                 version_max = None,
-                 versions = None,
-                 jdks = None,
-                 platforms = None,
-                 distributions = None,
-                 components = None):
+                 reason=None,
+                 version_min=None,
+                 version_max=None,
+                 versions=None,
+                 jdks=None,
+                 platforms=None,
+                 distributions=None,
+                 components=None):
         """Initialize a new skip rule."""
 
         self.mode = mode
@@ -91,10 +96,10 @@ class Rule(AbstractRule):
             (self.jdks, lambda x: "JDK in (%s)" % ",".join(map(str, x))),
         ]))]
         return "Rule({action}, {mode}({criteria}), reason = \"{reason}\")".format(
-            action = ", ".join(map(lambda x: str(x), self._actions)),
-            reason = self.reason or "Not given",
-            mode = self.mode,
-            criteria = ", ".join(criteria),
+            action=", ".join(map(lambda x: str(x), self._actions)),
+            reason=self.reason or "Not given",
+            mode=self.mode,
+            criteria=", ".join(criteria),
         )
 
     @classmethod
@@ -108,10 +113,10 @@ class Rule(AbstractRule):
     def unsupported_jvms_after(cls, version, *jdks, **kwargs):
         """Return a rule which restricts a download to a GraalVM minimum version."""
         return Rule(
-            action = MappingRuleAction.SKIP,
-            mode = RuleMatchMode.ALL,
-            jdks = jdks,
-            version_min = cls.parse_version_maybe(version),
+            action=MappingRuleAction.SKIP,
+            mode=RuleMatchMode.ALL,
+            jdks=jdks,
+            version_min=cls.parse_version_maybe(version),
             **kwargs
         )
 
@@ -119,10 +124,10 @@ class Rule(AbstractRule):
     def supported_jvms_after(cls, version, *jdks, **kwargs):
         """Return a rule which restricts a download to a GraalVM minimum version."""
         return Rule(
-            action = MappingRuleAction.SKIP,
-            mode = RuleMatchMode.ALL,
-            jdks = [i for i in DEFAULT_JAVA_VERSIONS if i not in jdks],
-            version_min = cls.parse_version_maybe(version),
+            action=MappingRuleAction.SKIP,
+            mode=RuleMatchMode.ALL,
+            jdks=[i for i in DEFAULT_JAVA_VERSIONS if i not in jdks],
+            version_min=cls.parse_version_maybe(version),
             **kwargs
         )
 
@@ -130,10 +135,10 @@ class Rule(AbstractRule):
     def unsupported_jvms_at(cls, version, *jdks, **kwargs):
         """Return a rule which restricts a download to a specific GraalVM version."""
         return Rule(
-            action = MappingRuleAction.SKIP,
-            mode = RuleMatchMode.ALL,
-            jdks = jdks,
-            versions = [cls.parse_version_maybe(version)],
+            action=MappingRuleAction.SKIP,
+            mode=RuleMatchMode.ALL,
+            jdks=jdks,
+            versions=[cls.parse_version_maybe(version)],
             **kwargs
         )
 
@@ -141,60 +146,60 @@ class Rule(AbstractRule):
     def supported_jvms_at(cls, version, *jdks, **kwargs):
         """Return a rule which restricts a download to a specific GraalVM version."""
         return Rule(
-            action = MappingRuleAction.SKIP,
-            mode = RuleMatchMode.ALL,
-            jdks = [i for i in DEFAULT_JAVA_VERSIONS if i not in jdks],
-            versions = [cls.parse_version_maybe(version)],
+            action=MappingRuleAction.SKIP,
+            mode=RuleMatchMode.ALL,
+            jdks=[i for i in DEFAULT_JAVA_VERSIONS if i not in jdks],
+            versions=[cls.parse_version_maybe(version)],
             **kwargs
         )
 
     @classmethod
-    def at_least_version(cls, version, mode = RuleMatchMode.ALL, action = MappingRuleAction.SKIP, **kwargs):
+    def at_least_version(cls, version, mode=RuleMatchMode.ALL, action=MappingRuleAction.SKIP, **kwargs):
         """Return a rule which restricts a download to a GraalVM minimum version."""
         return Rule(
-            action = action,
-            mode = mode,
-            version_min = cls.parse_version_maybe(version),
+            action=action,
+            mode=mode,
+            version_min=cls.parse_version_maybe(version),
             **kwargs
         )
 
     @classmethod
-    def at_most_version(cls, version, mode = RuleMatchMode.ALL, action = MappingRuleAction.SKIP, **kwargs):
+    def at_most_version(cls, version, mode=RuleMatchMode.ALL, action=MappingRuleAction.SKIP, **kwargs):
         """Return a rule which restricts a download to a GraalVM minimum version."""
         return Rule(
-            action = action,
-            mode = mode,
-            version_max = cls.parse_version_maybe(version),
+            action=action,
+            mode=mode,
+            version_max=cls.parse_version_maybe(version),
             **kwargs
         )
 
     @classmethod
-    def at_version(cls, version, mode = RuleMatchMode.ALL, action = MappingRuleAction.SKIP, **kwargs):
+    def at_version(cls, version, mode=RuleMatchMode.ALL, action=MappingRuleAction.SKIP, **kwargs):
         """Return a rule which restricts a download to a GraalVM minimum version."""
         return Rule(
-            action = action,
-            mode = mode,
-            versions = [cls.parse_version_maybe(version)],
+            action=action,
+            mode=mode,
+            versions=[cls.parse_version_maybe(version)],
             **kwargs
         )
 
     @classmethod
-    def for_distribution(cls, distribution, mode = RuleMatchMode.ALL, action = MappingRuleAction.SKIP, **kwargs):
+    def for_distribution(cls, distribution, mode=RuleMatchMode.ALL, action=MappingRuleAction.SKIP, **kwargs):
         """Return a rule which restricts a download for a GraalVM distribution."""
         return Rule(
-            action = action,
-            mode = mode,
-            distributions = [distribution],
+            action=action,
+            mode=mode,
+            distributions=[distribution],
             **kwargs
         )
 
     @classmethod
-    def for_platform(cls, platform, mode = RuleMatchMode.ALL, action = MappingRuleAction.SKIP, **kwargs):
+    def for_platform(cls, platform, mode=RuleMatchMode.ALL, action=MappingRuleAction.SKIP, **kwargs):
         """Return a rule which restricts a download on a speciic platform."""
         return Rule(
-            action = action,
-            mode = mode,
-            platforms = [platform],
+            action=action,
+            mode=mode,
+            platforms=[platform],
             **kwargs
         )
 
@@ -211,15 +216,15 @@ class Rule(AbstractRule):
             (self.version_max, target.version, lambda x: x <= self.version_max),
             (self.jdks, target.jdk, lambda x: x in self.jdks),
         ]
-        applies = False
+
         mode = all
         if self.mode == RuleMatchMode.ANY:
             mode = any
 
-        # if this rule has version constraints and we're evaluating a "latest"
+        # if this rule has version constraints, and we're evaluating a "latest"
         # SDK version, we should not apply the rule.
         if target.latest and any(filter(lambda x: x is not None, [self.versions, self.version_min, self.version_max])):
-            # corner case: if the rule is "latest", the greatest available `version_min` rules
+            # corner case: if the rule is "latest," the greatest available `version_min` rules
             # should still apply.
             if self.version_min is not None:
                 all_version_mins = [i for i in filter(lambda x: x.version_min is not None, MAPPING_RULES)]
@@ -236,7 +241,6 @@ class Rule(AbstractRule):
             # is unknown, so we cannot enforce this rule, which has version constraints.
             return False
 
-
         evaluated_conditions = [
             i for i in map(lambda x: x[2](x[1]), filter(lambda x: x[0] is not None and x[1] is not None, conditions))
         ]
@@ -246,6 +250,7 @@ class Rule(AbstractRule):
     def actions(self, target):
         """Return the action(s) to take on the provided target."""
         return [i for i in map(lambda x: (x, self.reason), self._actions)]
+
 
 class AlignmentRule(AbstractRule):
     """Enforce that the major and full Java versions align."""
@@ -262,6 +267,7 @@ class AlignmentRule(AbstractRule):
 
     def actions(self, target):
         return [(MappingRuleAction.SKIP, "Version misalignment")]
+
 
 def filter_supported_targets(args, targets):
     """Filter the provided set of download `targets` based on available support."""
@@ -295,4 +301,4 @@ def filter_supported_targets(args, targets):
             if not should_skip:
                 allowed_targets.append(target)
 
-    return (allowed_targets, skipped_targets, targets_requiring_auth, targets_requiring_transitional_urls)
+    return allowed_targets, skipped_targets, targets_requiring_auth, targets_requiring_transitional_urls

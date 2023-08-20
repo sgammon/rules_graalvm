@@ -2,12 +2,11 @@
 Defines logic for calculating the set of artifacts to work with in the mapping generator tool.
 """
 
-from .definitions import *
-from .constants import *
-from .github import *
+from .repo import *
 from .oracle_gds import *
 
-def determine_platforms(args, distributions):
+
+def determine_platforms(args):
     """Determine the set of platforms we should generate release mappings for."""
 
     all_platforms = DEFAULT_PLATFORMS[:]
@@ -19,7 +18,8 @@ def determine_platforms(args, distributions):
         logger.debug("Using default set of all platforms: '%s'" % ",".join(all_platforms))
         return all_platforms
 
-def determine_versions(args, distributions, platforms):
+
+def determine_versions(args, distributions):
     """Determine the set of versions we should generate release mappings for."""
 
     all_versions = []
@@ -34,8 +34,8 @@ def determine_versions(args, distributions, platforms):
         ce_versions = [i for i in map(lambda x: "ce-%s" % x, fetch_ce_versions(args, distributions))]
         oracle_versions = [i for i in map(lambda x: "oracle-%s" % x, fetch_oracle_versions(args, distributions))]
         return ce_versions + oracle_versions
-
     return all_versions
+
 
 def determine_distributions(args):
     """Determine the set of distribution types we should generate release mappings for."""
@@ -51,7 +51,8 @@ def determine_distributions(args):
     logger.debug("Explicit set of distributions resolved: '%s'" % ",".join(all_dists))
     return all_dists
 
-def determine_components(args, distributions, platforms, versions):
+
+def determine_components(args):
     """Determine the set of components which should be downloaded and generated into mappings."""
 
     all_components = args.components or []
@@ -71,7 +72,8 @@ def determine_components(args, distributions, platforms, versions):
     logger.debug("Explicit set of components resolved: '%s'" % ",".join(all_components))
     return all_components
 
-def determine_javas(args, distributions, platforms, versions):
+
+def determine_javas(args):
     """Determine the Java versions we should support for the generated target mappings."""
 
     all_javas = args.jdks or []

@@ -2,7 +2,9 @@
 Utilities for rendering and writing the generated Starlark mappings file.
 """
 
-import sys, os, stat
+import os
+import sys
+import stat
 
 from .logger import logger, say, colorize, grey
 
@@ -132,10 +134,12 @@ AlignedVersions = _AlignedVersions
 generate_distribution_coordinate = _generate_distribution_coordinate
 resolve_distribution_artifact = _resolve_distribution_artifact"""
 
+
 def emit_rendered_mappings(target, rendered):
     """Write the rendered final mappings to the provided stream or file target."""
     # make sure to prime the pipe and include a final newline
-    print(rendered, flush = True, file = target)
+    print(rendered, flush=True, file=target)
+
 
 def write_rendered_mappings(args, timestamp, rendered_mappings_file):
     """Write the rendered mappings file to the requested target (or stdout)."""
@@ -180,4 +184,3 @@ def write_rendered_mappings(args, timestamp, rendered_mappings_file):
             logger.debug("Writing rendered output to stdout, as no file was provided")
             say(colorize(grey, "Emitting rendered file to stdout."))
             emit_rendered_mappings(outstream, rendered_mappings_file)
-

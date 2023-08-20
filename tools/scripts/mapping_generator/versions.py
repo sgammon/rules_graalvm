@@ -4,6 +4,7 @@ Semantic version parsing utility.
 
 import semver
 
+
 class ParsedVersion:
     """Lightweight value class which wraps a parsed Semantic Version string."""
 
@@ -20,9 +21,6 @@ class ParsedVersion:
 
     def __str__(self):
         return self.raw
-
-    def __hash__(self):
-        return self.raw.__hash__()
 
     def __hash__(self):
         return self.raw.__hash__()

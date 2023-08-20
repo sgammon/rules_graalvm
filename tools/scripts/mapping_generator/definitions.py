@@ -21,10 +21,11 @@ class Distribution(Enum):
             Distribution.ORACLE: "Oracle GraalVM"
         }[self]
 
+
 class Component(Enum):
     """Enumerates available GraalVM components."""
 
-    BASE = "base" # special component representing base JDK
+    BASE = "base"  # special component representing base JDK
     NATIVE_IMAGE = "native-image"
     JS = "js"
     WASM = "wasm"
@@ -46,6 +47,7 @@ class Component(Enum):
             Component.ESPRESSO: "Espresso",
         }[self]
 
+
 class Platform(Enum):
     """Enumerates available GraalVM platforms."""
 
@@ -66,8 +68,10 @@ class Platform(Enum):
             Platform.WINDOWS_X64: "Windows (amd64)",
         }[self]
 
+
 JAVA_MIN = 8
 JAVA_MAX = 21
+
 
 class JavaVersion(IntEnum):
     """Enumerates supported Java versions."""
@@ -83,7 +87,6 @@ class JavaVersion(IntEnum):
     def from_parsed(cls, parsed):
         """Resolve a Java major version from a parsed version of the JVM."""
         if not (JAVA_MIN < parsed.semver.major < JAVA_MAX):
-            import pdb; pdb.set_trace()
             raise NotImplementedError("Java version %s not supported" % parsed.semver.major)
         return JavaVersion["JAVA_%s" % parsed.semver.major]
 
