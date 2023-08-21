@@ -1,9 +1,9 @@
 "GraalVM Rules package internals."
 
 package(default_visibility = [
-    "//lib:__pkg__",
     "//docs:__subpackages__",
     "//graalvm:__subpackages__",
+    "//lib:__pkg__",
     "//tools:__subpackages__",
 ])
 
@@ -16,4 +16,5 @@ exports_files([
     "jdk_build_file.bzl",
     "maven.bzl",
     "toolchain.bzl",
+    "engines.bzl",
 ])

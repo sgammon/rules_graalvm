@@ -1,30 +1,22 @@
 "Definitions for engines/components that ship with GraalVM."
 
-# buildifier: disable=name-conventions
-_GraalVMComponent = struct(
-    JS = "js",
-    PYTHON = "python",
-    RUBY = "ruby",
-    WASM = "wasm",
-    LLVM = "llvm",
-    ESPRESSO = "espresso",
-    NATIVE_IMAGE = "native-image",
+load(
+    "//internal:graalvm_bindist_map.bzl",
+    Component = "DistributionComponent",
 )
 
 # buildifier: disable=name-conventions
 _GraalVMEngine = struct(
-    JS = "js",
-    PYTHON = "python",
-    RUBY = "ruby",
-    WASM = "wasm",
-    LLVM = "llvm",
-    ESPRESSO = "espresso",
+    JS = Component.JS,
+    PYTHON = Component.PYTHON,
+    RUBY = Component.RUBY,
+    WASM = Component.WASM,
+    LLVM = Component.LLVM,
+    ESPRESSO = Component.ESPRESSO,
+    REGEX = Component.REGEX,
 )
 
 # Exports.
-
-# buildifier: disable=name-conventions
-GraalVMComponent = _GraalVMComponent
 
 # buildifier: disable=name-conventions
 GraalVMEngine = _GraalVMEngine
