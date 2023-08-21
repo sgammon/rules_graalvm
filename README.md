@@ -20,8 +20,8 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./docs/modern-bazel.md)
 - [Support for Bazel 5 and Bazel 4, drop-in replacement for `rules_graal`](./legacy-bazel.md)
 - [Run tools from GraalVM directly](./docs/binary-targets.md)
-- Support for macOS, Linux, Windows, ~~Windows~~ (working on it)
-- Support for latest modern GraalVM releases (Community Edition and Oracle GraalVM)
+- Support for macOS, Linux, Windows (including Native Image!)
+- Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
 ## Installation
 
