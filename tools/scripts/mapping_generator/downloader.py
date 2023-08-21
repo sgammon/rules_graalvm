@@ -3,6 +3,7 @@ Utilities for downloading assets over HTTP(s) via the mapping generator tool.
 """
 
 import requests
+import grequests
 
 from .constants import *
 from .logger import logger
@@ -12,6 +13,9 @@ _transitional_download_targets = set()
 
 # Download targets requiring auth
 _download_targets_requiring_auth = set()
+
+# Maximum in-flight requests at any time
+MAX_IN_FLIGHT_REQUESTS = 50
 
 
 def prepare_download_ctx(target, **kwargs):
@@ -39,6 +43,15 @@ def target_needs_transitional(target):
     return target in _transitional_download_targets
 
 
+def begin_download(url):
+    """Begin an asynchronous download."""
+    logger.debug("Beginning downloading from URL: '%s'" % url)
+    return grequests.get(
+        url,
+        allow_redirects=True,
+    )
+
+
 def download_file(url):
     """Fetch a download URL endpoint."""
     logger.debug("Downloading from URL: '%s'" % url)
@@ -54,9 +67,22 @@ def download_file(url):
         return None, "Error status -1 (Connection error)"
 
 
+def complete_download(response):
+    """Complete an asynchronous download."""
+    if isinstance(response, tuple):
+        return response  # already an error tuple
+    if response.status_code == 200:
+        return response, response.status_code
+    return None, "HTTP error status %s" % response.status_code
+
+
 def download_text(url, sanitize=True):
     """Fetch a download URL endpoint."""
     (response, err) = download_file(url)
+    return decode_response_as_text(response, err, sanitize)
+
+
+def decode_response_as_text(response, err, sanitize):
     if response is None:
         return response, err
     if response.apparent_encoding is None:
@@ -65,6 +91,12 @@ def download_text(url, sanitize=True):
     if sanitize:
         decoded = decoded.replace("\n", "")
     return decoded, err
+
+
+def complete_text_download(response, sanitize=True):
+    """Fetch a download URL endpoint."""
+    (response, err) = complete_download(response)
+    return decode_response_as_text(response, err, sanitize)
 
 
 def check_url_liveness(url):
@@ -77,9 +109,42 @@ def check_url_liveness(url):
         )
     except requests.exceptions.ConnectionError:
         return False
-    if result.status_code == 200:
+    return complete_url_liveness_check(result)
+
+
+def check_url_liveness_async(url):
+    """Check a download URL for validity."""
+    logger.debug("Beginning URL liveness check: '%s'" % url)
+    return grequests.head(
+        url,
+        allow_redirects=True,
+    )
+
+
+def complete_url_liveness_check(response):
+    """Complete an asynchronous URL liveness check."""
+    assert response.response is not None
+
+    if response.response.status_code == 200:
         return True
     return False
+
+
+def download_err_handler(request, exception):
+    """Handle an exception that surfaced during an asynchronous download."""
+    logger.debug("Error downloading URL: '%s'" % request.url)
+    if isinstance(exception, requests.exceptions.ConnectionError):
+        return None, "Error status -1 (Connection error)"
+    return None, "Unknown error (%s)" % exception
+
+
+def execute_async_requests(all_requests, exception_handler=None):
+    """Execute all async requests, handling exceptions as we go."""
+    return grequests.imap_enumerated(
+        all_requests,
+        size=MAX_IN_FLIGHT_REQUESTS,
+        exception_handler=exception_handler or download_err_handler
+    )
 
 
 def generate_base_download_urls(target):
@@ -146,6 +211,7 @@ def generate_component_download_urls(target):
         target,
         repo=repo_target,
         ext="jar",
+        engine=NON_SVM_COMPONENTS.get(target.component) or "installable-svm",
         component=str(target.component),
     )
     artifact = template.format(**render_ctx)

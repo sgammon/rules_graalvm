@@ -64,7 +64,9 @@ TARGET_JAVA_VERSIONS = [
 
 GRAALVM_KNOWN_RELEASES = [
     "20.0.2",
+    "20.0.1",
     "17.0.8",
+    "17.0.7",
 ]
 
 GRAALVM_KNOWN_DISTS = [

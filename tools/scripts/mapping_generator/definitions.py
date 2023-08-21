@@ -31,24 +31,32 @@ class Component(Enum):
     WASM = "wasm"
     PYTHON = "python"
     LLVM = "llvm"
+    LLVM_TOOLCHAIN = "llvm-toolchain"
     RUBY = "ruby"
     ESPRESSO = "espresso"
+    ESPRESSO_LLVM = "espresso-llvm"
     ICU4J = "icu4j"
     REGEX = "regex"
+    TRUFFLE_JSON = "trufflejson"
+    ANTLR4 = "antlr4"
 
     def label(self):
         """Return a human-readable label for this component."""
 
         return {
+            Component.ANTLR4: "ANTLR4",
             Component.NATIVE_IMAGE: "Native Image",
             Component.JS: "GraalJs",
             Component.WASM: "GraalWasm",
             Component.PYTHON: "GraalPython",
             Component.LLVM: "Sulong",
+            Component.LLVM_TOOLCHAIN: "LLVM Toolchain",
             Component.RUBY: "TruffleRuby",
             Component.ESPRESSO: "Espresso",
+            Component.ESPRESSO_LLVM: "Espresso for LLVM",
             Component.ICU4J: "ICU4j",
             Component.REGEX: "TruffleRegex",
+            Component.TRUFFLE_JSON: "TruffleJson",
         }[self]
 
 

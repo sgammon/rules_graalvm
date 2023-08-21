@@ -15,6 +15,27 @@ MAPPING_RULES = [
         reason="GraalPython does not provide a Windows release yet",
     ),
 
+    # there is no espresso LLVM release for ARM64 mac yet
+    Rule.for_platform(
+        Platform.MACOS_AARCH64,
+        components=[Component.ESPRESSO_LLVM],
+        reason="Espresso LLVM does not provide an Apple M1/M2 release yet",
+    ),
+
+    # there is no espresso LLVM release for ARM64 linux yet
+    Rule.for_platform(
+        Platform.LINUX_AARCH64,
+        components=[Component.ESPRESSO_LLVM],
+        reason="Espresso LLVM does not provide a Linux ARM64 release yet",
+    ),
+
+    # there is no espresso LLVM release for windows yet
+    Rule.for_platform(
+        Platform.WINDOWS_X64,
+        components=[Component.ESPRESSO_LLVM],
+        reason="Espresso LLVM does not provide a Windows release yet",
+    ),
+
     # there is no truffleruby release for windows yet
     Rule.for_platform(
         Platform.WINDOWS_X64,

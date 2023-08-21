@@ -39,6 +39,7 @@ py_library(
         requirement("pygithub"),
         requirement("semver"),
         requirement("requests"),
+        requirement("grequests"),
     ],
 )
 

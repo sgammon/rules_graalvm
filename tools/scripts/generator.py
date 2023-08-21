@@ -1,3 +1,4 @@
+#!/bin/env python
 
 from tools.scripts.mapping_generator import generator
 

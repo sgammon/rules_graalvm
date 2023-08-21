@@ -10,11 +10,28 @@ DEFAULT_COMPONENTS = [
     Component.WASM,
     Component.PYTHON,
     Component.LLVM,
+    Component.LLVM_TOOLCHAIN,
     Component.RUBY,
     Component.ESPRESSO,
+    Component.ESPRESSO_LLVM,
     Component.ICU4J,
     Component.REGEX,
 ]
+
+NON_SVM_COMPONENTS = {
+    Component.ICU4J: "installable-ce",
+    Component.REGEX: "installable-ce",
+    Component.ESPRESSO_LLVM: "installable-ce",
+    Component.LLVM_TOOLCHAIN: "installable-ce",
+}
+
+COMPONENT_DEPENDENCIES = {
+    Component.LLVM_TOOLCHAIN: [Component.LLVM],
+    Component.ESPRESSO_LLVM: [Component.LLVM],
+    Component.JS: [Component.ICU4J, Component.REGEX],
+    Component.PYTHON: [Component.LLVM],
+    Component.RUBY: [Component.LLVM],
+}
 
 DEFAULT_PLATFORMS = [
     Platform.MACOS_X64,
@@ -135,7 +152,7 @@ COMMUNITY_DOWNLOAD_BASE = (
 
 # GitHub repo download base for components
 COMMUNITY_DOWNLOAD_COMPONENT = (
-    "%s/graal-{version}/{component}-installable-svm-java{java_version_major}-{platform}-{version}.{ext}" % (
+    "%s/graal-{version}/{component}-{engine}-java{java_version_major}-{platform}-{version}.{ext}" % (
         COMMUNITY_REPO_BASE
     )
 )
@@ -147,7 +164,7 @@ COMMUNITY_DOWNLOAD_BASE_TRANSITIONAL = (
 
 # GitHub repo download base for components
 COMMUNITY_DOWNLOAD_COMPONENT_TRANSITIONAL = (
-    "%s/vm-{version}/{component}-installable-svm-java{java_version_major}-{platform}-{version}.{ext}" % (
+    "%s/vm-{version}/{component}-{engine}-java{java_version_major}-{platform}-{version}.{ext}" % (
         COMMUNITY_REPO_BASE
     )
 )
