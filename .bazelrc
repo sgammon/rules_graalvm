@@ -18,6 +18,7 @@ import %workspace%/tools/bazel/labs.bazelrc
 import %workspace%/tools/bazel/strict.bazelrc
 import %workspace%/tools/bazel/hermetic.bazelrc
 import %workspace%/tools/bazel/java.bazelrc
+import %workspace%/tools/bazel/windows.bazelrc
 
 common --color=auto
 
