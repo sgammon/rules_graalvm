@@ -91,3 +91,4 @@ jobs:
       label: ${{ matrix.label }}
       labs: ${{ matrix.labs }}
       main: ${{ matrix.main }}
+      flags: ${{ matrix.flags }}
