@@ -24,6 +24,7 @@ stardoc(
         "//lib:tooling",
         "//lib/nativeimage:internals",
         "//lib/nativeimage:rules",
+        "@bazel_skylib//lib:new_sets",
         "@bazel_skylib//lib:paths",
     ],
 )

@@ -14,6 +14,7 @@ GRAALVM_DIST = "ce"
 GRAALVM_SDK_VERSION = "23.0.1"
 GRAALVM_COMPONENTS = [
     "wasm",
+    "js",
 ]
 
 ##

@@ -51,6 +51,7 @@ MAVEN_REPOSITORIES = [
 
 GRAALVM_COMPONENTS = [
     "wasm",
+    "js",
 ]
 
 TARGET_JAVA_VERSIONS = [
