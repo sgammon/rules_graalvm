@@ -48,5 +48,6 @@ def native_image(name, **kwargs):
             "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
             "//conditions:default": "%target%-bin",
         }),
+        enable_default_shell_env = False,
         **kwargs
     )

@@ -22,19 +22,6 @@ _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
 
-_REQUIRED_SHELL_ENV_FOR_COMPILE = {
-    "darwin": [
-        "DEVELOPER_DIR",
-        "SDKROOT",
-    ],
-    "windows": [
-        "INCLUDE",
-        "LIB",
-        "MSVC",
-        "VSINSTALLDIR",
-    ],
-}
-
 _NATIVE_IMAGE_ATTRS = {
     "deps": attr.label_list(
         providers = [[JavaInfo]],
@@ -74,6 +61,9 @@ _NATIVE_IMAGE_ATTRS = {
     "c_compiler_option": attr.string_list(
         mandatory = False,
     ),
+    "enable_default_shell_env": attr.bool(
+        default = False,
+    ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
     ),
@@ -85,7 +75,6 @@ _NATIVE_IMAGE_ATTRS = {
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
     extra_tool_deps = []
-    toolchain_deps = None
     gvm_toolchain = None
     classpath_depset = depset(transitive = [
         dep[JavaInfo].transitive_runtime_jars
@@ -100,7 +89,7 @@ def _graal_binary_implementation(ctx):
         gvm_toolchain = info
         extra_tool_deps.append(info.gvm_files)
 
-        graal_inputs, graal_input_manifests = ctx.resolve_tools(tools = [
+        graal_inputs, _ = ctx.resolve_tools(tools = [
             graal_attr,
         ] + extra_tool_deps)
 
@@ -233,7 +222,7 @@ def _graal_binary_implementation(ctx):
         "arguments": [args],
         "executable": graal,
         "mnemonic": "NativeImage",
-        "use_default_shell_env": (not ctx.attr._legacy_rule),
+        "use_default_shell_env": (not ctx.attr._legacy_rule) and ctx.attr.enable_default_shell_env,
         "env": env,
     }
 

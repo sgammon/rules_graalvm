@@ -7,7 +7,6 @@ load(
 load(
     "//internal/native_image:rules.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
-    _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _graal_binary_implementation = "graal_binary_implementation",
@@ -55,6 +54,10 @@ def native_image(name, **kwargs):
         default_executable_name = select({
             "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
             "//conditions:default": "%target%-bin",
+        }),
+        enable_default_shell_env = select({
+            "@bazel_tools//src/conditions:windows": False,
+            "//conditions:default": True,
         }),
         **kwargs
     )
