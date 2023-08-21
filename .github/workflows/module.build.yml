@@ -138,7 +138,7 @@ jobs:
     name: ${{ matrix.label }}
     runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     continue-on-error: ${{ inputs.labs || matrix.labs }}
-    if: inputs.main && matrix.skip != true
+    if: inputs.main
     strategy:
       fail-fast: false
       matrix:
