@@ -74,11 +74,11 @@ jobs:
           - runner: macos-latest
             label: macOS
             labs: false
-            main: false
+            main: true
           - runner: windows-2022
             label: Windows
             labs: false
-            main: false
+            main: true
 
     secrets: inherit
     with:
