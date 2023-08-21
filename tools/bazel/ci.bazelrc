@@ -1,4 +1,5 @@
 build:ci --config=buildless
+build:ci --config=buildbuddy
 build:ci --build_metadata=ROLE=CI
 build:ci --build_metadata=VISIBILITY=PUBLIC
 build:ci-strict --lockfile_mode=error
