@@ -9,12 +9,17 @@ load(
     "paths",
 )
 load(
+    "@bazel_skylib//lib:new_sets.bzl",
+    "sets",
+)
+load(
     "//internal:jdk_build_file.bzl",
     _JDK_BUILD_TEMPLATE = "JDK_BUILD_TEMPLATE",
     _JDK_BUILD_TEMPLATE_BAZEL5 = "JDK_BUILD_TEMPLATE_BAZEL5",
 )
 load(
     "//internal:graalvm_bindist_map.bzl",
+    "ComponentDependencies",
     "VmReleaseVersions",
     "resolve_distribution_artifact",
     Component = "DistributionComponent",
@@ -150,6 +155,25 @@ alias(
         name = name,
         path = path,
     )
+
+def _build_component_graph(components):
+    """Resolve dependencies for all components, returning each set first in a list which is eventually flattened.
+
+    If there are no dependencies, the component itself is returned as the only list member."""
+
+    effective_components = []
+    unique_components = sets.make(components)
+    found_dependencies = False
+    for component in components:
+        deps = ComponentDependencies.get(component, None)
+        if deps != None:
+            found_dependencies = True
+            stanza = [i for i in (deps + [component]) if not sets.contains(unique_components, i)]
+            [sets.insert(unique_components, i) for i in stanza]
+            effective_components += stanza
+        else:
+            effective_components.append(component)
+    return effective_components
 
 def _graal_bindist_repository_impl(ctx):
     """Implements the GraalVM repository rule (`graalvm_repository`)."""
@@ -325,9 +349,12 @@ def _graal_bindist_repository_impl(ctx):
         if ctx.attr.components and len(ctx.attr.components) > 0:
             ctx.report_progress("Downloading %s GraalVM components" % len(ctx.attr.components))
 
+            # address dependencies
+            resolved_components = _build_component_graph(ctx.attr.components)
+
             all_url_hash_pairs = [
                 (c, _get_artifact_info(ctx, distribution, platform, version, component = c, strict = False))
-                for c in ctx.attr.components
+                for c in resolved_components
             ]
             downloads = []
             manual = []
@@ -369,7 +396,7 @@ def _graal_bindist_repository_impl(ctx):
                             stderr = exec_result.stderr,
                         ))
 
-            all_components.extend(ctx.attr.components)
+            all_components.extend(resolved_components)
             _bin_paths.extend(
                 [(n, v) for (k, n, v) in _conditional_paths if k in all_components],
             )

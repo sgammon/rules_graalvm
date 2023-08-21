@@ -42,9 +42,13 @@ _DistributionComponent = struct(
 
 # Lists dependencies for known components.
 # buildifier: disable=name-conventions
-_ComponentDependencies = struct(
-    JS = [_DistributionComponent.REGEX, _DistributionComponent.ICU4J],
-)
+_ComponentDependencies = {
+    "regex": [_DistributionComponent.ICU4J],
+    "js": [_DistributionComponent.ICU4J, _DistributionComponent.REGEX],
+    "python": [_DistributionComponent.LLVM],
+    "ruby": [_DistributionComponent.LLVM],
+    "llvm-toolchain": [_DistributionComponent.LLVM],
+}
 
 # Aligned GraalVM distribution versions.
 # buildifier: disable=name-conventions

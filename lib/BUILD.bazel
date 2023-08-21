@@ -108,6 +108,7 @@ bzl_library(
         ":engines",
         ":java_toolchains",
         ":tooling",
+        "@bazel_skylib//lib:new_sets",
     ],
 )
 
