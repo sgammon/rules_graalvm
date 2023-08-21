@@ -1,6 +1,10 @@
 "Rules for building native binaries using the GraalVM `native-image` tool."
 
 load(
+    "@bazel_skylib//lib:paths.bzl",
+    "paths",
+)
+load(
     "@bazel_tools//tools/cpp:toolchain_utils.bzl",
     "find_cpp_toolchain",
 )
@@ -17,6 +21,19 @@ _DEFAULT_GVM_REPO = "@graalvm"
 _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
+
+_REQUIRED_SHELL_ENV_FOR_COMPILE = {
+    "darwin": [
+        "DEVELOPER_DIR",
+        "SDKROOT",
+    ],
+    "windows": [
+        "INCLUDE",
+        "LIB",
+        "MSVC",
+        "VSINSTALLDIR",
+    ],
+}
 
 _NATIVE_IMAGE_ATTRS = {
     "deps": attr.label_list(
@@ -67,10 +84,25 @@ _NATIVE_IMAGE_ATTRS = {
 
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
+    extra_tool_deps = []
 
     if graal_attr == None:
         # resolve via toolchains
-        pass
+        info = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
+        graal_attr = info.native_image_bin
+        extra_tool_deps.append(info.gvm_files)
+
+        graal_inputs, graal_input_manifests = ctx.resolve_tools(tools = [
+            graal_attr,
+        ] + extra_tool_deps)
+
+        graal = graal_inputs.to_list()[0]
+    else:
+        # otherwise, use the legacy code path
+        graal_inputs, _, _ = ctx.resolve_command(tools = [
+            graal_attr,
+        ])
+        graal = graal_inputs[0]
 
     if graal_attr == None:
         # still failed to resolve: cannot resolve via either toolchains or attributes.
@@ -78,9 +110,6 @@ def _graal_binary_implementation(ctx):
             No `native-image` tool found. Please either define a `native_image_tool` in your target,
             or install a GraalVM `native-image` toolchain.
         """)
-
-    graal_inputs, _, _ = ctx.resolve_command(tools = [graal_attr])
-    graal = graal_inputs[0]
 
     classpath_depset = depset(transitive = [
         dep[JavaInfo].transitive_runtime_jars
@@ -112,77 +141,36 @@ def _graal_binary_implementation(ctx):
     )
 
     env = {}
-    use_shell_env = True
-    if ctx.attr._legacy_rule:
-        tool_paths = [c_compiler_path, ld_executable_path, ld_static_lib_path, ld_dynamic_lib_path]
-        path_set = {}
-        for tool_path in tool_paths:
-            tool_dir, _, _ = tool_path.rpartition("/")
-            path_set[tool_dir] = None
+    path_set = {}
+    tool_paths = [c_compiler_path, ld_executable_path, ld_static_lib_path, ld_dynamic_lib_path]
+    for tool_path in tool_paths:
+        tool_dir, _, _ = tool_path.rpartition("/")
+        path_set[tool_dir] = None
 
-        paths = sorted(path_set.keys())
-        use_shell_env = False
-        if ctx.configuration.host_path_separator == ":":
-            # HACK: ":" is a proxy for a UNIX-like host.
-            # The tools returned above may be bash scripts that reference commands
-            # in directories we might not otherwise include. For example,
-            # on macOS, wrapped_ar calls dirname.
-            if "/bin" not in path_set:
-                paths.append("/bin")
-                if "/usr/bin" not in path_set:
-                    paths.append("/usr/bin")
+    paths = sorted(path_set.keys())
+    if ctx.configuration.host_path_separator == ":":
+        # HACK: ":" is a proxy for a UNIX-like host.
+        # The tools returned above may be bash scripts that reference commands
+        # in directories we might not otherwise include. For example,
+        # on macOS, wrapped_ar calls dirname.
+        if "/bin" not in path_set:
+            paths.append("/bin")
+            if "/usr/bin" not in path_set:
+                paths.append("/usr/bin")
 
-        # fix: make sure to include VS install dir on windows
-        if "VSINSTALLDIR" in ctx.configuration.default_shell_env:
-            vs_install = ctx.configuration.default_shell_env["VSINSTALLDIR"]
-            if vs_install != None and len(vs_install) > 0:
-                env["VSINSTALLDIR"] = vs_install
+    # seal paths with hack above
+    env["PATH"] = ctx.configuration.host_path_separator.join(paths)
 
-        # fix: make sure to include SDKROOT on macos
-        if "SDKROOT" in ctx.configuration.default_shell_env:
-            sdkroot = ctx.configuration.default_shell_env["SDKROOT"]
-            if sdkroot != None and len(sdkroot) > 0:
-                env["SDKROOT"] = sdkroot
-
-        # fix: make sure to include SDKROOT on macos
-        if "DEVELOPER_DIR" in ctx.configuration.default_shell_env:
-            devdir = ctx.configuration.default_shell_env["DEVELOPER_DIR"]
-            if devdir != None and len(devdir) > 0:
-                env["DEVELOPER_DIR"] = devdir
-
-        # seal paths with hack above
-        env["PATH"] = ctx.configuration.host_path_separator.join(paths)
-        paths = sorted(path_set.keys())
-        if ctx.configuration.host_path_separator == ":":
-            # HACK: ":" is a proxy for a UNIX-like host.
-            # The tools returned above may be bash scripts that reference commands
-            # in directories we might not otherwise include. For example,
-            # on macOS, wrapped_ar calls dirname.
-            if "/bin" not in path_set:
-                paths.append("/bin")
-                if "/usr/bin" not in path_set:
-                    paths.append("/usr/bin")
-
-        # fix: make sure to include VS install dir on windows
-        if "VSINSTALLDIR" in ctx.configuration.default_shell_env:
-            vs_install = ctx.configuration.default_shell_env["VSINSTALLDIR"]
-            if vs_install != None and len(vs_install) > 0:
-                env["VSINSTALLDIR"] = vs_install
-
-        # fix: make sure to include SDKROOT on macos
-        if "SDKROOT" in ctx.configuration.default_shell_env:
-            sdkroot = ctx.configuration.default_shell_env["SDKROOT"]
-            if sdkroot != None and len(sdkroot) > 0:
-                env["SDKROOT"] = sdkroot
-
-        # fix: make sure to include SDKROOT on macos
-        if "DEVELOPER_DIR" in ctx.configuration.default_shell_env:
-            devdir = ctx.configuration.default_shell_env["DEVELOPER_DIR"]
-            if devdir != None and len(devdir) > 0:
-                env["DEVELOPER_DIR"] = devdir
-
-        # seal paths with hack above
-        env["PATH"] = ctx.configuration.host_path_separator.join(paths)
+    # fix: make sure to include VS install dir on windows, and SDKROOT/DEVELOPER_DIR on macos
+    for var in ["INCLUDE", "LIB", "MSVC", "VSINSTALLDIR", "SDKROOT", "DEVELOPER_DIR"]:
+        if var == "DEVELOPER_DIR":
+            # allow bazel to override the developer directory on mac
+            env[var] = apple_common.apple_toolchain().developer_dir()
+        elif var == "SDKROOT":
+            # allow bazel to override the apple SDK root
+            env[var] = apple_common.apple_toolchain().sdk_dir()
+        elif var in ctx.configuration.default_shell_env:
+            env[var] = ctx.configuration.default_shell_env[var]
 
     # seal paths with hack above
     out_bin_name = ctx.attr.default_executable_name.replace("%target%", ctx.attr.name)
@@ -192,7 +180,6 @@ def _graal_binary_implementation(ctx):
     args.add("--no-fallback")
     args.add("-cp", ":".join([f.path for f in classpath_depset.to_list()]))
 
-    # TODO only on later bazels
     args.add("--native-compiler-path=%s" % c_compiler_path)
 
     args.add("-H:Class=%s" % ctx.attr.main_class)
@@ -238,9 +225,9 @@ def _graal_binary_implementation(ctx):
         "arguments": [args],
         "executable": graal,
         "mnemonic": "NativeImage",
-        "use_default_shell_env": use_shell_env,
+        "use_default_shell_env": False,
         "env": env,
-        # "toolchain": Label(_NATIVE_IMAGE_TOOLCHAIN_TYPE),
+        "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
     }
 
     # fix: on bazel4, the `tools` parameter is expected to be a `File or FilesToRunProvider`, whereas

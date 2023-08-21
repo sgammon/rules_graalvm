@@ -125,11 +125,11 @@ def _graal_postinstall_actions(ctx, os):
                     stderr = exec_result.stderr,
                 ))
 
-def _relative_binpath(tail, name, tail_override = None):
+def _relative_binpath(tail, name, tail_override = None, prefix = "bin"):
     tail_fmt = ""
     if len(tail) > 0 or (tail_override != None and len(tail_override) > 0):
         tail_fmt = ".%s" % (tail_override or tail)
-    return paths.join("bin", "%s%s" % (name, tail_fmt))
+    return paths.join(prefix, "%s%s" % (name, tail_fmt))
 
 def _render_alias(name, actual):
     return """
@@ -145,15 +145,27 @@ alias(
 def _render_bin_alias(name, actual):
     return _render_alias(name, ":bin-%s" % actual)
 
-def _render_bin_target(name, path):
+def _render_bin_target(name, path, deps):
+    fmt_deps = "[]"
+    if len(deps) > 0:
+        fmt_deps = "[\n%s\n]" % "\n".join(["        \"%s\"," % d for d in deps])
+
     return """
 alias(
     name = "bin-{name}",
     actual = ":{path}",
 )
+filegroup(
+    name = "bin-{name}-filegroup",
+    srcs = [
+        ":{path}",
+    ],
+    data = {deps},
+)
 """.format(
         name = name,
         path = path,
+        deps = fmt_deps,
     )
 
 def _build_component_graph(components):
@@ -330,19 +342,21 @@ def _graal_bindist_repository_impl(ctx):
         gu_cmd = _relative_binpath(bin_tail, "gu", shell_tail)
 
         _bin_paths = [
-            ("gu", gu_cmd),
-            ("native-image", _relative_binpath(bin_tail, "native-image", shell_tail)),
-            ("java", _relative_binpath(bin_tail, "java")),
-            ("javac", _relative_binpath(bin_tail, "javac")),
-            ("polyglot", _relative_binpath(bin_tail, "polyglot")),
-            ("js", _relative_binpath(bin_tail, "js")),
+            ("gu", gu_cmd, []),
+            ("java", _relative_binpath(bin_tail, "java"), []),
+            ("javac", _relative_binpath(bin_tail, "javac"), []),
+            ("polyglot", _relative_binpath(bin_tail, "polyglot"), []),
+            (Component.NATIVE_IMAGE, _relative_binpath(bin_tail, "native-image"), []),
         ]
 
         _conditional_paths = [
-            (Component.WASM, "wasm", _relative_binpath(bin_tail, "wasm")),
-            (Component.PYTHON, "python", _relative_binpath(bin_tail, "python")),
-            (Component.RUBY, "ruby", _relative_binpath(bin_tail, "ruby")),
-            (Component.LLVM, "lli", _relative_binpath(bin_tail, "lli")),
+            (Component.WASM, "wasm", _relative_binpath(bin_tail, "wasm"), []),
+            (Component.PYTHON, "python", _relative_binpath(bin_tail, "python"), []),
+            (Component.RUBY, "ruby", _relative_binpath(bin_tail, "ruby"), []),
+            (Component.LLVM, "lli", _relative_binpath(bin_tail, "lli"), []),
+            (Component.JS, "js", _relative_binpath(bin_tail, "js"), [
+                _relative_binpath(bin_tail, paths.join("languages", "js", "bin", "js")),
+            ]),
         ]
 
         all_components = []
@@ -398,7 +412,7 @@ def _graal_bindist_repository_impl(ctx):
 
             all_components.extend(resolved_components)
             _bin_paths.extend(
-                [(n, v) for (k, n, v) in _conditional_paths if k in all_components],
+                [(n, v, d) for (k, n, v, d) in _conditional_paths if k in all_components],
             )
 
         if ctx.name in ["native-image", "toolchain_native_image", "toolchain_gvm", "entry", "bootstrap_runtime_toolchain", "toolchain", "jdk", "jre", "jre-lib"]:
@@ -409,11 +423,11 @@ def _graal_bindist_repository_impl(ctx):
             ctx_alias = "gvm_entry"
 
         ## render bin targets and aliases
-        rendered_bin_targets = "\n".join([_render_bin_target(n, p) for (n, p) in _bin_paths])
-        rendered_bin_aliases = "\n".join([_render_bin_alias(n, n) for (n, p) in _bin_paths])
+        rendered_bin_targets = "\n".join([_render_bin_target(n, p, d) for (n, p, d) in _bin_paths])
+        rendered_bin_aliases = "\n".join([_render_bin_alias(n, n) for (n, p, d) in _bin_paths])
 
         _bin_paths_map = {}
-        _bin_paths_map.update(_bin_paths)
+        _bin_paths_map.update([(k, v) for (k, v, d) in _bin_paths])
         rendered_bin_paths = struct(**_bin_paths_map)
 
         bootstrap_toolchain_alias = """
@@ -459,10 +473,31 @@ alias(
     visibility = ["//visibility:public"],
 )
 {bootstrap_toolchain_alias}
+
+load(
+    "@rules_graalvm//internal:toolchain.bzl",
+    "graalvm_sdk",
+    "graalvm_engine",
+)
+graalvm_sdk(
+    name = "gvm",
+    native_image_bin = ":native-image",
+    gvm_files = ":files",
+)
 alias(
+    name = "sdk",
+    actual = "toolchain_gvm",
+)
+toolchain(
     name = "toolchain_gvm",
-    actual = "@{repo}//:gvm",
-    visibility = ["//visibility:public"],
+    exec_compatible_with = [
+        {gvm_toolchain_tags_exec}
+    ],
+    target_compatible_with = [
+        {gvm_toolchain_tags_target}
+    ],
+    toolchain = ":gvm",
+    toolchain_type = "@rules_graalvm//graalvm/toolchain",
 )
 
 # Tool Aliases
@@ -473,12 +508,19 @@ alias(
             bootstrap_toolchain_alias = bootstrap_toolchain_alias,
             rendered_bin_aliases = rendered_bin_aliases,
             bin_java_path = rendered_bin_paths.java,
+            gvm_toolchain_tags_exec = "",
+            gvm_toolchain_tags_target = "",
         )
 
         ctx.file(
             "BUILD.bazel",
             """
 exports_files(glob(["**/*"]))
+
+filegroup(
+    name = "files",
+    srcs = glob(["**/*"]),
+)
 
 # Tool Targets
 {rendered_bin_targets}
@@ -615,7 +657,7 @@ toolchain(
     name = "gvm",
     target_compatible_with = {target_compatible_with},
     target_settings = [":version_or_prefix_version_setting"],
-    toolchain_type = "@rules_graalvm//graalvm/toolchain:graalvm",
+    toolchain_type = "@rules_graalvm//graalvm/toolchain:toolchain",
     toolchain = "{toolchain}",
     visibility = ["//visibility:public"],
 )

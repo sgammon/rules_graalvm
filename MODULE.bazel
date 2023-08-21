@@ -179,7 +179,7 @@ use_repo(
     "graalvm",
 )
 register_toolchains(
-    "@graalvm//:toolchain",
+    "@graalvm//:all",
     dev_dependency = True,
 )
 
