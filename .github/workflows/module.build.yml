@@ -40,6 +40,12 @@ name: "Build"
         type: string
         default: "bazel7"
 
+      ## Additional flags to pass to Bazel
+      flags:
+        description: "Flags"
+        type: string
+        default: ""
+
   workflow_call:
     inputs:
       runner:
@@ -74,6 +80,10 @@ name: "Build"
         description: "Main target"
         type: boolean
         default: false
+      flags:
+        description: "Flags"
+        type: string
+        default: ""
     secrets:
       ## Secrets: BuildBuddy API key
       BUILDBUDDY_APIKEY:
@@ -122,7 +132,7 @@ jobs:
       - name: "Build: Project"
         continue-on-error: ${{ inputs.labs }}
         shell: bash
-        run: bazel build --config=ci "//example/native"
+        run: bazel build --config=ci ${{ inputs.flags }} "//example/native"
 
   integration-tests:
     name: ${{ matrix.label }}
@@ -208,4 +218,4 @@ jobs:
         continue-on-error: ${{ inputs.labs }}
         working-directory: ${{ matrix.directory }}
         shell: bash
-        run: bazel ${{ matrix.action || 'build' }} "${{ matrix.target || '//...' }}"
+        run: bazel ${{ matrix.action || 'build' }} ${{ inputs.flags }} "${{ matrix.target || '//...' }}"
