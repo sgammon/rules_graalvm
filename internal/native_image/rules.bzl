@@ -144,31 +144,34 @@ def _graal_binary_implementation(ctx):
         path_set[tool_dir] = None
 
     paths = sorted(path_set.keys())
+    unix_like = True
     if ctx.configuration.host_path_separator == ":":
         # HACK: ":" is a proxy for a UNIX-like host.
         # The tools returned above may be bash scripts that reference commands
         # in directories we might not otherwise include. For example,
         # on macOS, wrapped_ar calls dirname.
+        unix_like = True
         if "/bin" not in path_set:
             paths.append("/bin")
             if "/usr/bin" not in path_set:
                 paths.append("/usr/bin")
-
-    # seal paths with hack above
-    env["PATH"] = ctx.configuration.host_path_separator.join(paths)
+    else:
+        # non-unix hosts implies windows, where we should splice the full path
+        unix_like = False
 
     # fix: make sure to include VS install dir on windows, and SDKROOT/DEVELOPER_DIR on macos
     for var in ["INCLUDE", "LIB", "MSVC", "VSINSTALLDIR", "SDKROOT", "DEVELOPER_DIR"]:
-        if var == "DEVELOPER_DIR":
+        if var == "DEVELOPER_DIR" and unix_like:
             # allow bazel to override the developer directory on mac
             env[var] = apple_common.apple_toolchain().developer_dir()
-        elif var == "SDKROOT":
+        elif var == "SDKROOT" and unix_like:
             # allow bazel to override the apple SDK root
             env[var] = apple_common.apple_toolchain().sdk_dir()
         elif var in ctx.configuration.default_shell_env:
             env[var] = ctx.configuration.default_shell_env[var]
 
     # seal paths with hack above
+    env["PATH"] = ctx.configuration.host_path_separator.join(paths)
     out_bin_name = ctx.attr.default_executable_name.replace("%target%", ctx.attr.name)
     binary = ctx.actions.declare_file(out_bin_name)
 
