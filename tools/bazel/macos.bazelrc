@@ -1,2 +1,1 @@
-build:mac --action_env=DEVELOPER_DIR
-build:mac --action_env=SDKROOT
+build:mac --spawn_strategy=worker,sandboxed,local

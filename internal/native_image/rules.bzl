@@ -111,11 +111,78 @@ def _graal_binary_implementation(ctx):
         action_name = CPP_LINK_DYNAMIC_LIBRARY_ACTION_NAME,
     )
 
-    tool_paths = [c_compiler_path, ld_executable_path, ld_static_lib_path, ld_dynamic_lib_path]
-    path_set = {}
-    for tool_path in tool_paths:
-        tool_dir, _, _ = tool_path.rpartition("/")
-        path_set[tool_dir] = None
+    env = {}
+    use_shell_env = True
+    if ctx.attr._legacy_rule:
+        tool_paths = [c_compiler_path, ld_executable_path, ld_static_lib_path, ld_dynamic_lib_path]
+        path_set = {}
+        for tool_path in tool_paths:
+            tool_dir, _, _ = tool_path.rpartition("/")
+            path_set[tool_dir] = None
+
+        paths = sorted(path_set.keys())
+        use_shell_env = False
+        if ctx.configuration.host_path_separator == ":":
+            # HACK: ":" is a proxy for a UNIX-like host.
+            # The tools returned above may be bash scripts that reference commands
+            # in directories we might not otherwise include. For example,
+            # on macOS, wrapped_ar calls dirname.
+            if "/bin" not in path_set:
+                paths.append("/bin")
+                if "/usr/bin" not in path_set:
+                    paths.append("/usr/bin")
+
+        # fix: make sure to include VS install dir on windows
+        if "VSINSTALLDIR" in ctx.configuration.default_shell_env:
+            vs_install = ctx.configuration.default_shell_env["VSINSTALLDIR"]
+            if vs_install != None and len(vs_install) > 0:
+                env["VSINSTALLDIR"] = vs_install
+
+        # fix: make sure to include SDKROOT on macos
+        if "SDKROOT" in ctx.configuration.default_shell_env:
+            sdkroot = ctx.configuration.default_shell_env["SDKROOT"]
+            if sdkroot != None and len(sdkroot) > 0:
+                env["SDKROOT"] = sdkroot
+
+        # fix: make sure to include SDKROOT on macos
+        if "DEVELOPER_DIR" in ctx.configuration.default_shell_env:
+            devdir = ctx.configuration.default_shell_env["DEVELOPER_DIR"]
+            if devdir != None and len(devdir) > 0:
+                env["DEVELOPER_DIR"] = devdir
+
+        # seal paths with hack above
+        env["PATH"] = ctx.configuration.host_path_separator.join(paths)
+        paths = sorted(path_set.keys())
+        if ctx.configuration.host_path_separator == ":":
+            # HACK: ":" is a proxy for a UNIX-like host.
+            # The tools returned above may be bash scripts that reference commands
+            # in directories we might not otherwise include. For example,
+            # on macOS, wrapped_ar calls dirname.
+            if "/bin" not in path_set:
+                paths.append("/bin")
+                if "/usr/bin" not in path_set:
+                    paths.append("/usr/bin")
+
+        # fix: make sure to include VS install dir on windows
+        if "VSINSTALLDIR" in ctx.configuration.default_shell_env:
+            vs_install = ctx.configuration.default_shell_env["VSINSTALLDIR"]
+            if vs_install != None and len(vs_install) > 0:
+                env["VSINSTALLDIR"] = vs_install
+
+        # fix: make sure to include SDKROOT on macos
+        if "SDKROOT" in ctx.configuration.default_shell_env:
+            sdkroot = ctx.configuration.default_shell_env["SDKROOT"]
+            if sdkroot != None and len(sdkroot) > 0:
+                env["SDKROOT"] = sdkroot
+
+        # fix: make sure to include SDKROOT on macos
+        if "DEVELOPER_DIR" in ctx.configuration.default_shell_env:
+            devdir = ctx.configuration.default_shell_env["DEVELOPER_DIR"]
+            if devdir != None and len(devdir) > 0:
+                env["DEVELOPER_DIR"] = devdir
+
+        # seal paths with hack above
+        env["PATH"] = ctx.configuration.host_path_separator.join(paths)
 
     # seal paths with hack above
     out_bin_name = ctx.attr.default_executable_name.replace("%target%", ctx.attr.name)
@@ -171,7 +238,8 @@ def _graal_binary_implementation(ctx):
         "arguments": [args],
         "executable": graal,
         "mnemonic": "NativeImage",
-        "use_default_shell_env": True,
+        "use_default_shell_env": use_shell_env,
+        "env": env,
         # "toolchain": Label(_NATIVE_IMAGE_TOOLCHAIN_TYPE),
     }
 
