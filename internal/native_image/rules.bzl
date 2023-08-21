@@ -85,13 +85,13 @@ _NATIVE_IMAGE_ATTRS = {
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
     extra_tool_deps = []
-    all_deps = None
+    toolchain_deps = None
     gvm_toolchain = None
-
     classpath_depset = depset(transitive = [
         dep[JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
+    all_deps = depset([], transitive = [classpath_depset])
 
     if graal_attr == None:
         # resolve via toolchains
@@ -105,6 +105,10 @@ def _graal_binary_implementation(ctx):
         ] + extra_tool_deps)
 
         graal = graal_inputs.to_list()[0]
+        all_deps = depset(transitive = [
+            classpath_depset,
+            gvm_toolchain.gvm_files.files,
+        ])
     else:
         # otherwise, use the legacy code path
         graal_inputs, _, _ = ctx.resolve_command(tools = [
@@ -118,13 +122,6 @@ def _graal_binary_implementation(ctx):
             No `native-image` tool found. Please either define a `native_image_tool` in your target,
             or install a GraalVM `native-image` toolchain.
         """)
-
-    all_deps = classpath_depset
-    if not ctx.attr._legacy_rule and (gvm_toolchain != None):
-        all_deps = depset(classpath_depset, transitive = [
-            gvm_toolchain.native_image_bin,
-            gvm_toolchain.gvm_files,
-        ])
 
     cc_toolchain = find_cpp_toolchain(ctx)
     feature_configuration = cc_common.configure_features(
