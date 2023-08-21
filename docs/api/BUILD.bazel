@@ -75,5 +75,6 @@ stardoc(
         "//lib/nativeimage:internals",
         "//lib/nativeimage:rules",
         "@bazel_skylib//lib:dicts",
+        "@bazel_skylib//lib:paths",
     ],
 )
