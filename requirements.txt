@@ -16,6 +16,12 @@ cryptography==41.0.3
     # via pyjwt
 deprecated==1.2.14
     # via pygithub
+gevent==23.7.0
+    # via grequests
+greenlet==2.0.2
+    # via gevent
+grequests==0.7.0
+    # via -r requirements.in
 idna==3.4
     # via requests
 pycparser==2.21
@@ -27,10 +33,19 @@ pyjwt[crypto]==2.8.0
 pynacl==1.5.0
     # via pygithub
 requests==2.31.0
-    # via pygithub
+    # via
+    #   grequests
+    #   pygithub
 semver==3.0.1
     # via -r requirements.in
 urllib3==2.0.4
     # via requests
 wrapt==1.15.0
     # via deprecated
+zope-event==5.0
+    # via gevent
+zope-interface==6.0
+    # via gevent
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

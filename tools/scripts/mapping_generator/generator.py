@@ -11,12 +11,17 @@ import time
 import itertools
 from datetime import datetime
 
+from gevent import monkey; monkey.patch_all(thread=False, select=False)  # noqa
+
 from .logger import *
 from .cli import *
 from .downloader import *
 from .matrix import *
 from .render import *
 from .config import *
+
+# Number of failed downloads.
+num_failures = 0
 
 
 def generate(args):
@@ -32,6 +37,8 @@ def generate(args):
     Args:
         :param args: Parsed arguments from the command line.
     """
+
+    global num_failures
 
     # respond to provided args, build client
     should_exit = handle_flags(args)
@@ -134,37 +141,87 @@ def generate(args):
         checked_tasks = generated_tasks
     else:
         say(colorize(grey, "Validating %s artifact URLs..." % len(generated_tasks)))
-        for (task, (download, sha)) in generated_tasks:
-            failed = False
-            if not check_url_liveness(download):
-                if args.keep_going:
-                    say(colorize(yellow, "✗ URL not valid ") + ("%s " % task) + colorize(grey, download))
-                    failed = True
-                else:
-                    logger.error("Artifact URL liveness check failed: '%s'" % download)
-                    sys.exit(2)
 
-            if not check_url_liveness(sha):
-                if args.keep_going:
-                    say(colorize(yellow, "✗ SHA URL not valid ") + ("%s " % task) + colorize(grey, download))
-                    failed = True
-                else:
-                    logger.error("Artifact URL liveness check failed: '%s'" % download)
-                    sys.exit(2)
+        # build all async checks
+        liveness_checks = []
+        in_flight_checks = []
+        messages = []
+
+        def async_followup(inner, download_url, sha_url, artifact_check_inner, sha_check_inner):
+            global num_failures
+            if artifact_check_inner.response is None or sha_check_inner.response is None:
+                return  # wait for completion
+
+            failed = False
+            if not complete_url_liveness_check(artifact_check_inner):
+                num_failures += 1
+                messages.append(
+                    colorize(yellow, "✗ URL not valid ") + ("%s " % inner) + colorize(grey, download_url)
+                )
+                failed = True
+
+            if not complete_url_liveness_check(sha_check_inner):
+                num_failures += 1
+                messages.append(
+                    colorize(yellow, "✗ SHA URL not valid ") + ("%s " % inner) + colorize(grey, sha_url)
+                )
+                failed = True
 
             elif not args.quiet:
-                say(colorize(green, "✓ Valid ") + ("%s " % task) + colorize(grey, download.split("/")[-1]))
-
+                messages.append(
+                    colorize(green, "✓ Valid ") + ("%s " % inner) + colorize(grey, download_url.split("/")[-1])
+                )
             if not failed:
                 checked_tasks.append((task, (download, sha)))
 
-    if len(checked_tasks) == len(generated_tasks):
-        check_status = colorize(green, "All targets are valid.")
-    else:
-        check_status = colorize(yellow, "Some targets failed liveness checks (%s/%s)." % (
-            len(generated_tasks) - len(checked_tasks),
+        indexed_requests = {}
+        for (task, (download, sha)) in generated_tasks:
+            checks = (
+                check_url_liveness_async(download),
+                check_url_liveness_async(sha)
+            )
+            liveness_checks.append((
+                task,
+                (download, sha),
+                checks,
+            ))
+            in_flight_checks.append(checks[0])
+            indexed_requests[len(in_flight_checks) - 1] = (task, (download, sha), checks)
+            in_flight_checks.append(checks[1])
+            indexed_requests[len(in_flight_checks) - 1] = (task, (download, sha), checks)
+
+        for (index, response) in execute_async_requests(in_flight_checks):
+            (response, err) = complete_download(response)
+            (task, (download, sha), (artifact_check, sha_check)) = indexed_requests[index]
+            async_followup(task, download, sha, artifact_check, sha_check)
+
+            if response is None:
+                # say that an error was encountered in yellow
+                say(colorize(yellow, "✗ URL not valid ") + colorize(grey, err))
+                continue
+
+            logger.debug("Received response for fetch of %s" % response)
+            if len(messages) > 0:
+                message = messages.pop()
+                while message is not None:
+                    say(message)
+                    if len(messages) > 0:
+                        message = messages.pop()
+                    else:
+                        message = None
+
+    say(colorize(grey, "Completing liveness checks..."))
+    if num_failures > 0:
+        color = (not args.keep_going) and yellow or grey
+        check_status = colorize(color, "Some targets failed liveness checks (%s/%s)." % (
+            num_failures,
             len(generated_tasks)
         ))
+        if not args.keep_going:
+            logging.debug("Exiting early due to failed liveness checks and absence of --keep-going flag")
+            sys.exit(1)
+    else:
+        check_status = colorize(green, "All targets are valid.")
 
     if args.dry:
         say(
@@ -181,34 +238,39 @@ def generate(args):
         colorize(cyan, "%s fingerprints" % len(checked_tasks)) +
         "...\n"
     )
-    time.sleep(4)
 
     # for each mapping, fetch the SHA256
     failed_tasks = []
     registered_hashes = {}
-    for (task, (download, sha)) in checked_tasks:
-        # check: should only be downloading sha256 files
-        if not sha.endswith(".sha256"):
-            raise NotImplementedError("Downloader should not be downloading full artifacts. Please report this.")
 
-        (result, err) = download_text(sha)
-        if result is None:
-            if args.keep_going:
-                failed_tasks.append((task, (download, sha)))
-                say(colorize(bold_red, "✗ Download failed ") + ("%s " % task) + colorize(grey, err))
-                continue
-            else:
-                logger.error("Artifact URL download failed for target %s: '%s'" % (task, download))
-                sys.exit(2)
+    in_flight_fetches = []
+    indexed_fetches = {}
+
+    # prepare async fetch tasks
+    for (task, (download, sha)) in checked_tasks:
+        sha_fetch = begin_download(sha)
+        in_flight_fetches.append(sha_fetch)
+        indexed_fetches[len(in_flight_fetches) - 1] = (task, (download, sha), sha_fetch)
+
+    for (index, response) in execute_async_requests(in_flight_fetches):
+        (task, (download, sha), sha_fetch) = indexed_fetches[index]
+        (response, err) = complete_text_download(response)
+        if response is None:
+            failed_tasks.append((task, (download, sha)))
+            say(colorize(bold_red, "✗ Download failed ") + ("%s " % task) + colorize(grey, err))
         else:
-            registered_hashes[task] = (download, sha, result)
-            say(colorize(green, "✓ SHA256 ") + colorize(grey, result) + (" %s" % task))
+            registered_hashes[task] = (download, sha, response)
+            say(colorize(green, "✓ SHA256 ") + colorize(grey, response) + (" %s" % task))
 
     if len(failed_tasks) > 0:
-        say(colorize(yellow, "Some targets failed to download (%s/%s).\n" % (
+        err_color = (not args.keep_going) and red or yellow
+        say(colorize(err_color, "Some targets failed to download (%s/%s).\n" % (
             len(failed_tasks) - len(checked_tasks),
             len(checked_tasks)
         )))
+        if not args.keep_going:
+            logging.debug("Exiting early due to failed downloads and absence of --keep-going flag")
+            sys.exit(1)
     else:
         say(
             colorize("All target fingerprints obtained. ") +
@@ -226,9 +288,21 @@ def generate(args):
         if len(tags) == 0:
             raise NotImplementedError("Targets require constraints")
         rendered_tags = "\n".join(map(
-            lambda x: "        \"%s\"," % x,
+            lambda x: "            \"%s\"," % x,
             tags,
         ))
+
+        # resolve dependencies
+        dependencies = COMPONENT_DEPENDENCIES.get(task.component, [])
+        rendered_dependencies = ""
+        if len(dependencies) != 0:
+            rendered_dependencies_inner = "\n".join(map(
+                lambda x: "            \"%s\"," % x,
+                dependencies,
+            ))
+            rendered_dependencies = dependencies_template % (
+                rendered_dependencies_inner
+            )
 
         rendered_mappings[coordinate] = (mapping_template % (
             coordinate,
@@ -236,6 +310,7 @@ def generate(args):
             download,
             result,
             rendered_tags,
+            rendered_dependencies,
         ))
 
     sorted_mappings = []
@@ -261,9 +336,8 @@ def generate(args):
 
 def invoke(args=None):
     """Run the mappings generator."""
-
     try:
-        generate(args=parser.parse_args(args or sys.argv))
+        generate(args=parser.parse_args(args or sys.argv[1:]))
     except KeyboardInterrupt:
         say(colorize(yellow, "Exiting on keyboard interrupt."))
 

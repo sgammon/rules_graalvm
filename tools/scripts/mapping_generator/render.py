@@ -8,14 +8,19 @@ import stat
 
 from .logger import logger, say, colorize, grey
 
-mapping_template = """  "%s": {
-    # %s
-    "url": "%s",
-    "sha256": "%s",
-    "compatible_with": [
+mapping_template = """    "%s": {
+        # %s
+        "url": "%s",
+        "sha256": "%s",
+        "compatible_with": [
 %s
-    ],
-  },"""
+        ],%s
+    },"""
+
+dependencies_template = """
+        "dependencies": [
+%s
+        ],"""
 
 mapping_file_template = """"Binary mappings for GraalVM distribution artifacts."
 
@@ -83,7 +88,7 @@ _VmReleaseVersions = {
     "17.0.7": "17.0.7+9.1",
 }
 
-def _generate_distribution_coordinate(dist, platform, release, version, component = None):
+def _generate_distribution_coordinate(dist, platform, version, component = None):
     \"""Generate a well-formed distribution coordinate key.
 
     Generates a key for the generated binary distribution map, which holds download
@@ -129,6 +134,13 @@ def _resolve_distribution_artifact(dist, platform, version, component = None, st
     Returns:
         Distribution artifact config payload, or throws.
     \"""
+
+    if dist == None:
+        fail("Cannot calculate GraalVM artifact coordinate with `None` as `dist`")
+    if platform == None:
+        fail("Cannot calculate GraalVM artifact coordinate with `None` as `platform`")
+    if version == None:
+        fail("Cannot calculate GraalVM artifact coordinate with `None` as `version`")
 
     target_key = _generate_distribution_coordinate(dist, platform, version, component)
     config = _GRAALVM_BINDIST.get(target_key)
