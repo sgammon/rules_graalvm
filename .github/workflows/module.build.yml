@@ -137,6 +137,7 @@ jobs:
         action: ["build"]
         directory: ["./example/integration_tests/bzlmod"]
         labs: [false]
+        skip: [false]
         include:
           # Test: BCR Sample
           - label: BCR
@@ -144,6 +145,7 @@ jobs:
             action: build
             directory: "./example/integration_tests/bzlmod"
             labs: false
+            skip: false
 
           # Test: Workspace Sample
           - label: Workspace
@@ -151,6 +153,7 @@ jobs:
             action: build
             directory: "./example/integration_tests/workspace"
             labs: false
+            skip: false
 
           # Test: Bazel 4
           - label: Bazel 4
@@ -158,6 +161,7 @@ jobs:
             action: build
             directory: "./example/integration_tests/bazel4"
             labs: false
+            skip: ${{ contains(inputs.runner, "windows") }}
 
           # Test: Bazel 5
           - label: Bazel 5
@@ -165,6 +169,7 @@ jobs:
             action: build
             directory: "./example/integration_tests/bazel5"
             labs: false
+            skip: false
 
           # Test: Bazel 6
           - label: Bazel 6
@@ -172,6 +177,7 @@ jobs:
             action: build
             directory: "./example/integration_tests/bazel6"
             labs: false
+            skip: false
 
     steps:
       - name: Harden Runner
@@ -187,7 +193,7 @@ jobs:
         uses: bazelbuild/setup-bazelisk@95c9bf48d0c570bb3e28e57108f3450cd67c1a44 # v2.0.0
       - name: "Configure: Bazel Version"
         shell: bash
-        if: inputs.bazel_version != '' && inputs.bazel_config != ''
+        if: !matrix.skip && inputs.bazel_version != '' && inputs.bazel_config != ''
         run: |
           echo "${{ inputs.bazel_version }}" > .bazelversion
           echo "import %workspace%/tools/bazel/${{ inputs.bazel_config }}.bazelrc" > version.bazelrc
@@ -198,6 +204,7 @@ jobs:
           echo "build --remote_header=x-buildbuddy-api-key=${{ secrets.BUILDBUDDY_APIKEY }}" >> local.bazelrc
           echo "build --remote_header=x-api-key=${{ secrets.BUILDLESS_APIKEY }}" >> local.bazelrc
       - name: "Test: ${{ matrix.label }}"
+        if: matrix.skip == false
         continue-on-error: ${{ inputs.labs }}
         working-directory: ${{ matrix.directory }}
         shell: bash
