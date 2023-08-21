@@ -193,7 +193,7 @@ jobs:
         uses: bazelbuild/setup-bazelisk@95c9bf48d0c570bb3e28e57108f3450cd67c1a44 # v2.0.0
       - name: "Configure: Bazel Version"
         shell: bash
-        if: !matrix.skip && inputs.bazel_version != '' && inputs.bazel_config != ''
+        if: matrix.skip != true && inputs.bazel_version != '' && inputs.bazel_config != ''
         run: |
           echo "${{ inputs.bazel_version }}" > .bazelversion
           echo "import %workspace%/tools/bazel/${{ inputs.bazel_config }}.bazelrc" > version.bazelrc
