@@ -59,10 +59,9 @@ jobs:
       fail-fast: false
       matrix:
         runner: [ubuntu-latest, windows-latest, macos-latest]
-        bzlmod: [false]
-        bazelversion: ["7.0.0-pre.20230724.1"]
-        bazel_config: ["bazel7"]
         main: [false]
+        label: ["Ubuntu"]
+        labs: [false]
         include:
           # Bazel 7
           - runner: ubuntu-latest
@@ -82,8 +81,5 @@ jobs:
     with:
       runner: ${{ matrix.runner }}
       label: ${{ matrix.label }}
-      bzlmod: ${{ matrix.bzlmod }}
       labs: ${{ matrix.labs }}
-      bazel_version: ${{ matrix.bazelversion }}
-      bazel_config: ${{ matrix.bazel_config }}
       main: ${{ matrix.main }}
