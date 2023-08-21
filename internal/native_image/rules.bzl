@@ -85,11 +85,19 @@ _NATIVE_IMAGE_ATTRS = {
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
     extra_tool_deps = []
+    all_deps = None
+    gvm_toolchain = None
+
+    classpath_depset = depset(transitive = [
+        dep[JavaInfo].transitive_runtime_jars
+        for dep in ctx.attr.deps
+    ])
 
     if graal_attr == None:
         # resolve via toolchains
         info = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
         graal_attr = info.native_image_bin
+        gvm_toolchain = info
         extra_tool_deps.append(info.gvm_files)
 
         graal_inputs, graal_input_manifests = ctx.resolve_tools(tools = [
@@ -111,10 +119,12 @@ def _graal_binary_implementation(ctx):
             or install a GraalVM `native-image` toolchain.
         """)
 
-    classpath_depset = depset(transitive = [
-        dep[JavaInfo].transitive_runtime_jars
-        for dep in ctx.attr.deps
-    ])
+    all_deps = classpath_depset
+    if not ctx.attr._legacy_rule and (gvm_toolchain != None):
+        all_deps = depset(classpath_depset, transitive = [
+            gvm_toolchain.native_image_bin,
+            gvm_toolchain.gvm_files,
+        ])
 
     cc_toolchain = find_cpp_toolchain(ctx)
     feature_configuration = cc_common.configure_features(
@@ -180,7 +190,8 @@ def _graal_binary_implementation(ctx):
     args.add("--no-fallback")
     args.add("-cp", ":".join([f.path for f in classpath_depset.to_list()]))
 
-    args.add("--native-compiler-path=%s" % c_compiler_path)
+    if gvm_toolchain != None:
+        args.add("--native-compiler-path=%s" % c_compiler_path)
 
     args.add("-H:Class=%s" % ctx.attr.main_class)
     args.add("-H:Name=%s" % binary.basename.replace(".exe", ""))
@@ -220,12 +231,12 @@ def _graal_binary_implementation(ctx):
         args.add("-H:+JNI")
 
     run_params = {
-        "inputs": classpath_depset,
+        "inputs": all_deps,
         "outputs": [binary],
         "arguments": [args],
         "executable": graal,
         "mnemonic": "NativeImage",
-        "use_default_shell_env": False,
+        "use_default_shell_env": (not ctx.attr._legacy_rule),
         "env": env,
     }
 
