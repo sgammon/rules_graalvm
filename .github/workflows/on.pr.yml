@@ -85,12 +85,13 @@ jobs:
             main: true
             bazelversion: 7.0.0-pre.20230724.1
             bazel_config: bazel7
-          #          - runner: windows-latest
-          #            label: Windows / Bazel 7
-          #            bzlmod: false
-          #            labs: true
-          #            bazelversion: 7.0.0-pre.20230724.1
-          #            bazel_config: bazel7
+          - runner: windows-latest
+            label: Windows / Bazel 7
+            bzlmod: false
+            labs: false
+            main: false
+            bazelversion: 7.0.0-pre.20230724.1
+            bazel_config: bazel7
 
           # Bazel 6
           - runner: ubuntu-latest
