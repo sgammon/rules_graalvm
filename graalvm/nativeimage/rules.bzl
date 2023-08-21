@@ -42,14 +42,8 @@ _native_image = rule(
         "platform",
     ],
     toolchains = [
-        config_common.toolchain_type(
-            _BAZEL_CPP_TOOLCHAIN_TYPE,
-            mandatory = True,
-        ),
-        config_common.toolchain_type(
-            _GVM_TOOLCHAIN_TYPE,
-            mandatory = False,
-        ),
+        _BAZEL_CPP_TOOLCHAIN_TYPE,
+        _GVM_TOOLCHAIN_TYPE,
     ],
 )
 

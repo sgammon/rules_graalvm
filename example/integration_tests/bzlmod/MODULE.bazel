@@ -29,4 +29,5 @@ use_repo(
     gvm,
     "graalvm",
 )
-register_toolchains("@graalvm//:toolchain")
+
+register_toolchains("@graalvm//:all")
