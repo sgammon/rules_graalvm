@@ -33,6 +33,8 @@ class Component(Enum):
     LLVM = "llvm"
     RUBY = "ruby"
     ESPRESSO = "espresso"
+    ICU4J = "icu4j"
+    REGEX = "regex"
 
     def label(self):
         """Return a human-readable label for this component."""
@@ -45,6 +47,8 @@ class Component(Enum):
             Component.LLVM: "Sulong",
             Component.RUBY: "TruffleRuby",
             Component.ESPRESSO: "Espresso",
+            Component.ICU4J: "ICU4j",
+            Component.REGEX: "TruffleRegex",
         }[self]
 
 

@@ -15,13 +15,21 @@ load(
 )
 load(
     "//internal:graalvm_bindist_map.bzl",
-    _resolve_distribution_artifact = "resolve_distribution_artifact",
+    "VmReleaseVersions",
+    "resolve_distribution_artifact",
+    Component = "DistributionComponent",
+    Distribution = "DistributionType",
+    Platform = "DistributionPlatform",
+)
+load(
+    "//internal:engines.bzl",
+    "GraalVMEngine",
 )
 load(
     "//internal:graalvm_bindist_legacy.bzl",
-    _graal_version_configs = "graal_version_configs",
-    _graal_native_image_version_configs = "graal_native_image_version_configs",
     _graal_archive_internal_prefixes = "graal_archive_internal_prefixes",
+    _graal_native_image_version_configs = "graal_native_image_version_configs",
+    _graal_version_configs = "graal_version_configs",
 )
 
 _graal_v2_archive_internal_prefixes = {
@@ -30,19 +38,16 @@ _graal_v2_archive_internal_prefixes = {
     "windows": "",
 }
 
-_COMPONENTS = struct(**{
-    "WASM": "wasm",
-    "JS": "js",
-    "RUBY": "ruby",
-    "PYTHON": "python",
-    "ESPRESSO": "espresso",
-    "LLVM": "llvm",
-})
-
 _LEGACY_X86_TAG = "amd64"
 _NONLEGACY_X86_TAG = "x64"
 _LEGACY_DARWIN_TAG = "darwin"
 _NONLEGACY_DARWIN_TAG = "macos"
+
+def _get_artifact_info(ctx, dist, platform, version, component = None, strict = True):
+    info = resolve_distribution_artifact(dist, platform, version, component, strict)
+    if info == None:
+        return None
+    return struct(component = component, **info)
 
 def _get_platform_legacy(ctx, legacy):
     tag = not legacy and _NONLEGACY_X86_TAG or _LEGACY_X86_TAG
@@ -94,10 +99,13 @@ def _toolchain_config_impl(ctx):
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
     ctx.file("BUILD.bazel", ctx.attr.build_file)
 
-def _graal_postinstall_actions(ctx, os):
+def _graal_updater_path(ctx, os):
     cmd = paths.join("bin", "gu")
-    if os == "windows":
+    if "windows" in os:
         cmd = paths.join("bin", "gu.cmd")
+
+def _graal_postinstall_actions(ctx, os):
+    cmd = _graal_updater_path(ctx, os)
     if ctx.attr.setup_actions and len(ctx.attr.setup_actions) > 0:
         for action in ctx.attr.setup_actions:
             if not action.startsWith("gu "):
@@ -182,9 +190,7 @@ def _graal_bindist_repository_impl(ctx):
             output = "native-image-installer.jar",
         )
 
-        cmd = paths.join("bin", "gu")
-        if os == "windows":
-            cmd = paths.join("bin", "gu.cmd")
+        cmd = _graal_updater_path(ctx, os)
 
         exec_result = ctx.execute([cmd, "install", "--local-file", "native-image-installer.jar"], quiet = False)
         if exec_result.return_code != 0:
@@ -226,40 +232,79 @@ def _graal_bindist_repository_impl(ctx):
         }
 
         # download graal
-        config = _graal_version_configs[dist_tag]
-        if platform not in config["sha256"]:
-            fail("Platform %s not supported at GraalVM version '%s' (distribution '%s'). Available: %s." % (
-                platform,
+        config = _graal_version_configs.get(dist_tag) or resolve_distribution_artifact(
+            dist_name,
+            platform,
+            version,
+            strict = False,
+        )
+        if config == None:
+            fail("Unable to locate GraalVM distribution '%s' at version '%s' for platform '%s'" % (
+                dist_name,
                 version,
-                distribution,
-                ", ".join(config["sha256"].keys()),
+                platform,
             ))
 
         sha = None
-        if platform in config["sha256"]:
-            sha = config["sha256"][platform]
-        elif ctx.attr.sha256:
-            sha = ctx.attr.sha256
+        prefix = None
+        urls = []
+        if "compatible_with" in config:
+            # new-style config is completely flat
+            sha = config["sha256"]
 
-        urls = [url.format(**format_args) for url in config["urls"]]
-        prefix = config["prefix"][os]
+            # map other properties
+            urls = [config["url"]]
+
+            if version in VmReleaseVersions:
+                prefix_version = VmReleaseVersions[version]
+                if dist_name == Distribution.ORACLE:
+                    prefix = "graalvm-jdk-%s" % (prefix_version)
+                else:
+                    prefix = "graalvm-community-openjdk-%s" % (prefix_version)
+            else:
+                fail("Unable to determine prefix value for archive '%s' at version '%s'" % (
+                    dist_tag,
+                    version,
+                ))
+
+        else:
+            # old-style config
+            if platform not in config["sha256"]:
+                fail("Platform %s not supported at GraalVM version '%s' (distribution '%s'). Available: %s." % (
+                    platform,
+                    version,
+                    distribution,
+                    ", ".join(config["sha256"].keys()),
+                ))
+            if platform in config["sha256"]:
+                sha = config["sha256"][platform]
+            elif ctx.attr.sha256:
+                sha = ctx.attr.sha256
+
+            prefix = config["prefix"][os]
+            urls = [url.format(**format_args) for url in config["urls"]]
+
         archive_internal_prefix = _graal_v2_archive_internal_prefixes[os].format(**format_args)
         effective_prefix = "%s/%s" % (prefix, archive_internal_prefix)
+        dist_label = "GraalVM CE"
+        if dist_name == "oracle":
+            dist_label = "Oracle GraalVM"
+        ctx.report_progress("Downloading %s %s" % (dist_label, version))
 
         ctx.download_and_extract(
             url = urls,
             sha256 = sha or ctx.attr.sha256,
             stripPrefix = effective_prefix,
         )
-
         bin_tail = ""
         shell_tail = ""
-        if os == "windows":
+        if "windows" in os:
             bin_tail = "exe"
             shell_tail = "cmd"
 
         # pluck `gu` because we need to use it
         gu_cmd = _relative_binpath(bin_tail, "gu", shell_tail)
+
         _bin_paths = [
             ("gu", gu_cmd),
             ("native-image", _relative_binpath(bin_tail, "native-image", shell_tail)),
@@ -270,22 +315,63 @@ def _graal_bindist_repository_impl(ctx):
         ]
 
         _conditional_paths = [
-            (_COMPONENTS.WASM, "wasm", _relative_binpath(bin_tail, "wasm")),
-            (_COMPONENTS.PYTHON, "python", _relative_binpath(bin_tail, "python")),
-            (_COMPONENTS.RUBY, "ruby", _relative_binpath(bin_tail, "ruby")),
-            (_COMPONENTS.LLVM, "lli", _relative_binpath(bin_tail, "lli")),
+            (Component.WASM, "wasm", _relative_binpath(bin_tail, "wasm")),
+            (Component.PYTHON, "python", _relative_binpath(bin_tail, "python")),
+            (Component.RUBY, "ruby", _relative_binpath(bin_tail, "ruby")),
+            (Component.LLVM, "lli", _relative_binpath(bin_tail, "lli")),
         ]
 
         all_components = []
         if ctx.attr.components and len(ctx.attr.components) > 0:
-            ctx.report_progress("Downloading GraalVM components")
-            exec_result = ctx.execute([gu_cmd, "install"] + ctx.attr.components, quiet = False)
-            if exec_result.return_code != 0:
-                fail("Unable to install GraalVM components:\n{stdout}\n{stderr}".format(stdout = exec_result.stdout, stderr = exec_result.stderr))
+            ctx.report_progress("Downloading %s GraalVM components" % len(ctx.attr.components))
+
+            all_url_hash_pairs = [
+                (c, _get_artifact_info(ctx, distribution, platform, version, component = c, strict = False))
+                for c in ctx.attr.components
+            ]
+            downloads = []
+            manual = []
+            for (component, info) in all_url_hash_pairs:
+                if info == None:
+                    manual.append(component)
+                    continue
+
+                # assemble file name
+                file = info.url.split("/")[-1]
+                downloads.append((info, file))
+
+                # download component
+                ctx.download(
+                    url = [info.url],
+                    sha256 = info.sha256,
+                    output = file,
+                )
+
+            for (info, file) in downloads:
+                ctx.report_progress("Installing GraalVM %s component" % info.component)
+
+                exec_result = ctx.execute([gu_cmd, "install", "--local-file", file], quiet = True)
+                if exec_result.return_code != 0:
+                    fail("Unable to install component '{component}':\n{stdout}\n{stderr}".format(
+                        component = info.component,
+                        stdout = exec_result.stdout,
+                        stderr = exec_result.stderr,
+                    ))
+
+            if len(manual) > 0:
+                for manual_component in manual:
+                    ctx.report_progress("Installing GraalVM %s component via gu" % manual_component)
+                    exec_result = ctx.execute([gu_cmd, "install", manual_component], quiet = True)
+                    if exec_result.return_code != 0:
+                        fail("Unable to install component '{component}':\n{stdout}\n{stderr}".format(
+                            info.component,
+                            stdout = exec_result.stdout,
+                            stderr = exec_result.stderr,
+                        ))
 
             all_components.extend(ctx.attr.components)
             _bin_paths.extend(
-                [(n, v) for (k, n, v) in _conditional_paths if k in all_components]
+                [(n, v) for (k, n, v) in _conditional_paths if k in all_components],
             )
 
         if ctx.name in ["native-image", "toolchain_native_image", "toolchain_gvm", "entry", "bootstrap_runtime_toolchain", "toolchain", "jdk", "jre", "jre-lib"]:
@@ -376,10 +462,11 @@ exports_files(glob(["**/*"]))
 # Aliases
 {aliases}
 """.format(
-            toolchain = toolchain_template.format(RUNTIME_VERSION = java_version),
-            aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
-            rendered_bin_targets = rendered_bin_targets,
-        ))
+                toolchain = toolchain_template.format(RUNTIME_VERSION = java_version),
+                aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
+                rendered_bin_targets = rendered_bin_targets,
+            ),
+        )
 
         ctx.file("WORKSPACE.bazel", """
 workspace(name = \"{name}\")
@@ -538,6 +625,3 @@ toolchain(
         )
     else:
         fail("GraalVM rules `register_all` is not supported yet.")
-
-# Exports.
-resolve_distribution_artifact = _resolve_distribution_artifact

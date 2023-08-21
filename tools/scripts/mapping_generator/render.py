@@ -53,18 +53,37 @@ _DistributionComponent = struct(
     PYTHON = "python",
     LLVM = "llvm",
     RUBY = "ruby",
+    ESPRESSO = "espresso",
+    REGEX = "regex",
+    ICU4J = "icu4j",
+    TRUFFLEJSON = "trufflejson",
+)
+
+# Lists dependencies for known components.
+# buildifier: disable=name-conventions
+_ComponentDependencies = struct(
+    JS = [_DistributionComponent.REGEX, _DistributionComponent.ICU4J],
 )
 
 # Aligned GraalVM distribution versions.
 # buildifier: disable=name-conventions
-_AlignedVersions = [
-    "20.0.2",
-    "20.0.1",
-    "17.0.8",
-    "17.0.7",
-]
+_AlignedVersions = {
+    "20.0.2": "23.0.1",
+    "20.0.1": "23.0.1",
+    "17.0.8": "23.0.1",
+    "17.0.7": "23.0.1",
+}
 
-def _generate_distribution_coordinate(dist, platform, version, component = None):
+# VM release versions for calculating prefixes.
+# buildifier: disable=name-conventions
+_VmReleaseVersions = {
+    "20.0.2": "20.0.2+9.1",
+    "20.0.1": "20.0.1+9.1",
+    "17.0.8": "17.0.8+9.1",
+    "17.0.7": "17.0.7+9.1",
+}
+
+def _generate_distribution_coordinate(dist, platform, release, version, component = None):
     \"""Generate a well-formed distribution coordinate key.
 
     Generates a key for the generated binary distribution map, which holds download
@@ -87,13 +106,13 @@ def _generate_distribution_coordinate(dist, platform, version, component = None)
     ]
     if component != None:
         segments.append(component)
-    segments.append(version)
+    segments.append(_AlignedVersions.get(version, version))
 
     # format:  `<dist>_<rlse>_<platfrm>_<vrsn>`
     # example: `oracle_20.0.2_linux-x64_23.0.1`
     return "_".join(segments)
 
-def _resolve_distribution_artifact(dist, platform, version, component = None):
+def _resolve_distribution_artifact(dist, platform, version, component = None, strict = True):
     \"""Resolve a distribution artifact URL and integrity set.
 
     Given the provided inputs, attempts to resolve a distribution config payload
@@ -105,14 +124,15 @@ def _resolve_distribution_artifact(dist, platform, version, component = None):
         platform: Platform for the release (a `DistributionPlatform`).
         version: Version string for the GraalVM release (aligned releases accepted).
         component: Component to download; if downloading a JDK, `None` is expected.
+        strict: Fail if the component cannot be found.
 
     Returns:
         Distribution artifact config payload, or throws.
     \"""
 
     target_key = _generate_distribution_coordinate(dist, platform, version, component)
-    config = _GRAALVM_BINDIST[target_key]
-    if config == None:
+    config = _GRAALVM_BINDIST.get(target_key)
+    if config == None and strict:
         fail("Failed to resolve distribution artifact at key '" + target_key + "'")
     return config
 
@@ -125,12 +145,22 @@ _GRAALVM_BINDIST = {
 
 # buildifier: disable=name-conventions
 DistributionType = _DistributionType
+
 # buildifier: disable=name-conventions
 DistributionPlatform = _DistributionPlatform
+
 # buildifier: disable=name-conventions
 DistributionComponent = _DistributionComponent
+
+# buildifier: disable=name-conventions
+ComponentDependencies = _ComponentDependencies
+
 # buildifier: disable=name-conventions
 AlignedVersions = _AlignedVersions
+
+# buildifier: disable=name-conventions
+VmReleaseVersions = _VmReleaseVersions
+
 generate_distribution_coordinate = _generate_distribution_coordinate
 resolve_distribution_artifact = _resolve_distribution_artifact"""
 

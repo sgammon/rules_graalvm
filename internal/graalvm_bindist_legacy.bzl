@@ -118,9 +118,9 @@ _graal_version_configs = {
     "oracle-17.0.7": {
         "urls": ["https://download.oracle.com/graalvm/{java_version}/archive/graalvm-jdk-{version}_{platform}_bin.tar.gz"],
         "prefix": {
-            "macos": "graalvm-jdk-17.0.8+9.1",
-            "linux": "graalvm-jdk-17.0.8+9.1",
-            "windows": "graalvm-jdk-17.0.8+9.1",
+            "macos": "graalvm-jdk-17.0.7+9.1",
+            "linux": "graalvm-jdk-17.0.7+9.1",
+            "windows": "graalvm-jdk-17.0.7+9.1",
         },
         "sha256": {
             "macos-x64": "325c1c5adce1e8b569e87f1e4dffe852f73e7c25e720ea15977f2ca1d7dba1bb",
@@ -158,21 +158,6 @@ _graal_version_configs = {
             "linux-x64": "242862bfd2fd2633950a8d85dd1fb4d0307c35cbc7445089aa593a931c8b17db",
             "linux-aarch64": "890596363a864bdbe55c6a9678a87384e62660056b6951c385cceaae4807fbb8",
             "windows-x64": "3ec83085b54a8de7d0c0ca893d225718cf6ff514f406af6d31a615da63ae9019",
-        },
-    },
-    "oracle-latest": {
-        "urls": ["https://download.oracle.com/graalvm/{java_version}/latest/graalvm-jdk-{java_version}_{platform}_bin.{archive}"],
-        "prefix": {
-            "macos": "graalvm-jdk-{version}",
-            "linux": "graalvm-jdk-{version}",
-            "windows": "graalvm-jdk-{version}",
-        },
-        "sha256": {
-            "macos-x64": None,
-            "macos-aarch64": None,
-            "linux-x64": None,
-            "linux-aarch64": None,
-            "windows-x64": None,
         },
     },
 }

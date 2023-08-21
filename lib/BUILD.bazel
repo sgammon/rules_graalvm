@@ -6,9 +6,9 @@ load(
 )
 
 package(default_visibility = [
-    "@//:__pkg__",
-    "//lib:__subpackages__",
     "//docs:__subpackages__",
+    "//lib:__subpackages__",
+    "@//:__pkg__",
 ])
 
 bzl_library(
@@ -17,8 +17,8 @@ bzl_library(
         "//graalvm:defs.bzl",
     ],
     deps = [
-        "//lib/nativeimage:rules",
         ":tooling",
+        "//lib/nativeimage:rules",
     ],
 )
 
@@ -92,13 +92,22 @@ bzl_library(
 )
 
 bzl_library(
+    name = "engines",
+    srcs = ["//internal:engines.bzl"],
+    deps = [
+        ":bindist_map",
+    ],
+)
+
+bzl_library(
     name = "bindist",
     srcs = ["//internal:graalvm_bindist.bzl"],
     deps = [
-        ":java_toolchains",
-        ":tooling",
         ":bindist_map",
         ":bindist_map_legacy",
+        ":engines",
+        ":java_toolchains",
+        ":tooling",
     ],
 )
 

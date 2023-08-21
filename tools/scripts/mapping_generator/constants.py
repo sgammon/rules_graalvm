@@ -12,6 +12,8 @@ DEFAULT_COMPONENTS = [
     Component.LLVM,
     Component.RUBY,
     Component.ESPRESSO,
+    Component.ICU4J,
+    Component.REGEX,
 ]
 
 DEFAULT_PLATFORMS = [
@@ -87,12 +89,15 @@ ALIGNMENT_VERSIONS = [
     ("17.0.7", (JavaVersion.JAVA_17,), "23.0.1"),
 ]
 
+VM_RELEASE_VERSIONS = {
+    "20.0.2": "20.0.2+9.1",
+    "20.0.1": "20.0.1+9.1",
+    "17.0.8": "17.0.8+9.1",
+    "17.0.7": "17.0.7+9.1",
+}
+
 SUPPORTED_JAVAS = [
     ("23.0.1", (JavaVersion.JAVA_17, JavaVersion.JAVA_20)),
-]
-
-TRANSITIONAL_VERSIONS = [
-    "22.3.3",
 ]
 
 COMMUNITY_COMPONENT_REPOS = {
