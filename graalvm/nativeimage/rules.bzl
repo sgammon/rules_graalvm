@@ -56,7 +56,7 @@ def native_image(name, **kwargs):
             "//conditions:default": "%target%-bin",
         }),
         enable_default_shell_env = select({
-            "@bazel_tools//src/conditions:windows": False,
+            "@bazel_tools//src/conditions:windows": True,
             "//conditions:default": True,
         }),
         **kwargs
