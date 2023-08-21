@@ -218,4 +218,4 @@ jobs:
         continue-on-error: ${{ inputs.labs }}
         working-directory: ${{ matrix.directory }}
         shell: bash
-        run: bazel ${{ matrix.action || 'build' }} ${{ inputs.flags }} "${{ matrix.target || '//...' }}"
+        run: bazel ${{ matrix.action || 'build' }} "${{ matrix.target || '//...' }}"
