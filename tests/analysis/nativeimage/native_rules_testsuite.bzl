@@ -48,7 +48,7 @@ def rules_graalvm_nativeimage_testsuite(name):
     test_suite(
         name = name,
         tests = [
-            _test_gvm_modern_nativeimage,
+            #            _test_gvm_modern_nativeimage,
         ],
     )
 

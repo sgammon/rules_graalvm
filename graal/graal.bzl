@@ -40,4 +40,13 @@ _native_image = rule(
 )
 
 ## Exports.
-native_image = _native_image
+def native_image(name, **kwargs):
+    """Macros which creates a native image via the legacy rules."""
+    _native_image(
+        name = name,
+        default_executable_name = select({
+            "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
+            "//conditions:default": "%target%-bin",
+        }),
+        **kwargs
+    )
