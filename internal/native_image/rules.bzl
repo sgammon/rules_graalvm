@@ -227,12 +227,12 @@ def _graal_binary_implementation(ctx):
         "mnemonic": "NativeImage",
         "use_default_shell_env": False,
         "env": env,
-        "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
     }
 
     # fix: on bazel4, the `tools` parameter is expected to be a `File or FilesToRunProvider`, whereas
-    # on later versions it is expected to be a `depset`.
+    # on later versions it is expected to be a `depset`. there is also no `toolchain` parameter at all.
     if not ctx.attr._legacy_rule:
+        run_params["toolchain"] = Label(_GVM_TOOLCHAIN_TYPE)
         run_params["tools"] = [
             ctx.attr._cc_toolchain.files,
         ]

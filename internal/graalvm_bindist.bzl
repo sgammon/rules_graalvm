@@ -346,7 +346,7 @@ def _graal_bindist_repository_impl(ctx):
             ("java", _relative_binpath(bin_tail, "java"), []),
             ("javac", _relative_binpath(bin_tail, "javac"), []),
             ("polyglot", _relative_binpath(bin_tail, "polyglot"), []),
-            (Component.NATIVE_IMAGE, _relative_binpath(bin_tail, "native-image"), []),
+            (Component.NATIVE_IMAGE, _relative_binpath(shell_tail, "native-image"), []),
         ]
 
         _conditional_paths = [
