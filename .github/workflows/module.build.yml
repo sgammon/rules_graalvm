@@ -125,10 +125,10 @@ jobs:
         run: bazel build --config=ci "//example/native"
 
   integration-tests:
-    name: "Tests / ${{ inputs.label }} / ${{ matrix.label }}"
+    name: ${{ matrix.label }}
     runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     continue-on-error: ${{ inputs.labs || matrix.labs }}
-    if: inputs.main
+    if: inputs.main && matrix.skip != true
     strategy:
       fail-fast: false
       matrix:
