@@ -10,8 +10,8 @@ These rules let you use [GraalVM](https://graalvm.org) from [Bazel](https://baze
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./modern-bazel.md)
 - [Support for Bazel 5 and Bazel 4, drop-in replacement for `rules_graal`](./legacy-bazel.md)
 - [Run GraalVM binaries directly](./binary-targets.md)
-- Support for macOS, Linux, ~~Windows~~ (working on it)
-- Support for latest modern GraalVM releases (Community Edition and Oracle GraalVM)
+- Support for macOS, Linux, Windows (including Native Image!)
+- Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
 ## Installation
 
