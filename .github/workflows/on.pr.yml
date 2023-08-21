@@ -62,23 +62,27 @@ jobs:
       fail-fast: false
       matrix:
         runner: [ubuntu-latest]
-        main: [false]
+        main: [true]
         label: ["Ubuntu"]
         labs: [false]
+        flags: ["--config=linux"]
         include:
           # Bazel 7
           - runner: ubuntu-latest
             label: Ubuntu
             labs: false
             main: true
+            flags: --config=linux
           - runner: macos-latest
             label: macOS
             labs: false
             main: true
+            flags: --config=mac
           - runner: windows-2022
             label: Windows
             labs: false
             main: true
+            flags: --config=windows
 
     secrets: inherit
     with:

@@ -1,0 +1,2 @@
+build:mac --action_env=DEVELOPER_DIR
+build:mac --action_env=SDKROOT
