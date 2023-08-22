@@ -67,13 +67,16 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
     ),
     "check_toolchains": attr.bool(
-        default = False,
+        default = True,
     ),
     "c_compiler_option": attr.string_list(
         mandatory = False,
     ),
     "enable_default_shell_env": attr.bool(
         default = False,
+    ),
+    "pass_compiler_path": attr.bool(
+        default = True,
     ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
@@ -190,7 +193,7 @@ def _graal_binary_implementation(ctx):
     args.add("--no-fallback")
     args.add("-cp", ":".join([f.path for f in classpath_depset.to_list()]))
 
-    if gvm_toolchain != None:
+    if gvm_toolchain != None and ctx.attr.pass_compiler_path:
         args.add("--native-compiler-path=%s" % c_compiler_path)
 
     args.add("-H:Class=%s" % ctx.attr.main_class)

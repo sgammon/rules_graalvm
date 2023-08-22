@@ -55,6 +55,17 @@ def native_image(name, **kwargs):
             "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
             "//conditions:default": "%target%-bin",
         }),
-        enable_default_shell_env = True,
+        enable_default_shell_env = select({
+            "@bazel_tools//src/conditions:windows": True,
+            "//conditions:default": True,
+        }),
+        check_toolchains = select({
+            "@bazel_tools//src/conditions:windows": True,
+            "//conditions:default": False,
+        }),
+        pass_compiler_path = select({
+            "@bazel_tools//src/conditions:windows": False,
+            "//conditions:default": True,
+        }),
         **kwargs
     )
