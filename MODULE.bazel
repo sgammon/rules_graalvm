@@ -195,6 +195,7 @@ python = use_extension(
 python.toolchain(
     python_version = PYTHON_VERSION,
     is_default = True,
+    configure_coverage_tool = True,
 )
 use_repo(python, "python_3_11", "python_versions")
 
