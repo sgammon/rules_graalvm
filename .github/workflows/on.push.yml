@@ -35,25 +35,39 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-latest, windows-latest, macos-latest]
+        runner: [ubuntu-latest]
+        main: [true]
+        label: ["Ubuntu"]
+        labs: [false]
+        flags: ["--config=linux"]
+        testlabel: ["Ubuntu"]
+        coverage: [false]
         include:
+          # Bazel 7
           - runner: ubuntu-latest
-            label: Ubuntu - Standard
-            bzlmod: true
+            label: Ubuntu
             labs: false
-          - runner: ubuntu-latest
-            label: Ubuntu - Bzlmod
-            bzlmod: true
-            labs: false
+            main: true
+            coverage: true
+            flags: --config=linux
           - runner: macos-latest
             label: macOS
-            bzlmod: false
             labs: false
+            main: true
+            coverage: false
+            flags: --config=mac
+          - runner: windows-2022
+            label: Windows
+            labs: false
+            main: true
+            coverage: false
+            flags: --config=windows
 
     secrets: inherit
     with:
       runner: ${{ matrix.runner }}
       label: ${{ matrix.label }}
-      bzlmod: ${{ matrix.bzlmod }}
       labs: ${{ matrix.labs }}
-      tests: true
+      main: ${{ matrix.main }}
+      flags: ${{ matrix.flags }}
+      coverage: ${{ matrix.coverage }}
