@@ -1,1 +1,2 @@
 build:mac --spawn_strategy=worker,sandboxed,local
+build:mac --action_env BAZEL_USE_CPP_ONLY_TOOLCHAIN=1

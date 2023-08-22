@@ -22,6 +22,17 @@ _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
 
+_PASSTHRU_ENV_VARS = [
+    "INCLUDE",
+    "LIB",
+    "MSVC",
+    "VSINSTALLDIR",
+    "SDKROOT",
+    "DEVELOPER_DIR",
+    "BAZEL_USE_CPP_ONLY_TOOLCHAIN",
+    "BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN",
+]
+
 _NATIVE_IMAGE_ATTRS = {
     "deps": attr.label_list(
         providers = [[JavaInfo]],
@@ -160,7 +171,7 @@ def _graal_binary_implementation(ctx):
         unix_like = False
 
     # fix: make sure to include VS install dir on windows, and SDKROOT/DEVELOPER_DIR on macos
-    for var in ["INCLUDE", "LIB", "MSVC", "VSINSTALLDIR", "SDKROOT", "DEVELOPER_DIR"]:
+    for var in _PASSTHRU_ENV_VARS:
         if var == "DEVELOPER_DIR" and unix_like:
             # allow bazel to override the developer directory on mac
             env[var] = apple_common.apple_toolchain().developer_dir()
