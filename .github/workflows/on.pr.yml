@@ -67,22 +67,26 @@ jobs:
         labs: [false]
         flags: ["--config=linux"]
         testlabel: ["Ubuntu"]
+        coverage: [false]
         include:
           # Bazel 7
           - runner: ubuntu-latest
             label: Ubuntu
             labs: false
             main: true
+            coverage: true
             flags: --config=linux
           - runner: macos-latest
             label: macOS
             labs: false
             main: true
+            coverage: false
             flags: --config=mac
           - runner: windows-2022
             label: Windows
             labs: false
             main: true
+            coverage: false
             flags: --config=windows
 
     secrets: inherit
@@ -92,3 +96,4 @@ jobs:
       labs: ${{ matrix.labs }}
       main: ${{ matrix.main }}
       flags: ${{ matrix.flags }}
+      coverage: ${{ matrix.coverage }}

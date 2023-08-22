@@ -28,6 +28,12 @@ name: "Build"
         type: boolean
         default: false
 
+      ## Whether we should report coverage
+      coverage:
+        description: "Coverage"
+        type: boolean
+        default: false
+
       ## Bazel version to use
       bazel_version:
         description: "Bazel version"
@@ -84,6 +90,11 @@ name: "Build"
         description: "Flags"
         type: string
         default: ""
+      coverage:
+        description: "Coverage"
+        type: boolean
+        default: false
+
     secrets:
       ## Secrets: BuildBuddy API key
       BUILDBUDDY_APIKEY:
@@ -91,6 +102,10 @@ name: "Build"
 
       ## Secrets: Buildless API key
       BUILDLESS_APIKEY:
+        required: false
+
+      ## Secrets: Codecov Reporting Token
+      CODECOV_TOKEN:
         required: false
 
 env:
@@ -133,6 +148,19 @@ jobs:
         continue-on-error: ${{ inputs.labs }}
         shell: bash
         run: bazel build --config=ci ${{ inputs.flags }} "//example/native"
+      - name: "Testsuite"
+        continue-on-error: ${{ inputs.labs }}
+        shell: bash
+        run: bazel coverage --config=ci ${{ inputs.flags }} "//tools/..." "//tests/..." "//.aspect/..."
+      - name: "Report: Coverage"
+        uses: codecov/codecov-action@v3
+        if: inputs.coverage
+        continue-on-error: true
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: bazel-out/_coverage/_coverage_report.dat
+          flags: tools
+          fail_ci_if_error: true # optional (default = false)
 
   integration-tests:
     name: ${{ matrix.label }}
