@@ -201,7 +201,7 @@ def _graal_bindist_repository_impl(ctx):
             "archive": archive,
         }
 
-        _check_version(ctx.attr.version, ctx.attr.java_version, False)
+        _check_version(version, java_version, False)
 
         # download graal
         config = _graal_version_configs[version]
