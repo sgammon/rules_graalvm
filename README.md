@@ -181,12 +181,45 @@ native_image(
 the default target `@graalvm//:native-image` is hard-coded in. If you use a different repository name
 make sure to add the `native_image_tool` attribute to point to `@yourrepo//:native-image`.
 
-## Known issues
+## Hermeticity / strictness
 
-- Windows builds usually don't work
-- Hermeticity is broken by component downloads
-- Does not use CC toolchains correctly yet
+These rules attempt to strike as optimal a balance as possible between older Bazel support (starting at Bazel 4) and the
+maximum possible strictness/hermeticity for action execution.
+
+[Bazel Toolchains][1] are used to resolve the C++ compiler which is provided to `native-image`.
+Toolchains are additionally used within the rules to provide and resolve tools from GraalVM itself.
+
+For information about strictness tuning on each operating system, see the [hermeticity guide][2].
+
+### GraalVM toolchain type
+
+The GraalVM-specific toolchain type is available at:
+
+```
+@rules_graalvm//graalvm/toolchain:toolchain_type
+```
+
+If you install GraalVM at a repository named `@graalvm`, the toolchain targets are:
+
+**Java toolchain:**
+
+```
+@graalvm//:toolchain
+```
+
+**GraalVM toolchain:**
+
+```
+@graalvm//:gvm
+```
+
+The default `WORKSPACE` and Bzlmod installation instructions register both types of toolchains.
+**The GraalVM toolchain is required** to perform builds with `native-image` (or you must provide a `native_image_tool`
+target).
 
 ## Acknowledgements
 
 Built on top of @andyscott's fantastic work with [rules_graal](https://github.com/andyscott/rules_graal).
+
+[1]: https://bazel.build/extending/toolchains
+[2]: ./docs/hermeticity.md

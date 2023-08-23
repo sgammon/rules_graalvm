@@ -34,6 +34,12 @@ This snippet assumes you've [set up the rules](../README.md).
 > [!IMPORTANT]  
 > If you declare `components`, make sure to declare the full set you need, including any that may be installed in the base distribution.
 
+### Component dependencies
+
+For components which ship with GraalVM, component dependencies are managed on behalf of the developer. For example, installing the `js` component will automatically install the `icu4j` and `regex` components, which the `js` component depends on.
+
+For components which are not recognized, the rules fall back to calling `gu` directly.
+
 ### After-install actions
 
 With certain GraalVM components or project configurations, you may need to run post-installation actions with the GraalVM Updater tool (`gu`):
@@ -55,7 +61,7 @@ graalvm_repository(
         "espresso",
     ],
     setup_actions = [
-        "gu rebuild-images libpolyglot -cp ${JAVA_HOME}/lib/graalvm/lib-javavm.jar",
+        "gu rebuild-images libpolyglot -cp $(location @graalvm//:lib/graalvm/lib-javavm.jar)",
     ],
 )
 ```
