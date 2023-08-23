@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "91bde1023e5ed99d3148c8cebd716268c9d51887a746cd592c75da5dd88473bd",
+  "moduleFileHash": "8d4f9a2ef11a8cfe91d4758b082d82aa597fb2671581474f99009d99174f4ea7",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -213,7 +213,7 @@
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_",
         "platforms": "platforms@0.0.7",
-        "bazel_features": "bazel_features@0.2.0",
+        "bazel_features": "bazel_features@1.0.0",
         "rules_java": "rules_java@6.4.0",
         "bazel_skylib": "bazel_skylib@1.4.2",
         "rules_license": "rules_license@0.0.7",
@@ -399,10 +399,10 @@
         "attributes": {"name":"--platforms","urls":["--https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz"],"integrity":"--sha256-OlYcmee9vpFzqmU/1Xn+hJ8djWc5V4CrR3Cx84FDHVE=","strip_prefix":"--","remote_patches":{},"remote_patch_strip":0}
       }
     },
-    "bazel_features@0.2.0": {
+    "bazel_features@1.0.0": {
       "name": "bazel_features",
-      "version": "0.2.0",
-      "key": "bazel_features@0.2.0",
+      "version": "1.0.0",
+      "key": "bazel_features@1.0.0",
       "repoName": "bazel_features",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [],
@@ -410,9 +410,9 @@
         {
           "extensionBzlFile": "@bazel_features//private:extensions.bzl",
           "extensionName": "version_extension",
-          "usingModule": "bazel_features@0.2.0",
+          "usingModule": "bazel_features@1.0.0",
           "location": {
-            "file": "https://bcr.bazel.build/modules/bazel_features/0.2.0/MODULE.bazel",
+            "file": "https://bcr.bazel.build/modules/bazel_features/1.0.0/MODULE.bazel",
             "line": 6,
             "column": 24
           },
@@ -433,7 +433,7 @@
       "repoSpec": {
         "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
-        "attributes": {"name":"--bazel_features~0.2.0","urls":["--https://github.com/bazel-contrib/bazel_features/releases/download/v0.2.0/bazel_features-v0.2.0.tar.gz"],"integrity":"--sha256-GqvOYTs+2DhHtH76aetdyao64CU5MJeSpg5wXKSrkqU=","strip_prefix":"--bazel_features-0.2.0","remote_patches":{"--https://bcr.bazel.build/modules/bazel_features/0.2.0/patches/module_dot_bazel_version.patch":"--sha256-1OJPHEXVgCh9MECuWKs4J+DLTfmxFhtZm3jdvYSN6X8="},"remote_patch_strip":0}
+        "attributes": {"name":"--bazel_features~1.0.0","urls":["--https://github.com/bazel-contrib/bazel_features/releases/download/v1.0.0/bazel_features-v1.0.0.tar.gz"],"integrity":"--sha256-n8s9fL6Qh3JGKqpS8CuFeiJZENMNqjwlL2cOOvbYA20=","strip_prefix":"--bazel_features-1.0.0","remote_patches":{"--https://bcr.bazel.build/modules/bazel_features/1.0.0/patches/module_dot_bazel_version.patch":"--sha256-SjmKguw3ZwbgVye2gtOviZsiIFZCfSsbKCLcqphm5F0="},"remote_patch_strip":0}
       }
     },
     "rules_java@6.4.0": {
@@ -855,7 +855,7 @@
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_",
         "aspect_bazel_lib": "aspect_bazel_lib@1.33.0",
-        "bazel_features": "bazel_features@0.2.0",
+        "bazel_features": "bazel_features@1.0.0",
         "bazel_skylib": "bazel_skylib@1.4.2",
         "rules_nodejs": "rules_nodejs@5.8.2",
         "platforms": "platforms@0.0.7"
