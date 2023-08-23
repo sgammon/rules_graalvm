@@ -50,18 +50,21 @@ jobs:
             main: true
             coverage: true
             flags: --config=linux
+            testlabel: Ubuntu
           - runner: macos-latest
             label: macOS
             labs: false
             main: true
             coverage: false
             flags: --config=mac
+            testlabel: macOS
           - runner: windows-2022
             label: Windows
             labs: false
             main: true
             coverage: false
             flags: --config=windows
+            testlabel: Windows
 
     secrets: inherit
     with:
