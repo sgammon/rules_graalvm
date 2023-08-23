@@ -1,4 +1,4 @@
-"Defines the GraalVM Rules for Bazel module."
+"GraalVM Rules for Bazel"
 
 module(
     name = "rules_graalvm",

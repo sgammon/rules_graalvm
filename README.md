@@ -25,15 +25,17 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 
 ## Installation
 
+> API docs for [`graalvm_repository`](./api/repositories.md)
+
 **Via `WORKSPACE.bazel`:**
 
 ```starlark
 http_archive(
     name = "rules_graalvm",
-    sha256 = None,
+    sha256 = "f41cc6ccdcacb5aeab7eb9f62223f1f570213b3fd0deeab386ef6188e35486ce",
     strip_prefix = "rules_graalvm-0.9.1",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/releases/download/v0.9.1/rules_graalvm-0.9.1.tar.gz",
+        "https://github.com/sgammon/rules_graalvm/releases/download/v0.9.1/rules_graalvm-0.9.1.zip",
     ],
 )
 ```
@@ -48,10 +50,20 @@ graalvm_repository(
     components = [
        # if you need components like `js` or `wasm`, add them here
     ],
-    distribution = "oracle",  # `oracle`, `ce`, or `community`
+    distribution = "ce",  # `oracle`, `ce`, or `community`
     java_version = "20",  # `17`, `20`, or `21`, as supported by the version provided
     version = "20.0.2",  # earlier version format like `22.x` also supported
 )
+```
+
+```starlark
+load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains", "rules_graalvm_repositories")
+```
+
+```starlark
+rules_graalvm_repositories()
+
+register_graalvm_toolchains()
 ```
 
 **Or, via `MODULE.bazel`:**
@@ -60,16 +72,16 @@ graalvm_repository(
 > To use Bzlmod with `rules_graalvm`, you will need the `archive_override` below (until we go live on BCR).
 
 ```starlark
-bazel_dep(name = "rules_graalvm", version = "0.9.0")
+bazel_dep(name = "rules_graalvm", version = "0.9.1")
 ```
 
 ```starlark
 # Until we ship to BCR:
 archive_override(
     module_name = "rules_graalvm",
-    urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.9.1/rules_graalvm-0.9.1.tar.gz"],
+    urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.9.1/rules_graalvm-0.9.1.zip"],
     strip_prefix = "rules_graalvm-0.9.1",
-    integrity = None,
+    integrity = "sha256-9BzGzNysta6rfrn2IiPx9XAhOz/Q3uqzhu9hiONUhs4=",
 )
 ```
 
@@ -85,27 +97,33 @@ gvm.graalvm(
        # if you need components like `js` or `wasm`, add them here
     ],
 )
-use_repo(
-    gvm,
-    "graalvm",
-)
+use_repo(gvm, "graalvm")
+register_toolchains("@graalvm//:all")
 ```
 
 ## Usage: Java Toolchains
 
 You can use the `graalvm_repository` as a Java toolchain, by registering it like below:
 
-**From `WORKSPACE.bazel`:**
+**Via `WORKSPACE.bazel`:**
 
 ```starlark
-# graalvm_repository(...)
+load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains", "rules_graalvm_repositories")
 ```
 
 ```starlark
-register_toolchains("@graalvm//:toolchain")
+rules_graalvm_repositories()
+
+register_graalvm_toolchains()
 ```
 
-**From `.bazelrc`:**
+**Via Bzlmod:**
+
+```starlark
+register_toolchains("@graalvm//:all")
+```
+
+**To _use_ the toolchain, add this to your `.bazelrc`:**
 
 ```
 build --extra_toolchains=@graalvm//:toolchain
@@ -147,11 +165,24 @@ the installation instructions.
 When using toolchains, the `native_image_tool` attribute can be omitted, which delegates to Bazel's
 toolchain system to resolve the tool:
 
+**Resolve via toolchains:**
+
 ```python
 native_image(
     name = "main-native",
     deps = [":main"],
     main_class = "Main",
+)
+```
+
+**Or point to a specific `native-image` tool:**
+
+```python
+native_image(
+    name = "main-native",
+    deps = [":main"],
+    main_class = "Main",
+    native_image_tool = "@graalvm//:native-image",
 )
 ```
 
