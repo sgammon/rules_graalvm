@@ -41,21 +41,21 @@ jobs:
         labs: [false]
         flags: ["--config=linux"]
         testlabel: ["Ubuntu"]
-        coverage: [true]
+        coverage: [false]
         include:
           # Bazel 7
           - runner: ubuntu-latest
             label: Ubuntu
             labs: false
             main: true
-            coverage: true
+            coverage: false
             flags: --config=linux
             testlabel: Ubuntu
           - runner: macos-latest
             label: macOS
             labs: false
             main: true
-            coverage: false
+            coverage: true
             flags: --config=mac
             testlabel: macOS
           - runner: windows-2022
