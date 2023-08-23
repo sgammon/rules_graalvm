@@ -754,7 +754,7 @@ _GRAALVM_BINDIST = {
         ],
     },
     "ce_17.0.8_windows-x64_js_23.0.1": {
-        # GraalJs for GraalVM CE 17.0.8 (Java 17), Windows (amd64), gersion 23.0.1
+        # GraalJs for GraalVM CE 17.0.8 (Java 17), Windows (amd64), Version 23.0.1
         "url": "https://github.com/oracle/graaljs/releases/download/graal-23.0.1/js-installable-svm-java17-windows-amd64-23.0.1.jar",
         "sha256": "ba912ff5773b1d5dc1f6893d1a3730586bbcfd2bbd6a1a0c471c4b259e49e35e",
         "compatible_with": [
