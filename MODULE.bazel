@@ -54,7 +54,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_python",
-    version = "0.24.0",
+    version = "0.25.0",
     dev_dependency = True,
 )
 bazel_dep(
@@ -74,7 +74,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_nodejs",
-    version = "5.8.2",
+    version = "6.0.1",
     dev_dependency = True,
 )
 bazel_dep(
@@ -103,7 +103,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "stardoc",
-    version = "0.5.4",
+    version = "0.6.2",
     dev_dependency = True,
     repo_name = "io_bazel_stardoc",
 )
@@ -124,7 +124,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "buildifier_prebuilt",
-    version = "6.1.2.1",
+    version = "6.1.2.2",
     dev_dependency = True,
 )
 
