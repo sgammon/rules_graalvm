@@ -150,6 +150,7 @@ jobs:
         run: bazel build --config=ci ${{ inputs.flags }} "//example/native"
       - name: "Testsuite"
         continue-on-error: ${{ inputs.labs }}
+        if: inputs.coverage
         shell: bash
         run: bazel coverage --config=ci ${{ inputs.flags }} "//tools/..." "//tests/..." "//.aspect/..."
       - name: "Report: Coverage"
