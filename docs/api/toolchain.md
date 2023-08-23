@@ -17,8 +17,8 @@ Register GraalVM toolchains for Native Image and installed language components.
 
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
-| <a id="register_graalvm_toolchains-repository"></a>repository |  <p align="center"> - </p>   |  <code>"@graalvm"</code> |
-| <a id="register_graalvm_toolchains-register_java_toolchain"></a>register_java_toolchain |  <p align="center"> - </p>   |  <code>True</code> |
-| <a id="register_graalvm_toolchains-register_gvm_toolchain"></a>register_gvm_toolchain |  <p align="center"> - </p>   |  <code>True</code> |
+| <a id="register_graalvm_toolchains-repository"></a>repository |  <p align="center"> - </p>   |  `"@graalvm"` |
+| <a id="register_graalvm_toolchains-register_java_toolchain"></a>register_java_toolchain |  <p align="center"> - </p>   |  `True` |
+| <a id="register_graalvm_toolchains-register_gvm_toolchain"></a>register_gvm_toolchain |  <p align="center"> - </p>   |  `True` |
 
 

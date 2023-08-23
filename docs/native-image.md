@@ -4,8 +4,8 @@ After you [install the rules](./modern-bazel.md) and setup your GraalVM reposito
 
 ### Native image example
 
-> [!NOTE]  
-> This sample is present in the `rules_graalvm` repository at `example/native`.
+> **Note**
+> This sample is present in the `rules_graalvm` repository at `example/native`. See [examples](./examples.md).
 
 **In `Main.java`:**
 

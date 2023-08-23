@@ -34,14 +34,14 @@ In this case, the `rules_graalvm` package does not provide an SHA256 hash otherw
 | :------------- | :------------- | :------------- |
 | <a id="graalvm_repository-name"></a>name |  Name of the VM repository.   |  none |
 | <a id="graalvm_repository-java_version"></a>java_version |  Java version to use/declare.   |  none |
-| <a id="graalvm_repository-version"></a>version |  Version of the GraalVM release.   |  <code>"latest"</code> |
-| <a id="graalvm_repository-distribution"></a>distribution |  Which GVM distribution to download - <code>ce</code>, <code>community</code>, or <code>oracle</code>.   |  <code>"oracle"</code> |
-| <a id="graalvm_repository-toolchain"></a>toolchain |  Whether to create a Java toolchain from this GVM installation.   |  <code>True</code> |
-| <a id="graalvm_repository-toolchain_prefix"></a>toolchain_prefix |  Name prefix to use for the toolchain; defaults to <code>graalvm</code>.   |  <code>"graalvm"</code> |
-| <a id="graalvm_repository-target_compatible_with"></a>target_compatible_with |  Compatibility tags to apply.   |  <code>[]</code> |
-| <a id="graalvm_repository-components"></a>components |  Components to install in the target GVM installation.   |  <code>[]</code> |
-| <a id="graalvm_repository-setup_actions"></a>setup_actions |  GraalVM Updater commands that should be run; pass complete command strings that start with "gu".   |  <code>[]</code> |
-| <a id="graalvm_repository-register_all"></a>register_all |  Register all GraalVM repositories and use <code>target_compatible_with</code> (experimental).   |  <code>False</code> |
+| <a id="graalvm_repository-version"></a>version |  Version of the GraalVM release.   |  `"latest"` |
+| <a id="graalvm_repository-distribution"></a>distribution |  Which GVM distribution to download - `ce`, `community`, or `oracle`.   |  `"oracle"` |
+| <a id="graalvm_repository-toolchain"></a>toolchain |  Whether to create a Java toolchain from this GVM installation.   |  `True` |
+| <a id="graalvm_repository-toolchain_prefix"></a>toolchain_prefix |  Name prefix to use for the toolchain; defaults to `graalvm`.   |  `"graalvm"` |
+| <a id="graalvm_repository-target_compatible_with"></a>target_compatible_with |  Compatibility tags to apply.   |  `[]` |
+| <a id="graalvm_repository-components"></a>components |  Components to install in the target GVM installation.   |  `[]` |
+| <a id="graalvm_repository-setup_actions"></a>setup_actions |  GraalVM Updater commands that should be run; pass complete command strings that start with "gu".   |  `[]` |
+| <a id="graalvm_repository-register_all"></a>register_all |  Register all GraalVM repositories and use `target_compatible_with` (experimental).   |  `False` |
 | <a id="graalvm_repository-kwargs"></a>kwargs |  Passed to the underlying bindist repository rule.   |  none |
 
 

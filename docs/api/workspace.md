@@ -17,9 +17,9 @@ Register GraalVM toolchains for Native Image and installed language components.
 
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
-| <a id="register_graalvm_toolchains-repository"></a>repository |  <p align="center"> - </p>   |  <code>"@graalvm"</code> |
-| <a id="register_graalvm_toolchains-register_java_toolchain"></a>register_java_toolchain |  <p align="center"> - </p>   |  <code>True</code> |
-| <a id="register_graalvm_toolchains-register_gvm_toolchain"></a>register_gvm_toolchain |  <p align="center"> - </p>   |  <code>True</code> |
+| <a id="register_graalvm_toolchains-repository"></a>repository |  <p align="center"> - </p>   |  `"@graalvm"` |
+| <a id="register_graalvm_toolchains-register_java_toolchain"></a>register_java_toolchain |  <p align="center"> - </p>   |  `True` |
+| <a id="register_graalvm_toolchains-register_gvm_toolchain"></a>register_gvm_toolchain |  <p align="center"> - </p>   |  `True` |
 
 
 <a id="rules_graalvm_repositories"></a>
@@ -42,7 +42,7 @@ can be omitted with the provided arguments.
 
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
-| <a id="rules_graalvm_repositories-omit_rules_java"></a>omit_rules_java |  Omit the <code>rules_java</code> dependency.   |  <code>False</code> |
-| <a id="rules_graalvm_repositories-omit_bazel_skylib"></a>omit_bazel_skylib |  Omit the <code>bazel_skylib</code> dependency.   |  <code>False</code> |
+| <a id="rules_graalvm_repositories-omit_rules_java"></a>omit_rules_java |  Omit the `rules_java` dependency.   |  `False` |
+| <a id="rules_graalvm_repositories-omit_bazel_skylib"></a>omit_bazel_skylib |  Omit the `bazel_skylib` dependency.   |  `False` |
 
 

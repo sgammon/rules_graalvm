@@ -20,6 +20,7 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./docs/modern-bazel.md)
 - [Support for Bazel 5 and Bazel 4, drop-in replacement for `rules_graal`](./legacy-bazel.md)
 - [Run tools from GraalVM directly](./docs/binary-targets.md)
+- [Example projects for each Bazel version](./docs/examples.md)
 - Support for macOS, Linux, Windows (including Native Image!)
 - Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
@@ -211,6 +212,11 @@ native_image(
 **Note:** In the legacy rules, you don't have to specify `native_image_tool`, but on the other hand,
 the default target `@graalvm//:native-image` is hard-coded in. If you use a different repository name
 make sure to add the `native_image_tool` attribute to point to `@yourrepo//:native-image`.
+
+## Examples
+
+See the list of [examples](./docs/examples.md), which are used as continuous integration tests. Examples are available
+for Bazel 4-7.
 
 ## Hermeticity / strictness
 
