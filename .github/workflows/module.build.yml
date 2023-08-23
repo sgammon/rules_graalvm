@@ -161,6 +161,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: bazel-out/_coverage/_coverage_report.dat
           flags: tools
+          verbose: true
           fail_ci_if_error: true # optional (default = false)
 
   integration-tests:
