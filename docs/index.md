@@ -1,6 +1,6 @@
 # GraalVM Rules for Bazel
 
-> Latest release: `0.9.0`
+> Latest release: `0.9.1`
 
 These rules let you use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with support for:
 
@@ -25,7 +25,7 @@ http_archive(
     sha256 = "96323ac1b7a5b9db1ae1a388c5ed1fb830d4628d3ab4b7f09538558321e03111",
     strip_prefix = "rules_graalvm-0.9.0",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/archive/v0.9.0.tar.gz",
+        "https://github.com/sgammon/rules_graalvm/releases/download/v0.9.1/rules_graalvm-0.9.1.tar.gz",
     ],
 )
 ```
@@ -59,9 +59,9 @@ bazel_dep(name = "rules_graalvm", version = "0.9.0")
 # Until we ship to BCR:
 archive_override(
     module_name = "rules_graalvm",
-    urls = ["https://github.com/sgammon/rules_graalvm/archive/v0.9.0.tar.gz"],
-    strip_prefix = "rules_graalvm-0.9.0",
-    integrity = "sha256-ljI6wbeludsa4aOIxe0fuDDUYo06tLfwlThVgyHgMRE=",
+    urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.9.1/rules_graalvm-0.9.1.tar.gz"],
+    strip_prefix = "rules_graalvm-0.9.1",
+    integrity = None,
 )
 ```
 
