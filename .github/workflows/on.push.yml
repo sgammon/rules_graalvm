@@ -41,7 +41,7 @@ jobs:
         labs: [false]
         flags: ["--config=linux"]
         testlabel: ["Ubuntu"]
-        coverage: [false]
+        coverage: [true]
         include:
           # Bazel 7
           - runner: ubuntu-latest
