@@ -223,14 +223,14 @@ def _graal_binary_implementation(ctx):
 
     if ctx.attr.reflection_configuration != None:
         args.add("-H:ReflectionConfigurationFiles={path}".format(path = ctx.file.reflection_configuration.path))
-        classpath_depset = depset([ctx.file.reflection_configuration], transitive = [classpath_depset])
+        all_deps = depset([ctx.file.reflection_configuration], transitive = [all_deps])
 
     if ctx.attr.include_resources != None:
         args.add("-H:IncludeResources={path}".format(path = ctx.attr.include_resources))
 
     if ctx.attr.jni_configuration != None:
         args.add("-H:JNIConfigurationFiles={path}".format(path = ctx.file.jni_configuration.path))
-        classpath_depset = depset([ctx.file.jni_configuration], transitive = [classpath_depset])
+        all_deps = depset([ctx.file.jni_configuration], transitive = [all_deps])
         args.add("-H:+JNI")
 
     run_params = {
