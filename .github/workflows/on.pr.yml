@@ -74,13 +74,13 @@ jobs:
             label: Ubuntu
             labs: false
             main: true
-            coverage: true
+            coverage: false
             flags: --config=linux
           - runner: macos-latest
             label: macOS
             labs: false
             main: true
-            coverage: false
+            coverage: true
             flags: --config=mac
           - runner: windows-2022
             label: Windows
