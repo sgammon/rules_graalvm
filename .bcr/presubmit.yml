@@ -9,3 +9,5 @@ bcr_test_module:
       platform: ${{ platform }}
       build_targets:
         - "//sample"
+      test_targets:
+        - "//tests/analysis/..."
