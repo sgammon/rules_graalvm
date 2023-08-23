@@ -38,7 +38,7 @@ name: "Build"
       bazel_version:
         description: "Bazel version"
         type: string
-        default: "7.0.0-pre.20230724.1"
+        default: "7.0.0-pre.20230810.1"
 
       ## Configuration profile to use
       bazel_config:
@@ -77,7 +77,7 @@ name: "Build"
       bazel_version:
         description: "Bazel version"
         type: string
-        default: "7.0.0-pre.20230724.1"
+        default: "7.0.0-pre.20230810.1"
       bazel_config:
         description: "Bazel profile"
         type: string

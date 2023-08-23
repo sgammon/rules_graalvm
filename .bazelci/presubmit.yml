@@ -1,6 +1,6 @@
 ---
 matrix:
-  bazel_version: ["6.3.2", "7.0.0-pre.20230724.1"]
+  bazel_version: ["6.3.2", "7.0.0-pre.20230810.1"]
   platform: ["centos7", "debian10", "macos", "ubuntu2004"]
 
 validate_config: 1
