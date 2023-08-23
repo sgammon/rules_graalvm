@@ -12,6 +12,8 @@ name: "CI"
       - graalvm/**/*.*
       - internal/**/*.*
       - tools/**/*.*
+      - "*.bzl"
+      - "*.bazel"
 
 jobs:
   dependency-graph:
