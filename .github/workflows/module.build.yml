@@ -123,7 +123,7 @@ jobs:
         with:
           egress-policy: audit
       - name: "Setup: Checkout"
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - name: "Setup: msbuild"
         uses: ilammy/msvc-dev-cmd@cec98b9d092141f74527d0afa6feb2af698cfe89 # v1.12.1
         if: ${{ contains(inputs.runner, 'windows') }}
@@ -273,7 +273,7 @@ jobs:
         with:
           egress-policy: audit
       - name: "Setup: Checkout"
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - name: "Setup: msbuild"
         uses: ilammy/msvc-dev-cmd@cec98b9d092141f74527d0afa6feb2af698cfe89 # v1.12.1
         if: ${{ contains(inputs.runner, 'windows') }}
