@@ -36,9 +36,14 @@ _PASSTHRU_ENV_VARS = [
 _NATIVE_IMAGE_ATTRS = {
     "deps": attr.label_list(
         providers = [[JavaInfo]],
+        mandatory = True,
     ),
     "main_class": attr.string(
-        mandatory = True,
+        mandatory = False,
+    ),
+    "binary_type": attr.string(
+        mandatory = False,
+        default = "executable",
     ),
     "include_resources": attr.string(
         mandatory = False,
@@ -78,11 +83,11 @@ _NATIVE_IMAGE_ATTRS = {
     "pass_compiler_path": attr.bool(
         default = True,
     ),
-    "_cc_toolchain": attr.label(
-        default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
-    ),
     "default_executable_name": attr.string(
         mandatory = True,
+    ),
+    "_cc_toolchain": attr.label(
+        default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
     ),
 }
 

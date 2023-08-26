@@ -1,571 +1,591 @@
 resolved = [
      {
-          "original_rule_class": "@rules_jvm_external~5.3//:coursier.bzl%pinned_coursier_fetch",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~stardoc_maven instantiated at:\n  <builtin>: in <toplevel>\nRepository rule pinned_coursier_fetch defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_jvm_external~5.3/coursier.bzl:1166:40: in <toplevel>\n",
+          "original_rule_class": "@com_grail_bazel_toolchain//toolchain:rules.bzl%toolchain",
+          "definition_information": "Repository llvm instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:115:19: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/com_grail_bazel_toolchain/toolchain/rules.bzl:300:14: in llvm_toolchain\nRepository rule toolchain defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/com_grail_bazel_toolchain/toolchain/rules.bzl:272:28: in <toplevel>\n",
           "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~stardoc_maven",
-               "repositories": [
-                    "{ \"repo_url\": \"https://repo1.maven.org/maven2\" }"
-               ],
-               "artifacts": [
-                    "{ \"group\": \"com.beust\", \"artifact\": \"jcommander\", \"version\": \"1.82\" }",
-                    "{ \"group\": \"com.google.escapevelocity\", \"artifact\": \"escapevelocity\", \"version\": \"1.1\" }",
-                    "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.1-jre\" }",
-                    "{ \"group\": \"com.google.truth\", \"artifact\": \"truth\", \"version\": \"1.1.3\" }",
-                    "{ \"group\": \"junit\", \"artifact\": \"junit\", \"version\": \"4.13.2\" }"
-               ],
-               "fetch_sources": True,
-               "fetch_javadoc": False,
-               "generate_compat_repositories": False,
-               "maven_install_json": "@stardoc~0.6.2//:maven_install.json",
-               "override_targets": {},
-               "strict_visibility": True,
-               "strict_visibility_value": [
-                    "//visibility:private"
-               ],
-               "jetify": False,
-               "jetify_include_list": [
-                    "*"
-               ],
-               "additional_netrc_lines": [],
-               "fail_if_repin_required": True,
-               "use_starlark_android_rules": False,
-               "aar_import_bzl_label": "@build_bazel_rules_android//android:rules.bzl",
-               "duplicate_version_warning": "warn"
-          },
-          "repositories": [
-               {
-                    "rule_class": "@rules_jvm_external~5.3//:coursier.bzl%pinned_coursier_fetch",
-                    "attributes": {
-                         "name": "rules_jvm_external~5.3~maven~stardoc_maven",
-                         "repositories": [
-                              "{ \"repo_url\": \"https://repo1.maven.org/maven2\" }"
-                         ],
-                         "artifacts": [
-                              "{ \"group\": \"com.beust\", \"artifact\": \"jcommander\", \"version\": \"1.82\" }",
-                              "{ \"group\": \"com.google.escapevelocity\", \"artifact\": \"escapevelocity\", \"version\": \"1.1\" }",
-                              "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.1-jre\" }",
-                              "{ \"group\": \"com.google.truth\", \"artifact\": \"truth\", \"version\": \"1.1.3\" }",
-                              "{ \"group\": \"junit\", \"artifact\": \"junit\", \"version\": \"4.13.2\" }"
-                         ],
-                         "fetch_sources": True,
-                         "fetch_javadoc": False,
-                         "generate_compat_repositories": False,
-                         "maven_install_json": "@stardoc~0.6.2//:maven_install.json",
-                         "override_targets": {},
-                         "strict_visibility": True,
-                         "strict_visibility_value": [
-                              "//visibility:private"
-                         ],
-                         "jetify": False,
-                         "jetify_include_list": [
-                              "*"
-                         ],
-                         "additional_netrc_lines": [],
-                         "fail_if_repin_required": True,
-                         "use_starlark_android_rules": False,
-                         "aar_import_bzl_label": "@build_bazel_rules_android//android:rules.bzl",
-                         "duplicate_version_warning": "warn"
-                    },
-                    "output_tree_hash": "e2a01ae6efc0a735d20fb6d0c4d4da70dee89077024d74ca20da01433f0f51c5"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-          "definition_information": "Repository rules_license~0.0.7 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_archive defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:379:31: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_license~0.0.7",
-               "urls": [
-                    "https://github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz"
-               ],
-               "integrity": "sha256-RTHezLkTY5ww5cdRKgVNXYdWmNrrddjPkPKEN1/nw2A=",
-               "strip_prefix": "",
-               "remote_patches": {},
-               "remote_patch_strip": 0
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-                    "attributes": {
-                         "url": "",
-                         "urls": [
-                              "https://github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz"
-                         ],
-                         "sha256": "",
-                         "integrity": "sha256-RTHezLkTY5ww5cdRKgVNXYdWmNrrddjPkPKEN1/nw2A=",
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "canonical_id": "",
-                         "strip_prefix": "",
-                         "add_prefix": "",
-                         "type": "",
-                         "patches": [],
-                         "remote_patches": {},
-                         "remote_patch_strip": 0,
-                         "patch_tool": "",
-                         "patch_args": [
-                              "-p0"
-                         ],
-                         "patch_cmds": [],
-                         "patch_cmds_win": [],
-                         "build_file_content": "",
-                         "workspace_file_content": "",
-                         "name": "rules_license~0.0.7"
-                    },
-                    "output_tree_hash": "e0c9cd868bc6884b8d00161efd067517376270cb92a4778e35dff2c25672e1f0"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava",
-               "downloaded_file_path": "com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
-               "sha256": "b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99",
-               "urls": [
-                    "https://repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
-                    "https://maven.google.com/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
-                         "sha256": "b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
-                              "https://maven.google.com/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava"
-                    },
-                    "output_tree_hash": "fd6cef071c4190006b3ce4689960ede682cb4e0ba4f2433e1bc387bfc9ed6438"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~com_google_guava_failureaccess_1_0_1 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~com_google_guava_failureaccess_1_0_1",
-               "downloaded_file_path": "com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
-               "sha256": "a171ee4c734dd2da837e4b16be9df4661afab72a41adaf31eb84dfdaf936ca26",
-               "urls": [
-                    "https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
-                    "https://maven.google.com/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
-                         "sha256": "a171ee4c734dd2da837e4b16be9df4661afab72a41adaf31eb84dfdaf936ca26",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
-                              "https://maven.google.com/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~com_google_guava_failureaccess_1_0_1"
-                    },
-                    "output_tree_hash": "5c1354a3b61ad53729f9e43a2bd746fc1ea26e94a1cdb5324028cd6c139cecdf"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~com_google_escapevelocity_escapevelocity_1_1 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~com_google_escapevelocity_escapevelocity_1_1",
-               "downloaded_file_path": "com/google/escapevelocity/escapevelocity/1.1/escapevelocity-1.1.jar",
-               "sha256": "37e76e4466836dedb864fb82355cd01c3bd21325ab642d89a0f759291b171231",
-               "urls": [
-                    "https://repo1.maven.org/maven2/com/google/escapevelocity/escapevelocity/1.1/escapevelocity-1.1.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "com/google/escapevelocity/escapevelocity/1.1/escapevelocity-1.1.jar",
-                         "sha256": "37e76e4466836dedb864fb82355cd01c3bd21325ab642d89a0f759291b171231",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/com/google/escapevelocity/escapevelocity/1.1/escapevelocity-1.1.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~com_google_escapevelocity_escapevelocity_1_1"
-                    },
-                    "output_tree_hash": "eab74c1d15ec277df9d01e8487be26b2b7de476cb5eb836e47d2071421e89d69"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~com_google_j2objc_j2objc_annotations_1_3 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~com_google_j2objc_j2objc_annotations_1_3",
-               "downloaded_file_path": "com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3.jar",
-               "sha256": "21af30c92267bd6122c0e0b4d20cccb6641a37eaf956c6540ec471d584e64a7b",
-               "urls": [
-                    "https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3.jar",
-                         "sha256": "21af30c92267bd6122c0e0b4d20cccb6641a37eaf956c6540ec471d584e64a7b",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~com_google_j2objc_j2objc_annotations_1_3"
-                    },
-                    "output_tree_hash": "36e72378146aa8dcf1a17ce0c1c1c1f58f04abfe1e543c74f4d84d4fa0b21daa"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~com_google_code_findbugs_jsr305_3_0_2 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~com_google_code_findbugs_jsr305_3_0_2",
-               "downloaded_file_path": "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-               "sha256": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7",
-               "urls": [
-                    "https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-                    "https://maven.google.com/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-                         "sha256": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-                              "https://maven.google.com/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~com_google_code_findbugs_jsr305_3_0_2"
-                    },
-                    "output_tree_hash": "194733b732588eda88f4ccf0a63f7699598ca1a09876921f93eb7ae91289994a"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~com_google_guava_guava_31_1_jre instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~com_google_guava_guava_31_1_jre",
-               "downloaded_file_path": "com/google/guava/guava/31.1-jre/guava-31.1-jre.jar",
-               "sha256": "a42edc9cab792e39fe39bb94f3fca655ed157ff87a8af78e1d6ba5b07c4a00ab",
-               "urls": [
-                    "https://repo1.maven.org/maven2/com/google/guava/guava/31.1-jre/guava-31.1-jre.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "com/google/guava/guava/31.1-jre/guava-31.1-jre.jar",
-                         "sha256": "a42edc9cab792e39fe39bb94f3fca655ed157ff87a8af78e1d6ba5b07c4a00ab",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/com/google/guava/guava/31.1-jre/guava-31.1-jre.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~com_google_guava_guava_31_1_jre"
-                    },
-                    "output_tree_hash": "769e17860ae561f2f3fdd7b8c290661cf74b392ccf7ab8d8f7d18870c373a8da"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~com_google_errorprone_error_prone_annotations_2_11_0 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~com_google_errorprone_error_prone_annotations_2_11_0",
-               "downloaded_file_path": "com/google/errorprone/error_prone_annotations/2.11.0/error_prone_annotations-2.11.0.jar",
-               "sha256": "721cb91842b46fa056847d104d5225c8b8e1e8b62263b993051e1e5a0137b7ec",
-               "urls": [
-                    "https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.11.0/error_prone_annotations-2.11.0.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "com/google/errorprone/error_prone_annotations/2.11.0/error_prone_annotations-2.11.0.jar",
-                         "sha256": "721cb91842b46fa056847d104d5225c8b8e1e8b62263b993051e1e5a0137b7ec",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.11.0/error_prone_annotations-2.11.0.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~com_google_errorprone_error_prone_annotations_2_11_0"
-                    },
-                    "output_tree_hash": "e95f6c4624d58b3d362cee5642303fbf6af62a523ff921cebdc1b4be973e2f29"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~com_beust_jcommander_1_82 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~com_beust_jcommander_1_82",
-               "downloaded_file_path": "com/beust/jcommander/1.82/jcommander-1.82.jar",
-               "sha256": "deeac157c8de6822878d85d0c7bc8467a19cc8484d37788f7804f039dde280b1",
-               "urls": [
-                    "https://repo1.maven.org/maven2/com/beust/jcommander/1.82/jcommander-1.82.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "com/beust/jcommander/1.82/jcommander-1.82.jar",
-                         "sha256": "deeac157c8de6822878d85d0c7bc8467a19cc8484d37788f7804f039dde280b1",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/com/beust/jcommander/1.82/jcommander-1.82.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~com_beust_jcommander_1_82"
-                    },
-                    "output_tree_hash": "f9d7bc14198a00a3f054daf552c6791eedd7cd475d7aa6763931f294f31fa40e"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-          "definition_information": "Repository rules_jvm_external~5.3~maven~org_checkerframework_checker_qual_3_13_0 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_file defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:473:28: in <toplevel>\n",
-          "original_attributes": {
-               "name": "rules_jvm_external~5.3~maven~org_checkerframework_checker_qual_3_13_0",
-               "downloaded_file_path": "org/checkerframework/checker-qual/3.13.0/checker-qual-3.13.0.jar",
-               "sha256": "3ea0dcd73b4d6cb2fb34bd7ed4dad6db327a01ebad7db05eb7894076b3d64491",
-               "urls": [
-                    "https://repo1.maven.org/maven2/org/checkerframework/checker-qual/3.13.0/checker-qual-3.13.0.jar"
-               ]
-          },
-          "repositories": [
-               {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-                    "attributes": {
-                         "executable": False,
-                         "downloaded_file_path": "org/checkerframework/checker-qual/3.13.0/checker-qual-3.13.0.jar",
-                         "sha256": "3ea0dcd73b4d6cb2fb34bd7ed4dad6db327a01ebad7db05eb7894076b3d64491",
-                         "integrity": "",
-                         "canonical_id": "",
-                         "url": "",
-                         "urls": [
-                              "https://repo1.maven.org/maven2/org/checkerframework/checker-qual/3.13.0/checker-qual-3.13.0.jar"
-                         ],
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "name": "rules_jvm_external~5.3~maven~org_checkerframework_checker_qual_3_13_0"
-                    },
-                    "output_tree_hash": "b22ff85e04902372d265404e87d21e57566fffcbc5a464d01b75a28695e9cfa2"
-               }
-          ]
-     },
-     {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-          "definition_information": "Repository protobuf~21.7 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_archive defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:379:31: in <toplevel>\n",
-          "original_attributes": {
-               "name": "protobuf~21.7",
-               "urls": [
-                    "https://github.com/protocolbuffers/protobuf/releases/download/v21.7/protobuf-all-21.7.zip"
-               ],
-               "integrity": "sha256-VJOiH17T/FAuZv7GuUScBqVRztYwAvpIkDxA36jeeko=",
-               "strip_prefix": "protobuf-21.7",
-               "remote_patches": {
-                    "https://bcr.bazel.build/modules/protobuf/21.7/patches/add_module_dot_bazel.patch": "sha256-q3V2+eq0v2XF0z8z+V+QF4cynD6JvHI1y3kI/+rzl5s=",
-                    "https://bcr.bazel.build/modules/protobuf/21.7/patches/add_module_dot_bazel_for_examples.patch": "sha256-O7YP6s3lo/1opUiO0jqXYORNHdZ/2q3hjz1QGy8QdIU=",
-                    "https://bcr.bazel.build/modules/protobuf/21.7/patches/relative_repo_names.patch": "sha256-RK9RjW8T5UJNG7flIrnFiNE9vKwWB+8uWWtJqXYT0w4=",
-                    "https://bcr.bazel.build/modules/protobuf/21.7/patches/add_missing_files.patch": "sha256-Hyne4DG2u5bXcWHNxNMirA2QFAe/2Cl8oMm1XJdkQIY="
+               "name": "llvm",
+               "generator_name": "llvm",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "toolchain_roots": {
+                    "": "@llvm_llvm//"
                },
-               "remote_patch_strip": 1
+               "llvm_versions": {
+                    "": "15.0.6"
+               }
           },
           "repositories": [
                {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+                    "rule_class": "@com_grail_bazel_toolchain//toolchain:rules.bzl%toolchain",
                     "attributes": {
-                         "url": "",
-                         "urls": [
-                              "https://github.com/protocolbuffers/protobuf/releases/download/v21.7/protobuf-all-21.7.zip"
-                         ],
-                         "sha256": "",
-                         "integrity": "sha256-VJOiH17T/FAuZv7GuUScBqVRztYwAvpIkDxA36jeeko=",
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "canonical_id": "",
-                         "strip_prefix": "protobuf-21.7",
-                         "add_prefix": "",
-                         "type": "",
-                         "patches": [],
-                         "remote_patches": {
-                              "https://bcr.bazel.build/modules/protobuf/21.7/patches/add_module_dot_bazel.patch": "sha256-q3V2+eq0v2XF0z8z+V+QF4cynD6JvHI1y3kI/+rzl5s=",
-                              "https://bcr.bazel.build/modules/protobuf/21.7/patches/add_module_dot_bazel_for_examples.patch": "sha256-O7YP6s3lo/1opUiO0jqXYORNHdZ/2q3hjz1QGy8QdIU=",
-                              "https://bcr.bazel.build/modules/protobuf/21.7/patches/relative_repo_names.patch": "sha256-RK9RjW8T5UJNG7flIrnFiNE9vKwWB+8uWWtJqXYT0w4=",
-                              "https://bcr.bazel.build/modules/protobuf/21.7/patches/add_missing_files.patch": "sha256-Hyne4DG2u5bXcWHNxNMirA2QFAe/2Cl8oMm1XJdkQIY="
+                         "name": "llvm",
+                         "generator_name": "llvm",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "toolchain_roots": {
+                              "": "@llvm_llvm//"
                          },
-                         "remote_patch_strip": 1,
-                         "patch_tool": "",
-                         "patch_args": [
-                              "-p0"
-                         ],
-                         "patch_cmds": [],
-                         "patch_cmds_win": [],
-                         "build_file_content": "",
-                         "workspace_file_content": "",
-                         "name": "protobuf~21.7"
+                         "llvm_versions": {
+                              "": "15.0.6"
+                         }
                     },
-                    "output_tree_hash": "521931f7403feb3e78f82bfcb1a2fcff13327db9fb58980bb356f3d65622db5b"
+                    "output_tree_hash": "b8c1a4978e94a4d2beec0ed91b6f5d813a768a534aebd6011e69f5beed349ad2"
                }
           ]
      },
      {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-          "definition_information": "Repository rules_pkg~0.7.0 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_archive defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:379:31: in <toplevel>\n",
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk11_linux_aarch64_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:532:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:205:10: in remote_jdk11_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
           "original_attributes": {
-               "name": "rules_pkg~0.7.0",
-               "urls": [
-                    "https://github.com/bazelbuild/rules_pkg/releases/download/0.7.0/rules_pkg-0.7.0.tar.gz"
-               ],
-               "integrity": "sha256-iimOgydi7aGDBZfWT+fbWBeKqEzVkm121bdE1lWJQcI=",
-               "strip_prefix": "",
-               "remote_patches": {
-                    "https://bcr.bazel.build/modules/rules_pkg/0.7.0/patches/module_dot_bazel.patch": "sha256-4OaEPZwYF6iC71ZTDg6MJ7LLqX7ZA0/kK4mT+4xKqiE="
-               },
-               "remote_patch_strip": 0
+               "name": "remotejdk11_linux_aarch64_toolchain_config_repo",
+               "generator_name": "remotejdk11_linux_aarch64_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_aarch64//:jdk\",\n)\n"
           },
           "repositories": [
                {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
                     "attributes": {
-                         "url": "",
-                         "urls": [
-                              "https://github.com/bazelbuild/rules_pkg/releases/download/0.7.0/rules_pkg-0.7.0.tar.gz"
-                         ],
-                         "sha256": "",
-                         "integrity": "sha256-iimOgydi7aGDBZfWT+fbWBeKqEzVkm121bdE1lWJQcI=",
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "canonical_id": "",
-                         "strip_prefix": "",
-                         "add_prefix": "",
-                         "type": "",
-                         "patches": [],
-                         "remote_patches": {
-                              "https://bcr.bazel.build/modules/rules_pkg/0.7.0/patches/module_dot_bazel.patch": "sha256-4OaEPZwYF6iC71ZTDg6MJ7LLqX7ZA0/kK4mT+4xKqiE="
-                         },
-                         "remote_patch_strip": 0,
-                         "patch_tool": "",
-                         "patch_args": [
-                              "-p0"
-                         ],
-                         "patch_cmds": [],
-                         "patch_cmds_win": [],
-                         "build_file_content": "",
-                         "workspace_file_content": "",
-                         "name": "rules_pkg~0.7.0"
+                         "name": "remotejdk11_linux_aarch64_toolchain_config_repo",
+                         "generator_name": "remotejdk11_linux_aarch64_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_aarch64//:jdk\",\n)\n"
                     },
-                    "output_tree_hash": "a6527d9eedb6b248cf5aa52983e7998df6edde85adb7870de5869483ea59dfc0"
+                    "output_tree_hash": "f817d64408c5484cf564d5fdc24f11c3f601835818645f6de7ab4c56eaf4056f"
                }
           ]
      },
      {
-          "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-          "definition_information": "Repository zlib~1.2.13 instantiated at:\n  <builtin>: in <toplevel>\nRepository rule http_archive defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/http.bzl:379:31: in <toplevel>\n",
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk11_win_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:532:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:285:10: in remote_jdk11_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
           "original_attributes": {
-               "name": "zlib~1.2.13",
-               "urls": [
-                    "https://github.com/madler/zlib/archive/refs/tags/v1.2.13.zip"
-               ],
-               "integrity": "sha256-woVpUbvzDjCGGs43ZVldhroT8s8BJ52QH2xiJYxX9P8=",
-               "strip_prefix": "zlib-1.2.13",
-               "remote_patches": {
-                    "https://bcr.bazel.build/modules/zlib/1.2.13/patches/add_build_file.patch": "sha256-Z2ig1F01/dfdG63H+GwYRMcGbW/zAGIUWnKKrwKSEaQ=",
-                    "https://bcr.bazel.build/modules/zlib/1.2.13/patches/module_dot_bazel.patch": "sha256-Nc7xP02Dl6yHQvkiZWSQnlnw1T277yS4cJxxONWJ/Ic="
-               },
-               "remote_patch_strip": 0
+               "name": "remotejdk11_win_toolchain_config_repo",
+               "generator_name": "remotejdk11_win_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_win//:jdk\",\n)\n"
           },
           "repositories": [
                {
-                    "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
                     "attributes": {
-                         "url": "",
-                         "urls": [
-                              "https://github.com/madler/zlib/archive/refs/tags/v1.2.13.zip"
-                         ],
-                         "sha256": "",
-                         "integrity": "sha256-woVpUbvzDjCGGs43ZVldhroT8s8BJ52QH2xiJYxX9P8=",
-                         "netrc": "",
-                         "auth_patterns": {},
-                         "canonical_id": "",
-                         "strip_prefix": "zlib-1.2.13",
-                         "add_prefix": "",
-                         "type": "",
-                         "patches": [],
-                         "remote_patches": {
-                              "https://bcr.bazel.build/modules/zlib/1.2.13/patches/add_build_file.patch": "sha256-Z2ig1F01/dfdG63H+GwYRMcGbW/zAGIUWnKKrwKSEaQ=",
-                              "https://bcr.bazel.build/modules/zlib/1.2.13/patches/module_dot_bazel.patch": "sha256-Nc7xP02Dl6yHQvkiZWSQnlnw1T277yS4cJxxONWJ/Ic="
-                         },
-                         "remote_patch_strip": 0,
-                         "patch_tool": "",
-                         "patch_args": [
-                              "-p0"
-                         ],
-                         "patch_cmds": [],
-                         "patch_cmds_win": [],
-                         "build_file_content": "",
-                         "workspace_file_content": "",
-                         "name": "zlib~1.2.13"
+                         "name": "remotejdk11_win_toolchain_config_repo",
+                         "generator_name": "remotejdk11_win_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_win//:jdk\",\n)\n"
                     },
-                    "output_tree_hash": "b45b65dd8a6d9e35bf1ab266fb8af85c7e29aab649e9871f753638d07f09f185"
+                    "output_tree_hash": "f6c7a48666a77c098017285e46d511074ce3de7ff4e9808bc592fd49228681b2"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk11_macos_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:532:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:253:10: in remote_jdk11_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk11_macos_toolchain_config_repo",
+               "generator_name": "remotejdk11_macos_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_macos//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk11_macos_toolchain_config_repo",
+                         "generator_name": "remotejdk11_macos_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_macos//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "4b40216fabc2f6c17810749b3bf713065a39e05ff547dac45c395be6391709af"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk11_linux_ppc64le_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:532:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:221:10: in remote_jdk11_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk11_linux_ppc64le_toolchain_config_repo",
+               "generator_name": "remotejdk11_linux_ppc64le_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:ppc\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_ppc64le//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk11_linux_ppc64le_toolchain_config_repo",
+                         "generator_name": "remotejdk11_linux_ppc64le_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:ppc\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_ppc64le//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "b5938368c9f92a6f5045ffca11214afb8ec9256686bec9245714376aa66b67d1"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk11_linux_s390x_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:532:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:237:10: in remote_jdk11_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk11_linux_s390x_toolchain_config_repo",
+               "generator_name": "remotejdk11_linux_s390x_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:s390x\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_s390x//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk11_linux_s390x_toolchain_config_repo",
+                         "generator_name": "remotejdk11_linux_s390x_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:s390x\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_s390x//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "10df692cd4259131687761221fcb989c660f1c6e9376feba066b4fdc80bdc048"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk11_macos_aarch64_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:532:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:269:10: in remote_jdk11_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk11_macos_aarch64_toolchain_config_repo",
+               "generator_name": "remotejdk11_macos_aarch64_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_macos_aarch64//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk11_macos_aarch64_toolchain_config_repo",
+                         "generator_name": "remotejdk11_macos_aarch64_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_macos_aarch64//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "a762e337f24b8b511c520c1101b81cc02082e3fd25e58140dfa47eb7342161ce"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk11_linux_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:532:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:189:10: in remote_jdk11_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk11_linux_toolchain_config_repo",
+               "generator_name": "remotejdk11_linux_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk11_linux_toolchain_config_repo",
+                         "generator_name": "remotejdk11_linux_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "8e1033ec85367ff2067aa4aa175c76d9cab0f81b9d0d4f10b7743e953331b892"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk17_macos_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:533:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:382:10: in remote_jdk17_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk17_macos_toolchain_config_repo",
+               "generator_name": "remotejdk17_macos_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_macos//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk17_macos_toolchain_config_repo",
+                         "generator_name": "remotejdk17_macos_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_macos//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "8fc6087c6e654d2ff8ce626db7d0902fcf08d111f3c9f737ab19355b67d59c80"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk17_linux_s390x_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:533:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:350:10: in remote_jdk17_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk17_linux_s390x_toolchain_config_repo",
+               "generator_name": "remotejdk17_linux_s390x_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:s390x\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_s390x//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk17_linux_s390x_toolchain_config_repo",
+                         "generator_name": "remotejdk17_linux_s390x_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:s390x\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_s390x//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "b862fb5fa8587c3b1443eeb858a974af46c3f71ad339147f857e37697dd06bc8"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk17_linux_ppc64le_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:533:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:366:10: in remote_jdk17_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk17_linux_ppc64le_toolchain_config_repo",
+               "generator_name": "remotejdk17_linux_ppc64le_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:ppc\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_ppc64le//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk17_linux_ppc64le_toolchain_config_repo",
+                         "generator_name": "remotejdk17_linux_ppc64le_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:ppc\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_ppc64le//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "34ebbe42ccc37481247f25b20d1e441017040d2b65a2fd6282c94fe58e17b11c"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk17_linux_aarch64_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:533:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:334:10: in remote_jdk17_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk17_linux_aarch64_toolchain_config_repo",
+               "generator_name": "remotejdk17_linux_aarch64_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_aarch64//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk17_linux_aarch64_toolchain_config_repo",
+                         "generator_name": "remotejdk17_linux_aarch64_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_aarch64//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "57763b4c6342c2729b70ccf1676a75726a4775a6e6468c86462f7247c968ecd7"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk11_win_arm64_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:532:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:301:10: in remote_jdk11_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk11_win_arm64_toolchain_config_repo",
+               "generator_name": "remotejdk11_win_arm64_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:arm64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_win_arm64//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk11_win_arm64_toolchain_config_repo",
+                         "generator_name": "remotejdk11_win_arm64_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:arm64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_win_arm64//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "383e78f7a5b828401c8b5a470bc3676797a189fe9641856f243c35e282e4384c"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk17_linux_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:533:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:318:10: in remote_jdk17_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk17_linux_toolchain_config_repo",
+               "generator_name": "remotejdk17_linux_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk17_linux_toolchain_config_repo",
+                         "generator_name": "remotejdk17_linux_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "9cd805ebc7702094002f5373bee54fb0b9bba1ece881b83ff48c0586ddaa10d5"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk20_linux_aarch64_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:534:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:462:10: in remote_jdk20_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk20_linux_aarch64_toolchain_config_repo",
+               "generator_name": "remotejdk20_linux_aarch64_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_linux_aarch64//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk20_linux_aarch64_toolchain_config_repo",
+                         "generator_name": "remotejdk20_linux_aarch64_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_linux_aarch64//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "46c1e8ce83320d997156077b209ecbd9a9dc964fcc68b1d0a920597904267819"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk20_linux_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:534:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:446:10: in remote_jdk20_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk20_linux_toolchain_config_repo",
+               "generator_name": "remotejdk20_linux_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_linux//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk20_linux_toolchain_config_repo",
+                         "generator_name": "remotejdk20_linux_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_linux//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "56bca5eb20b42c86545caa59487effc162066b25be5aba05fe08c6ef9eccec90"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk17_win_arm64_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:533:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:428:10: in remote_jdk17_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk17_win_arm64_toolchain_config_repo",
+               "generator_name": "remotejdk17_win_arm64_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:arm64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_win_arm64//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk17_win_arm64_toolchain_config_repo",
+                         "generator_name": "remotejdk17_win_arm64_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:arm64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_win_arm64//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "78dfb0f7dab651cbc675d9dfe42e28b363ec26c3e5dc9a57b94833852f91deda"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk17_win_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:533:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:413:10: in remote_jdk17_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk17_win_toolchain_config_repo",
+               "generator_name": "remotejdk17_win_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_win//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk17_win_toolchain_config_repo",
+                         "generator_name": "remotejdk17_win_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_win//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "224a8c9f9e2f5e5cbb9efff01aa2555019675d3e1c9b93a7b4a83dfd7f5b69d5"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk17_macos_aarch64_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:533:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:398:10: in remote_jdk17_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk17_macos_aarch64_toolchain_config_repo",
+               "generator_name": "remotejdk17_macos_aarch64_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_macos_aarch64//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk17_macos_aarch64_toolchain_config_repo",
+                         "generator_name": "remotejdk17_macos_aarch64_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_macos_aarch64//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "f698cb98820064a11248ba634c70c6df5b57382ee5f8a1b589007e5b73bfc6f8"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk20_win_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:534:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:509:10: in remote_jdk20_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk20_win_toolchain_config_repo",
+               "generator_name": "remotejdk20_win_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_win//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk20_win_toolchain_config_repo",
+                         "generator_name": "remotejdk20_win_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_win//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "26b81f5d62d1f237e048bc644d1d296d25e734b296b4f34803d65d7c22d2a6ca"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk20_macos_aarch64_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:534:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:494:10: in remote_jdk20_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk20_macos_aarch64_toolchain_config_repo",
+               "generator_name": "remotejdk20_macos_aarch64_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_macos_aarch64//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk20_macos_aarch64_toolchain_config_repo",
+                         "generator_name": "remotejdk20_macos_aarch64_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_macos_aarch64//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "5f488c8a476c60416d448aeb8569983551ce721d393672cf3dee5df7ab26ff61"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+          "definition_information": "Repository remotejdk20_macos_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:534:23: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:478:10: in remote_jdk20_repos\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:57:22: in remote_java_repository\nRepository rule _toolchain_config defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/remote_java_repository.bzl:27:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "remotejdk20_macos_toolchain_config_repo",
+               "generator_name": "remotejdk20_macos_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_macos//:jdk\",\n)\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:remote_java_repository.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "remotejdk20_macos_toolchain_config_repo",
+                         "generator_name": "remotejdk20_macos_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk20_macos//:jdk\",\n)\n"
+                    },
+                    "output_tree_hash": "b97edafaf14ed9ce2a1dea71573717a626126e3073cac8b3f1db2e0c6fa0a43c"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "@rules_java~6.4.0//toolchains:local_java_repository.bzl%_local_java_repository_rule",
+          "definition_information": "Repository local_jdk instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:145:28: in _setup_rules_graalvm_repositories\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:531:19: in rules_java_dependencies\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/java/repositories.bzl:76:10: in local_jdk_repo\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/bazel_tools/tools/build_defs/repo/utils.bzl:240:18: in maybe\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/local_java_repository.bzl:286:32: in local_java_repository\nRepository rule _local_java_repository_rule defined at:\n  /private/var/tmp/_bazel_sam/096d0fb8d9b4b97d25f3c6f4e987e69a/external/rules_java~6.4.0/toolchains/local_java_repository.bzl:250:46: in <toplevel>\n",
+          "original_attributes": {
+               "name": "local_jdk",
+               "generator_name": "local_jdk",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    version = {RUNTIME_VERSION},\n)\n",
+               "java_home": "",
+               "version": ""
+          },
+          "repositories": [
+               {
+                    "rule_class": "@rules_java~6.4.0//toolchains:local_java_repository.bzl%_local_java_repository_rule",
+                    "attributes": {
+                         "name": "local_jdk",
+                         "generator_name": "local_jdk",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    version = {RUNTIME_VERSION},\n)\n",
+                         "java_home": "",
+                         "version": ""
+                    },
+                    "output_tree_hash": "6c1cc6c19afddcd1ba1b080dc512f19f6442d68f702560638ef03686275aea54"
+               }
+          ]
+     },
+     {
+          "original_rule_class": "//internal:graalvm_bindist.bzl%_toolchain_config",
+          "definition_information": "Repository graalvm_toolchain_config_repo instantiated at:\n  /Volumes/VAULTROOM/rules_graalvm/WORKSPACE.bzlmod:123:27: in <toplevel>\n  /Volumes/VAULTROOM/rules_graalvm/internal/repositories.bzl:155:23: in _setup_rules_graalvm_repositories\n  /Volumes/VAULTROOM/rules_graalvm/graalvm/repositories.bzl:50:24: in graalvm_repository\n  /Volumes/VAULTROOM/rules_graalvm/internal/graalvm_bindist.bzl:649:26: in graalvm_repository\nRepository rule _toolchain_config defined at:\n  /Volumes/VAULTROOM/rules_graalvm/internal/graalvm_bindist.bzl:576:36: in <toplevel>\n",
+          "original_attributes": {
+               "name": "graalvm_toolchain_config_repo",
+               "generator_name": "graalvm_toolchain_config_repo",
+               "generator_function": "_setup_rules_graalvm_repositories",
+               "generator_location": None,
+               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"gvm\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain:toolchain\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"
+          },
+          "repositories": [
+               {
+                    "rule_class": "//internal:graalvm_bindist.bzl%_toolchain_config",
+                    "attributes": {
+                         "name": "graalvm_toolchain_config_repo",
+                         "generator_name": "graalvm_toolchain_config_repo",
+                         "generator_function": "_setup_rules_graalvm_repositories",
+                         "generator_location": None,
+                         "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"gvm\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain:toolchain\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"
+                    },
+                    "output_tree_hash": "00e9a2a8a7e42fc4bd1edb23dddc02d4d5570a07d6c4e5f991c899b8432f8fdd"
                }
           ]
      }
