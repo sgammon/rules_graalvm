@@ -40,18 +40,65 @@ _native_image = rule(
 )
 
 ## Exports.
-def native_image(name, **kwargs):
-    """Macros which creates a native image via the legacy rules."""
+def native_image(
+    name,
+    deps,
+    main_class,
+    include_resources = None,
+    reflection_configuration = None,
+    jni_configuration = None,
+    initialize_at_build_time = [],
+    initialize_at_run_time = [],
+    native_features = [],
+    data = [],
+    extra_args = [],
+    check_toolchains = select({
+        "@bazel_tools//src/conditions:windows": True,
+        "//conditions:default": False,
+    }),
+    c_compiler_option = [],
+    default_executable_name = select({
+        "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
+        "//conditions:default": "%target%-bin",
+    }),
+    **kwargs):
+
+    """Generates and compiles a GraalVM native image from a Java library target.
+
+    Args:
+        name: Name of the target; required.
+        deps: Dependency `java_library` targets to assemble the classpath from. Mandatory.
+        main_class: Entrypoint main class to build from; mandatory.
+        include_resources: Glob to pass to `IncludeResources`. No default; optional.
+        reflection_configuration: Reflection configuration file. No default; optional.
+        jni_configuration: JNI configuration file. No default; optional.
+        initialize_at_build_time: Classes or patterns to pass to `--initialize-at-build-time`. No default; optional.
+        initialize_at_run_time: Classes or patterns to pass to `--initialize-at-run-time`. No default; optional.
+        native_features: GraalVM `Feature` classes to include and apply. No default; optional.
+        data: Data files to make available during the compilation. No default; optional.
+        extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
+        check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
+        c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
+        default_executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
+            The special string `%target%`, if present, is replaced with `name`.
+        **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
+    """
+
     _native_image(
         name = name,
-        default_executable_name = select({
-            "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
-            "//conditions:default": "%target%-bin",
-        }),
-        check_toolchains = select({
-            "@bazel_tools//src/conditions:windows": True,
-            "//conditions:default": False,
-        }),
+        deps = deps,
+        main_class = main_class,
+        include_resources = include_resources,
+        reflection_configuration = reflection_configuration,
+        jni_configuration = jni_configuration,
+        initialize_at_build_time = initialize_at_build_time,
+        initialize_at_run_time = initialize_at_run_time,
+        native_features = native_features,
+        data = data,
+        extra_args = extra_args,
+        check_toolchains = check_toolchains,
+        c_compiler_option = c_compiler_option,
+        default_executable_name = default_executable_name,
         pass_compiler_path = select({
             "@bazel_tools//src/conditions:windows": False,
             "//conditions:default": True,
@@ -59,4 +106,64 @@ def native_image(name, **kwargs):
         **kwargs
     )
 
-graal_binary = native_image
+def graal_binary(
+    name,
+    deps,
+    main_class,
+    include_resources = None,
+    reflection_configuration = None,
+    jni_configuration = None,
+    initialize_at_build_time = [],
+    initialize_at_run_time = [],
+    native_features = [],
+    data = [],
+    extra_args = [],
+    check_toolchains = select({
+        "@bazel_tools//src/conditions:windows": True,
+        "//conditions:default": False,
+    }),
+    c_compiler_option = [],
+    default_executable_name = select({
+        "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
+        "//conditions:default": "%target%-bin",
+    }),
+    **kwargs):
+
+    """Alias for the renamed `native_image` rule. Identical.
+
+    Args:
+        name: Name of the target; required.
+        deps: Dependency `java_library` targets to assemble the classpath from. Mandatory.
+        main_class: Entrypoint main class to build from; mandatory.
+        include_resources: Glob to pass to `IncludeResources`. No default; optional.
+        reflection_configuration: Reflection configuration file. No default; optional.
+        jni_configuration: JNI configuration file. No default; optional.
+        initialize_at_build_time: Classes or patterns to pass to `--initialize-at-build-time`. No default; optional.
+        initialize_at_run_time: Classes or patterns to pass to `--initialize-at-run-time`. No default; optional.
+        native_features: GraalVM `Feature` classes to include and apply. No default; optional.
+        data: Data files to make available during the compilation. No default; optional.
+        extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
+        check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
+        c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
+        default_executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
+            The special string `%target%`, if present, is replaced with `name`.
+        **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
+    """
+
+    native_image(
+        name = name,
+        deps = deps,
+        main_class = main_class,
+        include_resources = include_resources,
+        reflection_configuration = reflection_configuration,
+        jni_configuration = jni_configuration,
+        initialize_at_build_time = initialize_at_build_time,
+        initialize_at_run_time = initialize_at_run_time,
+        native_features = native_features,
+        data = data,
+        extra_args = extra_args,
+        check_toolchains = check_toolchains,
+        c_compiler_option = c_compiler_option,
+        default_executable_name = default_executable_name,
+        **kwargs
+    )

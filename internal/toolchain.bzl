@@ -81,12 +81,12 @@ def repo_target(repo, target):
     return "{}//{}".format(repo, target)
 
 def register_graalvm_toolchains(
-        repository = "@graalvm",
+        name = "@graalvm",
         register_java_toolchain = True,
         register_gvm_toolchain = True):
     """Register GraalVM toolchains for Native Image and installed language components."""
 
     if register_java_toolchain:
-        native.register_toolchains(repo_target(repository, _TARGET_JAVA_TOOLCHAIN))
+        native.register_toolchains(repo_target(name, _TARGET_JAVA_TOOLCHAIN))
     if register_gvm_toolchain:
-        native.register_toolchains(repo_target(repository, _TARGET_GVM_TOOLCHAIN))
+        native.register_toolchains(repo_target(name, _TARGET_GVM_TOOLCHAIN))
