@@ -2760,7 +2760,7 @@
       }
     },
     "//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "fu5rdpBAUTX7gdEkr8+1QiHetOT/A7PgzgJh/FrSKmI=",
+      "bzlTransitiveDigest": "R3XilQAYYbUAbNQyzOEmSPCtjJLwHP5rW4YWj5pbu00=",
       "accumulatedFileDigests": {},
       "envVariables": {},
       "generatedRepoSpecs": {

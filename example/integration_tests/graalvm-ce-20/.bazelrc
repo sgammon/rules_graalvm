@@ -1,0 +1,5 @@
+# Need these env vars on Windows
+build --action_env=VSINSTALLDIR
+build --action_env=INCLUDE
+build --action_env=MSVC
+build --action_env=LIB

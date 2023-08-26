@@ -195,6 +195,38 @@ jobs:
             labs: false
             skip: false
 
+          # Test: GVM CE 17
+          - label: GraalVM CE 17
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-17"
+            labs: false
+            skip: false
+
+          # Test: GVM CE 20
+          - label: GraalVM CE 20
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-20"
+            labs: false
+            skip: false
+
+          # Test: Oracle GVM 17
+          - label: Oracle GraalVM 17
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-oracle-17"
+            labs: false
+            skip: false
+
+          # Test: Oracle GVM 20
+          - label: Oracle GraalVM 20
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-oracle-20"
+            labs: false
+            skip: false
+
           # Test: Bazel 4
           - label: Bazel 4
             target: sample

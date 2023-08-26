@@ -20,11 +20,6 @@ load(
     "@bazel_skylib//:workspace.bzl",
     "bazel_skylib_workspace",
 )
-# load(
-#     "@rules_cc//cc:repositories.bzl",
-#     "rules_cc_dependencies",
-#     "rules_cc_toolchains",
-# )
 load(
     "@bazel_features//:deps.bzl",
     "bazel_features_deps",
@@ -108,12 +103,6 @@ def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linter
             # Note: this is an example config!
             "java-spotbugs": "//java:spotbugs-config",
         })
-
-    # rules_cc
-
-    # rules_cc_dependencies()
-
-    # rules_cc_toolchains()
 
     # Zig
 

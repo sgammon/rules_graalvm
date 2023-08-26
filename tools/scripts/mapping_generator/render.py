@@ -92,6 +92,15 @@ _VmReleaseVersions = {
     "17.0.7": "17.0.7+9.1",
 }
 
+# VM release versions (for Oracle GVM) for calculating prefixes.
+# buildifier: disable=name-conventions
+_VmReleaseVersionsOracle = {
+    "20.0.2": "20.0.2+9.1",
+    "20.0.1": "20.0.1+9.1",
+    "17.0.8": "17.0.8+9.1",
+    "17.0.7": "17.0.8+9.1",
+}
+
 def _generate_distribution_coordinate(dist, platform, version, component = None):
     \"""Generate a well-formed distribution coordinate key.
 
@@ -176,6 +185,9 @@ AlignedVersions = _AlignedVersions
 
 # buildifier: disable=name-conventions
 VmReleaseVersions = _VmReleaseVersions
+
+# buildifier: disable=name-conventions
+VmReleaseVersionsOracle = _VmReleaseVersionsOracle
 
 generate_distribution_coordinate = _generate_distribution_coordinate
 resolve_distribution_artifact = _resolve_distribution_artifact"""

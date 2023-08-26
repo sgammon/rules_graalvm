@@ -21,14 +21,10 @@ load(
     "//internal:graalvm_bindist_map.bzl",
     "ComponentDependencies",
     "VmReleaseVersions",
+    "VmReleaseVersionsOracle",
     "resolve_distribution_artifact",
     Component = "DistributionComponent",
     Distribution = "DistributionType",
-    Platform = "DistributionPlatform",
-)
-load(
-    "//internal:engines.bzl",
-    "GraalVMEngine",
 )
 load(
     "//internal:graalvm_bindist_legacy.bzl",
@@ -292,10 +288,11 @@ def _graal_bindist_repository_impl(ctx):
             urls = [config["url"]]
 
             if version in VmReleaseVersions:
-                prefix_version = VmReleaseVersions[version]
                 if dist_name == Distribution.ORACLE:
+                    prefix_version = VmReleaseVersionsOracle[version]
                     prefix = "graalvm-jdk-%s" % (prefix_version)
                 else:
+                    prefix_version = VmReleaseVersions[version]
                     prefix = "graalvm-community-openjdk-%s" % (prefix_version)
             else:
                 fail("Unable to determine prefix value for archive '%s' at version '%s'" % (

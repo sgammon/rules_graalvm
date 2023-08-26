@@ -109,7 +109,7 @@ ALIGNMENT_VERSIONS = [
 VM_RELEASE_VERSIONS = {
     "20.0.2": "20.0.2+9.1",
     "20.0.1": "20.0.1+9.1",
-    "17.0.8": "17.0.8+9.1",
+    "17.0.8": "17.0.8+7.1",
     "17.0.7": "17.0.7+9.1",
 }
 
@@ -125,12 +125,12 @@ COMMUNITY_COMPONENT_REPOS = {
 
 # Latest download endpoint for Oracle GVM
 ORACLE_DOWNLOAD_BASE_LATEST = (
-  "https://download.oracle.com/java/{java_version_major}/latest/jdk-{java_version}_{platform}_bin.{ext}"
+  "https://download.oracle.com/graalvm/{java_version_major}/latest/graalvm-jdk-{java_version}_{platform}_bin.{ext}"
 )
 
 # Archive download endpoint for Oracle GVM
 ORACLE_DOWNLOAD_BASE_ARCHIVE = (
-    "https://download.oracle.com/java/{java_version_major}/archive/jdk-{java_version}_{platform}_bin.{ext}"
+  "https://download.oracle.com/graalvm/{java_version_major}/archive/graalvm-jdk-{java_version}_{platform}_bin.{ext}"
 )
 
 # Latest download endpoint for Oracle GVM components
