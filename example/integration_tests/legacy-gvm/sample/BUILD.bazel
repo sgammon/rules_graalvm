@@ -1,5 +1,5 @@
 load(
-    "@rules_graalvm//graal:graal.bzl",
+    "@rules_graalvm//graalvm/nativeimage:rules.bzl",
     "native_image",
 )
 
