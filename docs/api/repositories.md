@@ -35,7 +35,7 @@ In this case, the `rules_graalvm` package does not provide an SHA256 hash otherw
 | <a id="graalvm_repository-name"></a>name |  Name of the VM repository.   |  none |
 | <a id="graalvm_repository-java_version"></a>java_version |  Java version to use/declare.   |  none |
 | <a id="graalvm_repository-version"></a>version |  Version of the GraalVM release.   |  `"latest"` |
-| <a id="graalvm_repository-distribution"></a>distribution |  Which GVM distribution to download - `ce`, `community`, or `oracle`.   |  `"oracle"` |
+| <a id="graalvm_repository-distribution"></a>distribution |  Which GVM distribution to download - `ce`, `community`, or `oracle`.   |  `None` |
 | <a id="graalvm_repository-toolchain"></a>toolchain |  Whether to create a Java toolchain from this GVM installation.   |  `True` |
 | <a id="graalvm_repository-toolchain_prefix"></a>toolchain_prefix |  Name prefix to use for the toolchain; defaults to `graalvm`.   |  `"graalvm"` |
 | <a id="graalvm_repository-target_compatible_with"></a>target_compatible_with |  Compatibility tags to apply.   |  `[]` |
