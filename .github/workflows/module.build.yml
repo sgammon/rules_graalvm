@@ -195,6 +195,22 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Legacy Rules
+          - label: Legacy Rules
+            target: sample
+            action: build
+            directory: "./example/integration_tests/legacy-rules"
+            labs: false
+            skip: false
+
+          # Test: Legacy GVM
+          - label: Legacy GVM
+            target: sample
+            action: build
+            directory: "./example/integration_tests/legacy-gvm"
+            labs: false
+            skip: false
+
           # Test: GVM CE 17
           - label: GraalVM CE 17
             target: sample
