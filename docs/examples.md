@@ -18,7 +18,7 @@ All examples are continuously tested in CI.
 | [`bzlmod`][3]             | Bazel 5+ with Bzlmod    | [Modern][1] | Linux, macOS, Windows | Example Native Image build via Bzlmod                                   |
 | [`workspace`][4]          | Bazel 4+ with WORKSPACE | [Modern][1] | Linux, macOS, Windows | Example Native Image build via Workspace                                |
 | [`bazel4`][5]             | Bazel 4                 | [Legacy][2] | Linux, macOS          | Bazel 4 example project                                                 |
-| [`bazel5`][6]             | Bazel 5                 | [Legacy][2] | Linux, macOS, Windows | Bazel 5 example project                                                 |
+| [`bazel5`][6]             | Bazel 5                 | [Legacy][2] | Linux, macOS          | Bazel 5 example project                                                 |
 | [`bazel6`][7]             | Bazel 6                 | [Modern][1] | Linux, macOS, Windows | Bazel 6 example project                                                 |
 | [`graalvm-ce-17`][8]      | Bazel 7                 | [Modern][1] | Linux, macOS, Windows | Bazel 7 with GraalVM CE 17                                              |
 | [`graalvm-ce-20`][9]      | Bazel 7                 | [Modern][1] | Linux, macOS, Windows | Bazel 7 with GraalVM CE 20                                              |
