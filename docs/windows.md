@@ -34,7 +34,7 @@ The `native-image` tool additionally uses the `INCLUDE` and `LIB` variables to r
 | `17.0.7+`/`20.0.1+` | Bazel 7+      | `0.10.0+`       | ✅      | See [modern Bazel][6]                 |
 | `17.0.7+`/`20.0.1+` | Bazel 7+      | `0.9.0`         | ⚠️      | Known issues                          |
 | `17.0.7+`/`20.0.1+` | Bazel 6.x     | `0.10.0+`       | ✅      | See [modern Bazel][6]                 |
-| `17.0.7+`/`20.0.1+` | Bazel 5.x     | `0.10.0+`       | ✅      | See [legacy Bazel][7]                 |
+| `17.0.7+`/`20.0.1+` | Bazel 5.x     | No support      | ✖️      | See [legacy Bazel][7]                 |
 | Earlier releases    | Bazel 4+      | No support      | ✖️      | See [legacy Bazel](./legacy-bazel.md) |
 | Earlier releases    | Bazel 3.x     | No support      | ✖️      | Use [`rules_graal`][1]                |
 
