@@ -7,7 +7,7 @@
 
 ---
 
-> Latest release: `0.9.1`
+> Latest release: `0.9.2`
 
 > **Important**
 > Currently in beta. Feedback welcome but will probably break your build.
@@ -33,10 +33,10 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 ```python
 http_archive(
     name = "rules_graalvm",
-    sha256 = "f41cc6ccdcacb5aeab7eb9f62223f1f570213b3fd0deeab386ef6188e35486ce",
-    strip_prefix = "rules_graalvm-0.9.1",
+    sha256 = None,  # check releases page
+    strip_prefix = "rules_graalvm-0.9.2",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/releases/download/v0.9.1/rules_graalvm-0.9.1.zip",
+        "https://github.com/sgammon/rules_graalvm/releases/download/v0.9.2/rules_graalvm-0.9.2.zip",
     ],
 )
 ```
@@ -68,16 +68,16 @@ graalvm_repository(
 **Or, via `MODULE.bazel`:**
 
 ```python
-bazel_dep(name = "rules_graalvm", version = "0.9.1")
+bazel_dep(name = "rules_graalvm", version = "0.9.2")
 ```
 
 ```python
 # Until we ship to BCR:
 archive_override(
     module_name = "rules_graalvm",
-    urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.9.1/rules_graalvm-0.9.1.zip"],
-    strip_prefix = "rules_graalvm-0.9.1",
-    integrity = "sha256-9BzGzNysta6rfrn2IiPx9XAhOz/Q3uqzhu9hiONUhs4=",
+    urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.9.2/rules_graalvm-0.9.2.zip"],
+    strip_prefix = "rules_graalvm-0.9.2",
+    integrity = None,  # check releases page
 )
 ```
 
