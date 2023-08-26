@@ -5,7 +5,7 @@ load(
 )
 load(
     "@rules_graalvm//graal:graal.bzl",
-    "native_image",
+    "graal_binary",
 )
 
 package(default_visibility = [
@@ -25,7 +25,7 @@ java_binary(
     ],
 )
 
-native_image(
+graal_binary(
     name = "main-native",
     main_class = "Main",
     deps = [":java"],
