@@ -7,34 +7,17 @@ local_repository(
     path = "../../..",
 )
 
-# http_archive(
-#     name = "rules_graal",
-#     sha256 = "5626b5161aa0c2fa358dc9f7daa6c1a86931003dfce79ed1068143b3f9101c01",
-#     strip_prefix = "rules_graal-45252cc66a85c25c1729d69e7f4751f7af7ac049",
-#     urls = [
-#         "https://github.com/andyscott/rules_graal/archive/45252cc66a85c25c1729d69e7f4751f7af7ac049.zip",
-#     ],
-# )
-
-# load("@rules_graal//graal:graal_bindist.bzl", "graal_bindist_repository")
-
-# graal_bindist_repository(
-#     name = "graal",
-#     java_version = "11",
-#     version = "22.1.0",
-# )
-
 load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains", "rules_graalvm_repositories")
 
 rules_graalvm_repositories()
 
 register_graalvm_toolchains()
 
-load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
+load("@rules_graalvm//graal:graal_bindist.bzl", "graal_bindist_repository")
 
 rules_graalvm_repositories()
 
-graalvm_repository(
+graal_bindist_repository(
     name = "graalvm",
     java_version = "11",
     version = "22.1.0",

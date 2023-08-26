@@ -256,7 +256,7 @@ def _graal_bindist_repository_impl(ctx):
         java_version = ctx.attr.java_version
 
         # new gvm distribution check
-        _check_version(ctx.attr.version, ctx.attr.java_version, True)
+        _check_version(version, java_version, True)
         ctx.report_progress("Downloading GraalVM")
 
         dist_names = {
