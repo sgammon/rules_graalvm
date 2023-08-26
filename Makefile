@@ -15,6 +15,7 @@ COVERAGE ?= yes
 TARGETS ?= //graalvm/... //lib/... //tools/...
 DOCS ?= //docs/api:all
 TESTS ?= //.aspect/... //tests/... //tools/...
+PWD ?= $(shell pwd)
 ARGS ?=
 CONFIGS ?=
 
@@ -81,7 +82,12 @@ build: deps  ## Build all targets.
 	$(RULE)$(BAZEL) $(_STARTUP) build $(TARGETS) $(_ARGS)
 
 test:  ## Run all tests.
+
+unit-tests:
 	$(RULE)$(BAZEL) $(_STARTUP) $(TEST_TASK) $(TESTS) $(_ARGS)
+
+integration-tests:
+	$(RULE)for d in example/integration_tests/*; do ( bash $(PWD)/tools/scripts/run_test.sh "$$d"; ); done
 
 docs:  ## Build docs.
 	@echo "Building docs..."
