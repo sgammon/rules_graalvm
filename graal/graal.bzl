@@ -58,3 +58,5 @@ def native_image(name, **kwargs):
         }),
         **kwargs
     )
+
+graal_binary = native_image
