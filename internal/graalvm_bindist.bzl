@@ -568,7 +568,7 @@ def graalvm_repository(
         name,
         java_version,
         version = "latest",
-        distribution = "oracle",
+        distribution = None,
         toolchain = True,
         toolchain_prefix = "graalvm",
         target_compatible_with = [],
