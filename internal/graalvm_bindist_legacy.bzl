@@ -69,7 +69,7 @@ _graal_version_configs = {
     },
     "22.0.0.2": {
         "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/graalvm-ce-java{java_version}-{platform}-{version}.tar.gz"],
-        "sha": {
+        "sha256": {
             "11": {
                 "darwin-amd64": "8280159b8a66c51a839c8079d885928a7f759d5da0632f3af7300df2b63a6323",
                 "linux-aarch64": "1cc0263d95f642dada4e290dca7f49c0456cefa7b690b67e3e5c159b537b2c58",
@@ -84,7 +84,7 @@ _graal_version_configs = {
     },
     "22.1.0": {
         "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/graalvm-ce-java{java_version}-{platform}-{version}.tar.gz"],
-        "sha": {
+        "sha256": {
             "11": {
                 "darwin-aarch64": "06bc19a0b1e93aa3df5e15c08e97f8cef624cb6070eeae40a69a51ec7fd41152",
                 "darwin-amd64": "c4c9df94ca47b83b582758b87d39042732ba0193fc63f1ab93f6818005a1fe6b",
@@ -226,7 +226,7 @@ _graal_native_image_version_configs = {
     },
     "22.0.0.2": {
         "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar"],
-        "sha": {
+        "sha256": {
             "11": {
                 "darwin-amd64": "03c27de6cce61ee8073e89252212457f3fbac2c0bc9bfa4acbff12176476c176",
                 "linux-aarch64": "51d41e890a5aabf8e7b9d4f4e0f88206ee70a261f7dbb0315d51770ab8f3009e",
@@ -241,7 +241,7 @@ _graal_native_image_version_configs = {
     },
     "22.1.0": {
         "urls": ["https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-{version}/native-image-installable-svm-java{java_version}-{platform}-{version}.jar"],
-        "sha": {
+        "sha256": {
             "11": {
                 "darwin-aarch64": "21f84ccf7b979dccc9091032fe76b5737b38e0092f282107cef75143dadb3bdb",
                 "darwin-amd64": "e0758687f4bd46f15fcee9b0a5bdd65d702ec81c41d465ee7229d3f4465bcf13",
