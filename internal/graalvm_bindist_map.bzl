@@ -2,7 +2,7 @@
 
 # ! THIS FILE IS GENERATED. DO NOT EDIT. !
 
-# Last updated: 2023-08-20T20:17:36.410026 by Sandboxed user
+# Last updated: 2023-08-25T22:39:19.433333 by sam
 
 # To learn how to regenerate this file, consult the contributor docs for
 # the `rules_graalvm` repository: https://github.com/sgammon/rules_graalvm
@@ -65,7 +65,16 @@ _VmReleaseVersions = {
     "20.0.2": "20.0.2+9.1",
     "20.0.1": "20.0.1+9.1",
     "17.0.8": "17.0.8+7.1",
-    "17.0.7": "17.0.7+9.1",
+    "17.0.7": "17.0.7+7.1",
+}
+
+# VM release versions (for Oracle GVM) for calculating prefixes.
+# buildifier: disable=name-conventions
+_VmReleaseVersionsOracle = {
+    "20.0.2": "20.0.2+9.1",
+    "20.0.1": "20.0.1+9.1",
+    "17.0.8": "17.0.8+9.1",
+    "17.0.7": "17.0.8+9.1",
 }
 
 def _generate_distribution_coordinate(dist, platform, version, component = None):
@@ -1518,8 +1527,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.7_linux-aarch64_23.0.1": {
         # Oracle GraalVM 17.0.7 (Java 17), Linux (arm64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.7_linux-aarch64_bin.tar.gz",
-        "sha256": "fabcc3c58a5712fd4edd5ed7519e7c9f390941e0deac64df77cca220428d59f0",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.7_linux-aarch64_bin.tar.gz",
+        "sha256": "73256df1af0507f8cb230bafe506e4dcaba2b3e6d8bb1324bf5a02198890ef97",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:linux",
@@ -1528,8 +1537,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.7_linux-x64_23.0.1": {
         # Oracle GraalVM 17.0.7 (Java 17), Linux (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.7_linux-x64_bin.tar.gz",
-        "sha256": "6b1e55ca6e8a6242d7bd1f9a073cc4453a4285a9f9fe28daaa545a2ff4ee28d8",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.7_linux-x64_bin.tar.gz",
+        "sha256": "93db5fd373fc8eb5a5578387f7646cfd414b82e8cfaf9dbcd0145ceae0137398",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:linux",
@@ -1538,8 +1547,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.7_macos-aarch64_23.0.1": {
         # Oracle GraalVM 17.0.7 (Java 17), macOS (arm64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.7_macos-aarch64_bin.tar.gz",
-        "sha256": "b0b1377c75b8047662225eb18ca5172bf0291b041af6230c97eb75da68d87c14",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.7_macos-aarch64_bin.tar.gz",
+        "sha256": "cb45f6585ef02134a6a6ffb6de20db96197486ffef8821ad97b11fe2fc0c23b8",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:macos",
@@ -1548,8 +1557,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.7_macos-x64_23.0.1": {
         # Oracle GraalVM 17.0.7 (Java 17), macOS (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.7_macos-x64_bin.tar.gz",
-        "sha256": "f356a82c121963028c54f311fb5bfd6c70cb8fa1cd9d2c55845360ddd1da34b7",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.7_macos-x64_bin.tar.gz",
+        "sha256": "905255762546c69e3bb8d815a5d20e2e3cfa5332b868ab90af7aa0afe21e74ea",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:macos",
@@ -1558,8 +1567,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.7_windows-x64_23.0.1": {
         # Oracle GraalVM 17.0.7 (Java 17), Windows (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.7_windows-x64_bin.zip",
-        "sha256": "c08fe96bc1af1b500ccbe7225475896d6859f66aa45e7c86e69906161b8cbaca",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.7_windows-x64_bin.zip",
+        "sha256": "1ef3705fef76554bba792075df2f206237bd9d8603a4fc5ebb45a67ceb1e20d9",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
@@ -1568,8 +1577,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.8_linux-aarch64_23.0.1": {
         # Oracle GraalVM 17.0.8 (Java 17), Linux (arm64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.8_linux-aarch64_bin.tar.gz",
-        "sha256": "cd24d7b21ec0791c5a77dfe0d9d7836c5b1a8b4b75db7d33d253d07caa243117",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.8_linux-aarch64_bin.tar.gz",
+        "sha256": "10cb0b61571befb20bf7c11ac4e10ff4e4801065a64ae425b39f34d401e352b1",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:linux",
@@ -1578,8 +1587,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.8_linux-x64_23.0.1": {
         # Oracle GraalVM 17.0.8 (Java 17), Linux (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.8_linux-x64_bin.tar.gz",
-        "sha256": "74b528a33bb2dfa02b4d74a0d66c9aff52e4f52924ce23a62d7f9eb1a6744657",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.8_linux-x64_bin.tar.gz",
+        "sha256": "2d6696aa209daa098c51fefc51906aa7bf0dbe28dcc560ef738328352564181b",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:linux",
@@ -1588,8 +1597,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.8_macos-aarch64_23.0.1": {
         # Oracle GraalVM 17.0.8 (Java 17), macOS (arm64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.8_macos-aarch64_bin.tar.gz",
-        "sha256": "89f26bda33262d70455e774b55678fc259ae4f29c0a99eb0377d570507be3d04",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.8_macos-aarch64_bin.tar.gz",
+        "sha256": "c73d2917c1b681679d90a7e3851b553c328e4028137e19adb301040fe0d43cfd",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:macos",
@@ -1598,8 +1607,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.8_macos-x64_23.0.1": {
         # Oracle GraalVM 17.0.8 (Java 17), macOS (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.8_macos-x64_bin.tar.gz",
-        "sha256": "ddc4928be11642f35b3cb1e6a56463032705fccb74e10ed5a67a73a5fc7b639f",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.8_macos-x64_bin.tar.gz",
+        "sha256": "325c1c5adce1e8b569e87f1e4dffe852f73e7c25e720ea15977f2ca1d7dba1bb",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:macos",
@@ -1608,8 +1617,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_17.0.8_windows-x64_23.0.1": {
         # Oracle GraalVM 17.0.8 (Java 17), Windows (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/17/archive/jdk-17.0.8_windows-x64_bin.zip",
-        "sha256": "98385c1fd4db7ad3fd7ca2f33a1fadae0b15486cfde699138d47002d7068084a",
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.8_windows-x64_bin.zip",
+        "sha256": "ea90259f08c7e358bed62c2b48d68d295aa7be38ab3cb922d74bab284e717f64",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
@@ -1618,8 +1627,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.1_linux-aarch64_23.0.1": {
         # Oracle GraalVM 20.0.1 (Java 20), Linux (arm64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.1_linux-aarch64_bin.tar.gz",
-        "sha256": "f2e5c7bb4fc09dda05c04dfedfdb04545695d1a605e16588c9fbc48b8df87b9a",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.1_linux-aarch64_bin.tar.gz",
+        "sha256": "f1c175018acd6e9976a7374420e44b8c55b5871c2b0452435aba8a136fe8caae",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:linux",
@@ -1628,8 +1637,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.1_linux-x64_23.0.1": {
         # Oracle GraalVM 20.0.1 (Java 20), Linux (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.1_linux-x64_bin.tar.gz",
-        "sha256": "bb118683feb4d66476198c8176a9845a9125bf5b303089b56b4b59ff9a544ccf",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.1_linux-x64_bin.tar.gz",
+        "sha256": "0aef42ae97bc98acbd11dce81018a7916250fced6ee9f95a934816813e48e4f4",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:linux",
@@ -1638,8 +1647,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.1_macos-aarch64_23.0.1": {
         # Oracle GraalVM 20.0.1 (Java 20), macOS (arm64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.1_macos-aarch64_bin.tar.gz",
-        "sha256": "c264fd7452dd0aa86022b371b8abea3fa2a0b62b45ff7d189e7c519fe837bdb8",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.1_macos-aarch64_bin.tar.gz",
+        "sha256": "b94877df825ccefbe8b6751e087d54aa9b8129f9d2919d29ea18e00900392da1",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:macos",
@@ -1648,8 +1657,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.1_macos-x64_23.0.1": {
         # Oracle GraalVM 20.0.1 (Java 20), macOS (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.1_macos-x64_bin.tar.gz",
-        "sha256": "3f8b53c63d1f821d5ff8875140428cbb679159ce0d91294ac349b1634fe994df",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.1_macos-x64_bin.tar.gz",
+        "sha256": "b6f14aae4f9d6a1514446f6f2b83685e796ec083a205b613a9873b29454333ef",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:macos",
@@ -1658,8 +1667,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.1_windows-x64_23.0.1": {
         # Oracle GraalVM 20.0.1 (Java 20), Windows (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.1_windows-x64_bin.zip",
-        "sha256": "7f6e96a6f592d2a17c5c18b12d67c5aae859a2b422e9fa2f8ac8c9713ce09313",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.1_windows-x64_bin.zip",
+        "sha256": "d5b915df33d0f959d2d51e67eb1bfa94666443b6e66fa5c7be2b4933ece3cf61",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
@@ -1668,8 +1677,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.2_linux-aarch64_23.0.1": {
         # Oracle GraalVM 20.0.2 (Java 20), Linux (arm64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.2_linux-aarch64_bin.tar.gz",
-        "sha256": "ee572da97526bd55c07181fc6f5b16130d45fbc7d1e2feda966d2588ea4ac708",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.2_linux-aarch64_bin.tar.gz",
+        "sha256": "890596363a864bdbe55c6a9678a87384e62660056b6951c385cceaae4807fbb8",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:linux",
@@ -1678,8 +1687,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.2_linux-x64_23.0.1": {
         # Oracle GraalVM 20.0.2 (Java 20), Linux (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.2_linux-x64_bin.tar.gz",
-        "sha256": "499b59be8e3613c223e76f101598d7c28dc04b8e154d860edf2ed05980c67526",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.2_linux-x64_bin.tar.gz",
+        "sha256": "242862bfd2fd2633950a8d85dd1fb4d0307c35cbc7445089aa593a931c8b17db",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:linux",
@@ -1688,8 +1697,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.2_macos-aarch64_23.0.1": {
         # Oracle GraalVM 20.0.2 (Java 20), macOS (arm64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.2_macos-aarch64_bin.tar.gz",
-        "sha256": "e8718838c2011bab3ab00eb8097ddb20aa3b8fe0a8bb0b9e3c9d801c973477bc",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.2_macos-aarch64_bin.tar.gz",
+        "sha256": "f1b1068672feef3dc66cba8ccccc14d623b26e284870a156bb10ea3ea51af706",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:macos",
@@ -1698,8 +1707,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.2_macos-x64_23.0.1": {
         # Oracle GraalVM 20.0.2 (Java 20), macOS (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.2_macos-x64_bin.tar.gz",
-        "sha256": "8a0484e95b40a95f65c0a498a5b299e80757343f0ff1cc1ec43fc5249468bedb",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.2_macos-x64_bin.tar.gz",
+        "sha256": "72c74c3702437824cba3db3435897cce3643e9443acac59f6cfd43f9444b1004",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:macos",
@@ -1708,8 +1717,8 @@ _GRAALVM_BINDIST = {
     },
     "oracle_20.0.2_windows-x64_23.0.1": {
         # Oracle GraalVM 20.0.2 (Java 20), Windows (amd64), Version 23.0.1
-        "url": "https://download.oracle.com/java/20/archive/jdk-20.0.2_windows-x64_bin.zip",
-        "sha256": "79a227ca670e5594560f6caeec26bf466143612d048e7f5b0ad2c3770d465ea6",
+        "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.2_windows-x64_bin.zip",
+        "sha256": "3ec83085b54a8de7d0c0ca893d225718cf6ff514f406af6d31a615da63ae9019",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
@@ -1737,6 +1746,9 @@ AlignedVersions = _AlignedVersions
 
 # buildifier: disable=name-conventions
 VmReleaseVersions = _VmReleaseVersions
+
+# buildifier: disable=name-conventions
+VmReleaseVersionsOracle = _VmReleaseVersionsOracle
 
 generate_distribution_coordinate = _generate_distribution_coordinate
 resolve_distribution_artifact = _resolve_distribution_artifact
