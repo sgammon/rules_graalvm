@@ -173,16 +173,19 @@ def _graal_binary_implementation(ctx):
         # non-unix hosts implies windows, where we should splice the full path
         unix_like = False
 
-    # fix: make sure to include VS install dir on windows, and SDKROOT/DEVELOPER_DIR on macos
-    for var in _PASSTHRU_ENV_VARS:
-        if var == "DEVELOPER_DIR" and unix_like:
-            # allow bazel to override the developer directory on mac
-            env[var] = apple_common.apple_toolchain().developer_dir()
-        elif var == "SDKROOT" and unix_like:
-            # allow bazel to override the apple SDK root
-            env[var] = apple_common.apple_toolchain().sdk_dir()
-        elif var in ctx.configuration.default_shell_env:
-            env[var] = ctx.configuration.default_shell_env[var]
+    # fix: make sure to include VS install dir on windows, and SDKROOT/DEVELOPER_DIR on macos, but only
+    # when using the non-legacy rules, and only on Bazel greater than 5. otherwise, it appears to overwrite
+    # the env injected normally by Bazel to make Xcode and VS compilation work.
+    if (not ctx.attr._legacy_rule):
+        for var in _PASSTHRU_ENV_VARS:
+            if var == "DEVELOPER_DIR" and unix_like:
+                # allow bazel to override the developer directory on mac
+                env[var] = apple_common.apple_toolchain().developer_dir()
+            elif var == "SDKROOT" and unix_like:
+                # allow bazel to override the apple SDK root
+                env[var] = apple_common.apple_toolchain().sdk_dir()
+            elif var in ctx.configuration.default_shell_env:
+                env[var] = ctx.configuration.default_shell_env[var]
 
     # seal paths with hack above
     env["PATH"] = ctx.configuration.host_path_separator.join(paths)
@@ -234,23 +237,27 @@ def _graal_binary_implementation(ctx):
         args.add("-H:+JNI")
 
     run_params = {
-        "inputs": all_deps,
         "outputs": [binary],
         "arguments": [args],
         "executable": graal,
         "mnemonic": "NativeImage",
-        "use_default_shell_env": (not ctx.attr._legacy_rule) and ctx.attr.enable_default_shell_env,
         "env": env,
     }
 
     # fix: on bazel4, the `tools` parameter is expected to be a `File or FilesToRunProvider`, whereas
     # on later versions it is expected to be a `depset`. there is also no `toolchain` parameter at all.
     if not ctx.attr._legacy_rule:
-        run_params["toolchain"] = Label(_GVM_TOOLCHAIN_TYPE)
-        run_params["tools"] = [
-            ctx.attr._cc_toolchain.files,
-        ]
-        run_params["progress_message"] = "Compiling native image %{label}"
+        run_params.update(**{
+            "inputs": all_deps,
+            "use_default_shell_env": ctx.attr.enable_default_shell_env,
+            "progress_message": "Compiling native image %{label}",
+            "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
+            "tools": [
+                ctx.attr._cc_toolchain.files,
+            ],
+        })
+    else:
+        run_params["inputs"] = classpath_depset
 
     ctx.actions.run(
         **run_params

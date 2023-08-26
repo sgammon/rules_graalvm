@@ -227,6 +227,19 @@ def _graal_bindist_repository_impl(ctx):
         )
 
         cmd = _graal_updater_path(ctx, os)
+        bin_tail = ""
+        shell_tail = ""
+        if "windows" in os:
+            bin_tail = "exe"
+            shell_tail = "cmd"
+
+        _bin_paths = [
+            ("gu", cmd, []),
+            ("java", _relative_binpath(bin_tail, "java"), []),
+            ("javac", _relative_binpath(bin_tail, "javac"), []),
+            ("polyglot", _relative_binpath(bin_tail, "polyglot"), []),
+            (Component.NATIVE_IMAGE, _relative_binpath(shell_tail, "native-image"), []),
+        ]
 
         exec_result = ctx.execute([cmd, "install", "--local-file", "native-image-installer.jar"], quiet = False)
         if exec_result.return_code != 0:
@@ -416,43 +429,43 @@ def _graal_bindist_repository_impl(ctx):
                 [(n, v, d) for (k, n, v, d) in _conditional_paths if k in all_components],
             )
 
-        if ctx.name in ["native-image", "toolchain_native_image", "toolchain_gvm", "entry", "bootstrap_runtime_toolchain", "toolchain", "jdk", "jre", "jre-lib"]:
-            fail("Cannot use name '%s' for repository name: It will clash with other targets" % ctx.name)
+    if ctx.name in ["native-image", "toolchain_native_image", "toolchain_gvm", "entry", "bootstrap_runtime_toolchain", "toolchain", "jdk", "jre", "jre-lib"]:
+        fail("Cannot use name '%s' for repository name: It will clash with other targets" % ctx.name)
 
-        ctx_alias = ctx.name
-        if ctx.name == "graalvm":
-            ctx_alias = "gvm_entry"
+    ctx_alias = ctx.name
+    if ctx.name == "graalvm":
+        ctx_alias = "gvm_entry"
 
-        ## render bin targets and aliases
-        rendered_bin_targets = "\n".join([_render_bin_target(n, p, d) for (n, p, d) in _bin_paths])
-        rendered_bin_aliases = "\n".join([_render_bin_alias(n, n) for (n, p, d) in _bin_paths])
+    ## render bin targets and aliases
+    rendered_bin_targets = "\n".join([_render_bin_target(n, p, d) for (n, p, d) in _bin_paths])
+    rendered_bin_aliases = "\n".join([_render_bin_alias(n, n) for (n, p, d) in _bin_paths])
 
-        _bin_paths_map = {}
-        _bin_paths_map.update([(k, v) for (k, v, d) in _bin_paths])
-        rendered_bin_paths = struct(**_bin_paths_map)
+    _bin_paths_map = {}
+    _bin_paths_map.update([(k, v) for (k, v, d) in _bin_paths])
+    rendered_bin_paths = struct(**_bin_paths_map)
 
-        bootstrap_toolchain_alias = """
+    bootstrap_toolchain_alias = """
 alias(
     name = "bootstrap_runtime_toolchain",
     actual = "@{repo}//:bootstrap_runtime_toolchain",
     visibility = ["//visibility:public"],
 )
 """.format(
-            repo = ctx.attr.toolchain_config,
-        )
+        repo = ctx.attr.toolchain_config,
+    )
 
-        # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
-        # it doesn't yet exist in Bazel's internals.
-        if not versions.is_at_least("7", versions.get()):
-            bootstrap_toolchain_alias = ""
+    # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
+    # it doesn't yet exist in Bazel's internals.
+    if not versions.is_at_least("7", versions.get()):
+        bootstrap_toolchain_alias = ""
 
-        # bazel 6+ has support for the `version` attribute on the `java_runtime` rule. earlier
-        # versions do not, so we omit it.
-        toolchain_template = _JDK_BUILD_TEMPLATE
-        if not versions.is_at_least("6", versions.get()):
-            toolchain_template = _JDK_BUILD_TEMPLATE_BAZEL5
+    # bazel 6+ has support for the `version` attribute on the `java_runtime` rule. earlier
+    # versions do not, so we omit it.
+    toolchain_template = _JDK_BUILD_TEMPLATE
+    if not versions.is_at_least("6", versions.get()):
+        toolchain_template = _JDK_BUILD_TEMPLATE_BAZEL5
 
-        toolchain_aliases_template = """
+    toolchain_aliases_template = """
 # Entry Aliases
 alias(
     name = "entry",
@@ -504,16 +517,16 @@ toolchain(
 # Tool Aliases
 {rendered_bin_aliases}
         """.format(
-            name = ctx_alias,
-            repo = ctx.attr.toolchain_config,
-            bootstrap_toolchain_alias = bootstrap_toolchain_alias,
-            rendered_bin_aliases = rendered_bin_aliases,
-            bin_java_path = rendered_bin_paths.java,
-            gvm_toolchain_tags_exec = "",
-            gvm_toolchain_tags_target = "",
-        )
+        name = ctx_alias,
+        repo = ctx.attr.toolchain_config,
+        bootstrap_toolchain_alias = bootstrap_toolchain_alias,
+        rendered_bin_aliases = rendered_bin_aliases,
+        bin_java_path = rendered_bin_paths.java,
+        gvm_toolchain_tags_exec = "",
+        gvm_toolchain_tags_target = "",
+    )
 
-        ctx.file(
+    ctx.file(
             "BUILD.bazel",
             """
 exports_files(glob(["**/*"]))
@@ -532,18 +545,18 @@ filegroup(
 # Aliases
 {aliases}
 """.format(
-                toolchain = toolchain_template.format(RUNTIME_VERSION = java_version),
-                aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
-                rendered_bin_targets = rendered_bin_targets,
-            ),
-        )
+            toolchain = toolchain_template.format(RUNTIME_VERSION = java_version),
+            aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
+            rendered_bin_targets = rendered_bin_targets,
+        ),
+    )
 
-        ctx.file("WORKSPACE.bazel", """
+    ctx.file("WORKSPACE.bazel", """
 workspace(name = \"{name}\")
 """.format(name = ctx.name))
 
-        _graal_postinstall_actions(ctx, os)
-        # Done.
+    _graal_postinstall_actions(ctx, os)
+    # Done.
 
 _graalvm_bindist_repository = repository_rule(
     attrs = {
