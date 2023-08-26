@@ -33,7 +33,7 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 ```python
 http_archive(
     name = "rules_graalvm",
-    sha256 = None,  # check releases page
+    sha256 = "baf82fa979fe4c1c90fe676dfe80aea5a70bb6a8287c3d6d1d4418c0f3a3b2b2",
     strip_prefix = "rules_graalvm-0.9.2",
     urls = [
         "https://github.com/sgammon/rules_graalvm/releases/download/v0.9.2/rules_graalvm-0.9.2.zip",
@@ -77,7 +77,7 @@ archive_override(
     module_name = "rules_graalvm",
     urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.9.2/rules_graalvm-0.9.2.zip"],
     strip_prefix = "rules_graalvm-0.9.2",
-    integrity = None,  # check releases page
+    integrity = "sha256-uvgvqXn+TByQ/mdt/oCupacLtqgofD1tHUQYwPOjsrI=",
 )
 ```
 
