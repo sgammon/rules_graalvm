@@ -239,7 +239,7 @@ def _graal_bindist_repository_impl(ctx):
     else:
         platform, os, archive = _get_platform(ctx, True)
         version = ctx.attr.version
-        distribution = ctx.attr.distribution
+        distribution = ctx.attr.distribution or Distribution.COMMUNITY
         java_version = ctx.attr.java_version
 
         # new gvm distribution check
