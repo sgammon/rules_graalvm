@@ -16,7 +16,7 @@ Both of these clients use the `.bazelversion` file to determine what version of 
 ```
 ➜  rules_graalvm git:(main) cat .bazelversion
 
-7.0.0-pre.20230810.1
+7.0.0-pre.20230816.3
 ```
 
 Once you have Aspect, Bazelisk, or _that exact Bazel binary version_ installed and ready to go, you can proceed.
