@@ -104,6 +104,7 @@ def _graal_updater_path(ctx, os):
     cmd = paths.join("bin", "gu")
     if "windows" in os:
         cmd = paths.join("bin", "gu.cmd")
+    return cmd
 
 def _graal_postinstall_actions(ctx, os):
     cmd = _graal_updater_path(ctx, os)
@@ -171,22 +172,25 @@ def _build_component_graph(components):
 
     effective_components = []
     unique_components = sets.make(components)
-    found_dependencies = False
     for component in components:
         deps = ComponentDependencies.get(component, None)
         if deps != None:
-            found_dependencies = True
             stanza = [i for i in (deps + [component]) if not sets.contains(unique_components, i)]
-            [sets.insert(unique_components, i) for i in stanza]
+            for item in stanza:
+                sets.insert(unique_components, item)
             effective_components += stanza
         else:
             effective_components.append(component)
     return effective_components
 
+def _detect_older_gvm_version(version):
+    """Checks if a version should be treated as an "older" GraalVM version, before release alignment."""
+    return version != None and _graal_version_configs.get(version) != None
+
 def _graal_bindist_repository_impl(ctx):
     """Implements the GraalVM repository rule (`graalvm_repository`)."""
 
-    if ctx.attr.distribution == None:
+    if ctx.attr.distribution == None or _detect_older_gvm_version(ctx.attr.version):
         platform, os, archive = _get_platform(ctx, False)
         version = ctx.attr.version
         java_version = ctx.attr.java_version
