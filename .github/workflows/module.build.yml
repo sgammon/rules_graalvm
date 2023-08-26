@@ -201,7 +201,7 @@ jobs:
             action: build
             directory: "./example/integration_tests/legacy-rules"
             labs: false
-            skip: false
+            skip: ${{ contains(inputs.runner, 'windows') }}
 
           # Test: Legacy GVM
           - label: Legacy GVM
@@ -209,7 +209,7 @@ jobs:
             action: build
             directory: "./example/integration_tests/legacy-gvm"
             labs: false
-            skip: false
+            skip: ${{ contains(inputs.runner, 'windows') }}
 
           # Test: GVM CE 17
           - label: GraalVM CE 17
