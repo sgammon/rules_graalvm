@@ -21,6 +21,7 @@ _DEFAULT_GVM_REPO = "@graalvm"
 _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
+_WINDOWS_CONSTRAINT = "@platforms//os:windows"
 
 _PASSTHRU_ENV_VARS = [
     "INCLUDE",
@@ -88,6 +89,9 @@ _NATIVE_IMAGE_ATTRS = {
     ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
+    ),
+    "_windows_constraint": attr.label(
+        default = Label(_WINDOWS_CONSTRAINT),
     ),
 }
 
@@ -199,7 +203,15 @@ def _graal_binary_implementation(ctx):
 
     args = ctx.actions.args()
     args.add("--no-fallback")
-    args.add("-cp", ":".join([f.path for f in classpath_depset.to_list()]))
+
+    # TODO: This check really should be on the exec platform, not the target platform, but that
+    # requires going through a separate rule. Since GraalVM doesn't support cross-compilation, the
+    # distinction doesn't matter for now.
+    if ctx.target_platform_has_constraint(ctx.attr._windows_constraint[platform_common.ConstraintValueInfo]):
+        path_list_separator = ";"
+    else:
+        path_list_separator = ":"
+    args.add("-cp", path_list_separator.join([f.path for f in classpath_depset.to_list()]))
 
     if gvm_toolchain != None and ctx.attr.pass_compiler_path:
         args.add("--native-compiler-path=%s" % c_compiler_path)
