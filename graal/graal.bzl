@@ -56,6 +56,7 @@ def native_image(
             "//conditions:default": False,
         }),
         c_compiler_option = [],
+        static_zlib = None,
         executable_name = select({
             "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
             "//conditions:default": "%target%-bin",
@@ -78,6 +79,9 @@ def native_image(
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
+        static_zlib: A cc_library or cc_import target that provides zlib as a static library.
+            On Linux, this is used when Graal statically links zlib into the binary, e.g. with
+            `-H:+StaticExecutableWithDynamicLibC`.
         executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
             The special string `%target%`, if present, is replaced with `name`.
         native_image_tool: Specific `native-image` executable target to use.
@@ -97,6 +101,7 @@ def native_image(
         data = data,
         extra_args = extra_args,
         check_toolchains = check_toolchains,
+        static_zlib = static_zlib,
         c_compiler_option = c_compiler_option,
         executable_name = executable_name,
         native_image_tool = native_image_tool,
@@ -120,6 +125,7 @@ def graal_binary(
             "//conditions:default": False,
         }),
         c_compiler_option = [],
+        static_zlib = None,
         executable_name = select({
             "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
             "//conditions:default": "%target%-bin",
@@ -141,6 +147,9 @@ def graal_binary(
         data: Data files to make available during the compilation. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
+        static_zlib: A cc_library or cc_import target that provides zlib as a static library.
+            On Linux, this is used when Graal statically links zlib into the binary, e.g. with
+            `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
         executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
             The special string `%target%`, if present, is replaced with `name`.
@@ -160,6 +169,7 @@ def graal_binary(
         native_features = native_features,
         data = data,
         extra_args = extra_args,
+        static_zlib = static_zlib,
         check_toolchains = check_toolchains,
         c_compiler_option = c_compiler_option,
         executable_name = executable_name,

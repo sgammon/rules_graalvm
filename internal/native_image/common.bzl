@@ -45,6 +45,9 @@ _NATIVE_IMAGE_ATTRS = {
     "native_features": attr.string_list(
         mandatory = False,
     ),
+    "static_zlib": attr.label(
+        providers = [[CcInfo]],
+    ),
     "data": attr.label_list(
         allow_files = True,
     ),
