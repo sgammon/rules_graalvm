@@ -11,30 +11,31 @@ load(
 
 # Exports.
 def rules_graalvm_repositories(
-    omit_rules_java = False,
-    omit_bazel_skylib = False):
-
+        omit_rules_java = False,
+        omit_bazel_skylib = False,
+        omit_apple_support = False):
     """Register dependency repositories for the GraalVM Rules for Bazel.
 
     This function only needs to be called if consuming the GraalVM Rules from a non-Bzlmod environment.
-    The only dependencies the rules have are: (1) `rules_java`, and (2) `bazel_skylib`. Either or both
-    can be omitted with the provided arguments.
+    The only dependencies the rules have are: (1) `rules_java`, (2) `bazel_skylib`, and
+    (3) `apple_support`. Any of those can be omitted with the provided arguments.
 
     Args:
       omit_rules_java: Omit the `rules_java` dependency.
       omit_bazel_skylib: Omit the `bazel_skylib` dependency.
+      omit_apple_support: Omit the `apple_support` dependency.
     """
 
     _rules_graalvm_repositories(
         omit_rules_java = omit_rules_java,
         omit_bazel_skylib = omit_bazel_skylib,
+        omit_apple_support = omit_apple_support,
     )
 
 def register_graalvm_toolchains(
-    name = "@graalvm",
-    register_java_toolchain = True,
-    register_gvm_toolchain = True):
-
+        name = "@graalvm",
+        register_java_toolchain = True,
+        register_gvm_toolchain = True):
     """Register Bazel toolchains via the installed GraalVM repository.
 
     The default repository `name` is `@graalvm`, but this should be set to whatever the target repository
