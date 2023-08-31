@@ -75,10 +75,13 @@ def _graal_binary_implementation(ctx):
         native_toolchain.c_compiler_path,
         gvm_toolchain,
     )
+
+    # assemble final inputs
     inputs = depset(
         direct_inputs,
         transitive = transitive_inputs,
     )
+
     run_params = {
         "outputs": [binary],
         "executable": graal,

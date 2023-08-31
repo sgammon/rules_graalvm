@@ -1,5 +1,48 @@
 "Logic to assemble `native-image` options."
 
+def _configure_static_zlib_compile(ctx, args, direct_inputs):
+    """Configure a static image compile against hermetic/static zlib.
+
+    Args:
+        ctx: Context of the Native Image rule implementation.
+        args: Args builder for the Native Image build.
+        direct_inputs: Inputs into the image build (mutable). """
+
+    if CcInfo in ctx.attr.static_zlib and ctx.target_platform_has_constraint(ctx.attr._linux_constraint[platform_common.ConstraintValueInfo]):
+        linking_context = ctx.attr.static_zlib[CcInfo].linking_context
+        linker_inputs = linking_context.linker_inputs.to_list()
+        if len(linker_inputs) != 1:
+            fail("Expected exactly one LinkerInput for static_zlib, got %s" % repr(linker_inputs))
+        libraries = linker_inputs[0].libraries
+
+        # In some versions of Bazel, libraries is a depset, in others it's a list.
+        if type(libraries) == type(depset([])):
+            libraries = libraries.to_list()
+        if len(libraries) != 1:
+            fail("Expected exactly one library for static_zlib, got %s" % repr(libraries))
+        library = libraries[0]
+
+        # Prefer PIC over non-PIC.
+        static_library = library.pic_static_library
+        if not static_library:
+            static_library = library.static_library
+        if not static_library:
+            fail("Expected a static library for static_zlib, got %s" % library)
+
+        zlib_static = ctx.actions.declare_file(
+            ctx.attr.name + "_hermetic_libs/libz.a"
+        )
+        ctx.actions.symlink(
+            output = zlib_static,
+            target_file = static_library,
+        )
+        args.add(
+            zlib_static.dirname,
+            format = "-H:CLibraryPath=%s",
+        )
+        direct_inputs.append(zlib_static)
+
+
 def assemble_native_build_options(
         ctx,
         args,
@@ -9,7 +52,20 @@ def assemble_native_build_options(
         c_compiler_path,
         path_list_separator,
         gvm_toolchain = None):
-    """Assemble the effective arguments to `native-image`."""
+    """Assemble the effective arguments to `native-image`.
+
+    This function is responsible for converting the current rule invocation context into a set of arguments
+    which can be passed to the `native-image` builder.
+
+    Args:
+        ctx: Context of the Native Image rule implementation.
+        args: Args builder for the Native Image build.
+        binary: Target output binary which will be built with Native Image.
+        classpath_depset: Classpath dependency set.
+        direct_inputs: Direct inputs into the native image build (mutable).
+        c_compiler_path: Path to the C compiler; resolved via toolchains.
+        path_list_separator: Platform-specific path separator.
+        gvm_toolchain: Resolved GraalVM toolchain, or `None` if a tool target is in use via legacy rules. """
 
     args.add("--no-fallback")
 
@@ -63,3 +119,11 @@ def assemble_native_build_options(
         args.add(ctx.file.jni_configuration, format = "-H:JNIConfigurationFiles=%s")
         direct_inputs.append(ctx.file.jni_configuration)
         args.add("-H:+JNI")
+
+    # if a static build is being performed against hermetic zlib, configure it
+    if ctx.attr.static_zlib != None:
+        _configure_static_zlib_compile(
+            ctx,
+            args,
+            direct_inputs,
+        )
