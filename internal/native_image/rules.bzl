@@ -103,7 +103,9 @@ def _graal_binary_implementation(ctx):
         dep[JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
-    all_deps = depset([], transitive = [classpath_depset])
+
+    direct_inputs = []
+    transitive_inputs = [classpath_depset]
 
     if graal_attr == None:
         # resolve via toolchains
@@ -117,16 +119,14 @@ def _graal_binary_implementation(ctx):
         ] + extra_tool_deps)
 
         graal = graal_inputs.to_list()[0]
-        all_deps = depset(transitive = [
-            classpath_depset,
-            gvm_toolchain.gvm_files.files,
-        ])
+        transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
     else:
         # otherwise, use the legacy code path
         graal_inputs, _, _ = ctx.resolve_command(tools = [
             graal_attr,
         ])
         graal = graal_inputs[0]
+        direct_inputs.append(graal_inputs)
 
     if graal_attr == None:
         # still failed to resolve: cannot resolve via either toolchains or attributes.
@@ -158,6 +158,7 @@ def _graal_binary_implementation(ctx):
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_DYNAMIC_LIBRARY_ACTION_NAME,
     )
+    transitive_inputs.append(cc_toolchain.all_files)
 
     env = {}
     path_set = {}
@@ -251,38 +252,32 @@ def _graal_binary_implementation(ctx):
 
     if ctx.attr.reflection_configuration != None:
         args.add(ctx.file.reflection_configuration, format = "-H:ReflectionConfigurationFiles=%s")
-        all_deps = depset([ctx.file.reflection_configuration], transitive = [all_deps])
+        direct_inputs.append(ctx.file.reflection_configuration)
 
     if ctx.attr.include_resources != None:
         args.add(ctx.attr.include_resources, format = "-H:IncludeResources=%s")
 
     if ctx.attr.jni_configuration != None:
         args.add(ctx.file.jni_configuration, format = "-H:JNIConfigurationFiles=%s")
-        all_deps = depset([ctx.file.jni_configuration], transitive = [all_deps])
+        direct_inputs.append(ctx.file.jni_configuration)
         args.add("-H:+JNI")
 
+    inputs = depset(direct_inputs, transitive = transitive_inputs)
     run_params = {
         "outputs": [binary],
         "arguments": [args],
         "executable": graal,
+        "inputs": inputs,
         "mnemonic": "NativeImage",
         "env": env,
     }
 
-    # fix: on bazel4, the `tools` parameter is expected to be a `File or FilesToRunProvider`, whereas
-    # on later versions it is expected to be a `depset`. there is also no `toolchain` parameter at all.
     if not ctx.attr._legacy_rule:
-        run_params.update(**{
-            "inputs": all_deps,
-            "use_default_shell_env": ctx.attr.enable_default_shell_env,
-            "progress_message": "Compiling native image %{label}",
-            "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
-            "tools": [
-                ctx.attr._cc_toolchain.files,
-            ],
-        })
-    else:
-        run_params["inputs"] = classpath_depset
+        run_params.update(
+            use_default_shell_env = ctx.attr.enable_default_shell_env,
+            progress_message = "Compiling native image %{label}",
+            toolchain = Label(_GVM_TOOLCHAIN_TYPE),
+        )
 
     ctx.actions.run(
         **run_params
