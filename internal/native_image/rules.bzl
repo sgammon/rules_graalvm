@@ -29,6 +29,7 @@ _DEFAULT_GVM_REPO = "@graalvm"
 _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
+_LINUX_CONSTRAINT = "@platforms//os:linux"
 _MACOS_CONSTRAINT = "@platforms//os:macos"
 _WINDOWS_CONSTRAINT = "@platforms//os:windows"
 
@@ -79,8 +80,14 @@ _NATIVE_IMAGE_ATTRS = {
     "default_executable_name": attr.string(
         mandatory = True,
     ),
+    "static_zlib": attr.label(
+        providers = [[CcInfo]],
+    ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
+    ),
+    "_linux_constraint": attr.label(
+        default = Label(_LINUX_CONSTRAINT),
     ),
     "_macos_constraint": attr.label(
         default = Label(_MACOS_CONSTRAINT),
@@ -279,6 +286,31 @@ def _graal_binary_implementation(ctx):
         args.add(ctx.file.jni_configuration, format = "-H:JNIConfigurationFiles=%s")
         direct_inputs.append(ctx.file.jni_configuration)
         args.add("-H:+JNI")
+
+    if CcInfo in ctx.attr.static_zlib and ctx.target_platform_has_constraint(ctx.attr._linux_constraint[platform_common.ConstraintValueInfo]):
+        linking_context = ctx.attr.static_zlib[CcInfo].linking_context
+        linker_inputs = linking_context.linker_inputs.to_list()
+        if len(linker_inputs) != 1:
+            fail("Expected exactly one LinkerInput for static_zlib, got %s" % repr(linker_inputs))
+        libraries = linker_inputs[0].libraries
+
+        # In some versions of Bazel, libraries is a depset, in others it's a list.
+        if type(libraries) == type(depset([])):
+            libraries = libraries.to_list()
+        if len(libraries) != 1:
+            fail("Expected exactly one library for static_zlib, got %s" % repr(libraries))
+        library = libraries[0]
+
+        # Prefer PIC over non-PIC.
+        static_library = library.pic_static_library
+        if not static_library:
+            static_library = library.static_library
+        if not static_library:
+            fail("Expected a static library for static_zlib, got %s" % library)
+        zlib_static = ctx.actions.declare_file(ctx.attr.name + "_hermetic_libs/libz.a")
+        ctx.actions.symlink(output = zlib_static, target_file = static_library)
+        args.add(zlib_static.dirname, format = "-H:CLibraryPath=%s")
+        direct_inputs.append(zlib_static)
 
     inputs = depset(direct_inputs, transitive = transitive_inputs)
     run_params = {

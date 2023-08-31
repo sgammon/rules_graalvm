@@ -41,28 +41,27 @@ _native_image = rule(
 
 ## Exports.
 def native_image(
-    name,
-    deps,
-    main_class,
-    include_resources = None,
-    reflection_configuration = None,
-    jni_configuration = None,
-    initialize_at_build_time = [],
-    initialize_at_run_time = [],
-    native_features = [],
-    data = [],
-    extra_args = [],
-    check_toolchains = select({
-        "@bazel_tools//src/conditions:windows": True,
-        "//conditions:default": False,
-    }),
-    c_compiler_option = [],
-    default_executable_name = select({
-        "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
-        "//conditions:default": "%target%-bin",
-    }),
-    **kwargs):
-
+        name,
+        deps,
+        main_class,
+        include_resources = None,
+        reflection_configuration = None,
+        jni_configuration = None,
+        initialize_at_build_time = [],
+        initialize_at_run_time = [],
+        native_features = [],
+        data = [],
+        extra_args = [],
+        check_toolchains = select({
+            "@bazel_tools//src/conditions:windows": True,
+            "//conditions:default": False,
+        }),
+        c_compiler_option = [],
+        default_executable_name = select({
+            "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
+            "//conditions:default": "%target%-bin",
+        }),
+        **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
     Args:
@@ -81,6 +80,9 @@ def native_image(
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
         default_executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
             The special string `%target%`, if present, is replaced with `name`.
+        static_zlib: A cc_library or cc_import target that provides zlib as a static library.
+            On Linux, this is used when Graal statically links zlib into the binary, e.g. with
+            `-H:+StaticExecutableWithDynamicLibC`.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -107,28 +109,27 @@ def native_image(
     )
 
 def graal_binary(
-    name,
-    deps,
-    main_class,
-    include_resources = None,
-    reflection_configuration = None,
-    jni_configuration = None,
-    initialize_at_build_time = [],
-    initialize_at_run_time = [],
-    native_features = [],
-    data = [],
-    extra_args = [],
-    check_toolchains = select({
-        "@bazel_tools//src/conditions:windows": True,
-        "//conditions:default": False,
-    }),
-    c_compiler_option = [],
-    default_executable_name = select({
-        "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
-        "//conditions:default": "%target%-bin",
-    }),
-    **kwargs):
-
+        name,
+        deps,
+        main_class,
+        include_resources = None,
+        reflection_configuration = None,
+        jni_configuration = None,
+        initialize_at_build_time = [],
+        initialize_at_run_time = [],
+        native_features = [],
+        data = [],
+        extra_args = [],
+        check_toolchains = select({
+            "@bazel_tools//src/conditions:windows": True,
+            "//conditions:default": False,
+        }),
+        c_compiler_option = [],
+        default_executable_name = select({
+            "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
+            "//conditions:default": "%target%-bin",
+        }),
+        **kwargs):
     """Alias for the renamed `native_image` rule. Identical.
 
     Args:
