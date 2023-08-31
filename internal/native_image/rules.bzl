@@ -211,14 +211,14 @@ def _graal_binary_implementation(ctx):
         path_list_separator = ";"
     else:
         path_list_separator = ":"
-    args.add("-cp", path_list_separator.join([f.path for f in classpath_depset.to_list()]))
+    args.add_joined("-cp", classpath_depset, join_with = path_list_separator)
 
     if gvm_toolchain != None and ctx.attr.pass_compiler_path:
-        args.add("--native-compiler-path=%s" % c_compiler_path)
+        args.add(c_compiler_path, format = "--native-compiler-path=%s")
 
-    args.add("-H:Class=%s" % ctx.attr.main_class)
-    args.add("-H:Name=%s" % binary.basename.replace(".exe", ""))
-    args.add("-H:Path=%s" % binary.dirname)
+    args.add(ctx.attr.main_class, format = "-H:Class=%s")
+    args.add(binary.basename.replace(".exe", ""), format = "-H:Name=%s")
+    args.add(binary.dirname, format = "-H:Path=%s")
     args.add("-H:+ReportExceptionStackTraces")
 
     if not ctx.attr.check_toolchains:
@@ -227,29 +227,37 @@ def _graal_binary_implementation(ctx):
     for arg in ctx.attr.extra_args:
         args.add(arg)
 
-    args.add_joined(
+    args.add_all(
         ctx.attr.c_compiler_option,
-        join_with = " ",
-        format_joined = "-H:CCompilerOption=%s",
+        format_each = "-H:CCompilerOption=%s",
     )
-    if len(ctx.attr.native_features) > 0:
-        args.add("-H:Features={entries}".format(entries = ",".join(ctx.attr.native_features)))
 
-    if len(ctx.attr.initialize_at_build_time) > 0:
-        args.add("--initialize-at-build-time={entries}".format(entries = ",".join(ctx.attr.initialize_at_build_time)))
+    args.add_joined(
+        ctx.attr.native_features,
+        join_with = ",",
+        format_joined = "-H:Features=%s",
+    )
 
-    if len(ctx.attr.initialize_at_run_time) > 0:
-        args.add("--initialize-at-run-time={entries}".format(entries = ",".join(ctx.attr.initialize_at_run_time)))
+    args.add_joined(
+        ctx.attr.initialize_at_build_time,
+        join_with = ",",
+        format_joined = "--initialize-at-build-time=%s",
+    )
+    args.add_joined(
+        ctx.attr.initialize_at_run_time,
+        join_with = ",",
+        format_joined = "--initialize-at-run-time=%s",
+    )
 
     if ctx.attr.reflection_configuration != None:
-        args.add("-H:ReflectionConfigurationFiles={path}".format(path = ctx.file.reflection_configuration.path))
+        args.add(ctx.file.reflection_configuration, format = "-H:ReflectionConfigurationFiles=%s")
         all_deps = depset([ctx.file.reflection_configuration], transitive = [all_deps])
 
     if ctx.attr.include_resources != None:
-        args.add("-H:IncludeResources={path}".format(path = ctx.attr.include_resources))
+        args.add(ctx.attr.include_resources, format = "-H:IncludeResources=%s")
 
     if ctx.attr.jni_configuration != None:
-        args.add("-H:JNIConfigurationFiles={path}".format(path = ctx.file.jni_configuration.path))
+        args.add(ctx.file.jni_configuration, format = "-H:JNIConfigurationFiles=%s")
         all_deps = depset([ctx.file.jni_configuration], transitive = [all_deps])
         args.add("-H:+JNI")
 
