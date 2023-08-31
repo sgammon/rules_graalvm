@@ -1,6 +1,14 @@
 "Rules for building native binaries using the GraalVM `native-image` tool."
 
 load(
+    "@build_bazel_apple_support//lib:apple_support.bzl",
+    "apple_support",
+)
+load(
+    "@bazel_skylib//lib:dicts.bzl",
+    "dicts",
+)
+load(
     "@bazel_skylib//lib:paths.bzl",
     "paths",
 )
@@ -21,18 +29,8 @@ _DEFAULT_GVM_REPO = "@graalvm"
 _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
+_MACOS_CONSTRAINT = "@platforms//os:macos"
 _WINDOWS_CONSTRAINT = "@platforms//os:windows"
-
-_PASSTHRU_ENV_VARS = [
-    "INCLUDE",
-    "LIB",
-    "MSVC",
-    "VSINSTALLDIR",
-    "SDKROOT",
-    "DEVELOPER_DIR",
-    "BAZEL_USE_CPP_ONLY_TOOLCHAIN",
-    "BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN",
-]
 
 _NATIVE_IMAGE_ATTRS = {
     "deps": attr.label_list(
@@ -78,20 +76,23 @@ _NATIVE_IMAGE_ATTRS = {
     "c_compiler_option": attr.string_list(
         mandatory = False,
     ),
-    "enable_default_shell_env": attr.bool(
-        default = False,
-    ),
-    "pass_compiler_path": attr.bool(
-        default = True,
-    ),
     "default_executable_name": attr.string(
         mandatory = True,
     ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
     ),
+    "_macos_constraint": attr.label(
+        default = Label(_MACOS_CONSTRAINT),
+    ),
     "_windows_constraint": attr.label(
         default = Label(_WINDOWS_CONSTRAINT),
+    ),
+    "_xcode_config": attr.label(
+        default = configuration_field(
+            fragment = "apple",
+            name = "xcode_config_label",
+        ),
     ),
 }
 
@@ -147,6 +148,8 @@ def _graal_binary_implementation(ctx):
         """)
 
     cc_toolchain = find_cpp_toolchain(ctx)
+    transitive_inputs.append(cc_toolchain.all_files)
+
     feature_configuration = cc_common.configure_features(
         ctx = ctx,
         cc_toolchain = cc_toolchain,
@@ -169,9 +172,38 @@ def _graal_binary_implementation(ctx):
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_DYNAMIC_LIBRARY_ACTION_NAME,
     )
-    transitive_inputs.append(cc_toolchain.all_files)
+    compile_variables = cc_common.create_compile_variables(
+        cc_toolchain = cc_toolchain,
+        feature_configuration = feature_configuration,
+    )
+    compile_env = cc_common.get_environment_variables(
+        feature_configuration = feature_configuration,
+        action_name = C_COMPILE_ACTION_NAME,
+        variables = compile_variables,
+    )
+    compile_requirements = cc_common.get_execution_requirements(
+        feature_configuration = feature_configuration,
+        action_name = C_COMPILE_ACTION_NAME,
+    )
+    link_variables = cc_common.create_link_variables(
+        cc_toolchain = cc_toolchain,
+        feature_configuration = feature_configuration,
+    )
 
-    env = {}
+    # We assume that all link actions use the same environment and execution requirements.
+    link_env = cc_common.get_environment_variables(
+        feature_configuration = feature_configuration,
+        action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
+        variables = link_variables,
+    )
+    link_requirements = cc_common.get_execution_requirements(
+        feature_configuration = feature_configuration,
+        action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
+    )
+
+    env = dicts.add(compile_env, link_env)
+    execution_requirements = compile_requirements + link_requirements
+
     path_set = {}
     tool_paths = [c_compiler_path, ld_executable_path, ld_static_lib_path, ld_dynamic_lib_path]
     for tool_path in tool_paths:
@@ -194,20 +226,6 @@ def _graal_binary_implementation(ctx):
         # non-unix hosts implies windows, where we should splice the full path
         unix_like = False
 
-    # fix: make sure to include VS install dir on windows, and SDKROOT/DEVELOPER_DIR on macos, but only
-    # when using the non-legacy rules, and only on Bazel greater than 5. otherwise, it appears to overwrite
-    # the env injected normally by Bazel to make Xcode and VS compilation work.
-    if (not ctx.attr._legacy_rule):
-        for var in _PASSTHRU_ENV_VARS:
-            if var == "DEVELOPER_DIR" and unix_like:
-                # allow bazel to override the developer directory on mac
-                env[var] = apple_common.apple_toolchain().developer_dir()
-            elif var == "SDKROOT" and unix_like:
-                # allow bazel to override the apple SDK root
-                env[var] = apple_common.apple_toolchain().sdk_dir()
-            elif var in ctx.configuration.default_shell_env:
-                env[var] = ctx.configuration.default_shell_env[var]
-
     # seal paths with hack above
     env["PATH"] = ctx.configuration.host_path_separator.join(paths)
     out_bin_name = ctx.attr.default_executable_name.replace("%target%", ctx.attr.name)
@@ -225,7 +243,7 @@ def _graal_binary_implementation(ctx):
         path_list_separator = ":"
     args.add_joined("-cp", classpath_depset, join_with = path_list_separator)
 
-    if gvm_toolchain != None and ctx.attr.pass_compiler_path:
+    if gvm_toolchain != None:
         args.add(c_compiler_path, format = "--native-compiler-path=%s")
 
     args.add(ctx.attr.main_class, format = "-H:Class=%s")
@@ -277,23 +295,44 @@ def _graal_binary_implementation(ctx):
 
     run_params = {
         "outputs": [binary],
-        "arguments": [args],
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImage",
         "env": env,
+        "execution_requirements": {k: "" for k in execution_requirements},
     }
 
     if not ctx.attr._legacy_rule:
         run_params.update(
-            use_default_shell_env = ctx.attr.enable_default_shell_env,
             progress_message = "Compiling native image %{label}",
             toolchain = Label(_GVM_TOOLCHAIN_TYPE),
         )
 
-    ctx.actions.run(
-        **run_params
-    )
+    graal_actions = _wrap_actions_for_graal(ctx.actions)
+    if ctx.target_platform_has_constraint(ctx.attr._macos_constraint[platform_common.ConstraintValueInfo]):
+        xcode_args = ctx.actions.args()
+
+        # Bazel passes DEVELOPER_DIR and SDKROOT to every locally executed action that sets the
+        # environment variables passed by apple_support.run. However, Graal sanitizes the
+        # environment and removes these variables if set directly. We need to convert them into
+        # -E options and rely on apple_support's argument replacement to pass them through to the
+        # compiler invoked by Graal.
+        # https://github.com/oracle/graal/blob/77a7f6a691024d22367ae33be4da0c15ceb6a246/substratevm/src/com.oracle.svm.driver/src/com/oracle/svm/driver/NativeImage.java#L1801-L1808
+        xcode_args.add(apple_support.path_placeholders.xcode(), format = "-EDEVELOPER_DIR=%s")
+        xcode_args.add(apple_support.path_placeholders.sdkroot(), format = "-ESDKROOT=%s")
+        apple_support.run(
+            actions = graal_actions,
+            apple_fragment = ctx.fragments.apple,
+            xcode_config = ctx.attr._xcode_config[apple_common.XcodeVersionConfig],
+            xcode_path_resolve_level = apple_support.xcode_path_resolve_level.args,
+            arguments = [args, xcode_args],
+            **run_params
+        )
+    else:
+        graal_actions.run(
+            arguments = [args],
+            **run_params
+        )
 
     return [DefaultInfo(
         executable = binary,
@@ -304,6 +343,27 @@ def _graal_binary_implementation(ctx):
             files = [],
         ),
     )]
+
+def _wrap_actions_for_graal(actions):
+    """Wraps the given ctx.actions struct so that env variables are correctly passed to Graal."""
+    patched_actions = {k: getattr(actions, k) for k in dir(actions)}
+    patched_actions["run"] = lambda **kwargs: _wrapped_run_for_graal(actions, **kwargs)
+    return struct(**patched_actions)
+
+def _env_arg_map_each(key_value):
+    return "-E{}={}".format(key_value[0], key_value[1])
+
+def _wrapped_run_for_graal(_original_actions, arguments = [], env = {}, **kwargs):
+    env_args = _original_actions.args()
+    env_args.add_all(env.items(), map_each = _env_arg_map_each)
+    return _original_actions.run(
+        arguments = arguments + [env_args],
+        # We keep the original variables as Bazel has special handling for adding additional
+        # variables (such as DEVELOPER_DIR) based on existing ones when it executes the action
+        # locally.
+        env = env,
+        **kwargs
+    )
 
 # Exports.
 RULES_REPO = _RULES_REPO

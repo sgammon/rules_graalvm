@@ -37,6 +37,11 @@ bazel_dep(
     name = "bazel_skylib",
     version = "1.4.2",
 )
+bazel_dep(
+    name = "apple_support",
+    version = "1.8.1",
+    repo_name = "build_bazel_apple_support",
+)
 
 ##
 ## Dependencies: Development
@@ -212,7 +217,8 @@ pip.parse(
     python_version = PYTHON_VERSION,
     requirements_lock = "@//:requirements_lock.txt",
     extra_pip_args = [
-        "--no-binary", "grequests",
+        "--no-binary",
+        "grequests",
     ],
 )
 use_repo(pip, "pip", "pip_311")
