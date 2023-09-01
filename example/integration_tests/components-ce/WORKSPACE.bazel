@@ -1,0 +1,5 @@
+workspace(name = "rules_graalvm_sample")
+
+load("@rules_graalvm//graalvm:workspace.bzl", "rules_graalvm_repositories")
+
+rules_graalvm_repositories()
