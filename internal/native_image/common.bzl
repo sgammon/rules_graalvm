@@ -78,12 +78,12 @@ _NATIVE_IMAGE_ATTRS = {
 }
 
 def _prepare_native_image_rule_context(
-    ctx,
-    args,
-    classpath_depset,
-    direct_inputs,
-    c_compiler_path,
-    gvm_toolchain = None):
+        ctx,
+        args,
+        classpath_depset,
+        direct_inputs,
+        c_compiler_path,
+        gvm_toolchain = None):
     """Prepare a `native-image` build context."""
 
     out_bin_name = ctx.attr.default_executable_name.replace("%target%", ctx.attr.name)
@@ -109,7 +109,6 @@ def _prepare_native_image_rule_context(
     )
 
     return binary
-
 
 ## Exports.
 RULES_REPO = _RULES_REPO

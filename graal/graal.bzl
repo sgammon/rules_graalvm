@@ -40,29 +40,28 @@ _native_image = rule(
 
 ## Exports.
 def native_image(
-    name,
-    deps,
-    main_class,
-    include_resources = None,
-    reflection_configuration = None,
-    jni_configuration = None,
-    initialize_at_build_time = [],
-    initialize_at_run_time = [],
-    native_features = [],
-    data = [],
-    extra_args = [],
-    check_toolchains = select({
-        "@bazel_tools//src/conditions:windows": True,
-        "//conditions:default": False,
-    }),
-    c_compiler_option = [],
-    default_executable_name = select({
-        "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
-        "//conditions:default": "%target%-bin",
-    }),
-    native_image_tool = _DEFAULT_NATIVE_IMAGE_TOOL,
-    **kwargs):
-
+        name,
+        deps,
+        main_class,
+        include_resources = None,
+        reflection_configuration = None,
+        jni_configuration = None,
+        initialize_at_build_time = [],
+        initialize_at_run_time = [],
+        native_features = [],
+        data = [],
+        extra_args = [],
+        check_toolchains = select({
+            "@bazel_tools//src/conditions:windows": True,
+            "//conditions:default": False,
+        }),
+        c_compiler_option = [],
+        default_executable_name = select({
+            "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
+            "//conditions:default": "%target%-bin",
+        }),
+        native_image_tool = _DEFAULT_NATIVE_IMAGE_TOOL,
+        **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
     Args:
@@ -105,29 +104,28 @@ def native_image(
     )
 
 def graal_binary(
-    name,
-    deps,
-    main_class,
-    include_resources = None,
-    reflection_configuration = None,
-    jni_configuration = None,
-    initialize_at_build_time = [],
-    initialize_at_run_time = [],
-    native_features = [],
-    data = [],
-    extra_args = [],
-    check_toolchains = select({
-        "@bazel_tools//src/conditions:windows": True,
-        "//conditions:default": False,
-    }),
-    c_compiler_option = [],
-    default_executable_name = select({
-        "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
-        "//conditions:default": "%target%-bin",
-    }),
-    native_image_tool = _DEFAULT_NATIVE_IMAGE_TOOL,
-    **kwargs):
-
+        name,
+        deps,
+        main_class,
+        include_resources = None,
+        reflection_configuration = None,
+        jni_configuration = None,
+        initialize_at_build_time = [],
+        initialize_at_run_time = [],
+        native_features = [],
+        data = [],
+        extra_args = [],
+        check_toolchains = select({
+            "@bazel_tools//src/conditions:windows": True,
+            "//conditions:default": False,
+        }),
+        c_compiler_option = [],
+        default_executable_name = select({
+            "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
+            "//conditions:default": "%target%-bin",
+        }),
+        native_image_tool = _DEFAULT_NATIVE_IMAGE_TOOL,
+        **kwargs):
     """Alias for the renamed `native_image` rule. Identical.
 
     Args:

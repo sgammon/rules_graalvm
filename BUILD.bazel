@@ -13,7 +13,8 @@ load(
     alias(
         name = target,
         actual = "//tools:%s" % target,
-    ) for target in [
+    )
+    for target in [
         "python_requirements",
         "buildifier.check",
         "buildifier.format",
@@ -34,7 +35,8 @@ exports_files([
 bzl_library(
     name = "lib",
     deps = [
-        "//lib:%s" % target for target in [
+        "//lib:%s" % target
+        for target in [
             "defs",
             "toolchain",
             "repositories",

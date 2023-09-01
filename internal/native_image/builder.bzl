@@ -1,15 +1,14 @@
 "Logic to assemble `native-image` options."
 
-
 def assemble_native_build_options(
-    ctx,
-    args,
-    binary,
-    classpath_depset,
-    direct_inputs,
-    c_compiler_path,
-    path_list_separator,
-    gvm_toolchain = None):
+        ctx,
+        args,
+        binary,
+        classpath_depset,
+        direct_inputs,
+        c_compiler_path,
+        path_list_separator,
+        gvm_toolchain = None):
     """Assemble the effective arguments to `native-image`."""
 
     args.add("--no-fallback")

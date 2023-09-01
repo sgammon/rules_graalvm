@@ -7,17 +7,17 @@ load(
 
 ## Exports
 def graalvm_repository(
-    version,
-    java_version,
-    name = "graalvm",
-    distribution = None,
-    toolchain = True,
-    toolchain_prefix = "graalvm",
-    target_compatible_with = [],
-    components = [],
-    setup_actions = [],
-    register_all = False,
-    **kwargs):
+        version,
+        java_version,
+        name = "graalvm",
+        distribution = None,
+        toolchain = True,
+        toolchain_prefix = "graalvm",
+        target_compatible_with = [],
+        components = [],
+        setup_actions = [],
+        register_all = False,
+        **kwargs):
     """Declare a GraalVM distribution repository, and optionally a Java toolchain to match.
 
     To register and use the GraalVM distribution as a toolchain, follow the Toolchains guide in the docs
