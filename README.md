@@ -99,7 +99,8 @@ gvm.graalvm(
     ],
 )
 use_repo(gvm, "graalvm")
-register_toolchains("@graalvm//:all")
+register_toolchains("@graalvm//:jvm")
+register_toolchains("@graalvm//:sdk")
 ```
 
 ## Usage: Java Toolchains
@@ -121,7 +122,8 @@ register_graalvm_toolchains()
 **Via Bzlmod:**
 
 ```starlark
-register_toolchains("@graalvm//:all")
+register_toolchains("@graalvm//:jvm")
+register_toolchains("@graalvm//:sdk")
 ```
 
 **To _use_ the toolchain, add this to your `.bazelrc`:**
