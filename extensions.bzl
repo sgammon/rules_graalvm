@@ -30,7 +30,6 @@ def _gvm_impl(mctx):
         toolchain_prefix = selected.toolchain_prefix,
         components = all_components,
         setup_actions = selected.setup_actions,
-        sha256 = selected.sha256,
     )
 
     _extension_meta = {}
@@ -53,7 +52,6 @@ _graalvm = tag_class(attrs = {
     "toolchain_prefix": attr.string(mandatory = False),
     "components": attr.string_list(mandatory = False),
     "setup_actions": attr.string_list(mandatory = False),
-    "sha256": attr.string(mandatory = False),
 })
 
 _component = tag_class(attrs = {
