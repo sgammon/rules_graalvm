@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "de0c43014c1d7cc3b0049a7a8386e8d6a3062bee6c6d63da443947bae95b0301",
+  "moduleFileHash": "6e8d49486380490dcc31738a6ea40a2e566e34c673a1a3496732de1b47f9a3cc",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -32,7 +32,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 146,
+            "line": 151,
             "column": 22
           },
           "imports": {
@@ -50,7 +50,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 151,
+                "line": 156,
                 "column": 14
               }
             }
@@ -64,7 +64,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 167,
+            "line": 172,
             "column": 20
           },
           "imports": {
@@ -80,7 +80,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 172,
+                "line": 177,
                 "column": 12
               }
             }
@@ -94,7 +94,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 192,
+            "line": 197,
             "column": 23
           },
           "imports": {
@@ -112,7 +112,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 197,
+                "line": 202,
                 "column": 17
               }
             }
@@ -126,7 +126,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 204,
+            "line": 209,
             "column": 20
           },
           "imports": {
@@ -144,7 +144,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 210,
+                "line": 215,
                 "column": 10
               }
             }
@@ -158,7 +158,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 224,
+            "line": 230,
             "column": 21
           },
           "imports": {},
@@ -170,7 +170,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 230,
+                "line": 236,
                 "column": 15
               }
             }
@@ -184,7 +184,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 232,
+            "line": 238,
             "column": 20
           },
           "imports": {
@@ -200,7 +200,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 238,
+                "line": 244,
                 "column": 23
               }
             }
@@ -216,6 +216,7 @@
         "bazel_features": "bazel_features@1.0.0",
         "rules_java": "rules_java@6.4.0",
         "bazel_skylib": "bazel_skylib@1.4.2",
+        "build_bazel_apple_support": "apple_support@1.8.1",
         "rules_license": "rules_license@0.0.7",
         "rules_cc": "rules_cc@0.0.8",
         "rules_python": "rules_python@0.25.0",
@@ -547,6 +548,47 @@
         "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {"name":"--bazel_skylib~1.4.2","urls":["--https://github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz"],"integrity":"--sha256-Zv/ZMVZlv6r8lrUiePV8fi3Qn17eJ56m05sr5HHn46o=","strip_prefix":"--","remote_patches":{},"remote_patch_strip":0}
+      }
+    },
+    "apple_support@1.8.1": {
+      "name": "apple_support",
+      "version": "1.8.1",
+      "key": "apple_support@1.8.1",
+      "repoName": "build_bazel_apple_support",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [
+        "@local_config_apple_cc_toolchains//:all"
+      ],
+      "extensionUsages": [
+        {
+          "extensionBzlFile": "@build_bazel_apple_support//crosstool:setup.bzl",
+          "extensionName": "apple_cc_configure_extension",
+          "usingModule": "apple_support@1.8.1",
+          "location": {
+            "file": "https://bcr.bazel.build/modules/apple_support/1.8.1/MODULE.bazel",
+            "line": 14,
+            "column": 35
+          },
+          "imports": {
+            "local_config_apple_cc": "local_config_apple_cc",
+            "local_config_apple_cc_toolchains": "local_config_apple_cc_toolchains"
+          },
+          "devImports": [],
+          "tags": [],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        }
+      ],
+      "deps": {
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_",
+        "bazel_skylib": "bazel_skylib@1.4.2",
+        "platforms": "platforms@0.0.7"
+      },
+      "repoSpec": {
+        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {"name":"--apple_support~1.8.1","urls":["--https://github.com/bazelbuild/apple_support/releases/download/1.8.1/apple_support.1.8.1.tar.gz"],"integrity":"--sha256-Rda7rVMWycMAh4v3//xP/eE9YgSEyRhHCMkX4guLY/8=","strip_prefix":"--","remote_patches":{"--https://bcr.bazel.build/modules/apple_support/1.8.1/patches/module_dot_bazel_version.patch":"--sha256-KiC39AC9hYWZhC2sZwZcY46HVerfh2p9pzF9WXqcxAI="},"remote_patch_strip":0}
       }
     },
     "rules_license@0.0.7": {
@@ -3753,6 +3795,23 @@
           "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
           "ruleClassName": "http_archive",
           "attributes": {"name":"--rules_python~0.25.0~internal_deps~pypi__tomli","url":"--https://files.pythonhosted.org/packages/97/75/10a9ebee3fd790d20926a90a2547f0bf78f371b2f13aa822c759680ca7b9/tomli-2.0.1-py3-none-any.whl","sha256":"--939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc","type":"--zip","build_file_content":"--package(default_visibility = [\"//visibility:public\"])\n\nload(\"@rules_python//python:defs.bzl\", \"py_library\")\n\npy_library(\n    name = \"lib\",\n    srcs = glob([\"**/*.py\"]),\n    data = glob([\"**/*\"], exclude=[\n        # These entries include those put into user-installed dependencies by\n        # data_exclude in /python/pip_install/tools/bazel.py\n        # to avoid non-determinism following pip install's behavior.\n        \"**/*.py\",\n        \"**/*.pyc\",\n        \"**/*.pyc.*\",  # During pyc creation, temp files named *.pyc.NNN are created\n        \"**/* *\",\n        \"**/*.dist-info/RECORD\",\n        \"BUILD\",\n        \"WORKSPACE\",\n    ]),\n    # This makes this directory a top-level in the python import\n    # search path for anything that depends on this.\n    imports = [\".\"],\n)\n"}
+        }
+      }
+    },
+    "@apple_support~1.8.1//crosstool:setup.bzl%apple_cc_configure_extension": {
+      "bzlTransitiveDigest": "SPx14yZFDt7CU8o0nOGrgJ/Gjwxr/ESVXcaUVbXVT7E=",
+      "accumulatedFileDigests": {},
+      "envVariables": {},
+      "generatedRepoSpecs": {
+        "local_config_apple_cc": {
+          "bzlFile": "@@apple_support~1.8.1//crosstool:setup.bzl",
+          "ruleClassName": "_apple_cc_autoconf",
+          "attributes": {"name":"--apple_support~1.8.1~apple_cc_configure_extension~local_config_apple_cc"}
+        },
+        "local_config_apple_cc_toolchains": {
+          "bzlFile": "@@apple_support~1.8.1//crosstool:setup.bzl",
+          "ruleClassName": "_apple_cc_autoconf_toolchains",
+          "attributes": {"name":"--apple_support~1.8.1~apple_cc_configure_extension~local_config_apple_cc_toolchains"}
         }
       }
     }
