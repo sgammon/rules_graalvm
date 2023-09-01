@@ -56,7 +56,7 @@ def native_image(
             "//conditions:default": False,
         }),
         c_compiler_option = [],
-        default_executable_name = select({
+        executable_name = select({
             "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
             "//conditions:default": "%target%-bin",
         }),
@@ -78,7 +78,7 @@ def native_image(
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
-        default_executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
+        executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
             The special string `%target%`, if present, is replaced with `name`.
         native_image_tool: Specific `native-image` executable target to use.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
@@ -98,7 +98,7 @@ def native_image(
         extra_args = extra_args,
         check_toolchains = check_toolchains,
         c_compiler_option = c_compiler_option,
-        default_executable_name = default_executable_name,
+        executable_name = executable_name,
         native_image_tool = native_image_tool,
         **kwargs
     )
@@ -120,7 +120,7 @@ def graal_binary(
             "//conditions:default": False,
         }),
         c_compiler_option = [],
-        default_executable_name = select({
+        executable_name = select({
             "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
             "//conditions:default": "%target%-bin",
         }),
@@ -142,7 +142,7 @@ def graal_binary(
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
-        default_executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
+        executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
             The special string `%target%`, if present, is replaced with `name`.
         native_image_tool: Specific `native-image` executable target to use.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
@@ -162,7 +162,7 @@ def graal_binary(
         extra_args = extra_args,
         check_toolchains = check_toolchains,
         c_compiler_option = c_compiler_option,
-        default_executable_name = default_executable_name,
+        executable_name = executable_name,
         native_image_tool = native_image_tool,
         **kwargs
     )
