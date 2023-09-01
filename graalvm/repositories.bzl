@@ -4,6 +4,10 @@ load(
     "//internal:graalvm_bindist.bzl",
     _graalvm_repository = "graalvm_repository",
 )
+load(
+    "//internal:distribution.bzl",
+    _graalvm = "graalvm",
+)
 
 ## Exports
 def graalvm_repository(
@@ -60,3 +64,6 @@ def graalvm_repository(
         register_all = register_all,
         **kwargs
     )
+
+# Exports.
+graalvm = _graalvm

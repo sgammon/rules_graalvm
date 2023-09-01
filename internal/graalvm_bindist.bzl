@@ -619,6 +619,18 @@ build --tool_java_runtime_version=graalvm_20
 Both flags are optional, and each are required for the related use case.
             """
         ),
+        "artifacts": attr.string_dict(
+            mandatory = False,
+            doc = """
+Defines a set of custom artifact coordinates for a GraalVM SDK, and optionally
+components that are paired with that SDK. Components can be specified without
+an SDK.
+
+This artifact set is referenced *before* any built-in artifact mappings shipped
+with the GraalVM Rules. Use this attribute if you want to use an EE SDK, or a
+dev SDK, or a custom/third-party GraalVM component.
+"""
+        ),
         "components": attr.string_list(
             mandatory = False,
             doc = """
