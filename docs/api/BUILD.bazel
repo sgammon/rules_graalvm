@@ -21,8 +21,6 @@ stardoc(
     out = "defs.md",
     input = "//graalvm:defs.bzl",
     deps = [
-        "//lib:tooling",
-        "//lib/nativeimage:internals",
         "//lib/nativeimage:rules",
         "@bazel_skylib//lib:new_sets",
         "@bazel_skylib//lib:paths",
@@ -72,8 +70,8 @@ stardoc(
     out = "legacy.md",
     input = "//graal:graal.bzl",
     deps = [
-        "//lib/nativeimage:internals",
-        "//lib/nativeimage:rules",
+        "//lib:tooling",
+        "//lib/nativeimage:classic",
         "@bazel_skylib//lib:dicts",
         "@bazel_skylib//lib:paths",
     ],
