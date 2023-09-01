@@ -9,12 +9,12 @@ py_binary(
     srcs = [
         "generator.py",
     ],
-    deps = [
-        "//tools/scripts/mapping_generator",
-    ],
     tags = [
         "manual",
         "no-sandbox",
         "requires-network",
+    ],
+    deps = [
+        "//tools/scripts/mapping_generator",
     ],
 )

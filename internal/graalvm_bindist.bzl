@@ -530,8 +530,8 @@ toolchain(
     )
 
     ctx.file(
-            "BUILD.bazel",
-            """
+        "BUILD.bazel",
+        """
 exports_files(glob(["**/*"]))
 
 filegroup(

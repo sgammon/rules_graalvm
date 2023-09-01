@@ -8,9 +8,9 @@ load(
     "GRAALVM_JAVA_VERSION",
     "GRAALVM_SHA",
     "GRAALVM_VERSION",
+    "LLVM_VERSION",
     "MAVEN_ARTIFACTS",
     "MAVEN_REPOSITORIES",
-    "LLVM_VERSION",
 )
 load(
     "@buildifier_prebuilt//:deps.bzl",

@@ -7,11 +7,10 @@ load(
 
 ## Exports
 def graal_bindist_repository(
-    name,
-    java_version,
-    version,
-    **kwargs):
-
+        name,
+        java_version,
+        version,
+        **kwargs):
     """Legacy alias to declare a GraalVM repository target from a `WORKSPACE` file.
 
     If `distribution` is set to `oracle`, an Oracle GraalVM installation is downloaded. This variant of
