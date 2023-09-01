@@ -4,8 +4,6 @@ name: "PR"
 "on":
   ## Run on PR filings
   pull_request:
-    branches:
-      - main
     paths:
       - docs/**/*.*
       - example/**/*.*
