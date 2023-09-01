@@ -211,20 +211,15 @@ def _graal_binary_implementation(ctx):
         path_set[tool_dir] = None
 
     paths = sorted(path_set.keys())
-    unix_like = True
     if ctx.configuration.host_path_separator == ":":
         # HACK: ":" is a proxy for a UNIX-like host.
         # The tools returned above may be bash scripts that reference commands
         # in directories we might not otherwise include. For example,
         # on macOS, wrapped_ar calls dirname.
-        unix_like = True
         if "/bin" not in path_set:
             paths.append("/bin")
             if "/usr/bin" not in path_set:
                 paths.append("/usr/bin")
-    else:
-        # non-unix hosts implies windows, where we should splice the full path
-        unix_like = False
 
     # seal paths with hack above
     env["PATH"] = ctx.configuration.host_path_separator.join(paths)
@@ -347,7 +342,9 @@ def _graal_binary_implementation(ctx):
 def _wrap_actions_for_graal(actions):
     """Wraps the given ctx.actions struct so that env variables are correctly passed to Graal."""
     patched_actions = {k: getattr(actions, k) for k in dir(actions)}
-    patched_actions["run"] = lambda **kwargs: _wrapped_run_for_graal(actions, **kwargs)
+    def _run_target(**kwargs):
+        _wrapped_run_for_graal(actions, **kwargs)
+    patched_actions["run"] = _run_target
     return struct(**patched_actions)
 
 def _env_arg_map_each(key_value):
