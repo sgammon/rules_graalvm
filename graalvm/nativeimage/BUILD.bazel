@@ -1,20 +1,16 @@
 "Rules for generating binaries with the GraalVM `native-image` tool."
 
 load(
-    "@bazel_skylib//:bzl_library.bzl",
-    "bzl_library",
-)
-load(
     "@bazel_skylib//rules:common_settings.bzl",
     "string_flag",
 )
 load(
     "//internal/native_image:settings.bzl",
-    "GraalVMLibC",
-    "GraalVMCompilerBackend",
     "DEFAULT_BUILD_OPT",
     "DEFAULT_COMPILER",
     "DEFAULT_LIBC",
+    "GraalVMCompilerBackend",
+    "GraalVMLibC",
     "native_image_info",
     "native_image_settings",
 )
@@ -27,42 +23,42 @@ exports_files([
 
 string_flag(
     name = "opt",
+    build_setting_default = DEFAULT_BUILD_OPT,
     values = [
         "0",  # Don't optimize at all.
         "1",  # Tier 1 optimization.
         "2",  # Tier 2 optimization (default).
         "b",  # Build speed optimization.
     ],
-    build_setting_default = DEFAULT_BUILD_OPT,
 )
 
 string_flag(
     name = "libc",
+    build_setting_default = DEFAULT_LIBC,
     values = [
         GraalVMLibC.GLIBC,
         GraalVMLibC.MUSL,
     ],
-    build_setting_default = DEFAULT_LIBC,
 )
 
 string_flag(
     name = "compiler_backend",
+    build_setting_default = DEFAULT_COMPILER,
     values = [
         GraalVMCompilerBackend.NATIVE,
         GraalVMCompilerBackend.LLVM,
     ],
-    build_setting_default = DEFAULT_COMPILER,
 )
 
 native_image_info(
     name = "settings",
-    libc = ":libc",
     compiler_backend = ":compiler_backend",
+    libc = ":libc",
 )
 
 native_image_settings(
     name = "defaults",
-    opt = DEFAULT_BUILD_OPT,
-    libc = DEFAULT_LIBC,
     compiler_backend = DEFAULT_COMPILER,
+    libc = DEFAULT_LIBC,
+    opt = DEFAULT_BUILD_OPT,
 )
