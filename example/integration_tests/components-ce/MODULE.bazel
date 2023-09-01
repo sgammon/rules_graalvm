@@ -24,6 +24,10 @@ gvm.graalvm(
     distribution = "ce",
     java_version = "20",
     version = "20.0.2",
+    components = [
+        "js",  # should automatically install `regex` and other dependencies
+        "wasm",
+    ],
 )
 use_repo(
     gvm,
