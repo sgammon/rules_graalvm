@@ -11,9 +11,33 @@ package(default_visibility = [
 ])
 
 bzl_library(
+    name = "builder",
+    srcs = ["//internal/native_image:builder.bzl"],
+)
+
+bzl_library(
+    name = "classic",
+    srcs = ["//internal/native_image:classic.bzl"],
+    deps = [
+        ":builder",
+        ":common",
+    ],
+)
+
+bzl_library(
+    name = "common",
+    srcs = ["//internal/native_image:common.bzl"],
+    deps = [
+        ":builder",
+    ],
+)
+
+bzl_library(
     name = "rules",
     srcs = ["//graalvm/nativeimage:rules.bzl"],
     deps = [
+        ":common",
+        ":internals",
         ":settings",
         "//lib:tooling",
         "@bazel_skylib//lib:dicts",
@@ -28,6 +52,9 @@ bzl_library(
 bzl_library(
     name = "internals",
     srcs = ["//internal/native_image:rules.bzl"],
+    deps = [
+        "@build_bazel_apple_support//:apple_support",
+    ],
 )
 
 bzl_library(
