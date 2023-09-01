@@ -17,7 +17,8 @@ load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 
 # graalvm_repository(name = "graalvm" ...)
 
-register_toolchains("@graalvm//:all")
+register_toolchains("@graalvm//:jvm")
+register_toolchains("@graalvm//:sdk")
 ```
 
 ### Installation in `WORKSPACE.bazel`
