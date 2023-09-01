@@ -44,6 +44,7 @@ def _graal_binary_classic_implementation(ctx):
     native_toolchain = _resolve_cc_toolchain(
         ctx,
         transitive_inputs,
+        is_windows = ctx.configuration.host_path_separator == ";",
     )
 
     args = ctx.actions.args()
