@@ -1,4 +1,1 @@
-# Need these env vars on Windows
-build --action_env=INCLUDE
-build --action_env=MSVC
-build --action_env=LIB
+# Nothing at this time.
