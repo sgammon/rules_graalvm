@@ -81,7 +81,7 @@ node_modules:
 build: deps  ## Build all targets.
 	$(RULE)$(BAZEL) $(_STARTUP) build $(TARGETS) $(_ARGS)
 
-test:  ## Run all tests.
+test: unit-tests integration-tests  ## Run all tests.
 
 unit-tests:
 	$(RULE)$(BAZEL) $(_STARTUP) $(TEST_TASK) $(TESTS) $(_ARGS)
