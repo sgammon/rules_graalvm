@@ -20,7 +20,7 @@ load(
     "C_COMPILE_ACTION_NAME",
 )
 
-def resolve_cc_toolchain(ctx, transitive_inputs):
+def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
     """Build a context struct for accessing the native C toolchain.
 
     Available struct properties:
@@ -31,6 +31,7 @@ def resolve_cc_toolchain(ctx, transitive_inputs):
     Args:
         ctx: Context from the rule implementation.
         transitive_inputs: List of transitive inputs (mutated).
+        is_windows: Whether the target (and hence execution) platform is Windows.
 
     Returns:
         Resulting struct; see method documentation for parameters."""
@@ -101,8 +102,12 @@ def resolve_cc_toolchain(ctx, transitive_inputs):
         path_set[tool_dir] = None
 
     paths = sorted(path_set.keys())
-    if ctx.configuration.host_path_separator == ":":
-        # HACK: ":" is a proxy for a UNIX-like host.
+    if is_windows:
+        # Graal verifies the Visual Studio setup by looking for cl.exe in PATH,
+        # which in turn relies on cmd.exe being in PATH.
+        # https://github.com/oracle/graal/blob/46de6045d403bb373f65d5e3303f9d3d09f838df/substratevm/src/com.oracle.svm.driver/src/com/oracle/svm/driver/WindowsBuildEnvironmentUtil.java#L130-L135
+        paths.append("C:\\Windows\\System32")
+    else:
         # The tools returned above may be bash scripts that reference commands
         # in directories we might not otherwise include. For example,
         # on macOS, wrapped_ar calls dirname.
