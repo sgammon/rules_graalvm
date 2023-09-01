@@ -100,14 +100,14 @@ def _toolchain_config_impl(ctx):
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
     ctx.file("BUILD.bazel", ctx.attr.build_file)
 
-def _graal_updater_path(ctx, os):
+def _graal_updater_path(os):
     cmd = paths.join("bin", "gu")
     if "windows" in os:
         cmd = paths.join("bin", "gu.cmd")
     return cmd
 
 def _graal_postinstall_actions(ctx, os):
-    cmd = _graal_updater_path(ctx, os)
+    cmd = _graal_updater_path(os)
     if ctx.attr.setup_actions and len(ctx.attr.setup_actions) > 0:
         for action in ctx.attr.setup_actions:
             if not action.startsWith("gu "):
@@ -557,15 +557,115 @@ workspace(name = \"{name}\")
 
 _graalvm_bindist_repository = repository_rule(
     attrs = {
-        "version": attr.string(mandatory = True),
-        "java_version": attr.string(mandatory = True),
-        "distribution": attr.string(mandatory = False),
-        "toolchain_prefix": attr.string(mandatory = False),
-        "components": attr.string_list(mandatory = False),
-        "setup_actions": attr.string_list(mandatory = False),
-        "enable_toolchain": attr.bool(mandatory = False),
-        "toolchain_config": attr.string(mandatory = True),
-        "sha256": attr.string(mandatory = False),
+        "version": attr.string(
+            mandatory = True,
+            doc = """
+GraalVM engine version, like `23.0.1`. Note that this version aligns with
+OpenJDK release versions only for newer releases; in some cases, the
+`java_version` and `version` differ, and in others they align.
+
+This version is required in order to properly resolve artifacts for a given
+GraalVM engine version.
+            """
+        ),
+        "java_version": attr.string(
+            mandatory = True,
+            doc = """
+Specific (`17.0.8`) or major (`17`) Java version provided by the desired
+GraalVM SDK release. This value is mandatory so that components and SDK
+artifacts can properly be resolved; GraalVM releases each provide support
+for multiple Java versions.
+
+Early versions of GraalVM provide Java 8 and 11. This window slides as the
+GraalVM release approaches current; at the time of this writing, Java 17
+and Java 20 are provided, with Java 17 and Java 21 being the next release.
+            """
+        ),
+        "distribution": attr.string(
+            mandatory = False,
+            doc = """
+Specifies the type of distribution to download, install, and use. GraalVM
+is distributed as Community Edition (also known as "CE"), and Oracle GraalVM,
+which carries a different license and offers commercial support.
+
+For these reasons, the default distribution is Community, and you can opt-in
+to using the Oracle GVM distribution with the value `oracle`.
+
+Before the Java 17/20 release (known internally as `23.0.1`), Oracle GraalVM
+was known as GraalVM Enterprise Edition, or "GraalVM EE." To use an EE
+distribution of GraalVM, use the `artifacts` attribute with a custom artifact
+coordinate definition.
+            """
+        ),
+        "toolchain_prefix": attr.string(
+            mandatory = False,
+            doc = """
+String prefix to use for the Java toolchain; if no value is provided, the
+default value is `graalvm`, resulting in `graalvm_<java_major_version>` as the
+name of the registered Java toolchain.
+
+For example, if you install a GraalVM SDK with `java_version` set to `20`, the
+toolchain will be named `graalvm_20`, and you can use it in a `.bazelrc` file
+or on the command line with:
+
+```
+# run with your graalvm
+build --java_runtime_version=graalvm_20
+
+# build with your graalvm
+build --tool_java_runtime_version=graalvm_20
+```
+
+Both flags are optional, and each are required for the related use case.
+            """
+        ),
+        "components": attr.string_list(
+            mandatory = False,
+            doc = """
+Specifies the set of component names which should be installed or resolved for
+this GraalVM SDK installation.
+
+GraalVM "components" are language or engine modules, typically implemented via
+the Truffle API. For example, GraalJs, GraalPy, and TruffleRuby are all made
+available via this mechanism.
+
+The GraalVM Rules know about component dependencies for components which ship
+as part of GraalVM. For example, specifying `js` will install requisite component
+dependencies (`regex` and `icu4j`).
+
+If you want to define your own components or use third-party components which
+are not shipped with GraalVM, see the `artifacts` attribute.
+            """
+        ),
+        "setup_actions": attr.string_list(
+            mandatory = False,
+            doc = """
+Set of shell actions to run with the Graal Updater (`gu`) tool after SDK and
+component installation is complete.
+
+Some components need after-installation actions, like Espresso, which requires the
+user to run `gu rebuild-images`. These commands can be defined and performed using
+this attribute.
+"""
+        ),
+        "enable_toolchain": attr.bool(
+            mandatory = False,
+            doc = """
+Whether to define Java and GraalVM toolchain targets. These toolchain targets are
+used by the modern version of the Native Image rules, and optionally by Baazel as
+a Java Toolchain.
+"""
+        ),
+        "toolchain_config": attr.string(
+            mandatory = True,
+            doc = """
+Name to use for the toolchain configuration repository which is installed and set
+up with GraalVM and Java toolchains. This repository is used as the actual host for
+these toolchain configurations, with aliases from the main GraalVM repository.
+
+Normally this name is generated and the user does not have to provide it.
+"""
+        ),
     },
     implementation = _graal_bindist_repository_impl,
 )
