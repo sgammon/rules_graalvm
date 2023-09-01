@@ -30,7 +30,7 @@ def _configure_static_zlib_compile(ctx, args, direct_inputs):
             fail("Expected a static library for static_zlib, got %s" % library)
 
         zlib_static = ctx.actions.declare_file(
-            ctx.attr.name + "_hermetic_libs/libz.a"
+            ctx.attr.name + "_hermetic_libs/libz.a",
         )
         ctx.actions.symlink(
             output = zlib_static,
@@ -41,7 +41,6 @@ def _configure_static_zlib_compile(ctx, args, direct_inputs):
             format = "-H:CLibraryPath=%s",
         )
         direct_inputs.append(zlib_static)
-
 
 def assemble_native_build_options(
         ctx,
