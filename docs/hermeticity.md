@@ -16,7 +16,7 @@ All other downloads are performed through Bazel.
 
 ### Linux
 
-On Linux no specific action is needed. Note that `rules_graalvm` has limited support for [`sandboxfs`][2] at this time.
+On Linux no specific action is needed.
 
 ### macOS
 
