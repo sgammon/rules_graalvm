@@ -10,6 +10,7 @@ _DEFAULT_GVM_REPO = "@graalvm"
 _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
 _BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
+_LINUX_CONSTRAINT = "@platforms//os:linux"
 _MACOS_CONSTRAINT = "@platforms//os:macos"
 _WINDOWS_CONSTRAINT = "@platforms//os:windows"
 
@@ -65,6 +66,9 @@ _NATIVE_IMAGE_ATTRS = {
     ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
+    ),
+    "_linux_constraint": attr.label(
+        default = Label(_LINUX_CONSTRAINT),
     ),
     "_macos_constraint": attr.label(
         default = Label(_MACOS_CONSTRAINT),
