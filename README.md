@@ -18,10 +18,13 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Installing components with `gu`](./docs/components.md)
 - [Using GraalVM as a Bazel Java toolchain](./docs/toolchain.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./docs/modern-bazel.md)
-- [Support for Bazel 5 and Bazel 4, drop-in replacement for `rules_graal`](./legacy-bazel.md)
+- [Support for Bazel 4 and Bazel 5, drop-in replacement for `rules_graal`](./legacy-bazel.md)
 - [Run tools from GraalVM directly](./docs/binary-targets.md)
+- [Build native shared libraries from Java or polyglot code](./docs/shared-libraries.md)
 - [Example projects for each Bazel version](./docs/examples.md)
-- Support for macOS, Linux, Windows (including Native Image!)
+- [Hermetic compilation on all platforms](./docs/hermeticity.md)
+- [Respects conventional Bazel build settings](./docs/build-settings.md)
+- Support for macOS, Linux, Windows (including Native Image!) ([support matrix](./docs/modern-bazel.md))
 - Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
 ## Installation
@@ -243,13 +246,13 @@ If you install GraalVM at a repository named `@graalvm`, the toolchain targets a
 **Java toolchain:**
 
 ```
-@graalvm//:toolchain
+@graalvm//:jvm
 ```
 
 **GraalVM toolchain:**
 
 ```
-@graalvm//:gvm
+@graalvm//:sdk
 ```
 
 The default `WORKSPACE` and Bzlmod installation instructions register both types of toolchains.
