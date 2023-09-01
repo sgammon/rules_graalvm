@@ -14,6 +14,30 @@ _LINUX_CONSTRAINT = "@platforms//os:linux"
 _MACOS_CONSTRAINT = "@platforms//os:macos"
 _WINDOWS_CONSTRAINT = "@platforms//os:windows"
 
+# buildifier: disable=name-conventions
+_NativeImageOptimization = struct(
+    DEFAULT = "",
+    FASTBUILD = "b",
+    OPTIMIZED_LEVEL_1 = "1",
+    OPTIMIZED_LEVEL_2 = "2",
+)
+
+_DEBUG_CONDITION = select({
+    "@rules_graalvm//internal/conditions/compiler:debug": True,
+    "//conditions:default": False,
+})
+
+_COVERAGE_CONDITION = select({
+    "@rules_graalvm//internal/conditions/tools:coverage": True,
+    "//conditions:default": False,
+})
+
+_OPTIMIZATION_MODE_CONDITION = select({
+    "@rules_graalvm//internal/conditions/compiler:fastbuild": _NativeImageOptimization.FASTBUILD,  # becomes `-Ob`
+    "@rules_graalvm//internal/conditions/compiler:optimized": _NativeImageOptimization.OPTIMIZED_LEVEL_2,  # becomes `-O2`
+    "//conditions:default": _NativeImageOptimization.DEFAULT,  # becomes `-O2` via GraalVM defaults
+})
+
 _NATIVE_IMAGE_ATTRS = {
     "deps": attr.label_list(
         providers = [[JavaInfo]],
@@ -22,9 +46,13 @@ _NATIVE_IMAGE_ATTRS = {
     "main_class": attr.string(
         mandatory = False,
     ),
-    "binary_type": attr.string(
+    "shared_library": attr.bool(
         mandatory = False,
-        default = "executable",
+        default = False,
+    ),
+    "allow_fallback": attr.bool(
+        mandatory = False,
+        default = False,
     ),
     "include_resources": attr.string(
         mandatory = False,
@@ -36,6 +64,23 @@ _NATIVE_IMAGE_ATTRS = {
     "jni_configuration": attr.label(
         mandatory = False,
         allow_single_file = True,
+    ),
+    "debug": attr.bool(
+        mandatory = False,
+        default = False,
+    ),
+    "optimization_mode": attr.string(
+        mandatory = False,
+        values = [
+            _NativeImageOptimization.DEFAULT,
+            _NativeImageOptimization.FASTBUILD,
+            _NativeImageOptimization.OPTIMIZED_LEVEL_1,
+            _NativeImageOptimization.OPTIMIZED_LEVEL_2,
+        ],
+    ),
+    "coverage": attr.bool(
+        mandatory = False,
+        default = False,
     ),
     "initialize_at_build_time": attr.string_list(
         mandatory = False,
@@ -118,8 +163,15 @@ def _prepare_native_image_rule_context(
     return binary
 
 ## Exports.
+
+# buildifier: disable=name-conventions
+NativeImageOptimization = _NativeImageOptimization
+
 RULES_REPO = _RULES_REPO
 DEFAULT_GVM_REPO = _DEFAULT_GVM_REPO
+DEBUG_CONDITION = _DEBUG_CONDITION
+COVERAGE_CONDITION = _COVERAGE_CONDITION
+OPTIMIZATION_MODE_CONDITION = _OPTIMIZATION_MODE_CONDITION
 GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
 BAZEL_CPP_TOOLCHAIN_TYPE = _BAZEL_CPP_TOOLCHAIN_TYPE
 BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
