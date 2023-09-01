@@ -107,28 +107,39 @@ def _graal_binary_implementation(ctx):
     direct_inputs = []
     transitive_inputs = [classpath_depset]
 
-    if graal_attr == None:
+    # if we aren't handed a specific `native-image` tool binary, or we are running
+    # under the modern `native_image` rule, then attempt to resolve via toolchains...
+    if graal_attr == None and not (ctx.attr._legacy_rule):
         # resolve via toolchains
         info = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
-        graal_attr = info.native_image_bin
+
+        # but fall back to explicitly-provided tool, which should override, with the
+        # remainder of the resolved toolchain present
+        resolved_graal = graal_attr or info.native_image_bin
         gvm_toolchain = info
         extra_tool_deps.append(info.gvm_files)
 
         graal_inputs, _ = ctx.resolve_tools(tools = [
-            graal_attr,
+            resolved_graal,
         ] + extra_tool_deps)
 
         graal = graal_inputs.to_list()[0]
+
+        # if we're using an explicit tool, add it to the direct inputs
+        if graal_attr:
+            direct_inputs.append(graal_inputs)
+
+        # add toolchain files to transitive inputs
         transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
-    else:
-        # otherwise, use the legacy code path
+    elif graal_attr != None:
+        # otherwise, use the legacy code path. the `graal` value is used in the run
+        # `executable` so it isn't listed in deps for earlier Bazel versions.
         graal_inputs, _, _ = ctx.resolve_command(tools = [
             graal_attr,
         ])
         graal = graal_inputs[0]
-        direct_inputs.append(graal_inputs)
-
-    if graal_attr == None:
+        direct_inputs.append(graal)
+    else:
         # still failed to resolve: cannot resolve via either toolchains or attributes.
         fail("""
             No `native-image` tool found. Please either define a `native_image_tool` in your target,
@@ -263,6 +274,7 @@ def _graal_binary_implementation(ctx):
         args.add("-H:+JNI")
 
     inputs = depset(direct_inputs, transitive = transitive_inputs)
+
     run_params = {
         "outputs": [binary],
         "arguments": [args],
