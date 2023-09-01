@@ -24,7 +24,7 @@ All examples are continuously tested in CI.
 | [`graalvm-ce-20`][9]      | Bazel 7                 | [Modern][1] | Linux, macOS, Windows | Bazel 7 with GraalVM CE 20                                              |
 | [`graalvm-oracle-17`][10] | Bazel 7                 | [Modern][1] | Linux, macOS, Windows | Bazel 7 with Oracle GraalVM 17                                          |
 | [`graalvm-oracle-20`][11] | Bazel 7                 | [Modern][1] | Linux, macOS, Windows | Bazel 7 with Oracle GraalVM 20                                          |
-| [`legacy-gvm`][12]        | Bazel 7 with WORKSPACE  | [Modern][1] | Linux, macOS, Windows | Example **modern rules** with older GraalVM version (`22.1.0`, Java 11) |
+| [`legacy-gvm`][12]        | Bazel 7 with WORKSPACE  | [Legacy][2] | Linux, macOS          | Example **modern rules** with older GraalVM version (`22.1.0`, Java 11) |
 | [`legacy-rules`][13]      | Bazel 4+ with WORKSPACE | [Legacy][2] | Linux, macOS          | Example **legacy rules** with older GraalVM version (`22.1.0`, Java 11) |
 
 ### Specific version notes
