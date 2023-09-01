@@ -21,6 +21,7 @@ bzl_library(
     deps = [
         ":builder",
         ":common",
+        ":toolchain",
     ],
 )
 
@@ -29,6 +30,7 @@ bzl_library(
     srcs = ["//internal/native_image:common.bzl"],
     deps = [
         ":builder",
+        ":toolchain",
     ],
 )
 
@@ -39,6 +41,7 @@ bzl_library(
         ":common",
         ":internals",
         ":settings",
+        ":toolchain",
         "//lib:tooling",
         "@bazel_skylib//lib:dicts",
     ],
