@@ -265,7 +265,7 @@ def _graal_bindist_repository_impl(ctx):
             "oracle": "oracle",
             "gvm": "oracle",
         }
-        dist_name = dist_names[ctx.attr.distribution]
+        dist_name = dist_names[distribution]
         if not dist_name:
             fail("Cannot find distribution name for GraalVM: " + ctx.attr.distribution)
 
