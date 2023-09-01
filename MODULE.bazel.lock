@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "6e8d49486380490dcc31738a6ea40a2e566e34c673a1a3496732de1b47f9a3cc",
+  "moduleFileHash": "983271de343c5bfd4f160d9ccfa1ce1071f4ea4d3efacfb14c5ab592f277e612",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -32,7 +32,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 151,
+            "line": 155,
             "column": 22
           },
           "imports": {
@@ -50,7 +50,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 156,
+                "line": 160,
                 "column": 14
               }
             }
@@ -64,7 +64,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 172,
+            "line": 176,
             "column": 20
           },
           "imports": {
@@ -80,7 +80,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 177,
+                "line": 181,
                 "column": 12
               }
             }
@@ -94,7 +94,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 197,
+            "line": 202,
             "column": 23
           },
           "imports": {
@@ -108,11 +108,11 @@
           "tags": [
             {
               "tagName": "toolchain",
-              "attributeValues": {"python_version":"--3.11","is_default":true,"configure_coverage_tool":true},
+              "attributeValues": {"configure_coverage_tool":true,"is_default":true,"python_version":"--3.11"},
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 202,
+                "line": 207,
                 "column": 17
               }
             }
@@ -126,7 +126,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 209,
+            "line": 214,
             "column": 20
           },
           "imports": {
@@ -140,11 +140,11 @@
           "tags": [
             {
               "tagName": "parse",
-              "attributeValues": {"hub_name":"--pip","python_version":"--3.11","requirements_lock":"--@//:requirements_lock.txt","extra_pip_args":["----no-binary","--grequests"]},
+              "attributeValues": {"extra_pip_args":["----no-binary","--grequests"],"hub_name":"--pip","python_version":"--3.11","requirements_lock":"--@//:requirements_lock.txt"},
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 215,
+                "line": 219,
                 "column": 10
               }
             }
@@ -158,7 +158,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 230,
+            "line": 234,
             "column": 21
           },
           "imports": {},
@@ -170,7 +170,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 236,
+                "line": 239,
                 "column": 15
               }
             }
@@ -184,7 +184,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 238,
+            "line": 241,
             "column": 20
           },
           "imports": {
@@ -200,7 +200,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 244,
+                "line": 246,
                 "column": 23
               }
             }
@@ -2802,7 +2802,7 @@
       }
     },
     "//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "bzqr5/vjeEKcaMTUvH/L33UC27tbOU+xvF9xWbu13JY=",
+      "bzlTransitiveDigest": "oP2WplVBuDwdoIqn3KLBlPDcc82fBi+mYNGV+gl9vQ4=",
       "accumulatedFileDigests": {},
       "envVariables": {},
       "generatedRepoSpecs": {
