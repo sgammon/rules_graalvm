@@ -18,6 +18,9 @@ package(default_visibility = [
 ])
 
 exports_files([
+    "builder.bzl",
+    "classic.bzl",
+    "common.bzl",
     "rules.bzl",
     "settings.bzl",
     "toolchain.bzl",

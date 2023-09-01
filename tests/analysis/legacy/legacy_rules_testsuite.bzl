@@ -28,7 +28,6 @@ def _test_gvm_legacy_nativeimage(name):
         name = "%s_native" % name,
         main_class = "Main",
         deps = [":%s_java" % name],
-        native_image_tool = "@graalvm//:native-image",
     )
     analysis_test(
         name = name,

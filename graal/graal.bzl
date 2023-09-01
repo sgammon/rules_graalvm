@@ -5,7 +5,7 @@ load(
     "dicts",
 )
 load(
-    "//internal/native_image:rules.bzl",
+    "//internal/native_image:classic.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
     _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
@@ -13,21 +13,20 @@ load(
     _graal_binary_implementation = "graal_binary_implementation",
 )
 
+_DEFAULT_NATIVE_IMAGE_TOOL = Label("%s//:native-image" % _DEFAULT_GVM_REPO)
+
 _native_image = rule(
     implementation = _graal_binary_implementation,
     attrs = dicts.add(_NATIVE_IMAGE_ATTRS, **{
         "native_image_tool": attr.label(
             cfg = "exec",
-            default = Label("%s//:native-image" % _DEFAULT_GVM_REPO),
+            default = _DEFAULT_NATIVE_IMAGE_TOOL,
             allow_files = True,
             executable = True,
             mandatory = False,
         ),
         "_cc_toolchain": attr.label(
             default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
-        ),
-        "_legacy_rule": attr.bool(
-            default = True,
         ),
     }),
     executable = True,
@@ -61,6 +60,7 @@ def native_image(
         "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
         "//conditions:default": "%target%-bin",
     }),
+    native_image_tool = _DEFAULT_NATIVE_IMAGE_TOOL,
     **kwargs):
 
     """Generates and compiles a GraalVM native image from a Java library target.
@@ -81,6 +81,7 @@ def native_image(
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
         default_executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
             The special string `%target%`, if present, is replaced with `name`.
+        native_image_tool: Specific `native-image` executable target to use.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -99,10 +100,7 @@ def native_image(
         check_toolchains = check_toolchains,
         c_compiler_option = c_compiler_option,
         default_executable_name = default_executable_name,
-        pass_compiler_path = select({
-            "@bazel_tools//src/conditions:windows": False,
-            "//conditions:default": True,
-        }),
+        native_image_tool = native_image_tool,
         **kwargs
     )
 
@@ -127,6 +125,7 @@ def graal_binary(
         "@bazel_tools//src/conditions:windows": "%target%-bin.exe",
         "//conditions:default": "%target%-bin",
     }),
+    native_image_tool = _DEFAULT_NATIVE_IMAGE_TOOL,
     **kwargs):
 
     """Alias for the renamed `native_image` rule. Identical.
@@ -147,6 +146,7 @@ def graal_binary(
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
         default_executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
             The special string `%target%`, if present, is replaced with `name`.
+        native_image_tool: Specific `native-image` executable target to use.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -165,5 +165,6 @@ def graal_binary(
         check_toolchains = check_toolchains,
         c_compiler_option = c_compiler_option,
         default_executable_name = default_executable_name,
+        native_image_tool = native_image_tool,
         **kwargs
     )
