@@ -337,5 +337,3 @@ jobs:
         working-directory: ${{ matrix.directory }}
         shell: bash
         run: bazel ${{ matrix.action || 'build' }} "${{ matrix.target || '//...' }}"
-        env:
-          BAZEL_USE_CPP_ONLY_TOOLCHAIN: "1"
