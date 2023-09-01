@@ -482,6 +482,10 @@ alias(
 
 # Toolchains
 alias(
+    name = "jvm",
+    actual = "toolchain",
+)
+alias(
     name = "toolchain",
     actual = "@{repo}//:toolchain",
     visibility = ["//visibility:public"],
@@ -502,16 +506,9 @@ alias(
     name = "sdk",
     actual = "toolchain_gvm",
 )
-toolchain(
+alias(
     name = "toolchain_gvm",
-    exec_compatible_with = [
-        {gvm_toolchain_tags_exec}
-    ],
-    target_compatible_with = [
-        {gvm_toolchain_tags_target}
-    ],
-    toolchain = ":gvm",
-    toolchain_type = "@rules_graalvm//graalvm/toolchain",
+    actual = "@{repo}//:toolchain_gvm",
 )
 
 # Tool Aliases
@@ -667,12 +664,21 @@ alias(
     }}),
     visibility = ["//visibility:private"],
 )
+alias(
+    name = "toolchain_gvm",
+    actual = "gvm",
+    visibility = ["//visibility:public"],
+)
 toolchain(
     name = "gvm",
-    target_compatible_with = {target_compatible_with},
-    target_settings = [":version_or_prefix_version_setting"],
-    toolchain_type = "@rules_graalvm//graalvm/toolchain:toolchain",
-    toolchain = "{toolchain}",
+    exec_compatible_with = [
+        {gvm_toolchain_tags_exec}
+    ],
+    target_compatible_with = [
+        {gvm_toolchain_tags_target}
+    ],
+    toolchain = "@{name}//:gvm",
+    toolchain_type = "@rules_graalvm//graalvm/toolchain",
     visibility = ["//visibility:public"],
 )
 toolchain(
@@ -685,11 +691,14 @@ toolchain(
 )
 {bootstrap_runtime_toolchain}
 """.format(
+                name = name,
                 prefix = toolchain_prefix or "graalvm",
                 version = java_version,
                 target_compatible_with = target_compatible_with,
                 toolchain = "@{repo}//:jdk".format(repo = name),
                 bootstrap_runtime_toolchain = bootstrap_runtime_toolchain,
+                gvm_toolchain_tags_exec = "",
+                gvm_toolchain_tags_target = "",
             ),
         )
 

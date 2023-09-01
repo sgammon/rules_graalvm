@@ -94,7 +94,8 @@ gvm.graalvm(
     ],
 )
 use_repo(gvm, "graalvm")
-register_toolchains("@graalvm//:all")
+register_toolchains("@graalvm//:jvm")
+register_toolchains("@graalvm//:sdk")
 ```
 
 ## Usage
