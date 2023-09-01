@@ -12,6 +12,7 @@ RELEASE ?= no
 VERBOSE ?= no
 BZLMOD ?= no
 COVERAGE ?= yes
+TEST ?=
 TARGETS ?= //graalvm/... //lib/...
 DOCS ?= //docs/api:all
 TESTS ?= //.aspect/... //tests/...
@@ -88,6 +89,10 @@ unit-tests:
 
 integration-tests:
 	$(RULE)for d in example/integration_tests/*; do ( bash $(PWD)/tools/scripts/run_test.sh "$$d"; ); done
+
+integration-test:  ## Run a single integration test at name `TEST=x`.
+	$(RULE)bash $(PWD)/tools/scripts/run_test.sh "example/integration_tests/$(TEST)";
+	@echo "Test done."
 
 docs:  ## Build docs.
 	@echo "Building docs..."

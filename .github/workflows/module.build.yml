@@ -235,6 +235,30 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Components on CE
+          - label: Components (CE)
+            target: sample
+            action: build
+            directory: "./example/integration_tests/components-ce"
+            labs: false
+            skip: false
+
+          # Test: Components on GVM
+          - label: Components (Oracle)
+            target: sample
+            action: build
+            directory: "./example/integration_tests/components-oracle"
+            labs: false
+            skip: false
+
+          # Test: Java Toolchain
+          - label: Java Toolchain
+            target: sample
+            action: build
+            directory: "./example/integration_tests/java-toolchain"
+            labs: false
+            skip: false
+
           # Test: Legacy Rules
           - label: Legacy Rules
             target: sample
