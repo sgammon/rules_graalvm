@@ -3,21 +3,21 @@ workspace(name = "rules_graalvm")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load(
     "//internal:config.bzl",
-    "PROTOBUF_VERSION",
-    "PROTOBUF_SHA",
-    "HERMETIC_CC_TOOLCHAIN_VERSION",
     "HERMETIC_CC_TOOLCHAIN_SHA",
-    "LLVM_TOOLCHAIN_TAG",
+    "HERMETIC_CC_TOOLCHAIN_VERSION",
     "LLVM_TOOLCHAIN_SHA",
+    "LLVM_TOOLCHAIN_TAG",
+    "PROTOBUF_SHA",
+    "PROTOBUF_VERSION",
 )
 
 http_archive(
     name = "platforms",
+    sha256 = "3a561c99e7bdbe9173aa653fd579fe849f1d8d67395780ab4770b1f381431d51",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
         "https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
     ],
-    sha256 = "3a561c99e7bdbe9173aa653fd579fe849f1d8d67395780ab4770b1f381431d51",
 )
 
 http_archive(
@@ -65,9 +65,9 @@ http_archive(
 
 http_archive(
     name = "com_grail_bazel_toolchain",
+    canonical_id = LLVM_TOOLCHAIN_TAG,
     sha256 = LLVM_TOOLCHAIN_SHA,
     strip_prefix = "bazel-toolchain-{tag}".format(tag = LLVM_TOOLCHAIN_TAG),
-    canonical_id = LLVM_TOOLCHAIN_TAG,
     url = "https://github.com/grailbio/bazel-toolchain/archive/refs/tags/{tag}.tar.gz".format(tag = LLVM_TOOLCHAIN_TAG),
 )
 
@@ -126,7 +126,11 @@ load("//internal:setup.bzl", "rules_graalvm_toolchains", "rules_graalvm_workspac
 
 rules_graalvm_toolchains()
 
-rules_graalvm_workspace(gazelle = False, maven = False, python = False)
+rules_graalvm_workspace(
+    gazelle = False,
+    maven = False,
+    python = False,
+)
 
 # Provide a repository hint for Gazelle to inform it that the go package
 # github.com/bazelbuild/rules_go is available from io_bazel_rules_go and it

@@ -61,26 +61,27 @@ alias(
 
 run(
     name = "generator.update",
-    tool = "//tools/scripts:generator",
-    args = (
-        ["--tags"] + GRAALVM_KNOWN.RELEASES +
-        ["--distributions"] + GRAALVM_KNOWN.DISTS
-    ),
     srcs = [
         "//internal:graalvm_bindist_map.bzl",
     ],
+    outs = [
+        "graalvm_bindist_stamp.sh",
+    ],
+    args = (
+        ["--tags"] + GRAALVM_KNOWN.RELEASES + [
+            "--distributions",
+        ] + GRAALVM_KNOWN.DISTS
+    ),
     env = {
         "BAZEL_MAPPINGS_UPDATE": "1",
         "BAZEL_MAPPINGS_SRC": "$(location //internal:graalvm_bindist_map.bzl)",
         "BAZEL_BINDIST_STAMP": "$(location graalvm_bindist_stamp.sh)",
     },
-    outs = [
-        "graalvm_bindist_stamp.sh",
-    ],
     tags = [
         "manual",
         "no-cache",
         "no-sandbox",
         "requires-network",
     ],
+    tool = "//tools/scripts:generator",
 )

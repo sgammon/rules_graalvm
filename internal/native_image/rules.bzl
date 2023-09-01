@@ -6,11 +6,11 @@ load(
 )
 load(
     "//internal/native_image:common.bzl",
-    _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
-    _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
-    _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
+    _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
     _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
+    _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
+    _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _RULES_REPO = "RULES_REPO",
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
 )
@@ -137,8 +137,10 @@ def _graal_binary_implementation(ctx):
 def _wrap_actions_for_graal(actions):
     """Wraps the given ctx.actions struct so that env variables are correctly passed to Graal."""
     patched_actions = {k: getattr(actions, k) for k in dir(actions)}
+
     def _run_target(**kwargs):
         _wrapped_run_for_graal(actions, **kwargs)
+
     patched_actions["run"] = _run_target
     return struct(**patched_actions)
 

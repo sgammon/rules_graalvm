@@ -15,5 +15,6 @@ constraint_setting(
     constraint_value(
         name = "java%s" % i,
         constraint_setting = ":java_version",
-    ) for i in _TARGET_JAVA_VERSIONS
+    )
+    for i in _TARGET_JAVA_VERSIONS
 ]

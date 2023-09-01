@@ -8,10 +8,9 @@ load(
 ## Exports.
 
 def register_graalvm_toolchains(
-    name = "@graalvm",
-    register_java_toolchain = True,
-    register_gvm_toolchain = True):
-
+        name = "@graalvm",
+        register_java_toolchain = True,
+        register_gvm_toolchain = True):
     """Register Bazel toolchains via the installed GraalVM repository.
 
     The default repository `name` is `@graalvm`, but this should be set to whatever the target repository
