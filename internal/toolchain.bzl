@@ -1,7 +1,7 @@
 "Defines toolchain registration functions for use in downstream Bazel projects."
 
-_TARGET_JAVA_TOOLCHAIN = ":toolchain"
-_TARGET_GVM_TOOLCHAIN = ":toolchain_gvm"
+_TARGET_JAVA_TOOLCHAIN = ":jvm"
+_TARGET_GVM_TOOLCHAIN = ":sdk"
 
 GraalVMToolchainInfo = provider(
     doc = "Information about the GraalVM runtime and compiler.",
