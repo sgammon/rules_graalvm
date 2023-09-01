@@ -115,9 +115,6 @@ def _graal_binary_implementation(ctx):
         )
 
     else:
-        # activate default shell environment on windows and linux
-        run_params["use_default_shell_env"] = True
-
         # run our proxied env shim on all other platforms.
         graal_actions.run(
             arguments = [args],
