@@ -17,8 +17,6 @@ load(
     "NativeImageInfo",
 )
 
-_DEFAULT_NATIVE_IMAGE_TOOL = Label("%s//:native-image" % _DEFAULT_GVM_REPO)
-
 _DEFAULT_NATIVE_IMAGE_SETTINGS = Label("@rules_graalvm//internal/native_image:defaults")
 
 _DEFAULT_CHECK_TOOLCHAINS_CONDITION = select({
@@ -76,7 +74,7 @@ def native_image(
         check_toolchains = _DEFAULT_CHECK_TOOLCHAINS_CONDITION,
         c_compiler_option = [],
         executable_name = _EXEUCTABLE_NAME_CONDITION,
-        native_image_tool = _DEFAULT_NATIVE_IMAGE_TOOL,
+        native_image_tool = None,  # uses toolchains by default
         native_image_settings = [_DEFAULT_NATIVE_IMAGE_SETTINGS],
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
