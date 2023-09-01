@@ -15,13 +15,11 @@ function run_build() {
     run_build;
     echo "Test completed. Cleaning up...";
     bazelisk clean --expunge;
-    echo "Integration test passed.";
     echo "";
     exit 0;
 } || {
     echo "Test failed. See output for error.";
     bazelisk clean --expunge;
-    echo "Integration test failure.";
     echo "";
     exit 1;
 }
