@@ -229,7 +229,7 @@ def _graal_bindist_repository_impl(ctx):
             output = "native-image-installer.jar",
         )
 
-        cmd = _graal_updater_path(ctx, os)
+        cmd = _graal_updater_path(os)
         bin_tail = ""
         shell_tail = ""
         if "windows" in os:
