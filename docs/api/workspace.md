@@ -35,14 +35,14 @@ target tool in your `native_image` binary targets.
 ## rules_graalvm_repositories
 
 <pre>
-rules_graalvm_repositories(<a href="#rules_graalvm_repositories-omit_rules_java">omit_rules_java</a>, <a href="#rules_graalvm_repositories-omit_bazel_skylib">omit_bazel_skylib</a>)
+rules_graalvm_repositories(<a href="#rules_graalvm_repositories-omit_rules_java">omit_rules_java</a>, <a href="#rules_graalvm_repositories-omit_bazel_skylib">omit_bazel_skylib</a>, <a href="#rules_graalvm_repositories-omit_apple_support">omit_apple_support</a>)
 </pre>
 
 Register dependency repositories for the GraalVM Rules for Bazel.
 
 This function only needs to be called if consuming the GraalVM Rules from a non-Bzlmod environment.
-The only dependencies the rules have are: (1) `rules_java`, and (2) `bazel_skylib`. Either or both
-can be omitted with the provided arguments.
+The only dependencies the rules have are: (1) `rules_java`, (2) `bazel_skylib`, and
+(3) `apple_support`. Any of those can be omitted with the provided arguments.
 
 
 **PARAMETERS**
@@ -52,5 +52,6 @@ can be omitted with the provided arguments.
 | :------------- | :------------- | :------------- |
 | <a id="rules_graalvm_repositories-omit_rules_java"></a>omit_rules_java |  Omit the `rules_java` dependency.   |  `False` |
 | <a id="rules_graalvm_repositories-omit_bazel_skylib"></a>omit_bazel_skylib |  Omit the `bazel_skylib` dependency.   |  `False` |
+| <a id="rules_graalvm_repositories-omit_apple_support"></a>omit_apple_support |  Omit the `apple_support` dependency.   |  `False` |
 
 
