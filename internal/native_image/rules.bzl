@@ -195,6 +195,19 @@ def _graal_binary_implementation(ctx):
             arguments = [args, xcode_args],
             **run_params
         )
+
+    # on windows, inject the `LIB` and `INCLUDE` values, etc, which are used by the `native-image` tool
+    # to resolve msvc dependencies.
+    elif ctx.target_platform_has_constraint(ctx.attr._windows_constraint[platform_common.ConstraintValueInfo]):
+        # activate default shell environment on windows
+        run_params["use_default_shell_env"] = True
+
+        # run windows actions.
+        graal_actions.run(
+            arguments = [args],
+            **run_params
+        )
+
     else:
         # run our proxied env shim on all other platforms.
         graal_actions.run(
