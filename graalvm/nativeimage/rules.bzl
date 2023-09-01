@@ -6,7 +6,6 @@ load(
 )
 load(
     "//internal/native_image:rules.bzl",
-    _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
