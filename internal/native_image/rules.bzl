@@ -64,6 +64,9 @@ def _graal_binary_implementation(ctx):
     native_toolchain = _resolve_cc_toolchain(
         ctx,
         transitive_inputs,
+        is_windows = ctx.target_platform_has_constraint(
+            ctx.attr._windows_constraint[platform_common.ConstraintValueInfo],
+        ),
     )
 
     args = ctx.actions.args()
