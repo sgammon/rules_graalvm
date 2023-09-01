@@ -1,10 +1,1 @@
 build:windows --enable_runfiles
-build:windows --action_env=PATH
-build:windows --action_env=VSINSTALLDIR
-build:windows --action_env=INCLUDE
-build:windows --action_env=MSVC
-build:windows --action_env=LIB
-build:windows --noexperimental_strict_action_env
-build:windows --strategy=NativeImage=standalone
-build:windows --noworker_sandboxing
-build:windows --spawn_strategy=local
