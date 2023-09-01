@@ -25,9 +25,6 @@ _native_image = rule(
             executable = True,
             mandatory = False,
         ),
-        "_legacy_rule": attr.bool(
-            default = False,
-        ),
         "native_image_settings": attr.label_list(
             providers = [[NativeImageInfo]],
             mandatory = False,
@@ -48,7 +45,7 @@ _native_image = rule(
     ],
 )
 
-## Exports.
+# Exports.
 def native_image(name, **kwargs):
     """Macro which defines a GraalVM Native Image target."""
     _native_image(

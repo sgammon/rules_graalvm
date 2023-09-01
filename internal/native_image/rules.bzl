@@ -23,78 +23,16 @@ load(
     "CPP_LINK_STATIC_LIBRARY_ACTION_NAME",
     "C_COMPILE_ACTION_NAME",
 )
-
-_RULES_REPO = "@rules_graalvm"
-_DEFAULT_GVM_REPO = "@graalvm"
-_GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
-_BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
-_BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
-_MACOS_CONSTRAINT = "@platforms//os:macos"
-_WINDOWS_CONSTRAINT = "@platforms//os:windows"
-
-_NATIVE_IMAGE_ATTRS = {
-    "deps": attr.label_list(
-        providers = [[JavaInfo]],
-        mandatory = True,
-    ),
-    "main_class": attr.string(
-        mandatory = False,
-    ),
-    "binary_type": attr.string(
-        mandatory = False,
-        default = "executable",
-    ),
-    "include_resources": attr.string(
-        mandatory = False,
-    ),
-    "reflection_configuration": attr.label(
-        mandatory = False,
-        allow_single_file = True,
-    ),
-    "jni_configuration": attr.label(
-        mandatory = False,
-        allow_single_file = True,
-    ),
-    "initialize_at_build_time": attr.string_list(
-        mandatory = False,
-    ),
-    "initialize_at_run_time": attr.string_list(
-        mandatory = False,
-    ),
-    "native_features": attr.string_list(
-        mandatory = False,
-    ),
-    "data": attr.label_list(
-        allow_files = True,
-    ),
-    "extra_args": attr.string_list(
-        mandatory = False,
-    ),
-    "check_toolchains": attr.bool(
-        default = True,
-    ),
-    "c_compiler_option": attr.string_list(
-        mandatory = False,
-    ),
-    "default_executable_name": attr.string(
-        mandatory = True,
-    ),
-    "_cc_toolchain": attr.label(
-        default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
-    ),
-    "_macos_constraint": attr.label(
-        default = Label(_MACOS_CONSTRAINT),
-    ),
-    "_windows_constraint": attr.label(
-        default = Label(_WINDOWS_CONSTRAINT),
-    ),
-    "_xcode_config": attr.label(
-        default = configuration_field(
-            fragment = "apple",
-            name = "xcode_config_label",
-        ),
-    ),
-}
+load(
+    "//internal/native_image:common.bzl",
+    _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
+    _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
+    _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
+    _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
+    _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
+    _RULES_REPO = "RULES_REPO",
+    _prepare_native_image_rule_context = "prepare_native_image_rule_context",
+)
 
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
@@ -105,40 +43,30 @@ def _graal_binary_implementation(ctx):
         for dep in ctx.attr.deps
     ])
 
+    graal = None
     direct_inputs = []
     transitive_inputs = [classpath_depset]
 
-    # if we aren't handed a specific `native-image` tool binary, or we are running
-    # under the modern `native_image` rule, then attempt to resolve via toolchains...
-    if graal_attr == None and not (ctx.attr._legacy_rule):
-        # resolve via toolchains
-        info = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
+    # resolve via toolchains
+    info = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
 
-        # but fall back to explicitly-provided tool, which should override, with the
-        # remainder of the resolved toolchain present
-        resolved_graal = graal_attr or info.native_image_bin
-        gvm_toolchain = info
-        extra_tool_deps.append(info.gvm_files)
+    # but fall back to explicitly-provided tool, which should override, with the
+    # remainder of the resolved toolchain present
+    resolved_graal = graal_attr or info.native_image_bin
+    gvm_toolchain = info
+    extra_tool_deps.append(info.gvm_files)
 
-        graal_inputs, _ = ctx.resolve_tools(tools = [
-            resolved_graal,
-        ] + extra_tool_deps)
+    graal_inputs, _ = ctx.resolve_tools(tools = [
+        resolved_graal,
+    ] + extra_tool_deps)
 
-        graal = graal_inputs.to_list()[0]
+    graal = graal_inputs.to_list()[0]
 
-        # if we're using an explicit tool, add it to the direct inputs
-        if graal_attr:
-            direct_inputs.append(graal_inputs)
+    # add toolchain files to transitive inputs
+    transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
 
-        # add toolchain files to transitive inputs
-        transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
-    elif graal_attr != None:
-        # otherwise, use the legacy code path. the `graal` value is used in the run
-        # `executable` so it isn't listed in deps for earlier Bazel versions.
-        graal_inputs, _, _ = ctx.resolve_command(tools = [
-            graal_attr,
-        ])
-        graal = graal_inputs[0]
+    # if we're using an explicit tool, add it to the direct inputs
+    if graal:
         direct_inputs.append(graal)
     else:
         # still failed to resolve: cannot resolve via either toolchains or attributes.
@@ -147,6 +75,7 @@ def _graal_binary_implementation(ctx):
             or install a GraalVM `native-image` toolchain.
         """)
 
+    # begin resolving native toolchains
     cc_toolchain = find_cpp_toolchain(ctx)
     transitive_inputs.append(cc_toolchain.all_files)
 
@@ -223,68 +152,15 @@ def _graal_binary_implementation(ctx):
 
     # seal paths with hack above
     env["PATH"] = ctx.configuration.host_path_separator.join(paths)
-    out_bin_name = ctx.attr.default_executable_name.replace("%target%", ctx.attr.name)
-    binary = ctx.actions.declare_file(out_bin_name)
-
     args = ctx.actions.args()
-    args.add("--no-fallback")
-
-    # TODO: This check really should be on the exec platform, not the target platform, but that
-    # requires going through a separate rule. Since GraalVM doesn't support cross-compilation, the
-    # distinction doesn't matter for now.
-    if ctx.target_platform_has_constraint(ctx.attr._windows_constraint[platform_common.ConstraintValueInfo]):
-        path_list_separator = ";"
-    else:
-        path_list_separator = ":"
-    args.add_joined("-cp", classpath_depset, join_with = path_list_separator)
-
-    if gvm_toolchain != None:
-        args.add(c_compiler_path, format = "--native-compiler-path=%s")
-
-    args.add(ctx.attr.main_class, format = "-H:Class=%s")
-    args.add(binary.basename.replace(".exe", ""), format = "-H:Name=%s")
-    args.add(binary.dirname, format = "-H:Path=%s")
-    args.add("-H:+ReportExceptionStackTraces")
-
-    if not ctx.attr.check_toolchains:
-        args.add("-H:-CheckToolchain")
-
-    for arg in ctx.attr.extra_args:
-        args.add(arg)
-
-    args.add_all(
-        ctx.attr.c_compiler_option,
-        format_each = "-H:CCompilerOption=%s",
+    binary = _prepare_native_image_rule_context(
+        ctx,
+        args,
+        classpath_depset,
+        direct_inputs,
+        c_compiler_path,
+        gvm_toolchain,
     )
-
-    args.add_joined(
-        ctx.attr.native_features,
-        join_with = ",",
-        format_joined = "-H:Features=%s",
-    )
-
-    args.add_joined(
-        ctx.attr.initialize_at_build_time,
-        join_with = ",",
-        format_joined = "--initialize-at-build-time=%s",
-    )
-    args.add_joined(
-        ctx.attr.initialize_at_run_time,
-        join_with = ",",
-        format_joined = "--initialize-at-run-time=%s",
-    )
-
-    if ctx.attr.reflection_configuration != None:
-        args.add(ctx.file.reflection_configuration, format = "-H:ReflectionConfigurationFiles=%s")
-        direct_inputs.append(ctx.file.reflection_configuration)
-
-    if ctx.attr.include_resources != None:
-        args.add(ctx.attr.include_resources, format = "-H:IncludeResources=%s")
-
-    if ctx.attr.jni_configuration != None:
-        args.add(ctx.file.jni_configuration, format = "-H:JNIConfigurationFiles=%s")
-        direct_inputs.append(ctx.file.jni_configuration)
-        args.add("-H:+JNI")
 
     inputs = depset(direct_inputs, transitive = transitive_inputs)
 
@@ -295,13 +171,9 @@ def _graal_binary_implementation(ctx):
         "mnemonic": "NativeImage",
         "env": env,
         "execution_requirements": {k: "" for k in execution_requirements},
+        "progress_message": "Compiling native image %{label}",
+        "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
     }
-
-    if not ctx.attr._legacy_rule:
-        run_params.update(
-            progress_message = "Compiling native image %{label}",
-            toolchain = Label(_GVM_TOOLCHAIN_TYPE),
-        )
 
     graal_actions = _wrap_actions_for_graal(ctx.actions)
     if ctx.target_platform_has_constraint(ctx.attr._macos_constraint[platform_common.ConstraintValueInfo]):
@@ -324,6 +196,7 @@ def _graal_binary_implementation(ctx):
             **run_params
         )
     else:
+        # run our proxied env shim on all other platforms.
         graal_actions.run(
             arguments = [args],
             **run_params
