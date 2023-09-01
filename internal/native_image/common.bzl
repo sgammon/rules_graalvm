@@ -57,7 +57,7 @@ _NATIVE_IMAGE_ATTRS = {
     "c_compiler_option": attr.string_list(
         mandatory = False,
     ),
-    "default_executable_name": attr.string(
+    "executable_name": attr.string(
         mandatory = True,
     ),
     "_cc_toolchain": attr.label(
@@ -86,7 +86,7 @@ def _prepare_native_image_rule_context(
         gvm_toolchain = None):
     """Prepare a `native-image` build context."""
 
-    out_bin_name = ctx.attr.default_executable_name.replace("%target%", ctx.attr.name)
+    out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
     binary = ctx.actions.declare_file(out_bin_name)
 
     # TODO: This check really should be on the exec platform, not the target platform, but that
