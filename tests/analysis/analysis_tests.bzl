@@ -27,16 +27,16 @@ def _test_analysis_time_sanity(name):
 
 def _test_analysis_time_sanity_impl(env, target):
     env.expect.that_target(target).default_outputs().contains(
-        "tests/analysis/hello_world.txt"
+        "tests/analysis/hello_world.txt",
     )
 
 ## Exports.
 def rules_graalvm_analysis_time_sanity_testsuite(name):
-  test_suite(
-    name = name,
-    tests = [
-        _test_analysis_time_sanity,
-    ],
-  )
+    test_suite(
+        name = name,
+        tests = [
+            _test_analysis_time_sanity,
+        ],
+    )
 
 testsuite = rules_graalvm_analysis_time_sanity_testsuite

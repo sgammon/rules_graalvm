@@ -35,9 +35,9 @@ load(
 )
 
 def _rules_graalvm_toolchains(
-    repository = "@graalvm",
-    enable_zig = FOREIGN_TOOLCHAINS,
-    enable_llvm = FOREIGN_TOOLCHAINS):
+        repository = "@graalvm",
+        enable_zig = FOREIGN_TOOLCHAINS,
+        enable_llvm = FOREIGN_TOOLCHAINS):
     """Register toolchains for use in the GraalVM Rules codebase."""
 
     native.register_toolchains(
