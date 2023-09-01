@@ -18,10 +18,13 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Installing components with `gu`](./components.md)
 - [Using GraalVM as a Bazel Java toolchain](./toolchain.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./modern-bazel.md)
-- [Support for Bazel 5 and Bazel 4, drop-in replacement for `rules_graal`](./legacy-bazel.md)
+- [Support for Bazel 4 and Bazel 5, drop-in replacement for `rules_graal`](./legacy-bazel.md)
 - [Run GraalVM binaries directly](./binary-targets.md)
+- [Build native shared libraries from Java or polyglot code](./shared-libraries.md)
 - [Example projects for each Bazel version](./examples.md)
-- Support for macOS, Linux, Windows (including Native Image!)
+- [Hermetic compilation on all platforms](./hermeticity.md)
+- [Respects conventional Bazel build settings](./build-settings.md)
+- Support for macOS, Linux, Windows (including Native Image!) ([support matrix](./modern-bazel.md))
 - Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
 ## Installation
@@ -215,7 +218,7 @@ make sure to add the `native_image_tool` attribute to point to `@yourrepo//:nati
 
 ## Examples
 
-See the list of [examples](./docs/examples.md), which are used as continuous integration tests. Examples are available
+See the list of [examples](./examples.md), which are used as continuous integration tests. Examples are available
 for Bazel 4-7.
 
 ## Hermeticity / strictness
@@ -241,13 +244,13 @@ If you install GraalVM at a repository named `@graalvm`, the toolchain targets a
 **Java toolchain:**
 
 ```
-@graalvm//:toolchain
+@graalvm//:jvm
 ```
 
 **GraalVM toolchain:**
 
 ```
-@graalvm//:gvm
+@graalvm//:sdk
 ```
 
 The default `WORKSPACE` and Bzlmod installation instructions register both types of toolchains.

@@ -8,6 +8,8 @@ load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
+    _DEBUG_CONDITION = "DEBUG_CONDITION",
+    _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
     _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
@@ -18,6 +20,16 @@ load(
     "//internal/native_image:toolchain.bzl",
     _resolve_cc_toolchain = "resolve_cc_toolchain",
 )
+
+def _build_action_message(ctx):
+    _mode_label = {
+        "b": "fastbuild",
+        "s": "size",
+        "1": "opt",
+        "2": "opt",
+        "default": ctx.attr.debug and "debug" or "default",
+    }
+    return (_mode_label[ctx.attr.optimization_mode or "default"])
 
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
@@ -84,7 +96,6 @@ def _graal_binary_implementation(ctx):
         direct_inputs,
         transitive = transitive_inputs,
     )
-
     run_params = {
         "outputs": [binary],
         "executable": graal,
@@ -92,7 +103,7 @@ def _graal_binary_implementation(ctx):
         "mnemonic": "NativeImage",
         "env": native_toolchain.env,
         "execution_requirements": {k: "" for k in native_toolchain.execution_requirements},
-        "progress_message": "Compiling native image %{label}",
+        "progress_message": "Native Image (__mode__) %{label}".replace("__mode__", _build_action_message(ctx)),
         "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
     }
 
@@ -166,4 +177,6 @@ BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 BAZEL_CPP_TOOLCHAIN_TYPE = _BAZEL_CPP_TOOLCHAIN_TYPE
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
 GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
+DEBUG_CONDITION = _DEBUG_CONDITION
+OPTIMIZATION_MODE_CONDITION = _OPTIMIZATION_MODE_CONDITION
 graal_binary_implementation = _graal_binary_implementation

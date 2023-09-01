@@ -1,0 +1,10 @@
+package(default_visibility = [
+    "//visibility:public",
+])
+
+config_setting(
+    name = "coverage",
+    values = {
+        "collect_code_coverage": "true",
+    },
+)
