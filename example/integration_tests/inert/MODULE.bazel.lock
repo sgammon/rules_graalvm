@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "02fb45ec9a93a64bf28d0e6d97b2ae6397fa3a3e6ee85f4997937fc15320c451",
+  "moduleFileHash": "efc5da5180c433fd2f5ec41d3dc6056b70ea3b059986d0e21f5f88cb3d5b2375",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -14,7 +14,7 @@
   },
   "localOverrideHashes": {
     "bazel_tools": "9d57bf414ba18646affd51c55355f8a3db7ec97ee20e32765314201a1d707a1c",
-    "rules_graalvm": "9bba5bdfadfb57b36ddc430a8ea5cfb86418af7555301b17f4b3a436a4fd3513"
+    "rules_graalvm": "52c1294a2e8cdc9af230e8eafa594cddbd4f018b7883ae952309842fecb4f7c0"
   },
   "moduleDepGraph": {
     "<root>": {
@@ -39,7 +39,7 @@
           "tags": [
             {
               "tagName": "graalvm",
-              "attributeValues": {"name":"--graalvm","distribution":"--oracle","java_version":"--20","version":"--20.0.2"},
+              "attributeValues": {"name":"--graalvm","distribution":"--ce","java_version":"--20","version":"--20.0.2"},
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
