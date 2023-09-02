@@ -2803,14 +2803,14 @@
       }
     },
     "//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "dx1NHndC4WEvVNZJHqa7pdZn1nO4wenPCSmen/c3NaE=",
+      "bzlTransitiveDigest": "aQJryYP9wiwZXQ8JYwsuauQpVIo/X7CDOS2SiXt2rBI=",
       "accumulatedFileDigests": {},
       "envVariables": {},
       "generatedRepoSpecs": {
         "graalvm": {
           "bzlFile": "@@//internal:graalvm_bindist.bzl",
           "ruleClassName": "_graalvm_bindist_repository",
-          "attributes": {"name":"--_main~graalvm~graalvm","version":"--20.0.2","java_version":"--20","distribution":"--ce","components":["--wasm","--js"],"setup_actions":[],"enable_toolchain":true,"toolchain_config":"--graalvm_toolchain_config_repo","sha256":"--"}
+          "attributes": {"name":"--_main~graalvm~graalvm","version":"--20.0.2","java_version":"--20","distribution":"--ce","components":["--wasm","--js"],"setup_actions":[],"enable_toolchain":true,"toolchain_config":"--graalvm_toolchain_config_repo"}
         },
         "graalvm_toolchain_config_repo": {
           "bzlFile": "@@//internal:graalvm_bindist.bzl",
