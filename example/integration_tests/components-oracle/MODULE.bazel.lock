@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "05a5111fc8fbbfbb1775970ce6e0f53bd453ddd07f821602926d9f4466892f3c",
+  "moduleFileHash": "b3ee0582fd35fd95356019a7650b4bca21ef323c3ea8683bfaac0dbae75294e6",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -44,7 +44,7 @@
           "tags": [
             {
               "tagName": "graalvm",
-              "attributeValues": {"name":"--graalvm","distribution":"--ce","java_version":"--20","version":"--20.0.2"},
+              "attributeValues": {"name":"--graalvm","distribution":"--oracle","java_version":"--20","version":"--20.0.2","components":["--js","--wasm"]},
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
@@ -632,6 +632,40 @@
         }
       }
     },
+    "@apple_support~1.8.1//crosstool:setup.bzl%apple_cc_configure_extension": {
+      "bzlTransitiveDigest": "SPx14yZFDt7CU8o0nOGrgJ/Gjwxr/ESVXcaUVbXVT7E=",
+      "accumulatedFileDigests": {},
+      "envVariables": {},
+      "generatedRepoSpecs": {
+        "local_config_apple_cc": {
+          "bzlFile": "@@apple_support~1.8.1//crosstool:setup.bzl",
+          "ruleClassName": "_apple_cc_autoconf",
+          "attributes": {"name":"--apple_support~1.8.1~apple_cc_configure_extension~local_config_apple_cc"}
+        },
+        "local_config_apple_cc_toolchains": {
+          "bzlFile": "@@apple_support~1.8.1//crosstool:setup.bzl",
+          "ruleClassName": "_apple_cc_autoconf_toolchains",
+          "attributes": {"name":"--apple_support~1.8.1~apple_cc_configure_extension~local_config_apple_cc_toolchains"}
+        }
+      }
+    },
+    "@rules_graalvm~override//:extensions.bzl%graalvm": {
+      "bzlTransitiveDigest": "aQJryYP9wiwZXQ8JYwsuauQpVIo/X7CDOS2SiXt2rBI=",
+      "accumulatedFileDigests": {},
+      "envVariables": {},
+      "generatedRepoSpecs": {
+        "graalvm": {
+          "bzlFile": "@@rules_graalvm~override//internal:graalvm_bindist.bzl",
+          "ruleClassName": "_graalvm_bindist_repository",
+          "attributes": {"name":"--rules_graalvm~override~graalvm~graalvm","version":"--20.0.2","java_version":"--20","distribution":"--oracle","components":["--js","--wasm"],"setup_actions":[],"enable_toolchain":true,"toolchain_config":"--graalvm_toolchain_config_repo"}
+        },
+        "graalvm_toolchain_config_repo": {
+          "bzlFile": "@@rules_graalvm~override//internal:graalvm_bindist.bzl",
+          "ruleClassName": "_toolchain_config",
+          "attributes": {"name":"--rules_graalvm~override~graalvm~graalvm_toolchain_config_repo","build_file":"--\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"toolchain_gvm\",\n    actual = \"gvm\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"gvm\",\n    exec_compatible_with = [\n        \n    ],\n    target_compatible_with = [\n        \n    ],\n    toolchain = \"@graalvm//:gvm\",\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"}
+        }
+      }
+    },
     "@rules_java~6.5.0//java:extensions.bzl%toolchains": {
       "bzlTransitiveDigest": "W8MrzYXz3hle6PtGpg1ti3H+u7MDYBEuqnRIfKWKf70=",
       "accumulatedFileDigests": {},
@@ -901,23 +935,6 @@
         }
       }
     },
-    "@rules_graalvm~override//:extensions.bzl%graalvm": {
-      "bzlTransitiveDigest": "aQJryYP9wiwZXQ8JYwsuauQpVIo/X7CDOS2SiXt2rBI=",
-      "accumulatedFileDigests": {},
-      "envVariables": {},
-      "generatedRepoSpecs": {
-        "graalvm": {
-          "bzlFile": "@@rules_graalvm~override//internal:graalvm_bindist.bzl",
-          "ruleClassName": "_graalvm_bindist_repository",
-          "attributes": {"name":"--rules_graalvm~override~graalvm~graalvm","version":"--20.0.2","java_version":"--20","distribution":"--ce","components":[],"setup_actions":[],"enable_toolchain":true,"toolchain_config":"--graalvm_toolchain_config_repo"}
-        },
-        "graalvm_toolchain_config_repo": {
-          "bzlFile": "@@rules_graalvm~override//internal:graalvm_bindist.bzl",
-          "ruleClassName": "_toolchain_config",
-          "attributes": {"name":"--rules_graalvm~override~graalvm~graalvm_toolchain_config_repo","build_file":"--\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_20\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"20\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"toolchain_gvm\",\n    actual = \"gvm\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"gvm\",\n    exec_compatible_with = [\n        \n    ],\n    target_compatible_with = [\n        \n    ],\n    toolchain = \"@graalvm//:gvm\",\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"}
-        }
-      }
-    },
     "@bazel_tools//tools/osx:xcode_configure.bzl%xcode_configure_extension": {
       "bzlTransitiveDigest": "nr+7RQdBKy+vbv8CZBZ2fN6sDviz3GovjZnFZSmMeYE=",
       "accumulatedFileDigests": {},
@@ -927,23 +944,6 @@
           "bzlFile": "@@bazel_tools//tools/osx:xcode_configure.bzl",
           "ruleClassName": "xcode_autoconf",
           "attributes": {"name":"--bazel_tools~xcode_configure_extension~local_config_xcode","xcode_locator":"--@bazel_tools//tools/osx:xcode_locator.m","remote_xcode":"--"}
-        }
-      }
-    },
-    "@apple_support~1.8.1//crosstool:setup.bzl%apple_cc_configure_extension": {
-      "bzlTransitiveDigest": "SPx14yZFDt7CU8o0nOGrgJ/Gjwxr/ESVXcaUVbXVT7E=",
-      "accumulatedFileDigests": {},
-      "envVariables": {},
-      "generatedRepoSpecs": {
-        "local_config_apple_cc": {
-          "bzlFile": "@@apple_support~1.8.1//crosstool:setup.bzl",
-          "ruleClassName": "_apple_cc_autoconf",
-          "attributes": {"name":"--apple_support~1.8.1~apple_cc_configure_extension~local_config_apple_cc"}
-        },
-        "local_config_apple_cc_toolchains": {
-          "bzlFile": "@@apple_support~1.8.1//crosstool:setup.bzl",
-          "ruleClassName": "_apple_cc_autoconf_toolchains",
-          "attributes": {"name":"--apple_support~1.8.1~apple_cc_configure_extension~local_config_apple_cc_toolchains"}
         }
       }
     }
