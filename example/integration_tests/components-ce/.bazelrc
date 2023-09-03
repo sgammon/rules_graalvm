@@ -1,1 +1,3 @@
 build --enable_bzlmod
+build --java_runtime_version=graalvm_20
+build --tool_java_runtime_version=graalvm_20

@@ -20,6 +20,9 @@ native_image(
     name = "main-native",
     main_class = "Main",
     deps = [":java"],
+    extra_args = [
+        "--language:js",
+    ],
 )
 
 alias(
