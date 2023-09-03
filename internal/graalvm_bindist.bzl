@@ -110,7 +110,7 @@ def _graal_postinstall_actions(ctx, os):
     cmd = _graal_updater_path(ctx, os)
     if ctx.attr.setup_actions and len(ctx.attr.setup_actions) > 0:
         for action in ctx.attr.setup_actions:
-            if not action.startsWith("gu "):
+            if not action.startswith("gu "):
                 fail("GraalVM setup action did not start with 'gu'. Please only run GraalVM updater commands.")
 
             action_cmd = action.replace("gu ", "").split(" ")
