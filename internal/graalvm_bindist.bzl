@@ -175,10 +175,13 @@ def _build_component_graph(components):
     for component in components:
         deps = ComponentDependencies.get(component, None)
         if deps != None:
-            stanza = [i for i in (deps + [component]) if not sets.contains(unique_components, i)]
+            stanza = [i for i in deps if not sets.contains(unique_components, i)]
             for item in stanza:
                 sets.insert(unique_components, item)
-            effective_components += stanza
+
+            # component itself + unique deps, with component last (reverse-topological)
+            effective_components += (stanza + [component])
+            sets.insert(unique_components, component)
         else:
             effective_components.append(component)
     return effective_components
