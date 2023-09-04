@@ -48,6 +48,7 @@ native_image_info(
     name = "settings",
     compiler_backend = ":compiler_backend",
     libc = ":libc",
+    arch = "//graalvm/nativeimage/options:arch",
 )
 
 native_image_settings(
@@ -55,4 +56,6 @@ native_image_settings(
     compiler_backend = DEFAULTS.COMPILER_BACKEND,
     libc = DEFAULTS.LIBC,
     opt = DEFAULTS.BUILD_OPT,
+    arch = DEFAULTS.ARCH,
+    settings = ":settings",
 )

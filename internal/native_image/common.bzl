@@ -4,6 +4,10 @@ load(
     "//internal/native_image:builder.bzl",
     _assemble_native_build_options = "assemble_native_build_options",
 )
+load(
+    "//internal/native_image/options:arch.bzl",
+    "NativeImageArchInfo",
+)
 
 _RULES_REPO = "@rules_graalvm"
 _DEFAULT_GVM_REPO = "@graalvm"
@@ -13,6 +17,7 @@ _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
 _LINUX_CONSTRAINT = "@platforms//os:linux"
 _MACOS_CONSTRAINT = "@platforms//os:macos"
 _WINDOWS_CONSTRAINT = "@platforms//os:windows"
+_SETTING_TARGET_ARCH = "%s//graalvm/nativeimage/options:arch" % _RULES_REPO
 
 # buildifier: disable=name-conventions
 _NativeImageOptimization = struct(
@@ -108,6 +113,10 @@ _NATIVE_IMAGE_ATTRS = {
     ),
     "executable_name": attr.string(
         mandatory = True,
+    ),
+    "native_arch": attr.label(
+        default = Label(_SETTING_TARGET_ARCH),
+        providers = [[NativeImageArchInfo]],
     ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
