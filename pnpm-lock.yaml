@@ -21,8 +21,8 @@ devDependencies:
     specifier: 3.0.3
     version: 3.0.3
   prettier-plugin-java:
-    specifier: 2.3.0
-    version: 2.3.0
+    specifier: 2.3.1
+    version: 2.3.1
 
 packages:
 
@@ -1202,18 +1202,12 @@ packages:
     hasBin: true
     dev: true
 
-  /prettier-plugin-java@2.3.0:
-    resolution: {integrity: sha512-tcI9GkcwB3StyoAKcYLJbw/qS8DQjK4wNUvlBhPkyJyHOwxhoVtvCinckJgXhjEdEsVmGsq4YMQ1gD1qiAXTaA==}
+  /prettier-plugin-java@2.3.1:
+    resolution: {integrity: sha512-OYn8skqKnE5YUVL8f2ocayA6XCJK8PqsEz3pfATbDqzgdaSYDLhE/s8KrXrX9gj8KXIG6Wx0CMoXTNH8+ED22w==}
     dependencies:
       java-parser: 2.0.5
       lodash: 4.17.21
-      prettier: 3.0.2
-    dev: true
-
-  /prettier@3.0.2:
-    resolution: {integrity: sha512-o2YR9qtniXvwEZlOKbveKfDQVyqxbEIWn48Z8m3ZJjBjcCmUy3xZGIv+7AkaeuaTr6yPXJjwv07ZWlsWbEy1rQ==}
-    engines: {node: '>=14'}
-    hasBin: true
+      prettier: 3.0.3
     dev: true
 
   /prettier@3.0.3:
