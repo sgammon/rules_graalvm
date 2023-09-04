@@ -17,6 +17,15 @@ bzl_library(
 )
 
 stardoc(
+    name = "artifacts",
+    out = "artifacts.md",
+    input = "//graalvm/artifacts:maven.bzl",
+    deps = [
+        ":repo_tools",
+    ],
+)
+
+stardoc(
     name = "defs",
     out = "defs.md",
     input = "//graalvm:defs.bzl",
