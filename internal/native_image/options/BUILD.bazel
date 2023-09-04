@@ -1,0 +1,10 @@
+package(default_visibility = [
+    "//graalvm/nativeimage/options:__pkg__",
+    "//graalvm/nativeimage/options:__subpackages__",
+    "//internal:__pkg__",
+    "//internal:__subpackages__",
+])
+
+exports_files([
+    "arch.bzl",
+])

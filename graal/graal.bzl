@@ -27,6 +27,9 @@ _native_image = rule(
             executable = True,
             mandatory = False,
         ),
+        "native_image_settings": attr.label_list(
+            default = [],
+        ),
         "_cc_toolchain": attr.label(
             default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
         ),
@@ -63,6 +66,7 @@ def native_image(
         data = [],
         extra_args = [],
         allow_fallback = False,
+        native_arch = None,
         check_toolchains = select({
             "@bazel_tools//src/conditions:windows": True,
             "//conditions:default": False,
@@ -96,6 +100,8 @@ def native_image(
         data: Data files to make available during the compilation. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
+        native_arch: Provides native target architecture advice, like `march`; deaults to `None`, which yields to the default
+          behavior within GraalVM for architecture selection. Some earlier GraalVM versions may not support this flag.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
         native_image_tool: Specific `native-image` executable target to use.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
@@ -122,6 +128,8 @@ def native_image(
         allow_fallback = allow_fallback,
         executable_name = executable_name,
         native_image_tool = native_image_tool,
+        native_arch = native_arch,
+        native_image_settings = [],  # not supported for legacy rules
         **kwargs
     )
 
@@ -147,6 +155,7 @@ def graal_binary(
         data = [],
         extra_args = [],
         allow_fallback = False,
+        native_arch = None,
         check_toolchains = select({
             "@bazel_tools//src/conditions:windows": True,
             "//conditions:default": False,
@@ -180,6 +189,8 @@ def graal_binary(
         data: Data files to make available during the compilation. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
+        native_arch: Provides native target architecture advice, like `march`; deaults to `None`, which yields to the default
+          behavior within GraalVM for architecture selection. Some earlier GraalVM versions may not support this flag.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
         native_image_tool: Specific `native-image` executable target to use.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
@@ -205,5 +216,8 @@ def graal_binary(
         c_compiler_option = c_compiler_option,
         executable_name = executable_name,
         native_image_tool = native_image_tool,
+        allow_fallback = allow_fallback,
+        native_arch = native_arch,
+        native_image_settings = [],  # not supported for legacy rules
         **kwargs
     )

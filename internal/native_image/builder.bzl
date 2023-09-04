@@ -1,5 +1,14 @@
 "Logic to assemble `native-image` options."
 
+load(
+    "//internal/native_image:settings.bzl",
+    "NativeImageInfo",
+)
+load(
+    "//internal/native_image/options:arch.bzl",
+    "NativeImageArchInfo",
+)
+
 def _configure_static_zlib_compile(ctx, args, direct_inputs):
     """Configure a static image compile against hermetic/static zlib.
 
@@ -114,6 +123,38 @@ def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
 
     if gvm_toolchain != None:
         args.add(c_compiler_path, format = "--native-compiler-path=%s")
+
+    # calculate the value to use for `march`, which should default to nothing
+    native_arch_advice = None
+
+    # legacy rule specifies native arch with an explicit attribute
+    if ctx.attr.native_arch != None:
+        native_arch_info = ctx.attr.native_arch[NativeImageArchInfo]
+        if native_arch_info != None:
+            native_arch_advice = native_arch_info.target_arch
+
+    # modern rule uses the `native_image_settings` target
+    if len(ctx.attr.native_image_settings) > 0:
+
+        # loop through all settings, providing last-wins for native arch
+        for settings in ctx.attr.native_image_settings:
+            native_arch_explicit = None
+            native_arch_setting = None
+
+            if settings[NativeImageInfo]:
+                native_arch_explicit = settings[NativeImageInfo].arch
+
+                if settings[NativeImageInfo].settings:
+                    native_arch_setting = (
+                        settings[NativeImageInfo].settings[NativeImageInfo].arch
+                    )
+                    native_arch_advice = native_arch_setting or native_arch_explicit or native_arch_advice
+
+    if native_arch_advice != None:
+        args.add(
+            native_arch_advice,
+            format = "-march=%s",
+        )
 
     # add custom compiler options
     args.add_all(

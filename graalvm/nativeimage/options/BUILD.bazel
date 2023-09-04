@@ -1,0 +1,14 @@
+load(
+    "//internal/native_image/options:arch.bzl",
+    "arch",
+    "NativeImageArchitecture",
+)
+
+package(default_visibility = [
+    "//visibility:public",
+])
+
+arch(
+    name = "arch",
+    build_setting_default = NativeImageArchitecture.COMPATIBILITY,
+)

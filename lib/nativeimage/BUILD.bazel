@@ -13,6 +13,9 @@ package(default_visibility = [
 bzl_library(
     name = "builder",
     srcs = ["//internal/native_image:builder.bzl"],
+    deps = [
+        ":options",
+    ],
 )
 
 bzl_library(
@@ -42,6 +45,7 @@ bzl_library(
         ":internals",
         ":settings",
         ":toolchain",
+        ":options",
         "//lib:tooling",
         "@bazel_skylib//lib:dicts",
     ],
@@ -50,6 +54,9 @@ bzl_library(
 bzl_library(
     name = "settings",
     srcs = ["//internal/native_image:settings.bzl"],
+    deps = [
+        "//lib/nativeimage:options",
+    ],
 )
 
 bzl_library(
@@ -66,4 +73,9 @@ bzl_library(
     deps = [
         "@bazel_skylib//lib:dicts",
     ],
+)
+
+bzl_library(
+    name = "options",
+    srcs = ["//internal/native_image/options:arch.bzl"],
 )
