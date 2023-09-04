@@ -134,7 +134,7 @@ def _prepare_native_image_rule_context(
         args,
         classpath_depset,
         direct_inputs,
-        c_compiler_path,
+        native_toolchain,
         gvm_toolchain = None):
     """Prepare a `native-image` build context."""
 
@@ -155,7 +155,7 @@ def _prepare_native_image_rule_context(
         binary,
         classpath_depset,
         direct_inputs,
-        c_compiler_path,
+        native_toolchain,
         path_list_separator,
         gvm_toolchain,
     )

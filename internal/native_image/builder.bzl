@@ -96,7 +96,7 @@ def _configure_reflection(ctx, args, direct_inputs):
         direct_inputs.append(ctx.file.jni_configuration)
         args.add("-H:+JNI")
 
-def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
+def _configure_native_compiler(ctx, args, native_toolchain, gvm_toolchain):
     """Configure native compiler and linker flags for a Native Image build.
 
     Args:
@@ -113,13 +113,40 @@ def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
     _configure_optimization_mode(ctx, args)
 
     if gvm_toolchain != None:
-        args.add(c_compiler_path, format = "--native-compiler-path=%s")
+        args.add(native_toolchain.c_compiler_path, format = "--native-compiler-path=%s")
 
-    # add custom compiler options
+    args.add_all(
+        _filter_linker_options(native_toolchain.linker_options),
+        format_each = "-H:NativeLinkerOption=%s",
+    )
+
+    args.add_all(
+        native_toolchain.compiler_options,
+        format_each = "-H:CCompilerOption=%s",
+    )
+
+    # add custom compiler options last
     args.add_all(
         ctx.attr.c_compiler_option,
         format_each = "-H:CCompilerOption=%s",
     )
+
+def _filter_linker_options(options):
+    """Filter out linker options that aren't desirable for native image builds.
+
+    Args:
+        options: List of linker options.
+
+    Returns:
+       List of linker options with undesirable options removed.
+    """
+
+    # -Wl,-no-as-needed forcibly links against libstdc++ or libc++ with Bazel's auto-configured
+    # Unix toolchain, which is not desirable for native image builds.
+    # Return the list unchanged if possible as a memory optimization.
+    if "-Wl,-no-as-needed" not in options:
+        return options
+    return [option for option in options if option != "-Wl,-no-as-needed"]
 
 def _configure_native_test_flags(ctx, args):
     """Configure native testing flags; only applies if we are building a test-only target.
@@ -138,7 +165,7 @@ def assemble_native_build_options(
         binary,
         classpath_depset,
         direct_inputs,
-        c_compiler_path,
+        native_toolchain,
         path_list_separator,
         gvm_toolchain = None):
     """Assemble the effective arguments to `native-image`.
@@ -152,7 +179,7 @@ def assemble_native_build_options(
         binary: Target output binary which will be built with Native Image.
         classpath_depset: Classpath dependency set.
         direct_inputs: Direct inputs into the native image build (mutable).
-        c_compiler_path: Path to the C compiler; resolved via toolchains.
+        native_toolchain: Struct with information about the C toolchain.
         path_list_separator: Platform-specific path separator.
         gvm_toolchain: Resolved GraalVM toolchain, or `None` if a tool target is in use via legacy rules.
     """
@@ -168,7 +195,6 @@ def assemble_native_build_options(
 
     if not ctx.attr.allow_fallback:
         args.add("--no-fallback")
-
 
     args.add(ctx.attr.main_class, format = "-H:Class=%s")
     args.add(binary.basename.replace(".exe", ""), format = "-H:Name=%s")
@@ -192,7 +218,7 @@ def assemble_native_build_options(
     )
 
     # configure the build optimization mode
-    _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain)
+    _configure_native_compiler(ctx, args, native_toolchain, gvm_toolchain)
 
     # configure reflection
     _configure_reflection(ctx, args, direct_inputs)

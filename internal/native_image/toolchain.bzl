@@ -75,6 +75,12 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
         feature_configuration = feature_configuration,
         action_name = C_COMPILE_ACTION_NAME,
     )
+    compile_flags = cc_common.get_memory_inefficient_command_line(
+        feature_configuration = feature_configuration,
+        action_name = C_COMPILE_ACTION_NAME,
+        variables = compile_variables,
+    )
+
     link_variables = cc_common.create_link_variables(
         cc_toolchain = cc_toolchain,
         feature_configuration = feature_configuration,
@@ -89,6 +95,11 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
     link_requirements = cc_common.get_execution_requirements(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
+    )
+    link_flags = cc_common.get_memory_inefficient_command_line(
+        feature_configuration = feature_configuration,
+        action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
+        variables = link_variables,
     )
 
     # build final env and execution requirements
@@ -116,11 +127,13 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
             if "/usr/bin" not in path_set:
                 paths.append("/usr/bin")
 
-    # seal paths with hack above
-    env["PATH"] = ctx.configuration.host_path_separator.join(paths)
+    path_separator = ";" if is_windows else ":"
+    env["PATH"] = path_separator.join(paths)
 
     return struct(
         c_compiler_path = c_compiler_path,
         env = env,
         execution_requirements = execution_requirements,
+        compiler_options = compile_flags,
+        linker_options = link_flags,
     )

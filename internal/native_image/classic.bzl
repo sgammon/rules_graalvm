@@ -4,11 +4,11 @@ load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
-    _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
     _DEBUG_CONDITION = "DEBUG_CONDITION",
-    _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
+    _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
+    _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
     _RULES_REPO = "RULES_REPO",
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
 )
@@ -55,7 +55,7 @@ def _graal_binary_classic_implementation(ctx):
         args,
         classpath_depset,
         direct_inputs,
-        native_toolchain.c_compiler_path,
+        native_toolchain,
     )
 
     inputs = depset(
