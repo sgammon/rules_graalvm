@@ -2,6 +2,55 @@
 
 Defines Maven helpers and coordinates for GraalVM artifacts.
 
+<a id="alias.artifact"></a>
+
+## alias.artifact
+
+<pre>
+alias.artifact(<a href="#alias.artifact-artifact">artifact</a>, <a href="#alias.artifact-repo">repo</a>, <a href="#alias.artifact-version">version</a>)
+</pre>
+
+Helper which rewrites a target to be compatible with `rules_jvm_external`.
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="alias.artifact-artifact"></a>artifact |  Enumerated artifact entry.   |  none |
+| <a id="alias.artifact-repo"></a>repo |  Repository name; defaults to `@maven`.   |  `"@maven"` |
+| <a id="alias.artifact-version"></a>version |  Defaults to `None`; optional.   |  `None` |
+
+**RETURNS**
+
+Artifact target.
+
+
+<a id="alias.coordinate"></a>
+
+## alias.coordinate
+
+<pre>
+alias.coordinate(<a href="#alias.coordinate-group">group</a>, <a href="#alias.coordinate-artifact">artifact</a>, <a href="#alias.coordinate-repo">repo</a>, <a href="#alias.coordinate-version">version</a>)
+</pre>
+
+Helper which rewrites a target to be compatible with `rules_jvm_external`.
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="alias.coordinate-group"></a>group |  Group for the artifact.   |  none |
+| <a id="alias.coordinate-artifact"></a>artifact |  ID for the artifact.   |  none |
+| <a id="alias.coordinate-repo"></a>repo |  Repository name; defaults to `@maven`.   |  `"@maven"` |
+| <a id="alias.coordinate-version"></a>version |  Defaults to `None`; optional.   |  `None` |
+
+**RETURNS**
+
+Artifact target.
+
+
 <a id="graalvm.artifact"></a>
 
 ## graalvm.artifact
