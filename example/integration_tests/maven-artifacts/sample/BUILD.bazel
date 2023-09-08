@@ -1,0 +1,26 @@
+load("@rules_graalvm//graalvm/artifacts:maven.bzl", graalvm = "alias")
+
+java_library(
+    name = "java",
+    srcs = ["Main.java"],
+    deps = [
+        graalvm.artifact(graalvm.catalog.SDK),  # equivalent to targets below
+    ],
+)
+
+java_binary(
+    name = "main",
+    main_class = "Main",
+    runtime_deps = [
+        ":java",
+        "@maven//:org_graalvm_sdk_graal_sdk",
+
+        # also equivalent to targets above
+        # graalvm.alias("org.graalvm.sdk", "graal-sdk"),
+    ],
+)
+
+alias(
+    name = "sample",
+    actual = "main",
+)

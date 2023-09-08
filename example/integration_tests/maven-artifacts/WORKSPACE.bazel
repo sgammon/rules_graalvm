@@ -1,0 +1,70 @@
+workspace(name = "rules_graalvm_sample")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+## -- rules_graalvm
+
+local_repository(
+    name = "rules_graalvm",
+    path = "../../..",
+)
+
+GRAALVM_VERSION = "23.0.1"
+GRAALVM_JAVA_VERSION = "20.0.2"
+
+load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains", "rules_graalvm_repositories")
+
+rules_graalvm_repositories()
+
+register_graalvm_toolchains(register_gvm_toolchain = False)
+
+load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
+
+graalvm_repository(
+    name = "graalvm",
+    distribution = "ce",
+    java_version = "20",
+    version = GRAALVM_JAVA_VERSION,
+    components = [
+        "js",
+    ],
+)
+
+## -- rules_jvm_external
+
+RULES_JVM_EXTERNAL_TAG = "4.5"
+RULES_JVM_EXTERNAL_SHA = "b17d7388feb9bfa7f2fa09031b32707df529f26c91ab9e5d909eb1676badd9a6"
+
+http_archive(
+    name = "rules_jvm_external",
+    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
+    sha256 = RULES_JVM_EXTERNAL_SHA,
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
+)
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+
+rules_jvm_external_setup()
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+load("@rules_jvm_external//:specs.bzl", "maven")
+
+load("@rules_graalvm//graalvm/artifacts:maven.bzl", "graalvm")
+
+maven_install(
+    artifacts = [
+        graalvm.artifact(
+            maven,
+            artifact = graalvm.catalog.SDK,
+            version = GRAALVM_VERSION,
+        ),
+    ],
+    repositories = [
+        "https://maven.pkg.st",
+    ],
+)
