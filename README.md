@@ -7,7 +7,7 @@
 
 ---
 
-> Latest release: `0.9.2`
+> Latest release: `0.10.0`
 
 > **Important**
 > Currently in beta. Feedback welcome but will probably break your build.
@@ -36,10 +36,10 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 ```starlark
 http_archive(
     name = "rules_graalvm",
-    sha256 = "baf82fa979fe4c1c90fe676dfe80aea5a70bb6a8287c3d6d1d4418c0f3a3b2b2",
-    strip_prefix = "rules_graalvm-0.9.2",
+    sha256 = None,
+    strip_prefix = "rules_graalvm-0.10.0",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/releases/download/v0.9.2/rules_graalvm-0.9.2.zip",
+        "https://github.com/sgammon/rules_graalvm/releases/download/v0.10.0/rules_graalvm-0.10.0.zip",
     ],
 )
 ```
@@ -76,15 +76,15 @@ register_graalvm_toolchains()
 > To use Bzlmod with `rules_graalvm`, you will need the `archive_override` below (until we go live on BCR).
 
 ```starlark
-bazel_dep(name = "rules_graalvm", version = "0.9.2")
+bazel_dep(name = "rules_graalvm", version = "0.10.0")
 ```
 
 ```starlark
 # Until we ship to BCR:
 archive_override(
     module_name = "rules_graalvm",
-    urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.9.2/rules_graalvm-0.9.2.zip"],
-    strip_prefix = "rules_graalvm-0.9.2",
+    urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.10.0/rules_graalvm-0.10.0.zip"],
+    strip_prefix = "rules_graalvm-0.10.0",
     integrity = "sha256-uvgvqXn+TByQ/mdt/oCupacLtqgofD1tHUQYwPOjsrI=",
 )
 ```
