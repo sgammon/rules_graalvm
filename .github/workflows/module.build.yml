@@ -259,6 +259,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Maven Artifacts
+          - label: Maven Artifacts
+            target: sample
+            action: build
+            directory: "./example/integration_tests/maven-artifacts"
+            labs: false
+            skip: false
+
           # Test: Legacy Rules
           - label: Legacy Rules
             target: sample
