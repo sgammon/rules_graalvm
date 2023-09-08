@@ -24,6 +24,7 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Example projects for each Bazel version](./docs/examples.md)
 - [Hermetic compilation on all platforms](./docs/hermeticity.md)
 - [Respects conventional Bazel build settings](./docs/build-settings.md)
+- [Easily use GraalVM Maven artifacts](./docs/maven-artifacts.md)
 - Support for macOS, Linux, Windows (including Native Image!) ([support matrix](./docs/modern-bazel.md))
 - Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
