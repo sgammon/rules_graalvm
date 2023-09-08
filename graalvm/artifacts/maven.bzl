@@ -10,7 +10,7 @@ _MavenArtifacts = struct(
         artifact = "truffle-api",
         group = "org.graalvm.truffle",
         NFI = struct(
-            artifact = "truffle-api",
+            artifact = "truffle-nfi",
             group = "org.graalvm.truffle",
         ),
     ),
