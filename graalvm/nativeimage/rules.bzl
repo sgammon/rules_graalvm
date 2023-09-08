@@ -8,9 +8,9 @@ load(
     "//internal/native_image:rules.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _DEBUG = "DEBUG_CONDITION",
-    _OPTIMIZATION_MODE = "OPTIMIZATION_MODE_CONDITION",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
+    _OPTIMIZATION_MODE = "OPTIMIZATION_MODE_CONDITION",
     _graal_binary_implementation = "graal_binary_implementation",
 )
 load(

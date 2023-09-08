@@ -1,23 +1,6 @@
 "Second-stage setup code for the GraalVM Rules project."
 
 load(
-    "//internal:config.bzl",
-    "PYTHON_VERSION",
-    FOREIGN_TOOLCHAINS = "ENABLE_FOREIGN_TOOLCHAINS",
-)
-load(
-    "@rules_jvm_external//:setup.bzl",
-    "rules_jvm_external_setup",
-)
-load(
-    "@maven_gvm//:defs.bzl",
-    "pinned_maven_install",
-)
-load(
-    "@contrib_rules_jvm//:setup.bzl",
-    "contrib_rules_jvm_setup",
-)
-load(
     "@bazel_skylib_gazelle_plugin//:setup.bzl",
     "bazel_skylib_gazelle_plugin_setup",
 )
@@ -26,12 +9,29 @@ load(
     "buildifier_prebuilt_register_toolchains",
 )
 load(
+    "@contrib_rules_jvm//:setup.bzl",
+    "contrib_rules_jvm_setup",
+)
+load(
     "@llvm//:toolchains.bzl",
     "llvm_register_toolchains",
 )
 load(
+    "@maven_gvm//:defs.bzl",
+    "pinned_maven_install",
+)
+load(
+    "@rules_jvm_external//:setup.bzl",
+    "rules_jvm_external_setup",
+)
+load(
     "@rules_python//python:repositories.bzl",
     "python_register_toolchains",
+)
+load(
+    "//internal:config.bzl",
+    "PYTHON_VERSION",
+    FOREIGN_TOOLCHAINS = "ENABLE_FOREIGN_TOOLCHAINS",
 )
 
 def _rules_graalvm_toolchains(

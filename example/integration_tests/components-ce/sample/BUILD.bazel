@@ -18,11 +18,11 @@ java_binary(
 
 native_image(
     name = "main-native",
-    main_class = "Main",
-    deps = [":java"],
     extra_args = [
         "--language:js",
     ],
+    main_class = "Main",
+    deps = [":java"],
 )
 
 alias(

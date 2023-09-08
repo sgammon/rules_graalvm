@@ -1,13 +1,13 @@
 "Defines analysis-time tests for new GraalVM Native Image rules."
 
 load(
+    "@rules_java//java:defs.bzl",
+    "java_library",
+)
+load(
     "@rules_testing//lib:analysis_test.bzl",
     "analysis_test",
     "test_suite",
-)
-load(
-    "@rules_java//java:defs.bzl",
-    "java_library",
 )
 load(
     "//graal:graal.bzl",
