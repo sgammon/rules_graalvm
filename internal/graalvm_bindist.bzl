@@ -692,6 +692,7 @@ def graalvm_repository(
         components = [],
         setup_actions = [],
         register_all = False,
+        toolchain_repo_name = None,
         **kwargs):
     """Declare a GraalVM distribution repository, and optionally a Java toolchain to match.
 
@@ -719,8 +720,12 @@ def graalvm_repository(
         components: Components to install in the target GVM installation.
         setup_actions: GraalVM Updater commands that should be run; pass complete command strings that start with "gu".
         register_all: Register all GraalVM repositories and use `target_compatible_with` (experimental).
+        toolchain_repo_name: Explicit name to give to the toolchain config repo; if `None` (default), a sensible
+          name is used in the format `<name>_toolchains`.
         **kwargs: Passed to the underlying bindist repository rule.
     """
+
+    toolchain_repo_name = toolchain_repo_name or (name + "_toolchains")
 
     # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
     # it doesn't yet exist in Bazel's internals.
@@ -747,7 +752,7 @@ toolchain(
 
     if toolchain:
         _toolchain_config(
-            name = name + "_toolchain_config_repo",
+            name = toolchain_repo_name,
             build_file = """
 config_setting(
     name = "prefix_version_setting",
@@ -815,7 +820,7 @@ toolchain(
             components = components,
             setup_actions = setup_actions,
             enable_toolchain = toolchain,
-            toolchain_config = "%s_toolchain_config_repo" % name,
+            toolchain_config = toolchain_repo_name,
             **kwargs
         )
     else:

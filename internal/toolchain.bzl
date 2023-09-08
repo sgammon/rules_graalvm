@@ -1,7 +1,7 @@
 "Defines toolchain registration functions for use in downstream Bazel projects."
 
-_TARGET_JAVA_TOOLCHAIN = ":jvm"
-_TARGET_GVM_TOOLCHAIN = ":sdk"
+_TARGET_JAVA_TOOLCHAIN = ":toolchain"
+_TARGET_GVM_TOOLCHAIN = ":toolchain_gvm"
 
 GraalVMToolchainInfo = provider(
     doc = "Information about the GraalVM runtime and compiler.",
@@ -132,11 +132,12 @@ able to run it from the command line.
     },
 )
 
-def repo_target(repo, target):
+def _repo_target(repo, target):
     return "{}//{}".format(repo, target)
 
 def register_graalvm_toolchains(
         name = "@graalvm",
+        toolchain_repo_name_format = "%s_toolchains",
         register_java_toolchain = True,
         register_gvm_toolchain = True):
     """Register GraalVM toolchains for Native Image and installed language components.
@@ -167,9 +168,17 @@ def register_graalvm_toolchains(
         name: Name of the main `graalvm` repository (the `graalvm_repository`).
         register_java_toolchain: Whether to register a Java toolchain; defaults to `True`.
         register_gvm_toolchain: Whether to register a GraalVM toolchain; defaults to `True`.
+        toolchain_repo_name_format: Format expected for the toolchain config repo name; '%s' is
+          replaced with `name`.
     """
 
     if register_java_toolchain:
-        native.register_toolchains(repo_target(name, _TARGET_JAVA_TOOLCHAIN))
+        native.register_toolchains(_repo_target(
+            toolchain_repo_name_format % name,
+            _TARGET_JAVA_TOOLCHAIN,
+        ))
     if register_gvm_toolchain:
-        native.register_toolchains(repo_target(name, _TARGET_GVM_TOOLCHAIN))
+        native.register_toolchains(_repo_target(
+            toolchain_repo_name_format % name,
+            _TARGET_GVM_TOOLCHAIN,
+        ))
