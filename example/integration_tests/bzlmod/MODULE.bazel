@@ -31,4 +31,5 @@ use_repo(
 )
 
 register_toolchains("@graalvm//:jvm")
+
 register_toolchains("@graalvm//:sdk")

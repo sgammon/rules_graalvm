@@ -1,16 +1,16 @@
 "Bazel Rules for GraalVM"
 
 load(
+    "@bazel_skylib//rules:run_binary.bzl",
+    run = "run_binary",
+)
+load(
     "@buildifier_prebuilt//:rules.bzl",
     "buildifier",
 )
 load(
     "@rules_python//python:pip.bzl",
     pip_requirements = "compile_pip_requirements",
-)
-load(
-    "@bazel_skylib//rules:run_binary.bzl",
-    run = "run_binary",
 )
 load(
     "//internal:config.bzl",

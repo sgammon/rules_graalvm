@@ -169,7 +169,6 @@ def assemble_native_build_options(
     if not ctx.attr.allow_fallback:
         args.add("--no-fallback")
 
-
     args.add(ctx.attr.main_class, format = "-H:Class=%s")
     args.add(binary.basename.replace(".exe", ""), format = "-H:Name=%s")
     args.add(binary.dirname, format = "-H:Path=%s")

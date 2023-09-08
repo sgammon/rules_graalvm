@@ -1,11 +1,11 @@
 load(
+    "@rules_graalvm//graal:graal.bzl",
+    "graal_binary",
+)
+load(
     "@rules_java//java:defs.bzl",
     "java_binary",
     "java_library",
-)
-load(
-    "@rules_graalvm//graal:graal.bzl",
-    "graal_binary",
 )
 
 package(default_visibility = [

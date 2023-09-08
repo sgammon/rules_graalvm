@@ -21,13 +21,13 @@ local_path_override(
 gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 gvm.graalvm(
     name = "graalvm",
-    distribution = "ce",
-    java_version = "20",
-    version = "20.0.2",
     components = [
         "js",  # should automatically install `regex` and other dependencies
         "wasm",
     ],
+    distribution = "ce",
+    java_version = "20",
+    version = "20.0.2",
 )
 use_repo(
     gvm,
@@ -35,4 +35,5 @@ use_repo(
 )
 
 register_toolchains("@graalvm//:jvm")
+
 register_toolchains("@graalvm//:sdk")

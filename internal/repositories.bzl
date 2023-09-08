@@ -1,74 +1,8 @@
 "Local declarations for the GraalVM Rules project workspace."
 
 load(
-    "//internal:config.bzl",
-    "GO_VERSION",
-    "GRAALVM_COMPONENTS",
-    "GRAALVM_DISTRIBUTION",
-    "GRAALVM_JAVA_VERSION",
-    "GRAALVM_SHA",
-    "GRAALVM_VERSION",
-    "LLVM_VERSION",
-    "MAVEN_ARTIFACTS",
-    "MAVEN_REPOSITORIES",
-)
-load(
-    "@buildifier_prebuilt//:deps.bzl",
-    "buildifier_prebuilt_deps",
-)
-load(
-    "@bazel_skylib//:workspace.bzl",
-    "bazel_skylib_workspace",
-)
-load(
-    "@bazel_features//:deps.bzl",
-    "bazel_features_deps",
-)
-load(
-    "@rules_java//java:repositories.bzl",
-    "rules_java_dependencies",
-    "rules_java_toolchains",
-)
-load(
-    "@rules_python//python:repositories.bzl",
-    "py_repositories",
-)
-load(
     "@//graalvm:repositories.bzl",
     "graalvm_repository",
-)
-load(
-    "@aspect_bazel_lib//lib:repositories.bzl",
-    "aspect_bazel_lib_dependencies",
-)
-load(
-    "@rules_jvm_external//:repositories.bzl",
-    "rules_jvm_external_deps",
-)
-load(
-    "@io_bazel_stardoc//:setup.bzl",
-    "stardoc_repositories",
-)
-load(
-    "@rules_jvm_external//:defs.bzl",
-    "maven_install",
-)
-load(
-    "@io_bazel_rules_go//go:deps.bzl",
-    "go_register_toolchains",
-    "go_rules_dependencies",
-)
-load(
-    "@bazel_gazelle//:deps.bzl",
-    "gazelle_dependencies",
-)
-load(
-    "@googleapis//:repository_rules.bzl",
-    "switched_rules_by_language",
-)
-load(
-    "@contrib_rules_jvm//:repositories.bzl",
-    "contrib_rules_jvm_deps",
 )
 load(
     "@apple_rules_lint//lint:repositories.bzl",
@@ -79,16 +13,82 @@ load(
     "lint_setup",
 )
 load(
+    "@aspect_bazel_lib//lib:repositories.bzl",
+    "aspect_bazel_lib_dependencies",
+)
+load(
+    "@bazel_features//:deps.bzl",
+    "bazel_features_deps",
+)
+load(
+    "@bazel_gazelle//:deps.bzl",
+    "gazelle_dependencies",
+)
+load(
+    "@bazel_skylib//:workspace.bzl",
+    "bazel_skylib_workspace",
+)
+load(
+    "@buildifier_prebuilt//:deps.bzl",
+    "buildifier_prebuilt_deps",
+)
+load(
     "@com_grail_bazel_toolchain//toolchain:deps.bzl",
     llvm_toolchains = "bazel_toolchain_dependencies",
+)
+load(
+    "@com_grail_bazel_toolchain//toolchain:rules.bzl",
+    "llvm_toolchain",
+)
+load(
+    "@contrib_rules_jvm//:repositories.bzl",
+    "contrib_rules_jvm_deps",
+)
+load(
+    "@googleapis//:repository_rules.bzl",
+    "switched_rules_by_language",
 )
 load(
     "@hermetic_cc_toolchain//toolchain:defs.bzl",
     zig_toolchains = "toolchains",
 )
 load(
-    "@com_grail_bazel_toolchain//toolchain:rules.bzl",
-    "llvm_toolchain",
+    "@io_bazel_rules_go//go:deps.bzl",
+    "go_register_toolchains",
+    "go_rules_dependencies",
+)
+load(
+    "@io_bazel_stardoc//:setup.bzl",
+    "stardoc_repositories",
+)
+load(
+    "@rules_java//java:repositories.bzl",
+    "rules_java_dependencies",
+    "rules_java_toolchains",
+)
+load(
+    "@rules_jvm_external//:defs.bzl",
+    "maven_install",
+)
+load(
+    "@rules_jvm_external//:repositories.bzl",
+    "rules_jvm_external_deps",
+)
+load(
+    "@rules_python//python:repositories.bzl",
+    "py_repositories",
+)
+load(
+    "//internal:config.bzl",
+    "GO_VERSION",
+    "GRAALVM_COMPONENTS",
+    "GRAALVM_DISTRIBUTION",
+    "GRAALVM_JAVA_VERSION",
+    "GRAALVM_SHA",
+    "GRAALVM_VERSION",
+    "LLVM_VERSION",
+    "MAVEN_ARTIFACTS",
+    "MAVEN_REPOSITORIES",
 )
 
 def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linters = True):

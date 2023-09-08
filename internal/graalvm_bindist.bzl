@@ -1,21 +1,22 @@
 "Describes binary distribution coordinates for GraalVM releases."
 
 load(
-    "@bazel_skylib//lib:versions.bzl",
-    "versions",
+    "@bazel_skylib//lib:new_sets.bzl",
+    "sets",
 )
 load(
     "@bazel_skylib//lib:paths.bzl",
     "paths",
 )
 load(
-    "@bazel_skylib//lib:new_sets.bzl",
-    "sets",
+    "@bazel_skylib//lib:versions.bzl",
+    "versions",
 )
 load(
-    "//internal:jdk_build_file.bzl",
-    _JDK_BUILD_TEMPLATE = "JDK_BUILD_TEMPLATE",
-    _JDK_BUILD_TEMPLATE_BAZEL5 = "JDK_BUILD_TEMPLATE_BAZEL5",
+    "//internal:graalvm_bindist_legacy.bzl",
+    _graal_archive_internal_prefixes = "graal_archive_internal_prefixes",
+    _graal_native_image_version_configs = "graal_native_image_version_configs",
+    _graal_version_configs = "graal_version_configs",
 )
 load(
     "//internal:graalvm_bindist_map.bzl",
@@ -27,10 +28,9 @@ load(
     Distribution = "DistributionType",
 )
 load(
-    "//internal:graalvm_bindist_legacy.bzl",
-    _graal_archive_internal_prefixes = "graal_archive_internal_prefixes",
-    _graal_native_image_version_configs = "graal_native_image_version_configs",
-    _graal_version_configs = "graal_version_configs",
+    "//internal:jdk_build_file.bzl",
+    _JDK_BUILD_TEMPLATE = "JDK_BUILD_TEMPLATE",
+    _JDK_BUILD_TEMPLATE_BAZEL5 = "JDK_BUILD_TEMPLATE_BAZEL5",
 )
 
 _graal_v2_archive_internal_prefixes = {
@@ -569,7 +569,7 @@ OpenJDK release versions only for newer releases; in some cases, the
 
 This version is required in order to properly resolve artifacts for a given
 GraalVM engine version.
-            """
+            """,
         ),
         "java_version": attr.string(
             mandatory = True,
@@ -582,7 +582,7 @@ for multiple Java versions.
 Early versions of GraalVM provide Java 8 and 11. This window slides as the
 GraalVM release approaches current; at the time of this writing, Java 17
 and Java 20 are provided, with Java 17 and Java 21 being the next release.
-            """
+            """,
         ),
         "distribution": attr.string(
             mandatory = False,
@@ -598,7 +598,7 @@ Before the Java 17/20 release (known internally as `23.0.1`), Oracle GraalVM
 was known as GraalVM Enterprise Edition, or "GraalVM EE." To use an EE
 distribution of GraalVM, use the `artifacts` attribute with a custom artifact
 coordinate definition.
-            """
+            """,
         ),
         "toolchain_prefix": attr.string(
             mandatory = False,
@@ -620,7 +620,7 @@ build --tool_java_runtime_version=graalvm_20
 ```
 
 Both flags are optional, and each are required for the related use case.
-            """
+            """,
         ),
         "components": attr.string_list(
             mandatory = False,
@@ -638,7 +638,7 @@ dependencies (`regex` and `icu4j`).
 
 If you want to define your own components or use third-party components which
 are not shipped with GraalVM, see the `artifacts` attribute.
-            """
+            """,
         ),
         "setup_actions": attr.string_list(
             mandatory = False,
@@ -649,7 +649,7 @@ component installation is complete.
 Some components need after-installation actions, like Espresso, which requires the
 user to run `gu rebuild-images`. These commands can be defined and performed using
 this attribute.
-"""
+""",
         ),
         "enable_toolchain": attr.bool(
             mandatory = False,
@@ -657,7 +657,7 @@ this attribute.
 Whether to define Java and GraalVM toolchain targets. These toolchain targets are
 used by the modern version of the Native Image rules, and optionally by Baazel as
 a Java Toolchain.
-"""
+""",
         ),
         "toolchain_config": attr.string(
             mandatory = True,
@@ -667,7 +667,7 @@ up with GraalVM and Java toolchains. This repository is used as the actual host 
 these toolchain configurations, with aliases from the main GraalVM repository.
 
 Normally this name is generated and the user does not have to provide it.
-"""
+""",
         ),
     },
     implementation = _graal_bindist_repository_impl,

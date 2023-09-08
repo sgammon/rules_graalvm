@@ -194,6 +194,7 @@ register_toolchains(
     "@graalvm//:jvm",
     dev_dependency = True,
 )
+
 register_toolchains(
     "@graalvm//:sdk",
     dev_dependency = True,

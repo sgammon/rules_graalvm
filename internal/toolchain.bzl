@@ -61,7 +61,7 @@ distribution of GraalVM.
 
 The Native Image tool is used to build native binaries or shared libraries from Java or
 polyglot code.
-"""
+""",
         ),
         "gvm_files": attr.label(
             mandatory = True,
@@ -72,7 +72,7 @@ Filegroup which holds the full set of constituent files which are part of this G
 SDK installation.
 
 These files are transitive tool dependencies for any binary built with Native Image.
-"""
+""",
         ),
     },
 )
@@ -95,14 +95,14 @@ components: those are the tools which are described by a `graalvm_engine` target
 Main GraalVM toolchain which hosts this engine. This target is used to propagate toolchain
 dependencies from the SDK installation, as GraalVM components rely on built-in libraries
 which reside in the GRAALVM_HOME path.
-"""
+""",
         ),
         "jvm": attr.label(
             mandatory = True,
             doc = """
 Java toolchain target provided by the GraalVM repository which hosts this engine. This target
 is used to resolve Java and the Java Compiler if needed.
-"""
+""",
         ),
         "component": attr.string(
             mandatory = True,
@@ -139,7 +139,6 @@ def register_graalvm_toolchains(
         name = "@graalvm",
         register_java_toolchain = True,
         register_gvm_toolchain = True):
-
     """Register GraalVM toolchains for Native Image and installed language components.
 
     The Java Toolchain registered for use with GraalVM can be used as a runtime JVM if specified in

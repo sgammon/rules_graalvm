@@ -6,12 +6,12 @@ load(
 )
 load(
     "//internal/native_image:classic.bzl",
-    _DEBUG = "DEBUG_CONDITION",
-    _OPTIMIZATION_MODE = "OPTIMIZATION_MODE_CONDITION",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
+    _DEBUG = "DEBUG_CONDITION",
     _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
+    _OPTIMIZATION_MODE = "OPTIMIZATION_MODE_CONDITION",
     _graal_binary_implementation = "graal_binary_implementation",
 )
 
