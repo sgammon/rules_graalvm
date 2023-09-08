@@ -15,6 +15,11 @@ name: "CI"
       - "*.bzl"
       - "*.bazel"
 
+concurrency:
+  # Cancel previous actions from the same PR: https://stackoverflow.com/a/72408109
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   dependency-graph:
     name: "Dependency Graph"
