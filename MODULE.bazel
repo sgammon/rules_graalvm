@@ -2,7 +2,7 @@
 
 module(
     name = "rules_graalvm",
-    version = "0.10.0-rc1",
+    version = "0.10.0",
 )
 
 JAVA_VERSION = "20"
