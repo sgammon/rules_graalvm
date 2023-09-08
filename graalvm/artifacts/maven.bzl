@@ -9,7 +9,6 @@ _MavenArtifacts = struct(
     TRUFFLE = struct(
         artifact = "truffle-api",
         group = "org.graalvm.truffle",
-
         NFI = struct(
             artifact = "truffle-api",
             group = "org.graalvm.truffle",
@@ -33,11 +32,13 @@ def _graalvm_maven_alias(group, artifact, repo = "@maven", version = None):
         Artifact target.
     """
 
-    return Label("%s//:%s_%s%s" % (
-        repo,
-        _transform_artifact_segment(group),
-        _transform_artifact_segment(artifact),
-        version and _transform_artifact_segment(version) or "")
+    return Label(
+        "%s//:%s_%s%s" % (
+            repo,
+            _transform_artifact_segment(group),
+            _transform_artifact_segment(artifact),
+            version and _transform_artifact_segment(version) or "",
+        ),
     )
 
 def _graalvm_artifact_alias(artifact, repo = "@maven", version = None):
@@ -107,7 +108,6 @@ def _graalvm_maven_artifact(maven, artifact, version):
         group = artifact.group,
         version = version,
     )
-
 
 # buildifier: disable=name-conventions
 _MavenTools = struct(
