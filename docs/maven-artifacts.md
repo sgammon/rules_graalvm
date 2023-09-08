@@ -16,7 +16,7 @@ These rules have some macros which make use of this libraries a bit easier, part
 load("@rules_graalvm//graalvm/artifacts:maven.bzl", "graalvm")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 load("@rules_jvm_external//:specs.bzl", "maven")
-```python
+```
 ```python
 maven_install(
     artifacts = [
