@@ -720,8 +720,8 @@ def graalvm_repository(
         java_version: Java version to use/declare.
         version: Version of the GraalVM release.
         distribution: Which GVM distribution to download - `ce`, `community`, or `oracle`.
-        toolchain: Whether to create a Java toolchain from this GVM installation.
-        toolchain_prefix: Name prefix to use for the toolchain; defaults to `graalvm`.
+        toolchain: Whether to create a Java runtime toolchain from this GVM installation.
+        toolchain_prefix: Name prefix to use for the Java toolchain; defaults to `graalvm`.
         target_compatible_with: Compatibility tags to apply.
         components: Components to install in the target GVM installation.
         setup_actions: GraalVM Updater commands that should be run; pass complete command strings that start with "gu".
@@ -756,10 +756,32 @@ toolchain(
             toolchain = "@{repo}//:jdk".format(repo = name),
         )
 
+    toolchain_config_build_file = """
+alias(
+    name = "toolchain_gvm",
+    actual = "gvm",
+    visibility = ["//visibility:public"],
+)
+toolchain(
+    name = "gvm",
+    exec_compatible_with = [
+        {gvm_toolchain_tags_exec}
+    ],
+    target_compatible_with = [
+        {gvm_toolchain_tags_target}
+    ],
+    toolchain = "@{name}//:gvm",
+    toolchain_type = "@rules_graalvm//graalvm/toolchain",
+    visibility = ["//visibility:public"],
+)
+""".format(
+        name = name,
+        gvm_toolchain_tags_exec = "",
+        gvm_toolchain_tags_target = "",
+    )
+
     if toolchain:
-        _toolchain_config(
-            name = toolchain_repo_name,
-            build_file = """
+        toolchain_config_build_file += """
 config_setting(
     name = "prefix_version_setting",
     values = {{"java_runtime_version": "{prefix}_{version}"}},
@@ -778,23 +800,6 @@ alias(
     }}),
     visibility = ["//visibility:private"],
 )
-alias(
-    name = "toolchain_gvm",
-    actual = "gvm",
-    visibility = ["//visibility:public"],
-)
-toolchain(
-    name = "gvm",
-    exec_compatible_with = [
-        {gvm_toolchain_tags_exec}
-    ],
-    target_compatible_with = [
-        {gvm_toolchain_tags_target}
-    ],
-    toolchain = "@{name}//:gvm",
-    toolchain_type = "@rules_graalvm//graalvm/toolchain",
-    visibility = ["//visibility:public"],
-)
 toolchain(
     name = "toolchain",
     target_compatible_with = {target_compatible_with},
@@ -805,16 +810,20 @@ toolchain(
 )
 {bootstrap_runtime_toolchain}
 """.format(
-                name = name,
-                prefix = toolchain_prefix or "graalvm",
-                version = java_version,
-                target_compatible_with = target_compatible_with,
-                toolchain = "@{repo}//:jdk".format(repo = name),
-                bootstrap_runtime_toolchain = bootstrap_runtime_toolchain,
-                gvm_toolchain_tags_exec = "",
-                gvm_toolchain_tags_target = "",
-            ),
+            name = name,
+            prefix = toolchain_prefix or "graalvm",
+            version = java_version,
+            target_compatible_with = target_compatible_with,
+            toolchain = "@{repo}//:jdk".format(repo = name),
+            bootstrap_runtime_toolchain = bootstrap_runtime_toolchain,
+            gvm_toolchain_tags_exec = "",
+            gvm_toolchain_tags_target = "",
         )
+
+    _toolchain_config(
+        name = toolchain_repo_name,
+        build_file = toolchain_config_build_file,
+    )
 
     if not register_all:
         # register a specific GraalVM version at the host OS/arch pair
