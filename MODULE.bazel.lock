@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 1,
-  "moduleFileHash": "91f589b49b289d8b52a5e1683c0884879c0496cad407e79a327b6fd8608ebba5",
+  "moduleFileHash": "c6b6ed0d738c95e76e6eeac951bdf223022b8e10baba8f4829e76d9220e1d833",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -18,7 +18,7 @@
   "moduleDepGraph": {
     "<root>": {
       "name": "rules_graalvm",
-      "version": "0.10.1",
+      "version": "0.10.2",
       "key": "<root>",
       "repoName": "rules_graalvm",
       "executionPlatformsToRegister": [],
