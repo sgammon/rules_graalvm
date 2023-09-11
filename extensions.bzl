@@ -13,6 +13,8 @@ def _gvm_impl(mctx):
     for mod in mctx.modules:
         # gather gvm toolchain info
         for gvm in mod.tags.graalvm:
+            if not mod.is_root:
+                fail("graalvm tag is only allowed in the root module, use component tag instead")
             selected = gvm
             if len(gvm.components) > 0:
                 all_components += [i for i in gvm.components if not i in all_components]
