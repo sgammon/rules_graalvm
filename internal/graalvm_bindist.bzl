@@ -738,7 +738,7 @@ toolchain(
     # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in
     # the same configuration, this constraint will not result in toolchain resolution failures.
     exec_compatible_with = {target_compatible_with},
-    target_settings = [":version_or_prefix_version_setting"],
+    target_settings = [":prefix_version_setting"],
     toolchain_type = "@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type",
     toolchain = "{toolchain}",
     visibility = ["//visibility:public"],
@@ -781,23 +781,10 @@ config_setting(
     values = {{"java_runtime_version": "{prefix}_{version}"}},
     visibility = ["//visibility:private"],
 )
-config_setting(
-    name = "version_setting",
-    values = {{"java_runtime_version": "{version}"}},
-    visibility = ["//visibility:private"],
-)
-alias(
-    name = "version_or_prefix_version_setting",
-    actual = select({{
-        ":version_setting": ":version_setting",
-        "//conditions:default": ":prefix_version_setting",
-    }}),
-    visibility = ["//visibility:private"],
-)
 toolchain(
     name = "toolchain",
     target_compatible_with = {target_compatible_with},
-    target_settings = [":version_or_prefix_version_setting"],
+    target_settings = [":prefix_version_setting"],
     toolchain_type = "@bazel_tools//tools/jdk:runtime_toolchain_type",
     toolchain = "{toolchain}",
     visibility = ["//visibility:public"],
