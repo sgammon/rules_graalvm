@@ -34,18 +34,6 @@ def _gvm_impl(mctx):
         setup_actions = selected.setup_actions,
     )
 
-    _extension_meta = {}
-    if not mctx.root_module_has_non_dev_dependency:
-        _extension_meta["root_module_direct_dev_deps"] = [selected.name]
-        _extension_meta["root_module_direct_deps"] = []
-    else:
-        _extension_meta["root_module_direct_deps"] = [selected.name]
-        _extension_meta["root_module_direct_dev_deps"] = []
-
-    return mctx.extension_metadata(
-        **_extension_meta
-    )
-
 _graalvm = tag_class(attrs = {
     "name": attr.string(mandatory = True),
     "version": attr.string(mandatory = True),
