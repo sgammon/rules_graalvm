@@ -7,7 +7,7 @@
 
 ---
 
-> Latest release: `0.10.2`
+> Latest release: `0.10.3`
 
 > **Important**
 > Currently in beta. Feedback welcome but will probably break your build.
@@ -25,6 +25,7 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 - [Hermetic compilation on all platforms](./docs/hermeticity.md)
 - [Respects conventional Bazel build settings](./docs/build-settings.md)
 - [Easily use GraalVM Maven artifacts](./docs/maven-artifacts.md)
+- [Now available on BCR](https://registry.bazel.build/modules/rules_graalvm)
 - Support for macOS, Linux, Windows (including Native Image!) ([support matrix](./docs/modern-bazel.md))
 - Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
@@ -37,10 +38,10 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 ```starlark
 http_archive(
     name = "rules_graalvm",
-    sha256 = "b2dad731ac44ea122f295ba283f9949744c5f10180aedb36f9c7708b734f1250",
-    strip_prefix = "rules_graalvm-0.10.2",
+    sha256 = "1f4b9979e75033042df4e9405a0a949aa5dd9427e72c8aafd8891d8f674e75e4",
+    strip_prefix = "rules_graalvm-0.10.3",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/releases/download/v0.10.2/rules_graalvm-0.10.2.zip",
+        "https://github.com/sgammon/rules_graalvm/releases/download/v0.10.3/rules_graalvm-0.10.3.zip",
     ],
 )
 ```
@@ -77,19 +78,8 @@ register_graalvm_toolchains()
 > To use Bzlmod with `rules_graalvm`, you will need the `archive_override` below (until we go live on BCR).
 
 ```starlark
-bazel_dep(name = "rules_graalvm", version = "0.10.2")
+bazel_dep(name = "rules_graalvm", version = "0.10.3")
 ```
-
-```starlark
-# Until we ship to BCR:
-archive_override(
-    module_name = "rules_graalvm",
-    urls = ["https://github.com/sgammon/rules_graalvm/releases/download/v0.10.2/rules_graalvm-0.10.2.zip"],
-    strip_prefix = "rules_graalvm-0.10.2",
-    integrity = "sha256-strXMaxE6hIvKVuig/mUl0TF8QGArts2+cdwi3NPElA=",
-)
-```
-
 ```starlark
 gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 
