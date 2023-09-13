@@ -81,7 +81,7 @@ def _graal_binary_implementation(ctx):
         ),
     )
 
-    args = ctx.actions.args()
+    args = ctx.actions.args().use_param_file("@%s", use_always=False)
     binary = _prepare_native_image_rule_context(
         ctx,
         args,
