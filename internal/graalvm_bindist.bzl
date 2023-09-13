@@ -44,6 +44,12 @@ _NONLEGACY_X86_TAG = "x64"
 _LEGACY_DARWIN_TAG = "darwin"
 _NONLEGACY_DARWIN_TAG = "macos"
 
+def _get_bazel_version():
+    # Development versions of Bazel return an empty version string, but such a
+    # string isn't accepted by versions.is_at_least. We use a fake version that
+    # is certain to be higher than all released versions of Bazel.
+    return versions.get() or "9999.0.0"
+
 def _get_artifact_info(ctx, dist, platform, version, component = None, strict = True):
     info = resolve_distribution_artifact(dist, platform, version, component, strict)
     if info == None:
@@ -70,7 +76,7 @@ def _get_platform(ctx, newdist):
 
     # fix: before bazel5, the `arch` property did not exist on `repository_os`, so we need
     # to do without it and simply assume `amd64`.
-    if not newdist or not versions.is_at_least("5", versions.get()):
+    if not newdist or not versions.is_at_least("5", _get_bazel_version()):
         return _get_platform_legacy(ctx, not newdist)
     elif ctx.os.name == "linux":
         return ("linux-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "linux", "tar.gz")
@@ -459,13 +465,13 @@ alias(
 
     # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
     # it doesn't yet exist in Bazel's internals.
-    if not versions.is_at_least("7", versions.get()):
+    if not versions.is_at_least("7", _get_bazel_version()):
         bootstrap_toolchain_alias = ""
 
     # bazel 6+ has support for the `version` attribute on the `java_runtime` rule. earlier
     # versions do not, so we omit it.
     toolchain_template = _JDK_BUILD_TEMPLATE
-    if not versions.is_at_least("6", versions.get()):
+    if not versions.is_at_least("6", _get_bazel_version()):
         toolchain_template = _JDK_BUILD_TEMPLATE_BAZEL5
 
     toolchain_aliases_template = """
