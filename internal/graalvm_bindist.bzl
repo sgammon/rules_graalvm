@@ -736,7 +736,7 @@ def graalvm_repository(
     # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
     # it doesn't yet exist in Bazel's internals.
     bootstrap_runtime_toolchain = ""
-    if versions.is_at_least("7", versions.get()):
+    if versions.is_at_least("7", _get_bazel_version()):
         bootstrap_runtime_toolchain = """
 toolchain(
     name = "bootstrap_runtime_toolchain",
