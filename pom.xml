@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.graalvm.compiler</groupId>
       <artifactId>compiler</artifactId>
-      <version>23.0.1</version>
+      <version>23.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.graalvm.nativeimage</groupId>
