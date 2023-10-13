@@ -1,6 +1,10 @@
 "Legacy ('classic') rules for building with GraalVM on Bazel."
 
 load(
+    "//internal/native_image:builder.bzl",
+    _assemble_native_build_options = "assemble_native_build_options",
+)
+load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
@@ -10,7 +14,7 @@ load(
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
     _RULES_REPO = "RULES_REPO",
-    _prepare_native_image_rule_context = "prepare_native_image_rule_context",
+    _path_list_separator = "path_list_separator",
 )
 load(
     "//internal/native_image:toolchain.bzl",
@@ -50,12 +54,20 @@ def _graal_binary_classic_implementation(ctx):
     )
 
     args = ctx.actions.args()
-    binary = _prepare_native_image_rule_context(
+
+    binary_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
+    binary = ctx.actions.declare_file("output/" + binary_name)
+    path_list_separator = _path_list_separator(ctx)
+
+    _assemble_native_build_options(
         ctx,
         args,
+        binary_name,
+        binary.dirname,
         classpath_depset,
         direct_inputs,
         native_toolchain.c_compiler_path,
+        path_list_separator,
     )
 
     if ctx.files.data:

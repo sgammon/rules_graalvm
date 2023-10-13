@@ -1,10 +1,5 @@
 "Defines common properties shared by modern and legacy Native Image rules."
 
-load(
-    "//internal/native_image:builder.bzl",
-    _assemble_native_build_options = "assemble_native_build_options",
-)
-
 _RULES_REPO = "@rules_graalvm"
 _DEFAULT_GVM_REPO = "@graalvm"
 _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
@@ -125,6 +120,9 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         allow_single_file = True,
     ),
+    "extra_output_files": attr.string_list(
+        mandatory = False,
+    ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
     ),
@@ -153,39 +151,14 @@ def _prepare_bin_name(
         return "%s%s" % (name, bin_postfix)
     return name
 
-def _prepare_native_image_rule_context(
-        ctx,
-        args,
-        classpath_depset,
-        direct_inputs,
-        c_compiler_path,
-        gvm_toolchain = None,
-        bin_postfix = None):
-    """Prepare a `native-image` build context."""
-
-    out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
-    binary = ctx.actions.declare_file(_prepare_bin_name(out_bin_name, bin_postfix))
-
+def _path_list_separator(ctx):
     # TODO: This check really should be on the exec platform, not the target platform, but that
     # requires going through a separate rule. Since GraalVM doesn't support cross-compilation, the
     # distinction doesn't matter for now.
     if ctx.target_platform_has_constraint(ctx.attr._windows_constraint[platform_common.ConstraintValueInfo]):
-        path_list_separator = ";"
+        return ";"
     else:
-        path_list_separator = ":"
-
-    _assemble_native_build_options(
-        ctx,
-        args,
-        binary,
-        classpath_depset,
-        direct_inputs,
-        c_compiler_path,
-        path_list_separator,
-        gvm_toolchain,
-        bin_postfix,
-    )
-    return binary
+        return ":"
 
 ## Exports.
 
@@ -203,4 +176,4 @@ BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 MACOS_CONSTRAINT = _MACOS_CONSTRAINT
 WINDOWS_CONSTRAINT = _WINDOWS_CONSTRAINT
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
-prepare_native_image_rule_context = _prepare_native_image_rule_context
+path_list_separator = _path_list_separator
