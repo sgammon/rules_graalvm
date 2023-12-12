@@ -21,8 +21,8 @@ devDependencies:
     specifier: 3.1.1
     version: 3.1.1
   prettier-plugin-java:
-    specifier: 2.3.1
-    version: 2.3.1
+    specifier: 2.5.0
+    version: 2.5.0
 
 packages:
 
@@ -782,8 +782,8 @@ packages:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
 
-  /java-parser@2.0.5:
-    resolution: {integrity: sha512-AwieTO24Itcu0GgP9pBXs8gkqBtkmReclpBgXF4NkbIjdS7cn7hqpebjTmb5ouYYLFR+m3yh5fR3nW1NRrthdg==}
+  /java-parser@2.2.0:
+    resolution: {integrity: sha512-20/Rpuv4FnzTNgWkJBqs2M4qwBuPLMqOqNiwU5j7vKvrw4Ej+re8Aoc92KbDFb61M1u/Sd4Ygst+CpEcKXvhBQ==}
     dependencies:
       chevrotain: 6.5.0
       lodash: 4.17.21
@@ -1155,10 +1155,10 @@ packages:
     hasBin: true
     dev: true
 
-  /prettier-plugin-java@2.3.1:
-    resolution: {integrity: sha512-OYn8skqKnE5YUVL8f2ocayA6XCJK8PqsEz3pfATbDqzgdaSYDLhE/s8KrXrX9gj8KXIG6Wx0CMoXTNH8+ED22w==}
+  /prettier-plugin-java@2.5.0:
+    resolution: {integrity: sha512-6Uc1yHVrLTwgl7D9hsBS3Xa2qXXlEd4v/6z1oio7u8O6mQdh/6cP0cbhS1daik9tNSMMES/VyzI+78918KRuGA==}
     dependencies:
-      java-parser: 2.0.5
+      java-parser: 2.2.0
       lodash: 4.17.21
       prettier: 3.0.3
     dev: true
