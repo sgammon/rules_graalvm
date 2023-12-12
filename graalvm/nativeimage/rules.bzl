@@ -82,6 +82,7 @@ def native_image(
         check_toolchains = _DEFAULT_CHECK_TOOLCHAINS_CONDITION,
         native_image_tool = None,  # uses toolchains by default
         native_image_settings = [_DEFAULT_NATIVE_IMAGE_SETTINGS],
+        profiles = [],
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -113,6 +114,7 @@ def native_image(
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
         native_image_tool: Specific `native-image` executable target to use.
         native_image_settings: Suite(s) of Native Image build settings to use.
+        profiles: Profiles to use for profile-guided optimization (PGO) and obtained from a native image compiled with `--pgo-instrument`.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -138,5 +140,6 @@ def native_image(
         executable_name = executable_name,
         native_image_tool = native_image_tool,
         native_image_settings = native_image_settings,
+        profiles = profiles,
         **kwargs
     )
