@@ -109,6 +109,10 @@ _NATIVE_IMAGE_ATTRS = {
     "executable_name": attr.string(
         mandatory = True,
     ),
+    "profiles": attr.label_list(
+        allow_files = True,
+        mandatory = False,
+    ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
     ),

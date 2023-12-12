@@ -208,6 +208,14 @@ def assemble_native_build_options(
             direct_inputs,
         )
 
+    if ctx.files.profiles:
+        args.add_joined(
+            ctx.files.profiles,
+            join_with = ",",
+            format_joined = "--pgo=%s",
+        )
+        direct_inputs.extend(ctx.files.profiles)
+
     # add test-related flags, if this is a `testonly` target
     if ctx.attr.testonly:
         _configure_native_test_flags(
