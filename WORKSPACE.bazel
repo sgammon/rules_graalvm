@@ -247,19 +247,6 @@ rules_graalvm_repositories()
 # --------------------------------------------------------------------------------------------------------------
 # Dev Dependencies:
 
-# - Python
-
-load("@rules_python//python:pip.bzl", "pip_parse")
-
-pip_parse(
-    name = "pip",
-    requirements_lock = "@//:requirements_lock.txt",
-)
-
-load("@pip//:requirements.bzl", "install_deps")
-
-install_deps()
-
 # - JavaScript
 
 load("@aspect_rules_js//js:repositories.bzl", "rules_js_dependencies")
