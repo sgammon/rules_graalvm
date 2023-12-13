@@ -33,7 +33,7 @@ jobs:
         with:
           egress-policy: audit
       - name: "Setup: Checkout"
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: "Setup: Pages"
         uses: actions/configure-pages@f156874f8191504dae5b037505266ed5dda6c382 # v3.0.6
       - name: "Build: Jekyll"
