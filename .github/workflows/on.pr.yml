@@ -36,7 +36,7 @@ jobs:
         with:
           egress-policy: audit
       - name: "Setup: Checkout"
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: "Report: Dependency Graph"
         continue-on-error: true
         uses: advanced-security/maven-dependency-submission-action@fcd7eab6b6d22946badc98d1e62665cdee93e0ae # v3.0.3
@@ -50,7 +50,7 @@ jobs:
         with:
           egress-policy: audit
       - name: "Checkout Repository"
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: "Dependency Review"
         uses: actions/dependency-review-action@6c5ccdad469c9f8a2996bfecaec55a631a347034 # v3.1.0
         with:
