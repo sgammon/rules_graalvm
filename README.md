@@ -74,9 +74,6 @@ register_graalvm_toolchains()
 
 **Or, via `MODULE.bazel`:**
 
-> [!IMPORTANT]  
-> To use Bzlmod with `rules_graalvm`, you will need the `archive_override` below (until we go live on BCR).
-
 ```starlark
 bazel_dep(name = "rules_graalvm", version = "0.10.3")
 ```
