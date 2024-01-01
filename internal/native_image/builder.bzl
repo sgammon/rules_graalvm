@@ -140,7 +140,8 @@ def assemble_native_build_options(
         direct_inputs,
         c_compiler_path,
         path_list_separator,
-        gvm_toolchain = None):
+        gvm_toolchain = None,
+        bin_postfix = None):
     """Assemble the effective arguments to `native-image`.
 
     This function is responsible for converting the current rule invocation context into a set of arguments
@@ -155,6 +156,7 @@ def assemble_native_build_options(
         c_compiler_path: Path to the C compiler; resolved via toolchains.
         path_list_separator: Platform-specific path separator.
         gvm_toolchain: Resolved GraalVM toolchain, or `None` if a tool target is in use via legacy rules.
+        bin_postfix: Binary postfix expected from the output file (for example, `.exe` or `.dylib`).
     """
 
     # main class is required unless we are building a shared library
@@ -169,8 +171,12 @@ def assemble_native_build_options(
     if not ctx.attr.allow_fallback:
         args.add("--no-fallback")
 
+    trimmed_basename = binary.basename
+    if bin_postfix:
+        trimmed_basename = trimmed_basename[0:-(len(bin_postfix))]
+
     args.add(ctx.attr.main_class, format = "-H:Class=%s")
-    args.add(binary.basename.replace(".exe", ""), format = "-H:Name=%s")
+    args.add(trimmed_basename, format = "-H:Name=%s")
     args.add(binary.dirname, format = "-H:Path=%s")
     args.add("-H:+ReportExceptionStackTraces")
 
