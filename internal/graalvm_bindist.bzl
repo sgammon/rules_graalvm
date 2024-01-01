@@ -669,6 +669,13 @@ these toolchain configurations, with aliases from the main GraalVM repository.
 Normally this name is generated and the user does not have to provide it.
 """,
         ),
+        "sha256": attr.string(
+            mandatory = False,
+            doc = """
+SHA-256 fingerprint for a custom toolchain. Optional. If unspecified, use of custom
+toolchains may yield hermeticity warnings.
+"""
+        )
     },
     implementation = _graal_bindist_repository_impl,
 )
