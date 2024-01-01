@@ -26,14 +26,12 @@ gvm.graalvm(
         "wasm",
     ],
     distribution = "ce",
-    java_version = "20",
-    version = "20.0.2",
+    java_version = "17",
+    version = "17.0.8",
 )
 use_repo(
     gvm,
     "graalvm",
 )
-
-register_toolchains("@graalvm//:jvm")
 
 register_toolchains("@graalvm//:sdk")
