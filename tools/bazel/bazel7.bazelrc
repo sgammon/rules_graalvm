@@ -17,7 +17,6 @@ build:strict --incompatible_depset_for_java_output_source_jars
 build:strict --incompatible_disallow_sdk_frameworks_attributes
 build:strict --incompatible_objc_alwayslink_by_default
 build:strict --incompatible_python_disable_py2
-build:strict --incompatible_remote_disallow_symlink_in_tree_artifact
 build:strict --incompatible_always_include_files_in_data
 build:strict --incompatible_check_sharding_support
 build:strict --incompatible_check_testonly_for_output_files
