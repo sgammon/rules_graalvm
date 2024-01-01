@@ -200,6 +200,11 @@ register_toolchains(
     dev_dependency = True,
 )
 
+register_toolchains(
+    "@graalvm//:bootstrap_runtime_toolchain",
+    dev_dependency = True,
+)
+
 ################################################################################
 # rules_js
 ################################################################################
