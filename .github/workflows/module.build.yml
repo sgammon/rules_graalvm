@@ -259,6 +259,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Shared Library
+          - label: Shared Library
+            target: sample
+            action: build
+            directory: "./example/integration_tests/shared-lib"
+            labs: false
+            skip: false
+
           # Test: Maven Artifacts
           - label: Maven Artifacts
             target: sample

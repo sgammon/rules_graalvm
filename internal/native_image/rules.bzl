@@ -21,6 +21,11 @@ load(
     _resolve_cc_toolchain = "resolve_cc_toolchain",
 )
 
+_BIN_POSTFIX_DYLIB = ".dylib"
+_BIN_POSTFIX_EXE = ".exe"
+_BIN_POSTFIX_DLL = ".dll"
+_BIN_POSTFIX_SO = ".so"
+
 def _build_action_message(ctx):
     _mode_label = {
         "b": "fastbuild",
@@ -72,14 +77,30 @@ def _graal_binary_implementation(ctx):
             or install a GraalVM `native-image` toolchain.
         """)
 
+    is_macos = ctx.target_platform_has_constraint(
+        ctx.attr._macos_constraint[platform_common.ConstraintValueInfo]
+    )
+    is_windows = ctx.target_platform_has_constraint(
+        ctx.attr._windows_constraint[platform_common.ConstraintValueInfo],
+    )
+
     # resolve the native toolchain
     native_toolchain = _resolve_cc_toolchain(
         ctx,
         transitive_inputs,
-        is_windows = ctx.target_platform_has_constraint(
-            ctx.attr._windows_constraint[platform_common.ConstraintValueInfo],
-        ),
+        is_windows = is_windows,
     )
+
+    # shared libraries on macos are produced with an extension of `dylib`.
+    bin_postfix = None
+    if is_macos and ctx.attr.shared_library:
+        bin_postfix = _BIN_POSTFIX_DYLIB
+    elif is_windows and not ctx.attr.shared_library:
+        bin_postfix = _BIN_POSTFIX_EXE
+    elif is_windows:
+        bin_postfix = _BIN_POSTFIX_DLL
+    elif (not is_windows and not is_macos) and ctx.attr.shared_library:
+        bin_postfix = _BIN_POSTFIX_SO
 
     args = ctx.actions.args().use_param_file("@%s", use_always=False)
     binary = _prepare_native_image_rule_context(
@@ -89,6 +110,7 @@ def _graal_binary_implementation(ctx):
         direct_inputs,
         native_toolchain.c_compiler_path,
         gvm_toolchain,
+        bin_postfix = bin_postfix,
     )
 
     # assemble final inputs
@@ -103,12 +125,14 @@ def _graal_binary_implementation(ctx):
         "mnemonic": "NativeImage",
         "env": native_toolchain.env,
         "execution_requirements": {k: "" for k in native_toolchain.execution_requirements},
-        "progress_message": "Native Image (__mode__) %{label}".replace("__mode__", _build_action_message(ctx)),
+        "progress_message": "Native Image __target__ (__mode__) %{label}"
+            .replace("__mode__", _build_action_message(ctx))
+            .replace("__target__", ctx.attr.shared_library and "[shared lib]" or "[executable]"),
         "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
     }
 
     graal_actions = _wrap_actions_for_graal(ctx.actions)
-    if ctx.target_platform_has_constraint(ctx.attr._macos_constraint[platform_common.ConstraintValueInfo]):
+    if is_macos:
         xcode_args = ctx.actions.args()
 
         # Bazel passes DEVELOPER_DIR and SDKROOT to every locally executed action that sets the
