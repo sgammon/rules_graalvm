@@ -5,13 +5,13 @@ module(
     version = "0.10.3",
 )
 
-JAVA_VERSION = "20"
+JAVA_VERSION = "17"
 
 PYTHON_VERSION = "3.11"
 
 NODE_VERSION = "20.5.0"
 
-GRAALVM_VERSION = "20.0.2"
+GRAALVM_VERSION = "17.0.8"
 
 GRAALVM_DIST = "ce"
 

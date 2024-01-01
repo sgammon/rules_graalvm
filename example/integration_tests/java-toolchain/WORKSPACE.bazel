@@ -9,13 +9,13 @@ load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains", "ru
 
 rules_graalvm_repositories()
 
-register_graalvm_toolchains(register_gvm_toolchain = False)
+register_graalvm_toolchains()
 
 load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 
 graalvm_repository(
     name = "graalvm",
     distribution = "ce",
-    java_version = "20",
-    version = "20.0.2",
+    java_version = "17",
+    version = "17.0.8",
 )

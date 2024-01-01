@@ -6,6 +6,11 @@ test --test_output=errors
 
 build --sandbox_tmpfs_path=/tmp
 
-build --java_language_version=20
-build --java_runtime_version=graalvm_20
 build --extra_toolchains=@graalvm//:toolchain
+build --extra_toolchains=@graalvm//:toolchain_gvm
+build --extra_toolchains=@graalvm//:bootstrap_runtime_toolchain
+
+build --tool_java_language_version=17
+build --tool_java_runtime_version=graalvm_17
+build --java_language_version=17
+build --java_runtime_version=graalvm_17
