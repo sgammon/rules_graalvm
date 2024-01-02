@@ -8,11 +8,12 @@ load(
 _RULES_REPO = "@rules_graalvm"
 _DEFAULT_GVM_REPO = "@graalvm"
 _GVM_TOOLCHAIN_TYPE = "%s//graalvm/toolchain" % _RULES_REPO
-_BAZEL_CPP_TOOLCHAIN_TYPE = "@bazel_tools//tools/cpp:toolchain_type"
 _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
 _LINUX_CONSTRAINT = "@platforms//os:linux"
 _MACOS_CONSTRAINT = "@platforms//os:macos"
 _WINDOWS_CONSTRAINT = "@platforms//os:windows"
+_GRAALVM_ISOLATE_HEADER = "graal_isolate.h"
+_GRAALVM_ISOLATE_DYNAMIC_HEADER = "graal_isolate_dynamic.h"
 
 # buildifier: disable=name-conventions
 _NativeImageOptimization = struct(
@@ -113,6 +114,11 @@ _NATIVE_IMAGE_ATTRS = {
         allow_files = True,
         mandatory = False,
     ),
+    "out_headers": attr.output_list(),
+    "additional_outputs": attr.output_list(),
+    "default_outputs": attr.bool(
+        default = True,
+    ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
     ),
@@ -154,6 +160,9 @@ def _prepare_native_image_rule_context(
     out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
     binary = ctx.actions.declare_file(_prepare_bin_name(out_bin_name, bin_postfix))
 
+    additional_outputs = []
+    outputs = [binary]
+
     # TODO: This check really should be on the exec platform, not the target platform, but that
     # requires going through a separate rule. Since GraalVM doesn't support cross-compilation, the
     # distinction doesn't matter for now.
@@ -161,6 +170,25 @@ def _prepare_native_image_rule_context(
         path_list_separator = ";"
     else:
         path_list_separator = ":"
+
+    # if we are building a shared library, headers will be emitted; by default, the `graal_isolate.h`
+    # and `graal_isolate_dynamic.h` files are included. additional headers can be added by the `out_headers`
+    # attribute.
+    if ctx.attr.shared_library and ctx.attr.default_outputs:
+        additional_outputs.append(_GRAALVM_ISOLATE_HEADER)
+        additional_outputs.append(_GRAALVM_ISOLATE_DYNAMIC_HEADER)
+
+    # append all additional outputs
+    if len(additional_outputs) > 0:
+        outputs.extend([ctx.actions.declare_file(f) for f in additional_outputs])
+
+    # append all out headers
+    if len(ctx.attr.out_headers) > 0:
+        outputs.extend(ctx.outputs.out_headers)
+
+    # append all attr additional outputs
+    if len(ctx.attr.additional_outputs) > 0:
+        outputs.extend(ctx.outputs.additional_outputs)
 
     _assemble_native_build_options(
         ctx,
@@ -173,7 +201,7 @@ def _prepare_native_image_rule_context(
         gvm_toolchain,
         bin_postfix,
     )
-    return binary
+    return outputs
 
 ## Exports.
 
@@ -186,7 +214,6 @@ DEBUG_CONDITION = _DEBUG_CONDITION
 COVERAGE_CONDITION = _COVERAGE_CONDITION
 OPTIMIZATION_MODE_CONDITION = _OPTIMIZATION_MODE_CONDITION
 GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
-BAZEL_CPP_TOOLCHAIN_TYPE = _BAZEL_CPP_TOOLCHAIN_TYPE
 BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 MACOS_CONSTRAINT = _MACOS_CONSTRAINT
 WINDOWS_CONSTRAINT = _WINDOWS_CONSTRAINT

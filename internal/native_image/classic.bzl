@@ -50,13 +50,14 @@ def _graal_binary_classic_implementation(ctx):
     )
 
     args = ctx.actions.args()
-    binary = _prepare_native_image_rule_context(
+    outputs = _prepare_native_image_rule_context(
         ctx,
         args,
         classpath_depset,
         direct_inputs,
         native_toolchain.c_compiler_path,
     )
+    binary = outputs[0]
 
     inputs = depset(
         direct_inputs,
@@ -64,7 +65,7 @@ def _graal_binary_classic_implementation(ctx):
     )
 
     ctx.actions.run(
-        outputs = [binary],
+        outputs = outputs,
         arguments = [args],
         executable = graal,
         inputs = inputs,

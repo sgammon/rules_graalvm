@@ -5,8 +5,11 @@ load(
     "apple_support",
 )
 load(
+    "@bazel_tools//tools/cpp:toolchain_utils.bzl",
+    "find_cpp_toolchain",
+)
+load(
     "//internal/native_image:common.bzl",
-    _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
     _DEBUG_CONDITION = "DEBUG_CONDITION",
     _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
@@ -103,7 +106,7 @@ def _graal_binary_implementation(ctx):
         bin_postfix = _BIN_POSTFIX_SO
 
     args = ctx.actions.args().use_param_file("@%s", use_always=False)
-    binary = _prepare_native_image_rule_context(
+    all_outputs = _prepare_native_image_rule_context(
         ctx,
         args,
         classpath_depset,
@@ -112,6 +115,7 @@ def _graal_binary_implementation(ctx):
         gvm_toolchain,
         bin_postfix = bin_postfix,
     )
+    binary = all_outputs[0]
 
     # assemble final inputs
     inputs = depset(
@@ -119,7 +123,7 @@ def _graal_binary_implementation(ctx):
         transitive = transitive_inputs,
     )
     run_params = {
-        "outputs": [binary],
+        "outputs": all_outputs,
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImage",
@@ -159,14 +163,50 @@ def _graal_binary_implementation(ctx):
             **run_params
         )
 
-    return [DefaultInfo(
+    # if we are building a shared library, prepare `CcSharedLibraryInfo` for it
+    cc_info = []
+    runfiles = None
+    if ctx.attr.shared_library:
+        cc_toolchain = find_cpp_toolchain(ctx)
+        feature_configuration = cc_common.configure_features(
+            ctx = ctx,
+            cc_toolchain = cc_toolchain,
+            requested_features = ctx.features,
+            unsupported_features = ctx.disabled_features,
+        )
+        libraries_to_link = [
+            cc_common.create_library_to_link(
+                actions = ctx.actions,
+                feature_configuration = feature_configuration,
+                cc_toolchain = cc_toolchain,
+                dynamic_library = binary,
+            ),
+        ]
+        cc_info.extend([
+            OutputGroupInfo(
+                main_shared_library_output = depset([binary]),
+            ),
+            CcSharedLibraryInfo(
+                linker_input = cc_common.create_linker_input(
+                    owner = ctx.label,
+                    libraries = depset(libraries_to_link),
+                ),
+            ),
+        ])
+
+    # prepare all runfiles
+    all_runfiles = ctx.runfiles(
+        collect_data = True,
+        collect_default = True,
+        files = [],
+    )
+    if runfiles != None:
+        all_runfiles = all_runfiles.merge(runfiles)
+
+    return cc_info + [DefaultInfo(
         executable = binary,
-        files = depset([binary]),
-        runfiles = ctx.runfiles(
-            collect_data = True,
-            collect_default = True,
-            files = [],
-        ),
+        files = depset(all_outputs),
+        runfiles = all_runfiles,
     )]
 
 def _wrap_actions_for_graal(actions):
@@ -198,7 +238,6 @@ def _wrapped_run_for_graal(_original_actions, arguments = [], env = {}, **kwargs
 RULES_REPO = _RULES_REPO
 DEFAULT_GVM_REPO = _DEFAULT_GVM_REPO
 BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
-BAZEL_CPP_TOOLCHAIN_TYPE = _BAZEL_CPP_TOOLCHAIN_TYPE
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
 GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
 DEBUG_CONDITION = _DEBUG_CONDITION

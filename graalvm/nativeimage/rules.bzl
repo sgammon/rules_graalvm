@@ -5,8 +5,11 @@ load(
     "dicts",
 )
 load(
+    "@bazel_tools//tools/cpp:toolchain_utils.bzl",
+    "use_cpp_toolchain",
+)
+load(
     "//internal/native_image:rules.bzl",
-    _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _DEBUG = "DEBUG_CONDITION",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
@@ -53,8 +56,7 @@ _native_image = rule(
         "platform",
         "xcode",
     ],
-    toolchains = [
-        _BAZEL_CPP_TOOLCHAIN_TYPE,
+    toolchains = use_cpp_toolchain() + [
         _GVM_TOOLCHAIN_TYPE,
     ],
 )
@@ -83,6 +85,9 @@ def native_image(
         native_image_tool = None,  # uses toolchains by default
         native_image_settings = [_DEFAULT_NATIVE_IMAGE_SETTINGS],
         profiles = [],
+        out_headers = [],
+        additional_outputs = [],
+        default_outputs = True,
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -111,10 +116,14 @@ def native_image(
         data: Data files to make available during the compilation. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
+        out_headers: Shared library headers expected to be emitted by the rule (in addition to defaults).
+        additional_outputs: Additional outputs to expect from the rule (for example, polyglot language resources).
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
         native_image_tool: Specific `native-image` executable target to use.
         native_image_settings: Suite(s) of Native Image build settings to use.
         profiles: Profiles to use for profile-guided optimization (PGO) and obtained from a native image compiled with `--pgo-instrument`.
+        default_outputs: Whether to consider default output files; when `False`, the developer specifies all outputs on top of the
+            binary itself.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -141,5 +150,8 @@ def native_image(
         native_image_tool = native_image_tool,
         native_image_settings = native_image_settings,
         profiles = profiles,
+        out_headers = out_headers,
+        additional_outputs = additional_outputs,
+        default_outputs = default_outputs,
         **kwargs
     )

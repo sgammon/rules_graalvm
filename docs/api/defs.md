@@ -11,7 +11,7 @@ native_image(<a href="#native_image-name">name</a>, <a href="#native_image-deps"
              <a href="#native_image-jni_configuration">jni_configuration</a>, <a href="#native_image-initialize_at_build_time">initialize_at_build_time</a>, <a href="#native_image-initialize_at_run_time">initialize_at_run_time</a>, <a href="#native_image-native_features">native_features</a>,
              <a href="#native_image-debug">debug</a>, <a href="#native_image-optimization_mode">optimization_mode</a>, <a href="#native_image-shared_library">shared_library</a>, <a href="#native_image-static_zlib">static_zlib</a>, <a href="#native_image-c_compiler_option">c_compiler_option</a>, <a href="#native_image-data">data</a>,
              <a href="#native_image-extra_args">extra_args</a>, <a href="#native_image-allow_fallback">allow_fallback</a>, <a href="#native_image-check_toolchains">check_toolchains</a>, <a href="#native_image-native_image_tool">native_image_tool</a>, <a href="#native_image-native_image_settings">native_image_settings</a>,
-             <a href="#native_image-profiles">profiles</a>, <a href="#native_image-kwargs">kwargs</a>)
+             <a href="#native_image-profiles">profiles</a>, <a href="#native_image-out_headers">out_headers</a>, <a href="#native_image-additional_outputs">additional_outputs</a>, <a href="#native_image-default_outputs">default_outputs</a>, <a href="#native_image-kwargs">kwargs</a>)
 </pre>
 
 Generates and compiles a GraalVM native image from a Java library target.
@@ -43,6 +43,9 @@ Generates and compiles a GraalVM native image from a Java library target.
 | <a id="native_image-native_image_tool"></a>native_image_tool |  Specific `native-image` executable target to use.   |  `None` |
 | <a id="native_image-native_image_settings"></a>native_image_settings |  Suite(s) of Native Image build settings to use.   |  `[Label("@rules_graalvm//internal/native_image:defaults")]` |
 | <a id="native_image-profiles"></a>profiles |  Profiles to use for profile-guided optimization (PGO) and obtained from a native image compiled with `--pgo-instrument`.   |  `[]` |
+| <a id="native_image-out_headers"></a>out_headers |  Shared library headers expected to be emitted by the rule (in addition to defaults).   |  `[]` |
+| <a id="native_image-additional_outputs"></a>additional_outputs |  Additional outputs to expect from the rule (for example, polyglot language resources).   |  `[]` |
+| <a id="native_image-default_outputs"></a>default_outputs |  Whether to consider default output files; when `False`, the developer specifies all outputs on top of the binary itself.   |  `True` |
 | <a id="native_image-kwargs"></a>kwargs |  Extra keyword arguments are passed to the underlying `native_image` rule.   |  none |
 
 
