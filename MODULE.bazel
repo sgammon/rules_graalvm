@@ -32,7 +32,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_java",
-    version = "7.1.0",
+    version = "6.4.0",
 )
 bazel_dep(
     name = "bazel_skylib",
