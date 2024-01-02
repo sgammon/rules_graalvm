@@ -307,6 +307,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: GVM CE 21
+          - label: GraalVM CE 21
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-21"
+            labs: false
+            skip: false
+
           # Test: Oracle GVM 17
           - label: Oracle GraalVM 17
             target: sample
@@ -320,6 +328,14 @@ jobs:
             target: sample
             action: build
             directory: "./example/integration_tests/graalvm-oracle-20"
+            labs: false
+            skip: false
+
+          # Test: Oracle GVM 21
+          - label: Oracle GraalVM 21
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-oracle-21"
             labs: false
             skip: false
 

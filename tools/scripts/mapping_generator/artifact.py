@@ -102,7 +102,7 @@ class DownloadTarget:
         tags = [] + (
             PLATFORM_TAG_MAPPINGS[self.platform]
         ) + [
-            JAVA_VERSION_TAGS[self.jdk]
+            JAVA_VERSION_TAGS[JavaVersion(int(self.jdk))]
         ]
 
         if self.component is not None and self.component != Component.BASE:

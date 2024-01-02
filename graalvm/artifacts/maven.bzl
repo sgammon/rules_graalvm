@@ -6,6 +6,10 @@ _MavenArtifacts = struct(
         artifact = "graal-sdk",
         group = "org.graalvm.sdk",
     ),
+    POLYGLOT = struct(
+        artifact = "polyglot",
+        group = "org.graalvm.polyglot",
+    ),
     TRUFFLE = struct(
         artifact = "truffle-api",
         group = "org.graalvm.truffle",

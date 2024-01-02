@@ -15,7 +15,6 @@ load(
         actual = "//tools:%s" % target,
     )
     for target in [
-        "python_requirements",
         "buildifier.check",
         "buildifier.format",
     ]
@@ -47,3 +46,4 @@ bzl_library(
 gazelle(
     name = "gazelle",
 )
+

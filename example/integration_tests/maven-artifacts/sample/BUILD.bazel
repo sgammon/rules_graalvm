@@ -4,7 +4,7 @@ java_library(
     name = "java",
     srcs = ["Main.java"],
     deps = [
-        graalvm.artifact(graalvm.catalog.SDK),  # equivalent to targets below
+        graalvm.artifact(graalvm.catalog.POLYGLOT),  # equivalent to targets below
     ],
 )
 
@@ -13,10 +13,10 @@ java_binary(
     main_class = "Main",
     runtime_deps = [
         ":java",
-        "@maven//:org_graalvm_sdk_graal_sdk",
+        "@maven//:org_graalvm_polyglot_polyglot",
 
         # also equivalent to targets above
-        # graalvm.alias("org.graalvm.sdk", "graal-sdk"),
+        # graalvm.alias("org.graalvm.polyglot", "polyglot"),
     ],
 )
 

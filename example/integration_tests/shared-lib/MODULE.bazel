@@ -7,7 +7,7 @@ module(
 
 bazel_dep(
     name = "rules_java",
-    version = "6.4.0",
+    version = "7.1.0",
 )
 bazel_dep(
     name = "rules_graalvm",
@@ -22,8 +22,8 @@ gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 gvm.graalvm(
     name = "graalvm",
     distribution = "ce",
-    java_version = "20",
-    version = "20.0.2",
+    java_version = "21",
+    version = "21.0.1",
 )
 use_repo(
     gvm,

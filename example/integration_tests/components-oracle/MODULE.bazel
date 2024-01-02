@@ -7,7 +7,7 @@ module(
 
 bazel_dep(
     name = "rules_java",
-    version = "6.5.0",
+    version = "7.1.0",
 )
 bazel_dep(
     name = "rules_graalvm",
@@ -26,8 +26,8 @@ gvm.graalvm(
         "wasm",
     ],
     distribution = "oracle",
-    java_version = "20",
-    version = "20.0.2",
+    java_version = "17",
+    version = "17.0.8",
 )
 use_repo(
     gvm,

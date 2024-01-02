@@ -45,7 +45,14 @@ _LEGACY_DARWIN_TAG = "darwin"
 _NONLEGACY_DARWIN_TAG = "macos"
 
 def _get_artifact_info(ctx, dist, platform, version, component = None, strict = True):
-    info = resolve_distribution_artifact(dist, platform, version, component, strict)
+    info = resolve_distribution_artifact(
+        dist,
+        platform,
+        version,
+        ctx.attr.java_version,
+        component,
+        strict,
+    )
     if info == None:
         return None
     return struct(component = component, **info)
@@ -186,14 +193,20 @@ def _build_component_graph(components):
             effective_components.append(component)
     return effective_components
 
-def _detect_older_gvm_version(version):
+def _detect_older_gvm_version(ctx):
     """Checks if a version should be treated as an "older" GraalVM version, before release alignment."""
-    return version != None and _graal_version_configs.get(version) != None
+
+    version = ctx.attr.version
+    java_version = ctx.attr.java_version
+
+    if java_version != "21" and not int(java_version) > 20:
+        return version != None and _graal_version_configs.get(version) != None
+    return False  # force newer resolution on java 21+
 
 def _graal_bindist_repository_impl(ctx):
     """Implements the GraalVM repository rule (`graalvm_repository`)."""
 
-    if ctx.attr.distribution == None or _detect_older_gvm_version(ctx.attr.version):
+    if ctx.attr.distribution == None or _detect_older_gvm_version(ctx):
         platform, os, archive = _get_platform(ctx, False)
         version = ctx.attr.version
         java_version = ctx.attr.java_version
@@ -288,6 +301,7 @@ def _graal_bindist_repository_impl(ctx):
             dist_name,
             platform,
             version,
+            java_version,
             strict = False,
         )
         if config == None:
@@ -731,6 +745,28 @@ def graalvm_repository(
           name is used in the format `<name>_toolchains`.
         **kwargs: Passed to the underlying bindist repository rule.
     """
+
+    if (version == "21.0.0" and (java_version != "21" and java_version != "21.0.0")):
+        # buildifier: disable=print
+        print("""
+            Selected older GraalVM version at tag `21.0.0`; if you meant to select the newer Java 21 release,
+            please set the `java_version` to `21`, and the GraalVM `version` to `23.1.0` or greater.
+        """)
+
+    if ((java_version == "21") or (
+        version == "21.0.0" or
+        version == "21.0.1" or
+        version == "23.1.0" or
+        version == "23.1.1" or
+        version == "latest"
+    )):
+        if len(components) > 0:
+            fail("""
+                Components are no longer distributed via the GraalVM Updater (gu) tool at GraalVM 23.1.0+/Java 21+.
+                Please use Maven components instead.
+
+                To learn more about this transition, see: https://medium.com/graalvm/truffle-unchained-13887b77b62c
+            """)
 
     toolchain_repo_name = toolchain_repo_name or (name + "_toolchains")
 
