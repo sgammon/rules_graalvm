@@ -8,6 +8,9 @@ MAPPING_RULES = [
     # major and full java versions must align
     AlignmentRule(),
 
+    # handle deprecation of components at gvm 23.1.0+
+    ComponentDeprecationRule(),
+
     # there is no graalpython release for windows yet
     Rule.for_platform(
         Platform.WINDOWS_X64,
@@ -49,14 +52,6 @@ MAPPING_RULES = [
         components=DEFAULT_COMPONENTS,
         reason="Cannot calculate Oracle GVM component download URLs",
     ),
-
-    # at gvm 21+, only JVM17 and JVM20 are supported
-    Rule.supported_jvms_after(
-        "21.0.0",
-        JavaVersion.JAVA_17,
-        JavaVersion.JAVA_20,
-        reason="GraalVM 21+ only supports JVM17 and JVM20",
-    )
 ] + [
     # pins aligned version to supported JVM level (at JVM version tag)
     Rule.supported_jvms_at(

@@ -2,25 +2,21 @@
 
 module(
     name = "rules_graalvm",
-    version = "0.10.3",
+    version = "0.11.0",
 )
 
-JAVA_VERSION = "17"
+JAVA_VERSION = "21"
 
 PYTHON_VERSION = "3.11"
 
 NODE_VERSION = "20.5.0"
 
-GRAALVM_VERSION = "17.0.8"
+GRAALVM_VERSION = "21.0.1"
 
 GRAALVM_DIST = "ce"
 
-GRAALVM_SDK_VERSION = "23.0.1"
+GRAALVM_SDK_VERSION = "23.1.1"
 
-GRAALVM_COMPONENTS = [
-    "wasm",
-    "js",
-]
 
 ##
 ## Dependencies: API
@@ -144,6 +140,7 @@ bazel_dep(
 MAVEN_ARTIFACTS = [
     "org.graalvm.nativeimage:svm:%s" % GRAALVM_SDK_VERSION,
     "org.graalvm.sdk:graal-sdk:%s" % GRAALVM_SDK_VERSION,
+    "org.graalvm.polyglot:polyglot:%s" % GRAALVM_SDK_VERSION,
 ]
 
 MAVEN_REPOSITORIES = [
@@ -180,7 +177,6 @@ gvm = use_extension(
 )
 gvm.graalvm(
     name = "graalvm",
-    components = GRAALVM_COMPONENTS,
     distribution = GRAALVM_DIST,
     java_version = JAVA_VERSION,
     version = GRAALVM_VERSION,
@@ -189,14 +185,18 @@ use_repo(
     gvm,
     "graalvm",
 )
+use_repo(
+    gvm,
+    "graalvm_toolchains",
+)
 
 register_toolchains(
-    "@graalvm//:jvm",
+    "@graalvm_toolchains//:toolchain",
     dev_dependency = True,
 )
 
 register_toolchains(
-    "@graalvm//:sdk",
+    "@graalvm_toolchains//:toolchain_gvm",
     dev_dependency = True,
 )
 

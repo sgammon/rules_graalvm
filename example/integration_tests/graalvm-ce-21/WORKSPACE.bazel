@@ -1,0 +1,21 @@
+workspace(name = "rules_graalvm_sample")
+
+local_repository(
+    name = "rules_graalvm",
+    path = "../../..",
+)
+
+load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains", "rules_graalvm_repositories")
+
+rules_graalvm_repositories()
+
+register_graalvm_toolchains()
+
+load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
+
+graalvm_repository(
+    name = "graalvm",
+    distribution = "ce",
+    java_version = "21",
+    version = "21.0.1",
+)

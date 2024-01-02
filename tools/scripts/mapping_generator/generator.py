@@ -122,7 +122,7 @@ def generate(args):
     for target in all_targets:
         logger.debug("Processing target '%s'" % target)
         pair = target.generate_download_urls()
-        if not pair:
+        if not pair or not pair[0] or not pair[1]:
             logger.error("Failed to generate download URL for target: %s" % target)
             return sys.exit(1)
         if pair in download_urls:

@@ -81,7 +81,6 @@ load(
 load(
     "//internal:config.bzl",
     "GO_VERSION",
-    "GRAALVM_COMPONENTS",
     "GRAALVM_DISTRIBUTION",
     "GRAALVM_JAVA_VERSION",
     "GRAALVM_SHA",
@@ -158,7 +157,6 @@ def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linter
         distribution = GRAALVM_DISTRIBUTION,
         java_version = GRAALVM_JAVA_VERSION,
         sha256 = GRAALVM_SHA,
-        components = GRAALVM_COMPONENTS,
     )
 
     # Aspect: Bazel Lib

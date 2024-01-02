@@ -77,6 +77,8 @@ _ComponentDependencies = {
 # Aligned GraalVM distribution versions.
 # buildifier: disable=name-conventions
 _AlignedVersions = {
+    "21.0.1": "23.1.1",
+    "21.0.0": "23.1.0",
     "20.0.2": "23.0.1",
     "20.0.1": "23.0.1",
     "17.0.8": "23.0.1",
@@ -86,15 +88,23 @@ _AlignedVersions = {
 # VM release versions for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersions = {
+    "21.0.1": "21.0.1+12.1",
+    "23.1.1": "21.0.1+12.1",
+    "23.1.0": "21+35.1",
+    "21.0.0": "21+35.1",
     "20.0.2": "20.0.2+9.1",
     "20.0.1": "20.0.1+9.1",
-    "17.0.8": "17.0.8+9.1",
-    "17.0.7": "17.0.7+9.1",
+    "17.0.8": "17.0.8+7.1",
+    "17.0.7": "17.0.7+7.1",
 }
 
 # VM release versions (for Oracle GVM) for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersionsOracle = {
+    "21.0.1": "21.0.1+12.1",
+    "23.1.1": "21.0.1+12.1",
+    "23.1.0": "21+35.1",
+    "21.0.0": "21+35.1",
     "20.0.2": "20.0.2+9.1",
     "20.0.1": "20.0.1+9.1",
     "17.0.8": "17.0.8+9.1",

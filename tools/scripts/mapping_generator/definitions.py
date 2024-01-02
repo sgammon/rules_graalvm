@@ -82,7 +82,7 @@ class Platform(Enum):
 
 
 JAVA_MIN = 8
-JAVA_MAX = 21
+JAVA_MAX = 22
 
 
 class JavaVersion(IntEnum):
@@ -94,6 +94,7 @@ class JavaVersion(IntEnum):
     JAVA_19 = 19
     JAVA_20 = 20
     JAVA_21 = 21
+    JAVA_22 = 22
 
     @classmethod
     def from_parsed(cls, parsed):

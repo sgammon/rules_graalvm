@@ -269,6 +269,20 @@ class AlignmentRule(AbstractRule):
         return [(MappingRuleAction.SKIP, "Version misalignment")]
 
 
+COMPONENTS_DEPRECATED_AT = ParsedVersion.of("23.1.0")
+
+class ComponentDeprecationRule(AbstractRule):
+    """Enforce that components are distributed via Maven after Java 21/GraalVM 23.1.0."""
+
+    def applies_to(self, target):
+        if target.version == COMPONENTS_DEPRECATED_AT and target.component != Component.BASE:
+            return True  # need to reject
+        return False
+
+    def actions(self, target):
+        return [(MappingRuleAction.SKIP, "Components are distributed via Maven at GraalVM 23.1.0 and above")]
+
+
 def filter_supported_targets(args, targets):
     """Filter the provided set of download `targets` based on available support."""
     from .artifact import DownloadTarget

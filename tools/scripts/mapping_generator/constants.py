@@ -51,6 +51,7 @@ DEFAULT_JAVA_VERSIONS = [
     JavaVersion.JAVA_11,
     JavaVersion.JAVA_17,
     JavaVersion.JAVA_20,
+    JavaVersion.JAVA_21,
 ]
 
 TRANSITIONAL_RELEASES = [
@@ -100,6 +101,8 @@ PLATFORM_TAG_MAPPINGS = {
 
 ALIGNMENT_VERSIONS = [
     # jvm version -- java version -- gvm version
+    ("21.0.1", (JavaVersion.JAVA_21,), "23.1.1"),
+    ("21.0.0", (JavaVersion.JAVA_21,), "23.1.0"),
     ("20.0.2", (JavaVersion.JAVA_20,), "23.0.1"),
     ("20.0.1", (JavaVersion.JAVA_20,), "23.0.1"),
     ("17.0.8", (JavaVersion.JAVA_17,), "23.0.1"),
@@ -107,6 +110,8 @@ ALIGNMENT_VERSIONS = [
 ]
 
 VM_RELEASE_VERSIONS = {
+    "21.0.1": "21.0.1+12.1",
+    "21.0.0": "21+35.1",
     "20.0.2": "20.0.2+9.1",
     "20.0.1": "20.0.1+9.1",
     "17.0.8": "17.0.8+7.1",
@@ -114,6 +119,8 @@ VM_RELEASE_VERSIONS = {
 }
 
 SUPPORTED_JAVAS = [
+    ("23.1.1", (JavaVersion.JAVA_21,)),
+    ("23.1.0", (JavaVersion.JAVA_21,)),
     ("23.0.1", (JavaVersion.JAVA_17, JavaVersion.JAVA_20)),
 ]
 

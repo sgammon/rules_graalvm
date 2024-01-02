@@ -20,9 +20,15 @@ MAX_IN_FLIGHT_REQUESTS = 50
 
 def prepare_download_ctx(target, **kwargs):
     """Prepare context for rendering a download URL."""
+
+    # fix: graalvm for java21 is expressed as "21" instead of "21.0.0"
+    java_version = str(target.jvm or target.version)
+    if target.distribution == Distribution.ORACLE and java_version == "21.0.0":
+        java_version = "21"
+
     return dict(
         java_version_major=str(target.jdk),
-        java_version=str(target.jvm or target.version),
+        java_version=java_version,
         platform=str(target.platform),
         version=str(target.version),
         **kwargs
