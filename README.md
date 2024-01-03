@@ -8,24 +8,35 @@
 
 ---
 
-> Latest release: `0.11.0`
+> Latest release: [`0.11.0`](https://registry.bazel.build/modules/rules_graalvm)
 
-Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with support for:
+Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 
-- [Building native image binaries](./docs/native-image.md)
-- [Installing components with `gu`](./docs/components.md)
-- [Using GraalVM as a Bazel Java toolchain](./docs/toolchain.md)
+- [Build native binaries from polyglot apps](./docs/native-image.md)
+- [Build native shared libraries from Java or polyglot code](./docs/shared-libraries.md)
+- [Use GraalVM as a Bazel Java toolchain](./docs/toolchain.md)
+- [Easily use GraalVM Maven artifacts](./docs/maven-artifacts.md)
+- [Install components with `gu`](./docs/components.md)
+
+**Additional features:**
+
+- [Example projects for all use cases](./docs/examples.md)
+- [Hermetic compilation on all platforms](./docs/hermeticity.md)
+- [Run tools from GraalVM directly](./docs/binary-targets.md)
 - [Support for Bazel 6, Bazel 7, and Bzlmod](./docs/modern-bazel.md)
 - [Support for Bazel 4 and Bazel 5, drop-in replacement for `rules_graal`](./legacy-bazel.md)
-- [Run tools from GraalVM directly](./docs/binary-targets.md)
-- [Build native shared libraries from Java or polyglot code](./docs/shared-libraries.md)
-- [Example projects for each Bazel version](./docs/examples.md)
-- [Hermetic compilation on all platforms](./docs/hermeticity.md)
-- [Respects conventional Bazel build settings](./docs/build-settings.md)
-- [Easily use GraalVM Maven artifacts](./docs/maven-artifacts.md)
-- [Now available on BCR](https://registry.bazel.build/modules/rules_graalvm)
 - Support for macOS, Linux, Windows (including Native Image!) ([support matrix](./docs/modern-bazel.md))
 - Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
+
+## Getting Started
+
+- [Installation](#installation)
+- [Examples](#examples)
+- [Usage: Java Toolchains](#usage-java-toolchains)
+- [Usage: Native Image (Bazel 6+)](#usage-native-image-modern-bazel)
+- [Usage: Native Image (Bazel 4-6)](#usage-native-image-legacy-bazel)
+- [Hermeticity & Strictness](#hermeticity-strictness)
+- [GraalVM Toolchains](#graalvm-toolchains)
 
 ## Installation
 
@@ -131,7 +142,9 @@ build --java_runtime_version=graalvm_20
 > **Note**
 > If you name your repository `example` and set the Java version to `21`, your `java_runtime_version` would be `example_21`.
 
-## Build a native binary on Bazel 6+
+<a id="usage-native-image-modern-bazel"></a>
+
+## Usage: Native Image (Bazel 6+)
 
 > API docs for [`native_image`](./api/defs.md)
 
@@ -184,7 +197,9 @@ native_image(
 )
 ```
 
-## Build a native binary on Bazel 4 and Bazel 5
+<a id="usage-native-image-legacy-bazel"></a>
+
+## Usage: Native Image (Bazel 4 & 5)
 
 > API docs for legacy [`native_image`](./api/legacy.md) rule
 
@@ -209,7 +224,9 @@ native_image(
 > [!IMPORTANT]
 > In the legacy rules, you don't have to specify `native_image_tool`, but on the other hand, the default target `@graalvm//:native-image` is hard-coded in. If you use a different repository name make sure to add the `native_image_tool` attribute to point to `@yourrepo//:native-image`.
 
-## Hermeticity / strictness
+<a id="hermeticity-strictness"></a>
+
+## Hermeticity & Strictness
 
 These rules attempt to strike as optimal a balance as possible between older Bazel support (starting at Bazel 4) and the
 maximum possible strictness/hermeticity for action execution.
@@ -218,6 +235,8 @@ maximum possible strictness/hermeticity for action execution.
 Toolchains are additionally used within the rules to provide and resolve tools from GraalVM itself.
 
 For information about strictness tuning on each operating system, see the [hermeticity guide][2].
+
+<a id="graalvm-toolchains"></a>
 
 ### GraalVM toolchain type
 
@@ -245,13 +264,15 @@ The default `WORKSPACE` and Bzlmod installation instructions register both types
 **The GraalVM toolchain is required** to perform builds with `native-image` (or you must provide a `native_image_tool`
 target).
 
-## Adoption
+# Adoption
 
 `rules_graalvm` is used in the following organizations and in [Bazel itself](https://github.com/bazelbuild/bazel/pull/19361), as part of the [Turbine](https://github.com/google/turbine) toolchain.
 
-If you are using `rules_graalvm`, let us know with a PR 😄
+If you are using `rules_graalvm`, let us know with a PR!
 
-<img src="./docs/images/google.svg" alt="Google logo" height=50 />
+<br />
+
+<img src="./docs/images/google.svg" alt="Google logo" height=40 />
 
 > Bazel uses `rules_graalvm` for [Native Turbine](https://github.com/bazelbuild/bazel/pull/19361).
 
@@ -259,11 +280,11 @@ If you are using `rules_graalvm`, let us know with a PR 😄
 
 <img src="./docs/images/netflix.png" alt="Netflix logo" height=50 />
 
-> It's a secret how, but Netflix has been known to use `rules_graalvm`. 🫨
+> Netflix apparently uses it somehow.
 
 <br />
 
-<img src="./docs/images/elide.png" alt="Elide logo" height=50 />
+<img src="./docs/images/elide.png" alt="Elide logo" height=40 />
 
 > Elide uses `rules_graalvm` as part of the tooling for the [Elide Runtime](https://elide.dev), and for [Buildless](https://less.build).
 
@@ -271,7 +292,7 @@ If you are using `rules_graalvm`, let us know with a PR 😄
 
 [![Star History Chart](https://api.star-history.com/svg?repos=sgammon/rules_graalvm&type=Date)](https://star-history.com/#sgammon/rules_graalvm&Date)
 
-## Acknowledgements
+# Acknowledgements
 
 Built on top of @andyscott's fantastic work with [rules_graal](https://github.com/andyscott/rules_graal). Several contributors helped greatly, especially with regard to Bazel's toolchains and C++ features: @fmeum and others.
 
