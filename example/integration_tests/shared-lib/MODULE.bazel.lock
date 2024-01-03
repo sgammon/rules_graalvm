@@ -14,7 +14,7 @@
   },
   "localOverrideHashes": {
     "bazel_tools": "922ea6752dc9105de5af957f7a99a6933c0a6a712d23df6aad16a9c399f7e787",
-    "rules_graalvm": "aafe1f4a7dbd121ece2664c0cc6565800dc921778d02741303c83ca371c927e6"
+    "rules_graalvm": "fa50be8381e0ebb2e2dd9fbb5eeff1495406335c7141ccc5d5d24800f8374789"
   },
   "moduleDepGraph": {
     "<root>": {
@@ -172,7 +172,7 @@
     },
     "rules_graalvm@_": {
       "name": "rules_graalvm",
-      "version": "0.10.3",
+      "version": "0.11.0",
       "key": "rules_graalvm@_",
       "repoName": "rules_graalvm",
       "executionPlatformsToRegister": [],
@@ -811,7 +811,7 @@
     },
     "@@rules_graalvm~override//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "47LvXSQ/cQMnMfSBSOSjDIfPLef+KNX4dRXsTB6pW54=",
+        "bzlTransitiveDigest": "PkyvavvK5e4FjXXNmFAYYcGB6FofYxEbQwP3Uuc8TR4=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
