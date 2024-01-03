@@ -9,9 +9,6 @@
 
 > Latest release: `0.11.0`
 
-> **Important**
-> Currently in beta. Feedback welcome but will probably break your build.
-
 Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with support for:
 
 - [Building native image binaries](./docs/native-image.md)
@@ -248,9 +245,34 @@ The default `WORKSPACE` and Bzlmod installation instructions register both types
 **The GraalVM toolchain is required** to perform builds with `native-image` (or you must provide a `native_image_tool`
 target).
 
+## Adoption
+
+`rules_graalvm` is used in the following organizations and in [Bazel itself](https://github.com/bazelbuild/bazel/pull/19361), as part of the [Turbine](https://github.com/google/turbine) toolchain.
+
+If you are using `rules_graalvm`, let us know with a PR 😄
+
+###
+
+<img src="./docs/images/google.svg" alt="Google logo" height=50 />
+<br />
+
+> Bazel uses `rules_graalvm` for [Native Turbine](https://github.com/bazelbuild/bazel/pull/19361).
+
+<img src="./docs/images/netflix.png" alt="Netflix logo" height=50 />
+
+> It's a secret how, but Netflix has been known to use `rules_graalvm`. 🫨
+
+<img src="./docs/images/elide.png" alt="Elide logo" height=50 />
+
+> Elide uses `rules_graalvm` as part of the tooling for the [Elide Runtime](https://elide.dev), and for [Buildless](https://less.build).
+
+<br />
+
+[![Star History Chart](https://api.star-history.com/svg?repos=sgammon/rules_graalvm&type=Date)](https://star-history.com/#sgammon/rules_graalvm&Date)
+
 ## Acknowledgements
 
-Built on top of @andyscott's fantastic work with [rules_graal](https://github.com/andyscott/rules_graal).
+Built on top of @andyscott's fantastic work with [rules_graal](https://github.com/andyscott/rules_graal). Several contributors helped greatly, especially with regard to Bazel's toolchains and C++ features: @fmeum and others.
 
 [1]: https://bazel.build/extending/toolchains
 [2]: ./docs/hermeticity.md
