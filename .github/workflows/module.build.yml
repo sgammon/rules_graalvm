@@ -112,6 +112,9 @@ env:
   BUILDLESS_APIKEY: ${{ secrets.BUILDLESS_APIKEY }}
   BUILDBUDDY_APIKEY: ${{ secrets.BUILDBUDDY_APIKEY }}
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: "Build"
