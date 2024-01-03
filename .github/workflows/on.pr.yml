@@ -55,6 +55,7 @@ jobs:
         uses: actions/dependency-review-action@01bc87099ba56df1e897b6874784491ea6309bc4 # v3.1.4
         with:
           config-file: "./.github/dependency-review-config.yml"
+          comment-summary-in-pr: always
 
   test:
     name: "Tests: ${{ matrix.label }}"
