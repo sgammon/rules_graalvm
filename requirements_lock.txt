@@ -226,7 +226,7 @@ gevent==23.7.0 \
     # via
     #   -r requirements.txt
     #   grequests
-greenlet==2.0.2
+greenlet==3.0.3
     # via
     #   -r requirements.txt
     #   gevent
