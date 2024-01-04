@@ -6,13 +6,33 @@ name: Release
     tags:
       - "v*.*.*"
 
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: Pre-release
+        type: boolean
+        default: false
+      artifact:
+        description: Artifact
+        type: string
+        default: "rules_graalvm"
+      dry:
+        description: Dry-run
+        type: boolean
+        default: false
+
 permissions:
   contents: read
 
 jobs:
   release:
     name: "Release: BCR"
-    uses: elide-dev/bazel-contrib/.github/workflows/release_ruleset.yaml@master
+    uses: elide-dev/bazel-contrib/.github/workflows/release_ruleset.yaml@feat/provenance
     with:
       release_files: rules_graalvm-*.zip
-      prerelease: false
+      prerelease: ${{ inputs.prerelease }}
+      artifact: ${{ inputs.artifact }}
+      dry: ${{ inputs.dry }}
+      generate_release_notes: true
+      retention_days: 7
+      provenance: true
