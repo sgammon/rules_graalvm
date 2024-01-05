@@ -42,11 +42,15 @@ def _graal_binary_classic_implementation(ctx):
             or install a GraalVM `native-image` toolchain.
         """)
 
+    # resolve graal_home
+    graalvm_home = graal.dirname
+
     # resolve the native toolchain
     native_toolchain = _resolve_cc_toolchain(
         ctx,
         transitive_inputs,
         is_windows = ctx.configuration.host_path_separator == ";",
+        graalvm_home = graalvm_home,
     )
 
     args = ctx.actions.args()
