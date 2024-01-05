@@ -9,6 +9,10 @@ load(
     "find_cpp_toolchain",
 )
 load(
+    "@bazel_skylib//lib:paths.bzl",
+    "paths",
+)
+load(
     "//internal/native_image:common.bzl",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
     _DEBUG_CONDITION = "DEBUG_CONDITION",
@@ -71,7 +75,7 @@ def _graal_binary_implementation(ctx):
     # add toolchain files to transitive inputs
     transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
     transitive_inputs.append(gvm_toolchain.includes[DefaultInfo].files)
-    graalvm_home = graal.dirname
+    graalvm_home = paths.dirname(graal.dirname)
 
     # if we're using an explicit tool, add it to the direct inputs
     if graal:

@@ -16,6 +16,10 @@ load(
     "//internal/native_image:toolchain.bzl",
     _resolve_cc_toolchain = "resolve_cc_toolchain",
 )
+load(
+    "@bazel_skylib//lib:paths.bzl",
+    "paths",
+)
 
 def _graal_binary_classic_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
@@ -43,7 +47,7 @@ def _graal_binary_classic_implementation(ctx):
         """)
 
     # resolve graal_home
-    graalvm_home = graal.dirname
+    graalvm_home = paths.dirname(graal.dirname)
 
     # resolve the native toolchain
     native_toolchain = _resolve_cc_toolchain(
