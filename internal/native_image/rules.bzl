@@ -75,6 +75,8 @@ def _graal_binary_implementation(ctx):
     # add toolchain files to transitive inputs
     transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
     transitive_inputs.append(gvm_toolchain.includes[DefaultInfo].files)
+    direct_inputs.extend(ctx.files.data)
+
     graalvm_home = paths.dirname(graal.dirname)
 
     # if we're using an explicit tool, add it to the direct inputs
