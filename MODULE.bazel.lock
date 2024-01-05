@@ -2212,7 +2212,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "PkyvavvK5e4FjXXNmFAYYcGB6FofYxEbQwP3Uuc8TR4=",
+        "bzlTransitiveDigest": "mRzSuTlbQlQ0snbnMM3X7itZ8Eh1p7TKee6l6JsBWUc=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
