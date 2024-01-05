@@ -71,6 +71,7 @@ def _graal_binary_implementation(ctx):
     # add toolchain files to transitive inputs
     transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
     transitive_inputs.append(gvm_toolchain.includes[DefaultInfo].files)
+    graalvm_home = graal.dirname
 
     # if we're using an explicit tool, add it to the direct inputs
     if graal:
@@ -94,6 +95,7 @@ def _graal_binary_implementation(ctx):
         ctx,
         transitive_inputs,
         is_windows = is_windows,
+        graalvm_home = graalvm_home,
     )
 
     # shared libraries on macos are produced with an extension of `dylib`.
