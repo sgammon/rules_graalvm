@@ -8,6 +8,7 @@ GraalVMToolchainInfo = provider(
     fields = [
         "native_image_bin",
         "gvm_files",
+        "includes",
     ],
 )
 
@@ -24,6 +25,7 @@ def _gvm_toolchain_impl(ctx):
         graalvm = GraalVMToolchainInfo(
             native_image_bin = ctx.attr.native_image_bin,
             gvm_files = ctx.attr.gvm_files,
+            includes = ctx.attr.includes,
         ),
     )
     return [toolchain_info]
@@ -72,6 +74,15 @@ Filegroup which holds the full set of constituent files which are part of this G
 SDK installation.
 
 These files are transitive tool dependencies for any binary built with Native Image.
+""",
+        ),
+        "includes": attr.label(
+            mandatory = True,
+            allow_files = True,
+            cfg = "exec",
+            doc = """
+Native headers from the GraalVM JDK which should be made available to `native-image`
+compile jobs (for example, `jni.h`).
 """,
         ),
     },

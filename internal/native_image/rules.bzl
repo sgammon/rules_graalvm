@@ -60,6 +60,7 @@ def _graal_binary_implementation(ctx):
     resolved_graal = graal_attr or info.native_image_bin
     gvm_toolchain = info
     extra_tool_deps.append(info.gvm_files)
+    extra_tool_deps.append(info.includes)
 
     graal_inputs, _ = ctx.resolve_tools(tools = [
         resolved_graal,
@@ -69,6 +70,7 @@ def _graal_binary_implementation(ctx):
 
     # add toolchain files to transitive inputs
     transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
+    transitive_inputs.append(gvm_toolchain.includes[DefaultInfo].files)
 
     # if we're using an explicit tool, add it to the direct inputs
     if graal:
