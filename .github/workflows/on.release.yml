@@ -30,4 +30,3 @@ jobs:
     uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v2
     with:
       release_files: rules_graalvm-*.zip
-      prerelease: ${{ inputs.prerelease }}
