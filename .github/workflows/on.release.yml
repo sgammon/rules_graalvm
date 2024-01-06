@@ -27,12 +27,7 @@ permissions:
 jobs:
   release:
     name: "Release: BCR"
-    uses: elide-dev/bazel-contrib/.github/workflows/release_ruleset.yaml@feat/provenance
+    uses: bazel-contrib/.github/workflows/release_ruleset.yaml@master
     with:
       release_files: rules_graalvm-*.zip
       prerelease: ${{ inputs.prerelease }}
-      artifact: ${{ inputs.artifact }}
-      dry: ${{ inputs.dry }}
-      generate_release_notes: true
-      retention_days: 7
-      provenance: true
