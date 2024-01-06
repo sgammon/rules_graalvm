@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   test:
-    uses: bazel-contrib/.github/.github/workflows/bazel.yaml@29e53247c6366e30acbedfc767f58f79fc05836c
+    uses: bazel-contrib/.github/.github/workflows/bazel.yaml@b134b73fcae522bc77dcc03533d3de20b45714bf
     with:
       folders: |
         [
