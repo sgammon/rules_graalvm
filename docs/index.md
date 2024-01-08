@@ -34,10 +34,15 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 
 **Via `WORKSPACE.bazel`:**
 
+| Artifact | SHA256 |
+| ------- | ----------- |
+| `rules_graalvm-0.11.0.zip` | `f907041330f7eff8a0af1c19fdf936f0c8f8bc127cb52d5a1dde444784d9df54 ` |
+| `rules_graalvm-0.11.0.tgz` | `07ee6451dd4fd78625b0f0d94b9df9bf673716bf9572a0ab24675bc052928f7a ` |
+
 ```python
 http_archive(
     name = "rules_graalvm",
-    sha256 = None,
+    sha256 = "f907041330f7eff8a0af1c19fdf936f0c8f8bc127cb52d5a1dde444784d9df54",
     strip_prefix = "rules_graalvm-0.11.0",
     urls = [
         "https://github.com/sgammon/rules_graalvm/releases/download/v0.11.0/rules_graalvm-0.11.0.zip",
@@ -60,16 +65,18 @@ load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 ```python
 graalvm_repository(
     name = "graalvm",
-    components = [
-       # if you need components like `js` or `wasm`, add them here
-    ],
-    distribution = "oracle",  # `oracle`, `ce`, or `community`
-    java_version = "20",  # `17`, `20`, or `21`, as supported by the version provided
-    version = "20.0.2",  # earlier version format like `22.x` also supported
+    distribution = "ce",  # `oracle`, `ce`, or `community`
+    java_version = "21",  # `17`, `20`, or `21`, as supported by the version provided
+    version = "21.0.1",  # earlier version format like `22.x` also supported
 )
 ```
 
 **Or, via `MODULE.bazel`:**
+
+| Artifact | Integrity value |
+| ------- | --------------- |
+| `rules_graalvm-0.11.0.zip` | `sha256-+QcEEzD37/igrxwZ/fk28Mj4vBJ8tS1aHd5ER4TZ31Q=` |
+| `rules_graalvm-0.11.0.tgz` | `sha256-B+5kUd1P14YlsPDZS535v2c3Fr+VcqCrJGdbwFKSj3o=` |
 
 ```python
 bazel_dep(name = "rules_graalvm", version = "0.11.0")
@@ -80,12 +87,9 @@ gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 
 gvm.graalvm(
     name = "graalvm",
-    version = "20.0.2",  # earlier version format like `22.x` also supported
-    distribution = "oracle",  # `oracle`, `ce`, or `community`
-    java_version = "20",  # `17`, `20`, or `21`, as supported by the version provided
-    components = [
-       # if you need components like `js` or `wasm`, add them here
-    ],
+    version = "21.0.1",  # earlier version format like `22.x` also supported
+    distribution = "ce",  # `oracle`, `ce`, or `community`
+    java_version = "21",  # `17`, `20`, or `21`, as supported by the version provided
 )
 use_repo(gvm, "graalvm")
 register_toolchains("@graalvm//:jvm")
