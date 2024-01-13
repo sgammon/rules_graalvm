@@ -43,6 +43,14 @@ def _build_action_message(ctx):
     }
     return (_mode_label[ctx.attr.optimization_mode or "default"])
 
+def _prepare_execution_env(ctx, base_env = {}):
+    effective = {}
+    effective.update(base_env)
+    effective.update({
+        "GRAALVM_BAZEL": "true",
+    })
+    return effective
+
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
     extra_tool_deps = []
@@ -115,7 +123,7 @@ def _graal_binary_implementation(ctx):
     elif (not is_windows and not is_macos) and ctx.attr.shared_library:
         bin_postfix = _BIN_POSTFIX_SO
 
-    args = ctx.actions.args().use_param_file("@%s", use_always=False)
+    args = ctx.actions.args().use_param_file("@%s", use_always=True)
     all_outputs = _prepare_native_image_rule_context(
         ctx,
         args,
@@ -126,6 +134,10 @@ def _graal_binary_implementation(ctx):
         bin_postfix = bin_postfix,
     )
     binary = all_outputs[0]
+    execution_env = _prepare_execution_env(
+        ctx,
+        native_toolchain.env,
+    )
 
     # assemble final inputs
     inputs = depset(
@@ -137,7 +149,7 @@ def _graal_binary_implementation(ctx):
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImage",
-        "env": native_toolchain.env,
+        "env": execution_env,
         "execution_requirements": {k: "" for k in native_toolchain.execution_requirements},
         "progress_message": "Native Image __target__ (__mode__) %{label}"
             .replace("__mode__", _build_action_message(ctx))
