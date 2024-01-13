@@ -231,4 +231,4 @@ def assemble_native_build_options(
 
     # append extra arguments last
     for arg in ctx.attr.extra_args:
-        args.add(arg)
+        args.add(ctx.expand_location(arg, ctx.attr.data))
