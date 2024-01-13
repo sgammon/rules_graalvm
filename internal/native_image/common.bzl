@@ -191,7 +191,8 @@ def _prepare_native_image_rule_context(
     if len(ctx.attr.additional_outputs) > 0:
         outputs.extend(ctx.outputs.additional_outputs)
 
-    _assemble_native_build_options(
+    # generate options with tempdir for build
+    tempdir = _assemble_native_build_options(
         ctx,
         args,
         binary,
@@ -202,6 +203,9 @@ def _prepare_native_image_rule_context(
         gvm_toolchain,
         bin_postfix,
     )
+
+    # add native image tempdir to outputs
+    outputs.append(tempdir)
     return outputs
 
 ## Exports.

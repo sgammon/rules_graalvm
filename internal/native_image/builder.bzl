@@ -1,5 +1,22 @@
 "Logic to assemble `native-image` options."
 
+_DEFAULT_NATIVE_IMAGE_ARGS = [
+    "-H:+ReportExceptionStackTraces",
+]
+
+def _expand_var(ctx, arg, context = None, vars = None):
+    return ctx.expand_make_variables(
+        "native_image",
+        ctx.expand_location(arg, context or ctx.attr.data),
+        vars or ctx.var,
+    )
+
+def _expand_vars(ctx, args, context = None, vars = None):
+    return [_expand_var(ctx, arg, context, vars or ctx.var) for arg in args]
+
+def _arg_formatted(ctx, args, value, format = None, context = None, vars = None):
+    args.add(_expand_var(ctx, value, context, vars), format = format or "%s")
+
 def _configure_static_zlib_compile(ctx, args, direct_inputs):
     """Configure a static image compile against hermetic/static zlib.
 
@@ -157,6 +174,9 @@ def assemble_native_build_options(
         path_list_separator: Platform-specific path separator.
         gvm_toolchain: Resolved GraalVM toolchain, or `None` if a tool target is in use via legacy rules.
         bin_postfix: Binary postfix expected from the output file (for example, `.exe` or `.dylib`).
+
+    Returns:
+        Tempdir path where the native build should occur.
     """
 
     # main class is required unless we are building a shared library
@@ -177,8 +197,26 @@ def assemble_native_build_options(
 
     args.add(ctx.attr.main_class, format = "-H:Class=%s")
     args.add(trimmed_basename, format = "-H:Name=%s")
-    args.add(binary.dirname, format = "-H:Path=%s")
-    args.add("-H:+ReportExceptionStackTraces")
+
+    # binary path supports expansion
+    _arg_formatted(
+        ctx,
+        args,
+        binary.dirname,
+        format = "-H:Path=%s",
+    )
+
+    # default native image args
+    args.add_all(_DEFAULT_NATIVE_IMAGE_ARGS)
+
+    # declare a temp path for graalvm to use
+    tempdir = ctx.actions.declare_directory("native_image_build", sibling = binary)
+
+    # share temp path with graalvm sandbox, as genfiles root
+    args.add(
+        tempdir.path,
+        format = "-H:TempDirectory=%s",
+    )
 
     if not ctx.attr.check_toolchains:
         args.add("-H:-CheckToolchain")
@@ -204,7 +242,14 @@ def assemble_native_build_options(
 
     # configure resources
     if ctx.attr.include_resources != None:
-        args.add(ctx.attr.include_resources, format = "-H:IncludeResources=%s")
+        # resources config supports expansion
+        _arg_formatted(
+            ctx,
+            args,
+            ctx.attr.include_resources,
+            format = "-H:IncludeResources=%s",
+            context = ctx.attr.profiles,
+        )
 
     # if a static build is being performed against hermetic zlib, configure it
     if ctx.attr.static_zlib != None:
@@ -215,8 +260,9 @@ def assemble_native_build_options(
         )
 
     if ctx.files.profiles:
+        # pgo profiles support expansion
         args.add_joined(
-            ctx.files.profiles,
+            _expand_vars(ctx, ctx.files.profiles, ctx.attr.profiles),
             join_with = ",",
             format_joined = "--pgo=%s",
         )
@@ -230,5 +276,8 @@ def assemble_native_build_options(
         )
 
     # append extra arguments last
-    for arg in ctx.attr.extra_args:
-        args.add(ctx.expand_location(arg, ctx.attr.data))
+    if len(ctx.attr.extra_args) > 0:
+        # extra args support location + makefile expansion
+        args.add_all(_expand_vars(ctx, ctx.attr.extra_args))
+
+    return tempdir
