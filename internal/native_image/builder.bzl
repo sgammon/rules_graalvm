@@ -195,8 +195,15 @@ def assemble_native_build_options(
     if bin_postfix:
         trimmed_basename = trimmed_basename[0:-(len(bin_postfix))]
 
-    args.add(ctx.attr.main_class, format = "-H:Class=%s")
     args.add(trimmed_basename, format = "-H:Name=%s")
+    if ctx.attr.main_class != None and ctx.attr.main_class != "":
+        if ctx.attr.main_module != None and ctx.attr.main_module != "":
+            args.add(
+                "%s/%s" % (ctx.attr.main_module, ctx.attr.main_class),
+                format = "-H:Class=%s",
+            )
+        else:
+            args.add(ctx.attr.main_class, format = "-H:Class=%s")
 
     # binary path supports expansion
     _arg_formatted(
