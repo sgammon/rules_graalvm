@@ -226,6 +226,7 @@ def assemble_native_build_options(
         args,
         binary,
         classpath_depset,
+        modulepath_depset,
         direct_inputs,
         c_compiler_path,
         path_list_separator,
@@ -241,6 +242,7 @@ def assemble_native_build_options(
         args: Args builder for the Native Image build.
         binary: Target output binary which will be built with Native Image.
         classpath_depset: Classpath dependency set.
+        modulepath_depset: Modular dependency set.
         direct_inputs: Direct inputs into the native image build (mutable).
         c_compiler_path: Path to the C compiler; resolved via toolchains.
         path_list_separator: Platform-specific path separator.
@@ -318,10 +320,11 @@ def assemble_native_build_options(
         join_with = path_list_separator,
     )
 
+    # assemble module path
     args.add_joined(
-        ctx.attr.native_features,
-        join_with = ",",
-        format_joined = "-H:Features=%s",
+        "--module-path",
+        modulepath_depset,
+        join_with = path_list_separator,
     )
 
     # configure the build optimization mode

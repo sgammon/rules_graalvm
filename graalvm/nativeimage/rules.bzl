@@ -151,6 +151,7 @@ def native_image(
     """
 
     if shared_library:
+        # buildifier: disable=print
         print("GraalVM rules for Bazel at >0.11.x uses `native_image_shared_library`. Please migrate at your convenience.")
 
     _native_image(

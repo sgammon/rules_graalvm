@@ -1,0 +1,58 @@
+load(
+    "@rules_graalvm//graalvm:defs.bzl",
+    "native_image",
+)
+load(
+    "@rules_graalvm//graalvm/artifacts:maven.bzl",
+    graalvm = "alias",
+)
+load(
+    "@rules_java//java:defs.bzl",
+    "java_binary",
+    "java_library",
+)
+
+package(default_visibility = [
+    "//tests:__subpackages__",
+])
+
+
+filegroup(
+    name = "reflection-config",
+    srcs = ["reflection.json"],
+)
+
+java_library(
+    name = "java",
+    srcs = [
+        "Main.java",
+        "module-info.java",
+    ],
+    deps = [
+        graalvm.artifact(graalvm.catalog.SDK, repo = "@maven_gvm"),
+    ],
+)
+
+java_binary(
+    name = "main",
+    main_class = "app/Main",
+    runtime_deps = [
+        ":java",
+    ],
+)
+
+native_image(
+    name = "main-modular",
+    main_class = "Main",
+    deps = [":java"],
+    strict = True,
+    reflection_configuration = ":reflection-config",
+    module_deps = [
+        graalvm.artifact(graalvm.catalog.SDK, repo = "@maven_gvm"),
+    ],
+)
+
+alias(
+    name = "modular",
+    actual = "main-modular",
+)

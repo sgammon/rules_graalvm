@@ -58,6 +58,10 @@ _NATIVE_IMAGE_BASE_ATTRS = {
         providers = [[JavaInfo]],
         mandatory = True,
     ),
+    "module_deps": attr.label_list(
+        providers = [[JavaInfo]],
+        mandatory = False,
+    ),
     "shared_library": attr.bool(
         mandatory = False,
         default = False,
@@ -195,7 +199,8 @@ def _prepare_native_image_rule_context(
         direct_inputs,
         c_compiler_path,
         gvm_toolchain = None,
-        bin_postfix = None):
+        bin_postfix = None,
+        modulepath_depset = None):
     """Prepare a `native-image` build context."""
 
     out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
@@ -237,6 +242,7 @@ def _prepare_native_image_rule_context(
         args,
         binary,
         classpath_depset,
+        modulepath_depset or depset([]),
         direct_inputs,
         c_compiler_path,
         path_list_separator,

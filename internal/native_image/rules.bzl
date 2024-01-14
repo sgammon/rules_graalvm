@@ -59,9 +59,24 @@ def _graal_binary_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
     extra_tool_deps = []
     gvm_toolchain = None
+
+    # build a suite of modular-capable dependencies
+    modulepath_depset = depset([])
+    modular_jars = []
+    if ctx.attr.module_deps and len(ctx.attr.module_deps) > 0:
+        modulepath_depset = depset(transitive = [
+            depset(dep[JavaInfo].java_outputs)
+            for dep in ctx.attr.module_deps
+        ])
+        modular_jars = modulepath_depset.to_list()
+
     classpath_depset = depset(transitive = [
-        dep[JavaInfo].transitive_runtime_jars
-        for dep in ctx.attr.deps
+        f for f in
+        [
+            dep[JavaInfo].transitive_runtime_jars
+            for dep in ctx.attr.deps
+        ]
+        if f not in modular_jars
     ])
 
     graal = None
@@ -136,6 +151,7 @@ def _graal_binary_implementation(ctx):
         native_toolchain.c_compiler_path,
         gvm_toolchain,
         bin_postfix = bin_postfix,
+        modulepath_depset = modulepath_depset,
     )
     binary = all_outputs[0]
     execution_env = _prepare_execution_env(
