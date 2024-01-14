@@ -13,6 +13,11 @@ _MavenArtifacts = struct(
         artifact = "graal-sdk",
         group = "org.graalvm.sdk",
         options = {"neverlink": True},
+        NATIVEIMAGE = struct(
+            artifact = "nativeimage",
+            group = "org.graalvm.sdk",
+            options = {"neverlink": True},
+        )
     ),
     POLYGLOT = struct(
         artifact = "polyglot",
