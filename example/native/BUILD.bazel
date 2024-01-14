@@ -12,6 +12,12 @@ package(default_visibility = [
     "//tests:__subpackages__",
 ])
 
+
+filegroup(
+    name = "reflection-config",
+    srcs = ["reflection.json"],
+)
+
 java_library(
     name = "java",
     srcs = ["Main.java"],
@@ -30,6 +36,7 @@ native_image(
     main_class = "Main",
     deps = [":java"],
     strict = True,
+    reflection_configuration = ":reflection-config",
 )
 
 alias(
