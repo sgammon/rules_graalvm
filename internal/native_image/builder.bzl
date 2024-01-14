@@ -3,7 +3,14 @@
 _NATIVE_IMAGE_SHARED_TMP_DIR_TPL = "native-shlib-%s"
 
 _DEFAULT_NATIVE_IMAGE_ARGS = [
+    "-H:+JNI",
     "-H:+ReportExceptionStackTraces",
+    "-H:+UnlockExperimentalVMOptions",
+]
+
+_STRICT_NATIVE_IMAGE_ARGS = [
+    "--link-at-build-time",
+    "--strict-image-heap",
 ]
 
 def _expand_var(ctx, arg, context = None, vars = None):
@@ -215,8 +222,10 @@ def assemble_native_build_options(
         format = "-H:Path=%s",
     )
 
-    # default native image args
+    # default native image args, and strict args if directed
     args.add_all(_DEFAULT_NATIVE_IMAGE_ARGS)
+    if ctx.attr.strict:
+        args.add_all(_STRICT_NATIVE_IMAGE_ARGS)
 
     tempdir = None
     if ctx.attr.shared_library:

@@ -72,6 +72,10 @@ _NATIVE_IMAGE_BASE_ATTRS = {
         mandatory = False,
         default = False,
     ),
+    "strict": attr.bool(
+        mandatory = False,
+        default = False,
+    ),
     "optimization_mode": attr.string(
         mandatory = False,
         values = [
