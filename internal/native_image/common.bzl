@@ -1,6 +1,10 @@
 "Defines common properties shared by modern and legacy Native Image rules."
 
 load(
+    "@bazel_skylib//lib:dicts.bzl",
+    "dicts",
+)
+load(
     "//internal/native_image:builder.bzl",
     _assemble_native_build_options = "assemble_native_build_options",
 )
@@ -40,13 +44,10 @@ _OPTIMIZATION_MODE_CONDITION = select({
     "//conditions:default": _NativeImageOptimization.DEFAULT,  # becomes `-O2` via GraalVM defaults
 })
 
-_NATIVE_IMAGE_ATTRS = {
+_NATIVE_IMAGE_BASE_ATTRS = {
     "deps": attr.label_list(
         providers = [[JavaInfo]],
         mandatory = True,
-    ),
-    "main_class": attr.string(
-        mandatory = False,
     ),
     "shared_library": attr.bool(
         mandatory = False,
@@ -140,6 +141,19 @@ _NATIVE_IMAGE_ATTRS = {
     ),
 }
 
+_NATIVE_IMAGE_BIN_ATTRS = dicts.add(_NATIVE_IMAGE_BASE_ATTRS, **{
+    "main_class": attr.string(
+        mandatory = False,
+    ),
+    "main_module": attr.string(
+        mandatory = False,
+    ),
+})
+
+_NATIVE_IMAGE_SHAREDLIB_ATTRS = dicts.add(_NATIVE_IMAGE_BASE_ATTRS, **{
+    # Nothing at this time.
+})
+
 def _prepare_bin_name(
         name,
         bin_postfix = None):
@@ -223,5 +237,6 @@ BAZEL_CPP_TOOLCHAIN_TYPE = _BAZEL_CPP_TOOLCHAIN_TYPE
 BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 MACOS_CONSTRAINT = _MACOS_CONSTRAINT
 WINDOWS_CONSTRAINT = _WINDOWS_CONSTRAINT
-NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
+NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_BIN_ATTRS
+NATIVE_IMAGE_SHARED_LIB_ATTRS = _NATIVE_IMAGE_SHAREDLIB_ATTRS
 prepare_native_image_rule_context = _prepare_native_image_rule_context

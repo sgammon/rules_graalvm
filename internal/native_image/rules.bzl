@@ -1,16 +1,16 @@
 "Rules for building native binaries using the GraalVM `native-image` tool."
 
 load(
-    "@build_bazel_apple_support//lib:apple_support.bzl",
-    "apple_support",
+    "@bazel_skylib//lib:paths.bzl",
+    "paths",
 )
 load(
     "@bazel_tools//tools/cpp:toolchain_utils.bzl",
     "find_cpp_toolchain",
 )
 load(
-    "@bazel_skylib//lib:paths.bzl",
-    "paths",
+    "@build_bazel_apple_support//lib:apple_support.bzl",
+    "apple_support",
 )
 load(
     "//internal/native_image:common.bzl",
@@ -19,6 +19,7 @@ load(
     _DEFAULT_GVM_REPO = "DEFAULT_GVM_REPO",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
+    _NATIVE_IMAGE_SHARED_LIB_ATTRS = "NATIVE_IMAGE_SHARED_LIB_ATTRS",
     _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
     _RULES_REPO = "RULES_REPO",
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
@@ -261,7 +262,9 @@ RULES_REPO = _RULES_REPO
 DEFAULT_GVM_REPO = _DEFAULT_GVM_REPO
 BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
+NATIVE_IMAGE_SHARED_LIB_ATTRS = _NATIVE_IMAGE_SHARED_LIB_ATTRS
 GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
 DEBUG_CONDITION = _DEBUG_CONDITION
 OPTIMIZATION_MODE_CONDITION = _OPTIMIZATION_MODE_CONDITION
 graal_binary_implementation = _graal_binary_implementation
+graal_shared_binary_implementation = _graal_binary_implementation
