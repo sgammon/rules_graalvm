@@ -7,23 +7,26 @@ _MavenArtifacts = struct(
     SVM = struct(
         artifact = "svm",
         group = "org.graalvm.nativeimage",
-        neverlink = True,
+        options = {"neverlink": True},
     ),
     SDK = struct(
         artifact = "graal-sdk",
         group = "org.graalvm.sdk",
-        neverlink = True,
+        options = {"neverlink": True},
     ),
     POLYGLOT = struct(
         artifact = "polyglot",
         group = "org.graalvm.polyglot",
+        options = {},
     ),
     TRUFFLE = struct(
         artifact = "truffle-api",
         group = "org.graalvm.truffle",
+        options = {},
         NFI = struct(
             artifact = "truffle-nfi",
             group = "org.graalvm.truffle",
+            options = {},
         ),
     ),
 )
@@ -119,7 +122,7 @@ def _graalvm_maven_artifact(maven, artifact, version):
         artifact = artifact.artifact,
         group = artifact.group,
         version = version,
-        neverlink = artifact.get("neverlink", False),
+        **artifact.options,
     )
 
 # buildifier: disable=name-conventions
