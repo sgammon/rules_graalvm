@@ -36,6 +36,10 @@ _EXEUCTABLE_NAME_CONDITION = select({
     "//conditions:default": "%target%-bin",
 })
 
+_SHARED_LIB_NAME_CONDITION = select({
+    "//conditions:default": "%target%",
+})
+
 _modern_rule_attrs = {
     "native_image_tool": attr.label(
         cfg = "exec",
@@ -185,7 +189,7 @@ def native_image(
 def native_image_shared_library(
         name,
         deps,
-        executable_name = _EXEUCTABLE_NAME_CONDITION,
+        executable_name = _SHARED_LIB_NAME_CONDITION,
         include_resources = None,
         reflection_configuration = None,
         jni_configuration = None,
