@@ -13,6 +13,12 @@ _STRICT_NATIVE_IMAGE_ARGS = [
     "--strict-image-heap",
 ]
 
+_DEBUG_NATIVE_IMAGE_ARGS = [
+    "-g",
+    "-H:+SourceLevelDebug",
+    "-H:-DeleteLocalSymbols",
+]
+
 def _expand_var(ctx, arg, context = None, vars = None):
     return ctx.expand_make_variables(
         "native_image",
@@ -77,7 +83,7 @@ def _configure_debug(ctx, args):
     """
 
     if ctx.attr.debug:
-        args.add("-g")
+        args.add_all(_DEBUG_NATIVE_IMAGE_ARGS)
 
 def _configure_optimization_mode(ctx, args):
     """Configure the Native Image optimization mode to match Bazel's build setting.
