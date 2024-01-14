@@ -65,7 +65,7 @@ def _graal_binary_implementation(ctx):
     modular_jars = []
     if ctx.attr.module_deps and len(ctx.attr.module_deps) > 0:
         modulepath_depset = depset(transitive = [
-            depset(dep[JavaInfo].java_outputs)
+            dep.files
             for dep in ctx.attr.module_deps
         ])
         modular_jars = modulepath_depset.to_list()

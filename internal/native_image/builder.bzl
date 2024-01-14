@@ -210,16 +210,19 @@ def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
         format_each = "-H:CCompilerOption=%s",
     )
 
-def _configure_native_test_flags(ctx, args):
-    """Configure native testing flags; only applies if we are building a test-only target.
+def _configure_gvm_features(args, features = []):
+    """Format and add arguments for GraalVM feature classes.
 
     Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
+        args: Args we're adding to.
+        features: Additional features to inject.
     """
 
-    if ctx.attr.coverage:
-        args.add("--tool:coverage")
+    args.add_joined(
+        features,
+        join_with = ",",
+        format_joined = "--features=%s",
+    )
 
 def assemble_native_build_options(
         ctx,
@@ -231,7 +234,9 @@ def assemble_native_build_options(
         c_compiler_path,
         path_list_separator,
         gvm_toolchain = None,
-        bin_postfix = None):
+        bin_postfix = None,
+        injected_features = [],
+        injected_args = []):
     """Assemble the effective arguments to `native-image`.
 
     This function is responsible for converting the current rule invocation context into a set of arguments
@@ -248,6 +253,8 @@ def assemble_native_build_options(
         path_list_separator: Platform-specific path separator.
         gvm_toolchain: Resolved GraalVM toolchain, or `None` if a tool target is in use via legacy rules.
         bin_postfix: Binary postfix expected from the output file (for example, `.exe` or `.dylib`).
+        injected_features: Additional feature classes to add to the compile invocation.
+        injected_args: Additional arguments to inject into the compile invocation.
 
     Returns:
         Tempdir path where the native build should occur.
@@ -361,12 +368,11 @@ def assemble_native_build_options(
         )
         direct_inputs.extend(ctx.files.profiles)
 
-    # add test-related flags, if this is a `testonly` target
-    if ctx.attr.testonly:
-        _configure_native_test_flags(
-            ctx,
-            args,
-        )
+    # configure feature classes
+    _configure_gvm_features(args, injected_features)
+
+    # add injected args before user args, so that `extra_args` has a chance to override these.
+    args.add_all(injected_args)
 
     # append extra arguments last
     if len(ctx.attr.extra_args) > 0:

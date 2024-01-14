@@ -98,7 +98,15 @@ def native_image(
         executable_name = _EXEUCTABLE_NAME_CONDITION,
         include_resources = None,
         reflection_configuration = None,
+        reflection_configurations = [],
         jni_configuration = None,
+        jni_configurations = [],
+        resource_configuration = None,
+        resource_configurations = [],
+        proxy_configuration = None,
+        proxy_configurations = [],
+        serialization_configuration = None,
+        serialization_configurations = [],
         initialize_at_build_time = [],
         initialize_at_run_time = [],
         native_features = [],
@@ -127,7 +135,15 @@ def native_image(
             The special string `%target%`, if present, is replaced with `name`.
         include_resources: Glob to pass to `IncludeResources`. No default; optional.
         reflection_configuration: Reflection configuration file. No default; optional.
+        reflection_configurations: Reflection configuration file. No default; optional.
         jni_configuration: JNI configuration file. No default; optional.
+        jni_configurations: Multiple JNI configuration files. No default; optional.
+        resource_configuration: Configuration file for embedded resources. No default; optional.
+        resource_configurations: Configuration files for embedded resources. No default; optional.
+        proxy_configuration: Configuration file for Java class proxies. No default; optional.
+        proxy_configurations: Configuration files for Java class proxies. No default; optional.
+        serialization_configuration: Configuration file for Java class proxies. No default; optional.
+        serialization_configurations: Configuration files for Java class proxies. No default; optional.
         initialize_at_build_time: Classes or patterns to pass to `--initialize-at-build-time`. No default; optional.
         initialize_at_run_time: Classes or patterns to pass to `--initialize-at-run-time`. No default; optional.
         native_features: GraalVM `Feature` classes to include and apply. No default; optional.
@@ -189,10 +205,18 @@ def native_image(
 def native_image_shared_library(
         name,
         deps,
-        executable_name = _SHARED_LIB_NAME_CONDITION,
+        lib_name = _SHARED_LIB_NAME_CONDITION,
         include_resources = None,
         reflection_configuration = None,
+        reflection_configurations = [],
         jni_configuration = None,
+        jni_configurations = [],
+        resource_configuration = None,
+        resource_configurations = [],
+        proxy_configuration = None,
+        proxy_configurations = [],
+        serialization_configuration = None,
+        serialization_configurations = [],
         initialize_at_build_time = [],
         initialize_at_run_time = [],
         native_features = [],
@@ -216,11 +240,19 @@ def native_image_shared_library(
     Args:
         name: Name of the target; required.
         deps: Dependency `java_library` targets to assemble the classpath from. Mandatory.
-        executable_name: Set the name of the output binary; defaults to `%target%-bin`, or `%target%-bin.exe` on Windows.
+        lib_name: Set the name of the output library binary; defaults to `%target%`.
             The special string `%target%`, if present, is replaced with `name`.
         include_resources: Glob to pass to `IncludeResources`. No default; optional.
         reflection_configuration: Reflection configuration file. No default; optional.
+        reflection_configurations: Reflection configuration file. No default; optional.
         jni_configuration: JNI configuration file. No default; optional.
+        jni_configurations: Multiple JNI configuration files. No default; optional.
+        resource_configuration: Configuration file for embedded resources. No default; optional.
+        resource_configurations: Configuration files for embedded resources. No default; optional.
+        proxy_configuration: Configuration file for Java class proxies. No default; optional.
+        proxy_configurations: Configuration files for Java class proxies. No default; optional.
+        serialization_configuration: Configuration file for Java class proxies. No default; optional.
+        serialization_configurations: Configuration files for Java class proxies. No default; optional.
         initialize_at_build_time: Classes or patterns to pass to `--initialize-at-build-time`. No default; optional.
         initialize_at_run_time: Classes or patterns to pass to `--initialize-at-run-time`. No default; optional.
         native_features: GraalVM `Feature` classes to include and apply. No default; optional.
@@ -252,7 +284,15 @@ def native_image_shared_library(
         deps = deps,
         include_resources = include_resources,
         reflection_configuration = reflection_configuration,
+        reflection_configurations = reflection_configurations,
         jni_configuration = jni_configuration,
+        jni_configurations = jni_configurations,
+        resource_configuration = resource_configuration,
+        resource_configurations = resource_configurations,
+        proxy_configuration = proxy_configuration,
+        proxy_configurations = proxy_configurations,
+        serialization_configuration = serialization_configuration,
+        serialization_configurations = serialization_configurations,
         initialize_at_build_time = initialize_at_build_time,
         initialize_at_run_time = initialize_at_run_time,
         native_features = native_features,
@@ -265,7 +305,7 @@ def native_image_shared_library(
         static_zlib = static_zlib,
         c_compiler_option = c_compiler_option,
         allow_fallback = allow_fallback,
-        executable_name = executable_name,
+        lib_name = lib_name,
         native_image_tool = native_image_tool,
         native_image_settings = native_image_settings,
         profiles = profiles,

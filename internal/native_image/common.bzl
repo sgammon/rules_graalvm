@@ -56,7 +56,7 @@ _OUTPUT_GROUPS = struct(
 _NATIVE_IMAGE_BASE_ATTRS = {
     "deps": attr.label_list(
         providers = [[JavaInfo]],
-        mandatory = True,
+        mandatory = False,
     ),
     "module_deps": attr.label_list(
         providers = [[JavaInfo]],
@@ -94,6 +94,20 @@ _NATIVE_IMAGE_BASE_ATTRS = {
     "resource_configurations": attr.label_list(
         mandatory = False,
     ),
+    "proxy_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
+    "proxy_configurations": attr.label_list(
+        mandatory = False,
+    ),
+    "serialization_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
+    "serialization_configurations": attr.label_list(
+        mandatory = False,
+    ),
     "debug": attr.bool(
         mandatory = False,
         default = False,
@@ -121,6 +135,9 @@ _NATIVE_IMAGE_BASE_ATTRS = {
     "initialize_at_run_time": attr.string_list(
         mandatory = False,
     ),
+    "initialize_rerun_at_runtime": attr.string_list(
+        mandatory = False,
+    ),
     "native_features": attr.string_list(
         mandatory = False,
     ),
@@ -139,14 +156,10 @@ _NATIVE_IMAGE_BASE_ATTRS = {
     "c_compiler_option": attr.string_list(
         mandatory = False,
     ),
-    "executable_name": attr.string(
-        mandatory = True,
-    ),
     "profiles": attr.label_list(
         allow_files = True,
         mandatory = False,
     ),
-    "out_headers": attr.output_list(),
     "additional_outputs": attr.output_list(),
     "default_outputs": attr.bool(
         default = True,
@@ -172,16 +185,54 @@ _NATIVE_IMAGE_BASE_ATTRS = {
 }
 
 _NATIVE_IMAGE_BIN_ATTRS = dicts.add(_NATIVE_IMAGE_BASE_ATTRS, **{
+    "deps": attr.label_list(
+        providers = [[JavaInfo]],
+        mandatory = True,
+    ),
+    "main_class": attr.string(
+        mandatory = True,
+    ),
+    "main_module": attr.string(
+        mandatory = False,
+    ),
+    "executable_name": attr.string(
+        mandatory = True,
+    ),
+})
+
+_NATIVE_IMAGE_TEST_ATTRS = dicts.add(_NATIVE_IMAGE_BASE_ATTRS, **{
+    "tests": attr.label_list(
+        providers = [[JavaInfo]],
+        mandatory = True,
+    ),
     "main_class": attr.string(
         mandatory = False,
     ),
     "main_module": attr.string(
         mandatory = False,
     ),
+    "discovery": attr.bool(
+        default = True,
+    ),
+    "executable_name": attr.string(
+        mandatory = True,
+    ),
+    "_is_test": attr.bool(
+        default = True,
+    ),
 })
 
 _NATIVE_IMAGE_SHAREDLIB_ATTRS = dicts.add(_NATIVE_IMAGE_BASE_ATTRS, **{
-    # Nothing at this time.
+    "deps": attr.label_list(
+        providers = [[JavaInfo]],
+        mandatory = True,
+    ),
+    "out_headers": attr.output_list(
+        # Emitted headers.
+    ),
+    "lib_name": attr.string(
+        # Shared library name.
+    ),
 })
 
 def _prepare_bin_name(
@@ -200,10 +251,17 @@ def _prepare_native_image_rule_context(
         c_compiler_path,
         gvm_toolchain = None,
         bin_postfix = None,
-        modulepath_depset = None):
+        modulepath_depset = None,
+        injected_features = [],
+        injected_args = []):
     """Prepare a `native-image` build context."""
 
-    out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
+    out_bin_name = None
+    if ctx.attr.shared_library:
+        out_bin_name = ctx.attr.lib_name.replace("%target%", ctx.attr.name)
+    else:
+        out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
+
     binary = ctx.actions.declare_file(_prepare_bin_name(out_bin_name, bin_postfix))
 
     additional_outputs = []
@@ -224,13 +282,13 @@ def _prepare_native_image_rule_context(
         additional_outputs.append(_GRAALVM_ISOLATE_HEADER)
         additional_outputs.append(_GRAALVM_ISOLATE_DYNAMIC_HEADER)
 
+        # append all out headers
+        if len(ctx.attr.out_headers) > 0:
+            outputs.extend(ctx.outputs.out_headers)
+
     # append all additional outputs
     if len(additional_outputs) > 0:
         outputs.extend([ctx.actions.declare_file(f) for f in additional_outputs])
-
-    # append all out headers
-    if len(ctx.attr.out_headers) > 0:
-        outputs.extend(ctx.outputs.out_headers)
 
     # append all attr additional outputs
     if len(ctx.attr.additional_outputs) > 0:
@@ -248,6 +306,8 @@ def _prepare_native_image_rule_context(
         path_list_separator,
         gvm_toolchain,
         bin_postfix,
+        injected_features,
+        injected_args,
     )
 
     # add native image tempdir to outputs if one was allocated
