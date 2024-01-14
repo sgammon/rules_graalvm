@@ -14,7 +14,7 @@
   },
   "localOverrideHashes": {
     "bazel_tools": "922ea6752dc9105de5af957f7a99a6933c0a6a712d23df6aad16a9c399f7e787",
-    "rules_graalvm": "fa50be8381e0ebb2e2dd9fbb5eeff1495406335c7141ccc5d5d24800f8374789"
+    "rules_graalvm": "dc53fbbe269b450a74414cc27a801d520fcbdeeeac04b1b0f9179ba111207326"
   },
   "moduleDepGraph": {
     "<root>": {
