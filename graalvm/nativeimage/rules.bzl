@@ -9,11 +9,6 @@ load(
     "use_cpp_toolchain",
 )
 load(
-    "//graalvm/artifacts:maven.bzl",
-    _MavenArtifacts = "MavenArtifacts",
-    _graalvm_maven_artifact = "graalvm_maven_artifact",
-)
-load(
     "//internal/native_image:rules.bzl",
     _DEBUG = "DEBUG_CONDITION",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
@@ -89,8 +84,6 @@ _native_image_shared_library = rule(
 
 _NATIVE_IMAGE_UTILS = struct(
     output_groups = _OUTPUT_GROUPS,
-    catalog = _MavenArtifacts,
-    artifact = _graalvm_maven_artifact,
 )
 
 # Exports.
@@ -277,5 +270,5 @@ def native_image_shared_library(
         **kwargs
     )
 
-# Struct alias.
-graalvm = _NATIVE_IMAGE_UTILS
+# Aliases.
+utils = _NATIVE_IMAGE_UTILS
