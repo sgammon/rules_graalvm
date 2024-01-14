@@ -223,6 +223,7 @@
         "build_bazel_apple_support": "apple_support@1.8.1",
         "rules_license": "rules_license@0.0.7",
         "rules_cc": "rules_cc@0.0.9",
+        "rules_jvm_external": "rules_jvm_external@5.3",
         "rules_python": "rules_python@0.25.0",
         "rules_testing": "rules_testing@0.4.0",
         "aspect_bazel_lib": "aspect_bazel_lib@1.34.1",
@@ -231,7 +232,6 @@
         "com_google_protobuf": "protobuf@21.7",
         "io_bazel_rules_go": "rules_go@0.41.0",
         "bazel_gazelle": "gazelle@0.32.0",
-        "rules_jvm_external": "rules_jvm_external@5.3",
         "io_bazel_stardoc": "stardoc@0.6.2",
         "bazel_skylib_gazelle_plugin": "bazel_skylib_gazelle_plugin@1.4.2",
         "contrib_rules_jvm": "contrib_rules_jvm@0.18.0",
@@ -574,6 +574,95 @@
           "remote_patches": {
             "https://bcr.bazel.build/modules/rules_cc/0.0.9/patches/module_dot_bazel_version.patch": "sha256-mM+qzOI0SgAdaJBlWOSMwMPKpaA9b7R37Hj/tp5bb4g="
           },
+          "remote_patch_strip": 0
+        }
+      }
+    },
+    "rules_jvm_external@5.3": {
+      "name": "rules_jvm_external",
+      "version": "5.3",
+      "key": "rules_jvm_external@5.3",
+      "repoName": "rules_jvm_external",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [
+        {
+          "extensionBzlFile": "@rules_jvm_external//:non-module-deps.bzl",
+          "extensionName": "non_module_deps",
+          "usingModule": "rules_jvm_external@5.3",
+          "location": {
+            "file": "https://bcr.bazel.build/modules/rules_jvm_external/5.3/MODULE.bazel",
+            "line": 9,
+            "column": 32
+          },
+          "imports": {
+            "io_bazel_rules_kotlin": "io_bazel_rules_kotlin"
+          },
+          "devImports": [],
+          "tags": [],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        },
+        {
+          "extensionBzlFile": ":extensions.bzl",
+          "extensionName": "maven",
+          "usingModule": "rules_jvm_external@5.3",
+          "location": {
+            "file": "https://bcr.bazel.build/modules/rules_jvm_external/5.3/MODULE.bazel",
+            "line": 16,
+            "column": 22
+          },
+          "imports": {
+            "rules_jvm_external_deps": "rules_jvm_external_deps"
+          },
+          "devImports": [],
+          "tags": [
+            {
+              "tagName": "install",
+              "attributeValues": {
+                "name": "rules_jvm_external_deps",
+                "artifacts": [
+                  "com.google.auth:google-auth-library-credentials:1.17.0",
+                  "com.google.auth:google-auth-library-oauth2-http:1.17.0",
+                  "com.google.cloud:google-cloud-core:2.18.1",
+                  "com.google.cloud:google-cloud-storage:2.22.3",
+                  "com.google.code.gson:gson:2.10.1",
+                  "com.google.googlejavaformat:google-java-format:1.17.0",
+                  "com.google.guava:guava:32.0.0-jre",
+                  "org.apache.maven:maven-artifact:3.9.2",
+                  "software.amazon.awssdk:s3:2.20.78"
+                ],
+                "lock_file": "@rules_jvm_external//:rules_jvm_external_deps_install.json"
+              },
+              "devDependency": false,
+              "location": {
+                "file": "https://bcr.bazel.build/modules/rules_jvm_external/5.3/MODULE.bazel",
+                "line": 18,
+                "column": 14
+              }
+            }
+          ],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        }
+      ],
+      "deps": {
+        "bazel_skylib": "bazel_skylib@1.5.0",
+        "io_bazel_stardoc": "stardoc@0.6.2",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "name": "rules_jvm_external~5.3",
+          "urls": [
+            "https://github.com/bazelbuild/rules_jvm_external/releases/download/5.3/rules_jvm_external-5.3.tar.gz"
+          ],
+          "integrity": "sha256-0x42m4VDIspQmOoSxp1xdd7ZcUNeVcGN2d1fKcxSSaw=",
+          "strip_prefix": "rules_jvm_external-5.3",
+          "remote_patches": {},
           "remote_patch_strip": 0
         }
       }
@@ -1273,95 +1362,6 @@
           ],
           "integrity": "sha256-KSGPjgzr5YNkPL+Tyub5cb6KJITNz6HkUFdljfjVQAI=",
           "strip_prefix": "",
-          "remote_patches": {},
-          "remote_patch_strip": 0
-        }
-      }
-    },
-    "rules_jvm_external@5.3": {
-      "name": "rules_jvm_external",
-      "version": "5.3",
-      "key": "rules_jvm_external@5.3",
-      "repoName": "rules_jvm_external",
-      "executionPlatformsToRegister": [],
-      "toolchainsToRegister": [],
-      "extensionUsages": [
-        {
-          "extensionBzlFile": "@rules_jvm_external//:non-module-deps.bzl",
-          "extensionName": "non_module_deps",
-          "usingModule": "rules_jvm_external@5.3",
-          "location": {
-            "file": "https://bcr.bazel.build/modules/rules_jvm_external/5.3/MODULE.bazel",
-            "line": 9,
-            "column": 32
-          },
-          "imports": {
-            "io_bazel_rules_kotlin": "io_bazel_rules_kotlin"
-          },
-          "devImports": [],
-          "tags": [],
-          "hasDevUseExtension": false,
-          "hasNonDevUseExtension": true
-        },
-        {
-          "extensionBzlFile": ":extensions.bzl",
-          "extensionName": "maven",
-          "usingModule": "rules_jvm_external@5.3",
-          "location": {
-            "file": "https://bcr.bazel.build/modules/rules_jvm_external/5.3/MODULE.bazel",
-            "line": 16,
-            "column": 22
-          },
-          "imports": {
-            "rules_jvm_external_deps": "rules_jvm_external_deps"
-          },
-          "devImports": [],
-          "tags": [
-            {
-              "tagName": "install",
-              "attributeValues": {
-                "name": "rules_jvm_external_deps",
-                "artifacts": [
-                  "com.google.auth:google-auth-library-credentials:1.17.0",
-                  "com.google.auth:google-auth-library-oauth2-http:1.17.0",
-                  "com.google.cloud:google-cloud-core:2.18.1",
-                  "com.google.cloud:google-cloud-storage:2.22.3",
-                  "com.google.code.gson:gson:2.10.1",
-                  "com.google.googlejavaformat:google-java-format:1.17.0",
-                  "com.google.guava:guava:32.0.0-jre",
-                  "org.apache.maven:maven-artifact:3.9.2",
-                  "software.amazon.awssdk:s3:2.20.78"
-                ],
-                "lock_file": "@rules_jvm_external//:rules_jvm_external_deps_install.json"
-              },
-              "devDependency": false,
-              "location": {
-                "file": "https://bcr.bazel.build/modules/rules_jvm_external/5.3/MODULE.bazel",
-                "line": 18,
-                "column": 14
-              }
-            }
-          ],
-          "hasDevUseExtension": false,
-          "hasNonDevUseExtension": true
-        }
-      ],
-      "deps": {
-        "bazel_skylib": "bazel_skylib@1.5.0",
-        "io_bazel_stardoc": "stardoc@0.6.2",
-        "bazel_tools": "bazel_tools@_",
-        "local_config_platform": "local_config_platform@_"
-      },
-      "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "ruleClassName": "http_archive",
-        "attributes": {
-          "name": "rules_jvm_external~5.3",
-          "urls": [
-            "https://github.com/bazelbuild/rules_jvm_external/releases/download/5.3/rules_jvm_external-5.3.tar.gz"
-          ],
-          "integrity": "sha256-0x42m4VDIspQmOoSxp1xdd7ZcUNeVcGN2d1fKcxSSaw=",
-          "strip_prefix": "rules_jvm_external-5.3",
           "remote_patches": {},
           "remote_patch_strip": 0
         }
