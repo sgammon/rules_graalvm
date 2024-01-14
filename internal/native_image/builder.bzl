@@ -5,7 +5,6 @@ _NATIVE_IMAGE_SHARED_TMP_DIR_TPL = "native-shlib-%s"
 _DEFAULT_NATIVE_IMAGE_ARGS = [
     "-H:+JNI",
     "-H:+ReportExceptionStackTraces",
-    "-H:+UnlockExperimentalVMOptions",
 ]
 
 _STRICT_NATIVE_IMAGE_ARGS = [
@@ -251,6 +250,9 @@ def assemble_native_build_options(
     Returns:
         Tempdir path where the native build should occur.
     """
+
+    # @TODO(sgammon): only append with gvm version > 23.1.x
+    # "-H:+UnlockExperimentalVMOptions"
 
     # main class is required unless we are building a shared library
     if ctx.attr.shared_library:
