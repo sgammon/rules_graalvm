@@ -21,6 +21,7 @@ load(
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _NATIVE_IMAGE_SHARED_LIB_ATTRS = "NATIVE_IMAGE_SHARED_LIB_ATTRS",
     _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
+    _OUTPUT_GROUPS = "OUTPUT_GROUPS",
     _RULES_REPO = "RULES_REPO",
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
 )
@@ -54,6 +55,7 @@ def _prepare_execution_env(ctx, base_env = {}):
     return effective
 
 def _graal_binary_implementation(ctx):
+    output_groups = {}
     graal_attr = ctx.attr.native_image_tool
     extra_tool_deps = []
     gvm_toolchain = None
@@ -188,7 +190,7 @@ def _graal_binary_implementation(ctx):
         )
 
     # if we are building a shared library, prepare `CcSharedLibraryInfo` for it
-    cc_info = []
+    output_infos = []
     runfiles = None
     if ctx.attr.shared_library:
         cc_toolchain = find_cpp_toolchain(ctx)
@@ -206,10 +208,10 @@ def _graal_binary_implementation(ctx):
                 dynamic_library = binary,
             ),
         ]
-        cc_info.extend([
-            OutputGroupInfo(
-                main_shared_library_output = depset([binary]),
-            ),
+
+        ## extend with additional cc info for shared library use
+        output_groups["main_shared_library_output"] = depset([binary])
+        output_infos.extend([
             CcSharedLibraryInfo(
                 linker_input = cc_common.create_linker_input(
                     owner = ctx.label,
@@ -217,6 +219,16 @@ def _graal_binary_implementation(ctx):
                 ),
             ),
         ])
+
+        # add output group for shared headers
+        # output_groups[_OUTPUT_GROUPS.HEADERS] = depset([binary])
+
+        # in shared library mode, the shared library is the default output
+        output_groups[_OUTPUT_GROUPS.DEFAULT] = depset([binary])
+
+    else:
+        # if it's not a shared library, our default output is the binary produced
+        output_groups[_OUTPUT_GROUPS.DEFAULT] = depset([binary])
 
     # prepare all runfiles
     all_runfiles = ctx.runfiles(
@@ -227,11 +239,16 @@ def _graal_binary_implementation(ctx):
     if runfiles != None:
         all_runfiles = all_runfiles.merge(runfiles)
 
-    return cc_info + [DefaultInfo(
-        executable = binary,
-        files = depset(all_outputs),
-        runfiles = all_runfiles,
-    )]
+    return output_infos + [
+        DefaultInfo(
+            executable = binary,
+            files = depset(all_outputs),
+            runfiles = all_runfiles,
+        ),
+        OutputGroupInfo(
+            **output_groups
+        )
+    ]
 
 def _wrap_actions_for_graal(actions):
     """Wraps the given ctx.actions struct so that env variables are correctly passed to Graal."""
@@ -265,6 +282,7 @@ BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
 NATIVE_IMAGE_SHARED_LIB_ATTRS = _NATIVE_IMAGE_SHARED_LIB_ATTRS
 GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
+OUTPUT_GROUPS = _OUTPUT_GROUPS
 DEBUG_CONDITION = _DEBUG_CONDITION
 OPTIMIZATION_MODE_CONDITION = _OPTIMIZATION_MODE_CONDITION
 graal_binary_implementation = _graal_binary_implementation

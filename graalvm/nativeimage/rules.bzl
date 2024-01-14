@@ -9,11 +9,17 @@ load(
     "use_cpp_toolchain",
 )
 load(
+    "//graalvm/artifacts:maven.bzl",
+    _MavenArtifacts = "MavenArtifacts",
+    _graalvm_maven_artifact = "graalvm_maven_artifact",
+)
+load(
     "//internal/native_image:rules.bzl",
     _DEBUG = "DEBUG_CONDITION",
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _NATIVE_IMAGE_SHARED_LIB_ATTRS = "NATIVE_IMAGE_SHARED_LIB_ATTRS",
+    _OUTPUT_GROUPS = "OUTPUT_GROUPS",
     _OPTIMIZATION_MODE = "OPTIMIZATION_MODE_CONDITION",
     _graal_binary_implementation = "graal_binary_implementation",
     _graal_shared_binary_implementation = "graal_shared_binary_implementation",
@@ -79,6 +85,12 @@ _native_image_shared_library = rule(
     toolchains = use_cpp_toolchain() + [
         _GVM_TOOLCHAIN_TYPE,
     ],
+)
+
+_NATIVE_IMAGE_UTILS = struct(
+    output_groups = _OUTPUT_GROUPS,
+    catalog = _MavenArtifacts,
+    artifact = _graalvm_maven_artifact,
 )
 
 # Exports.
@@ -264,3 +276,6 @@ def native_image_shared_library(
         default_outputs = default_outputs,
         **kwargs
     )
+
+# Struct alias.
+graalvm = _NATIVE_IMAGE_UTILS

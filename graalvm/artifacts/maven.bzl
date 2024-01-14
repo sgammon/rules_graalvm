@@ -119,6 +119,9 @@ _MavenTools = struct(
     artifact = _graalvm_maven_artifact,
 )
 
+# buildifier: disable=name-conventions
+MavenTools = _MavenTools
+
 # Exports.
 
 # buildifier: disable=name-conventions

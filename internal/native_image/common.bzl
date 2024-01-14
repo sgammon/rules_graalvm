@@ -44,6 +44,15 @@ _OPTIMIZATION_MODE_CONDITION = select({
     "//conditions:default": _NativeImageOptimization.DEFAULT,  # becomes `-O2` via GraalVM defaults
 })
 
+_OUTPUT_GROUPS = struct(
+    DEFAULT = "default",
+    SYMBOLS = "symbols",
+    HEADERS = "headers",
+    OBJECTS = "objects",
+    PROFILES = "profiles",
+    RESOURCES = "resources",
+)
+
 _NATIVE_IMAGE_BASE_ATTRS = {
     "deps": attr.label_list(
         providers = [[JavaInfo]],
@@ -246,6 +255,7 @@ def _prepare_native_image_rule_context(
 NativeImageOptimization = _NativeImageOptimization
 
 RULES_REPO = _RULES_REPO
+OUTPUT_GROUPS = _OUTPUT_GROUPS
 DEFAULT_GVM_REPO = _DEFAULT_GVM_REPO
 DEBUG_CONDITION = _DEBUG_CONDITION
 COVERAGE_CONDITION = _COVERAGE_CONDITION
