@@ -167,6 +167,9 @@ _NATIVE_IMAGE_BASE_ATTRS = {
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
     ),
+    "_is_test": attr.bool(
+        default = False,
+    ),
     "_linux_constraint": attr.label(
         default = Label(_LINUX_CONSTRAINT),
     ),
@@ -333,4 +336,5 @@ MACOS_CONSTRAINT = _MACOS_CONSTRAINT
 WINDOWS_CONSTRAINT = _WINDOWS_CONSTRAINT
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_BIN_ATTRS
 NATIVE_IMAGE_SHARED_LIB_ATTRS = _NATIVE_IMAGE_SHAREDLIB_ATTRS
+NATIVE_IMAGE_TEST_ATTRS = _NATIVE_IMAGE_TEST_ATTRS
 prepare_native_image_rule_context = _prepare_native_image_rule_context

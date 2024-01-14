@@ -1,0 +1,50 @@
+load(
+    "@rules_graalvm//graalvm:defs.bzl",
+    "native_image_test",
+)
+load(
+    "@rules_java//java:defs.bzl",
+    "java_library",
+)
+load(
+    "//tools/defs:junit5.bzl",
+    java_test = "java_junit5_test",
+)
+
+package(default_visibility = [
+    "//tests:__subpackages__",
+])
+
+
+java_library(
+    name = "java",
+    srcs = ["Something.java"],
+)
+
+java_test(
+    name = "java-test",
+    test_package = "example.testing",
+    srcs = ["SomethingTest.java"],
+    size = "small",
+    deps = [
+        ":java",
+    ],
+)
+
+native_image_test(
+    name = "native-test",
+    tests = [":java-test"],
+    size = "small",
+)
+
+test_suite(
+    name = "tests",
+    tests = [
+        ":native-test",
+    ],
+)
+
+alias(
+    name = "testing",
+    actual = "tests",
+)

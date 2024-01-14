@@ -1,5 +1,10 @@
 "Logic to assemble `native-image` options."
 
+load(
+    "//internal/native_image:testing.bzl",
+    _NATIVE_TEST_ENTRYPOINT = "NATIVE_TEST_ENTRYPOINT",
+)
+
 _NATIVE_IMAGE_SHARED_TMP_DIR_TPL = "native-shlib-%s"
 
 _DEFAULT_NATIVE_IMAGE_ARGS = [
@@ -263,9 +268,13 @@ def assemble_native_build_options(
     # @TODO(sgammon): only append with gvm version > 23.1.x
     # "-H:+UnlockExperimentalVMOptions"
 
+    is_test = ctx.attr._is_test
+
     # main class is required unless we are building a shared library
     if ctx.attr.shared_library:
         args.add("--shared")
+    elif is_test:
+        pass  # no main class for tests
     elif ctx.attr.main_class == None or ctx.attr.main_class == "":
         fail("""
             Native Image build failure: `main_class` attribute is mandatory in `native_image` or `graal_binary` targets,
@@ -289,6 +298,13 @@ def assemble_native_build_options(
                 )
             else:
                 args.add(ctx.attr.main_class, format = "-H:Class=%s")
+        elif is_test:
+            # it's a test and we have no entrypoint class, so we should use the default
+            # entrypoint provided by this package.
+            args.add(
+                _NATIVE_TEST_ENTRYPOINT,
+                format = "-H:Class=%s",
+            )
 
     # binary path supports expansion
     _arg_formatted(

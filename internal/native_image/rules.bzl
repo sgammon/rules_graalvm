@@ -20,10 +20,17 @@ load(
     _GVM_TOOLCHAIN_TYPE = "GVM_TOOLCHAIN_TYPE",
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _NATIVE_IMAGE_SHARED_LIB_ATTRS = "NATIVE_IMAGE_SHARED_LIB_ATTRS",
+    _NATIVE_IMAGE_TEST_ATTRS = "NATIVE_IMAGE_TEST_ATTRS",
     _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
     _OUTPUT_GROUPS = "OUTPUT_GROUPS",
     _RULES_REPO = "RULES_REPO",
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
+)
+load(
+    "//internal/native_image:testing.bzl",
+    _DEFAULT_WRAPPED_ENTRYPOINT = "DEFAULT_WRAPPED_ENTRYPOINT",
+    _DEFAULT_NATIVE_BASE_ENTRYPOINT = "DEFAULT_NATIVE_BASE_ENTRYPOINT",
+    _NATIVE_TEST_FEATURE = "NATIVE_TEST_FEATURE",
 )
 load(
     "//internal/native_image:toolchain.bzl",
@@ -54,10 +61,34 @@ def _prepare_execution_env(ctx, base_env = {}):
     })
     return effective
 
+def _create_testrunner_entry_script(ctx, binary, test_args = []):
+    """Merge available test args from the user, and from the testrunner script to create a shell entrypoint."""
+
+    formatted_args = " ".join([ctx.expand_location(i) for i in test_args])
+
+    # create a wrapper shell script which will invoke the testrunner script with the correct args
+    script = ctx.actions.declare_file(
+        "%s-native-testrunner.sh" % ctx.label.name,
+    )
+    ctx.actions.write(
+        script,
+        """
+#!/bin/bash
+set -euo pipefail
+exec {binary} {args}
+        """.format(
+            binary = binary.short_path,
+            args = formatted_args,
+        ),
+    )
+    return script
+
 def _graal_binary_implementation(ctx):
     output_groups = {}
+    is_test = ctx.attr._is_test
     graal_attr = ctx.attr.native_image_tool
     extra_tool_deps = []
+    direct_inputs = []
     gvm_toolchain = None
 
     # build a suite of modular-capable dependencies
@@ -70,18 +101,64 @@ def _graal_binary_implementation(ctx):
         ])
         modular_jars = modulepath_depset.to_list()
 
-    classpath_depset = depset(transitive = [
+    # build deps list of utilities (for example, injected test deps)
+    utils_deps = []
+    if is_test:
+        utils_deps.append(depset(ctx.files._native_image_test_utils))
+        utils_deps.append(depset(transitive = [
+            dep[JavaInfo].transitive_runtime_jars
+            for dep in ctx.attr._native_test_deps
+        ] + [
+            dep[JavaInfo].transitive_compile_time_jars
+            for dep in ctx.attr._native_test_deps
+        ]))
+
+    # build classpath depset, withholding any deps which are modular; we include compile-time
+    # deps here as well, since GVM should be able to see them.
+    depset_transitive = [
         f for f in
         [
             dep[JavaInfo].transitive_runtime_jars
             for dep in ctx.attr.deps
         ]
         if f not in modular_jars
+    ]
+    depset_transitive.extend([
+        f for f in
+        [
+            dep[JavaInfo].transitive_compile_time_jars
+            for dep in ctx.attr.deps
+        ]
+        if f not in modular_jars
     ])
+    depset_transitive.extend(
+        utils_deps
+    )
+
+    # if this is a test target, include transitive test dependencies
+    if is_test:
+        depset_transitive.append(depset(transitive = [
+            test[JavaInfo].transitive_runtime_jars
+            for test in ctx.attr.tests
+        ] + [
+            test[JavaInfo].transitive_compile_time_jars
+            for test in ctx.attr.tests
+        ]))
+        for test in ctx.attr.tests:
+            depset_transitive.append(test.files)
+
+    # seal our classpath depset, we're ready to use it
+    classpath_depset = depset(transitive = depset_transitive)
 
     graal = None
-    direct_inputs = []
-    transitive_inputs = [classpath_depset]
+    transitive_inputs = [
+        classpath_depset,
+        modulepath_depset,
+    ]
+
+    # if this is a test, we need to include the test sources as inputs
+    if is_test:
+        direct_inputs.extend(ctx.files.tests)
 
     # resolve via toolchains
     info = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
@@ -143,6 +220,32 @@ def _graal_binary_implementation(ctx):
         bin_postfix = _BIN_POSTFIX_SO
 
     args = ctx.actions.args().use_param_file("@%s", use_always=True)
+
+    # if we're running tests or doing other special stuff, we may need to inject features into
+    # the graalvm build context.
+    test_args = []
+    injected_args = []
+    injected_features = []
+    if is_test:
+        injected_features.append(_NATIVE_TEST_FEATURE)
+        test_args.append("-Dbazel.graalvm.testing=true")
+        test_args.append("-Dbazel.graalvm.native=true")
+        test_args.append("-Dbazel.graalvm.testing.discovery=%s" % (ctx.attr.discovery and "true" or "false"))
+        test_args.append("-Dbazel.graalvm.testing.nativeEntry=%s" % _DEFAULT_NATIVE_BASE_ENTRYPOINT)
+        test_args.append("-Dbazel.graalvm.testing.wrappedEntry=%s" % (ctx.attr.main_class or _DEFAULT_WRAPPED_ENTRYPOINT))
+        injected_args.append("-R:-Dbazel.graalvm.testing=true")
+        injected_args.append("-R:-Dbazel.graalvm.native=true")
+        injected_args.extend(test_args)
+
+        # enable test discovery if requested
+        if ctx.attr.discovery:
+            injected_args.append("-DtestDiscovery")
+
+    # if the user provided features via the `native_features` attribute, consider those, too.
+    if ctx.attr.native_features:
+        injected_features.extend(ctx.attr.native_features)
+
+    # prepare rule context and outputs
     all_outputs = _prepare_native_image_rule_context(
         ctx,
         args,
@@ -152,8 +255,11 @@ def _graal_binary_implementation(ctx):
         gvm_toolchain,
         bin_postfix = bin_postfix,
         modulepath_depset = modulepath_depset,
+        injected_features = injected_features,
     )
     binary = all_outputs[0]
+
+    # prepare execution environment
     execution_env = _prepare_execution_env(
         ctx,
         native_toolchain.env,
@@ -164,6 +270,12 @@ def _graal_binary_implementation(ctx):
         direct_inputs,
         transitive = transitive_inputs,
     )
+    target_type = "executable"
+    if ctx.attr.shared_library:
+        target_type = "shared lib"
+    elif is_test:
+        target_type = "test"
+
     run_params = {
         "outputs": all_outputs,
         "executable": graal,
@@ -173,7 +285,7 @@ def _graal_binary_implementation(ctx):
         "execution_requirements": {k: "" for k in native_toolchain.execution_requirements},
         "progress_message": "Native Image __target__ (__mode__) %{label}"
             .replace("__mode__", _build_action_message(ctx))
-            .replace("__target__", ctx.attr.shared_library and "[shared lib]" or "[executable]"),
+            .replace("__target__", "[%s]" % target_type),
         "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
     }
 
@@ -246,24 +358,37 @@ def _graal_binary_implementation(ctx):
         # if it's not a shared library, our default output is the binary produced
         output_groups[_OUTPUT_GROUPS.DEFAULT] = depset([binary])
 
+    # if we are building a test, we need to create a shell script which wraps the test's
+    # execution, and sets up the args and environment correctly. then, we need to swap the
+    # main output binary for this wrapper.
+    entrypoint = binary
+    extra_runfiles = []
+    if is_test:
+        entrypoint = _create_testrunner_entry_script(
+            ctx,
+            binary,
+            test_args,
+        )
+        extra_runfiles.append(binary)
+
     # prepare all runfiles
     all_runfiles = ctx.runfiles(
         collect_data = True,
         collect_default = True,
-        files = [],
+        files = extra_runfiles,
     )
     if runfiles != None:
         all_runfiles = all_runfiles.merge(runfiles)
 
     return output_infos + [
         DefaultInfo(
-            executable = binary,
+            executable = entrypoint,
             files = depset(all_outputs),
             runfiles = all_runfiles,
         ),
         OutputGroupInfo(
             **output_groups
-        )
+        ),
     ]
 
 def _wrap_actions_for_graal(actions):
@@ -297,9 +422,11 @@ DEFAULT_GVM_REPO = _DEFAULT_GVM_REPO
 BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
 NATIVE_IMAGE_SHARED_LIB_ATTRS = _NATIVE_IMAGE_SHARED_LIB_ATTRS
+NATIVE_IMAGE_TEST_ATTRS = _NATIVE_IMAGE_TEST_ATTRS
 GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
 OUTPUT_GROUPS = _OUTPUT_GROUPS
 DEBUG_CONDITION = _DEBUG_CONDITION
 OPTIMIZATION_MODE_CONDITION = _OPTIMIZATION_MODE_CONDITION
 graal_binary_implementation = _graal_binary_implementation
 graal_shared_binary_implementation = _graal_binary_implementation
+graal_test_binary_implementation = _graal_binary_implementation

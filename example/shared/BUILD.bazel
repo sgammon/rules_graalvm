@@ -35,7 +35,7 @@ native_image_shared_library(
     name = "mylib",
     deps = [":java"],
     strict = True,
-    executable_name = "mylib",
+    lib_name = "libmylib",  # becomes `libmylib.so`, `libmylib.dylib`, etc.
     reflection_configuration = ":reflection-config",
 )
 

@@ -17,6 +17,14 @@ GRAALVM_DIST = "ce"
 
 GRAALVM_SDK_VERSION = "23.1.1"
 
+GRAALVM_JUNIT_VERSION = "0.9.28"
+
+JUNIT4_VERSION = "4.12"
+
+JUNIT5_VERSION = "5.10.0"
+
+JUNIT5_PLATFORM_VERSION = "1.10.0"
+
 
 ##
 ## Dependencies: API
@@ -143,6 +151,7 @@ maven = use_extension(
     dev_dependency = True,
 )
 
+# GraalVM.
 maven.artifact(
     name = "maven_gvm",
     group = "org.graalvm.nativeimage",
@@ -159,13 +168,78 @@ maven.artifact(
 )
 maven.artifact(
     name = "maven_gvm",
+    group = "org.graalvm.sdk",
+    artifact= "nativeimage",
+    version = GRAALVM_SDK_VERSION,
+    neverlink = True,
+)
+maven.artifact(
+    name = "maven_gvm",
     group = "org.graalvm.polyglot",
     artifact = "polyglot",
     version = GRAALVM_SDK_VERSION,
 )
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.graalvm.polyglot",
+    artifact = "polyglot",
+    version = GRAALVM_SDK_VERSION,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.graalvm.buildtools",
+    artifact = "junit-platform-native",
+    version = GRAALVM_JUNIT_VERSION,
+)
+
+# JUnit 4.
+maven.artifact(
+    name = "maven_gvm",
+    group = "junit",
+    artifact = "junit",
+    version = JUNIT4_VERSION,
+)
+
+# JUnit 5.
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.junit.jupiter",
+    artifact = "junit-jupiter-api",
+    version = JUNIT5_VERSION,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.junit.jupiter",
+    artifact = "junit-jupiter-engine",
+    version = JUNIT5_VERSION,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.junit.jupiter",
+    artifact = "junit-jupiter-params",
+    version = JUNIT5_VERSION,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.junit.platform",
+    artifact = "junit-platform-console",
+    version = JUNIT5_PLATFORM_VERSION,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.junit.platform",
+    artifact = "junit-platform-commons",
+    version = JUNIT5_PLATFORM_VERSION,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.junit.platform",
+    artifact = "junit-platform-launcher",
+    version = JUNIT5_PLATFORM_VERSION,
+)
 
 STD_ARTIFACTS = [
-    # Nothing additional at this time.
+    # Nothing at this time.
 ]
 
 MAVEN_REPOSITORIES = [
