@@ -137,11 +137,31 @@ bazel_dep(
 # rules_jvm_external
 ################################################################################
 
-MAVEN_ARTIFACTS = [
-    "org.graalvm.nativeimage:svm:%s" % GRAALVM_SDK_VERSION,
-    "org.graalvm.sdk:graal-sdk:%s" % GRAALVM_SDK_VERSION,
-    "org.graalvm.polyglot:polyglot:%s" % GRAALVM_SDK_VERSION,
-]
+maven = use_extension(
+    "@rules_jvm_external//:extensions.bzl",
+    "maven",
+    dev_dependency = True,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.graalvm.nativeimage",
+    artifact= "svm",
+    version = GRAALVM_SDK_VERSION,
+    neverlink = True,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.graalvm.sdk",
+    artifact= "graal_sdk",
+    version = GRAALVM_SDK_VERSION,
+    neverlink = True,
+)
+maven.artifact(
+    name = "maven_gvm",
+    group = "org.graalvm.polyglot",
+    artifact= "polyglot",
+    version = GRAALVM_SDK_VERSION,
+)
 
 MAVEN_REPOSITORIES = [
     "https://maven.pkg.st",
@@ -149,14 +169,8 @@ MAVEN_REPOSITORIES = [
     "https://repo1.maven.org/maven2",
 ]
 
-maven = use_extension(
-    "@rules_jvm_external//:extensions.bzl",
-    "maven",
-    dev_dependency = True,
-)
 maven.install(
     name = "maven_gvm",
-    artifacts = MAVEN_ARTIFACTS,
     lock_file = "//:maven_install.json",
     repositories = MAVEN_REPOSITORIES,
 )

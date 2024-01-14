@@ -2,7 +2,7 @@
 
 load(
     "//internal:config.bzl",
-    "GRAALVM_VERSION",
+    _GRAALVM_VERSION = "GRAALVM_VERSION",
 )
 
 def graalvm(artifact, repository = "@maven", version = None, group = None):
@@ -25,7 +25,7 @@ def graalvm(artifact, repository = "@maven", version = None, group = None):
 
     group = (group or artifact.split(":")[0]).replace(".", "_")
     name = (group and artifact or artifact.split(":")[1]).replace(".", "_")
-    resolved_version = version or GRAALVM_VERSION
+    resolved_version = version or _GRAALVM_VERSION
 
     if resolved_version:
         formatted_version = resolved_version.replace(".", "_")

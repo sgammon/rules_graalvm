@@ -27,9 +27,13 @@ def _graal_binary_classic_implementation(ctx):
         dep[JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
+    classpath_neverlink_depset = depset(transitive = [
+        dep[JavaInfo].transitive_compile_time_jars
+        for dep in ctx.attr.deps
+    ])
 
     direct_inputs = []
-    transitive_inputs = [classpath_depset]
+    transitive_inputs = [classpath_depset, classpath_neverlink_depset]
 
     if graal_attr != None:
         # otherwise, use the legacy code path. the `graal` value is used in the run
