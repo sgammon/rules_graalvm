@@ -142,6 +142,7 @@ maven = use_extension(
     "maven",
     dev_dependency = True,
 )
+
 maven.artifact(
     name = "maven_gvm",
     group = "org.graalvm.nativeimage",
@@ -152,16 +153,20 @@ maven.artifact(
 maven.artifact(
     name = "maven_gvm",
     group = "org.graalvm.sdk",
-    artifact= "graal_sdk",
+    artifact= "graal-sdk",
     version = GRAALVM_SDK_VERSION,
     neverlink = True,
 )
 maven.artifact(
     name = "maven_gvm",
     group = "org.graalvm.polyglot",
-    artifact= "polyglot",
+    artifact = "polyglot",
     version = GRAALVM_SDK_VERSION,
 )
+
+STD_ARTIFACTS = [
+    # Nothing additional at this time.
+]
 
 MAVEN_REPOSITORIES = [
     "https://maven.pkg.st",
@@ -171,8 +176,9 @@ MAVEN_REPOSITORIES = [
 
 maven.install(
     name = "maven_gvm",
-    lock_file = "//:maven_install.json",
     repositories = MAVEN_REPOSITORIES,
+    lock_file = "//:maven_install.json",
+    artifacts = STD_ARTIFACTS,
 )
 use_repo(
     maven,
