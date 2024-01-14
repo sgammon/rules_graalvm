@@ -49,6 +49,7 @@ def _prepare_execution_env(ctx, base_env = {}):
     effective.update(base_env)
     effective.update({
         "GRAALVM_BAZEL": "true",
+        "GENFILES_DIR": ctx.genfiles_dir.path,
     })
     return effective
 
