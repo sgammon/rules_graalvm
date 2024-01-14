@@ -218,8 +218,9 @@ def _prepare_native_image_rule_context(
         bin_postfix,
     )
 
-    # add native image tempdir to outputs
-    outputs.append(tempdir)
+    # add native image tempdir to outputs if one was allocated
+    if tempdir != None:
+        outputs.append(tempdir)
     return outputs
 
 ## Exports.

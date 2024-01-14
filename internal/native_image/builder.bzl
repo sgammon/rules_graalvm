@@ -1,5 +1,7 @@
 "Logic to assemble `native-image` options."
 
+_NATIVE_IMAGE_SHARED_TMP_DIR_TPL = "native-shlib-%s"
+
 _DEFAULT_NATIVE_IMAGE_ARGS = [
     "-H:+ReportExceptionStackTraces",
 ]
@@ -216,14 +218,19 @@ def assemble_native_build_options(
     # default native image args
     args.add_all(_DEFAULT_NATIVE_IMAGE_ARGS)
 
-    # declare a temp path for graalvm to use
-    tempdir = ctx.actions.declare_directory("native_image_build", sibling = binary)
+    tempdir = None
+    if ctx.attr.shared_library:
+        # declare a temp path for graalvm to use
+        tempdir = ctx.actions.declare_directory(
+            _NATIVE_IMAGE_SHARED_TMP_DIR_TPL % (ctx.label.name),
+            sibling = binary,
+        )
 
-    # share temp path with graalvm sandbox, as genfiles root
-    args.add(
-        tempdir.path,
-        format = "-H:TempDirectory=%s",
-    )
+        # share temp path with graalvm sandbox, as genfiles root
+        args.add(
+            tempdir.path,
+            format = "-H:TempDirectory=%s",
+        )
 
     if not ctx.attr.check_toolchains:
         args.add("-H:-CheckToolchain")
