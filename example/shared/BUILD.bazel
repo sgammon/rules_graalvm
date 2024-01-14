@@ -1,0 +1,45 @@
+load(
+    "@rules_graalvm//graalvm:defs.bzl",
+    "native_image_shared_library",
+)
+load(
+    "@rules_java//java:defs.bzl",
+    "java_binary",
+    "java_library",
+)
+
+package(default_visibility = [
+    "//tests:__subpackages__",
+])
+
+
+filegroup(
+    name = "reflection-config",
+    srcs = ["reflection.json"],
+)
+
+java_library(
+    name = "java",
+    srcs = ["Main.java"],
+)
+
+java_binary(
+    name = "main",
+    main_class = "Main",
+    runtime_deps = [
+        ":java",
+    ],
+)
+
+native_image_shared_library(
+    name = "mylib",
+    deps = [":java"],
+    strict = True,
+    executable_name = "mylib",
+    reflection_configuration = ":reflection-config",
+)
+
+alias(
+    name = "shared",
+    actual = "mylib",
+)
