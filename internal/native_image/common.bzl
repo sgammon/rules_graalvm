@@ -64,9 +64,22 @@ _NATIVE_IMAGE_BASE_ATTRS = {
         mandatory = False,
         allow_single_file = True,
     ),
+    "reflection_configurations": attr.label_list(
+        mandatory = False,
+    ),
     "jni_configuration": attr.label(
         mandatory = False,
         allow_single_file = True,
+    ),
+    "jni_configurations": attr.label_list(
+        mandatory = False,
+    ),
+    "resource_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
+    "resource_configurations": attr.label_list(
+        mandatory = False,
     ),
     "debug": attr.bool(
         mandatory = False,

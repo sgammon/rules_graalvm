@@ -93,6 +93,45 @@ def _configure_optimization_mode(ctx, args):
             format = "-O%s",
         )
 
+def _singular_or_multi_but_not_both(args, direct_inputs, singular_label, plural_label, singular, plural, format = "%s", separator = ","):
+    """Use either the singular form of a file attribute, or the multi-label form, but fail if both are provided.
+
+    Resulting arguments are formatted (if necessary) and appended to the `direct_inputs` list and
+    suite of args.
+
+    Args:
+        args: Arguments to add to.
+        direct_inputs: Direct inputs list to append to for matching files.
+        singular_label: Label for the singular attribute. Used in error messages.
+        plural_label: Label for the plural attribute. Used in error messages.
+        singular: Singular attribute value.
+        plural: Plural attribute value.
+        format: Format string for the attribute value.
+        separator: Separator for the attribute value.
+    """
+
+    values = []
+    if singular != None:
+        values.append(singular)
+    elif plural and len(plural) > 0:
+        values.extend(plural)
+    elif (plural == None or len(plural) == 0) and (singular == None):
+        pass
+    else:
+        fail(
+            "GraalVM Rules: Please provide singular or plural attributes, but not both. Got both: %s and %s." % (
+            singular_label,
+            plural_label
+        ))
+
+    if len(values) > 0:
+        args.add_joined(
+            values,
+            join_with = separator,
+            format_joined = format,
+        )
+        direct_inputs.extend(values)
+
 def _configure_reflection(ctx, args, direct_inputs):
     """Configure reflection settings for a Native Image build.
 
@@ -113,14 +152,33 @@ def _configure_reflection(ctx, args, direct_inputs):
         format_joined = "--initialize-at-run-time=%s",
     )
 
-    if ctx.attr.reflection_configuration != None:
-        args.add(ctx.file.reflection_configuration, format = "-H:ReflectionConfigurationFiles=%s")
-        direct_inputs.append(ctx.file.reflection_configuration)
-
-    if ctx.attr.jni_configuration != None:
-        args.add(ctx.file.jni_configuration, format = "-H:JNIConfigurationFiles=%s")
-        direct_inputs.append(ctx.file.jni_configuration)
-        args.add("-H:+JNI")
+    _singular_or_multi_but_not_both(
+        args,
+        direct_inputs,
+        "reflection_configuration",
+        "reflection_configurations",
+        ctx.file.reflection_configuration,
+        ctx.files.reflection_configurations,
+        format = "-H:ReflectionConfigurationFiles=%s",
+    )
+    _singular_or_multi_but_not_both(
+        args,
+        direct_inputs,
+        "jni_configuration",
+        "jni_configurations",
+        ctx.file.jni_configuration,
+        ctx.files.jni_configurations,
+        format = "-H:JNIConfigurationFiles=%s",
+    )
+    _singular_or_multi_but_not_both(
+        args,
+        direct_inputs,
+        "resource_configuration",
+        "resource_configurations",
+        ctx.file.resource_configuration,
+        ctx.files.resource_configurations,
+        format = "-H:ResourceConfigurationFiles=%s",
+    )
 
 def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
     """Configure native compiler and linker flags for a Native Image build.
