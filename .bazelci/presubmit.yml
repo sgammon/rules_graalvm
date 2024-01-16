@@ -13,17 +13,9 @@ tasks:
       - test
     build_targets:
       - "//graalvm/..."
-
-bcr_test_module:
-  module_path: "example/integration_tests/bzlmod"
-  matrix:
-    platform: ["debian10", "macos", "ubuntu2004", "centos7"]
-  tasks:
-    build_bzlmod_test:
-      name: "Build test module"
-      platform: ${{ platform }}
-      build_targets:
-        - "//sample"
+      - "//example/native"
+    test_targets:
+      - "//tests/analysis/..."
 ---
 bazel: 5.4.0
 
@@ -40,3 +32,6 @@ tasks:
       - echo "import %workspace%/tools/bazel/bazel5.bazelrc" > version.bazelrc
     build_targets:
       - "//graalvm/..."
+      - "//example/native"
+    test_targets:
+      - "//tests/analysis/..."
