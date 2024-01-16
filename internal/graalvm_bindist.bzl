@@ -518,6 +518,7 @@ graalvm_sdk(
     name = "gvm",
     native_image_bin = ":native-image",
     gvm_files = ":files",
+    includes = ":includes",
 )
 alias(
     name = "sdk",
@@ -548,6 +549,11 @@ exports_files(glob(["**/*"]))
 filegroup(
     name = "files",
     srcs = glob(["**/*"]),
+)
+
+filegroup(
+    name = "includes",
+    srcs = glob(["include/**/*"]),
 )
 
 # Tool Targets

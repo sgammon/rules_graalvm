@@ -1,21 +1,37 @@
 "Defines Maven helpers and coordinates for GraalVM artifacts."
 
+load("@rules_jvm_external//:specs.bzl", "maven")
+
 # buildifier: disable=name-conventions
 _MavenArtifacts = struct(
+    SVM = struct(
+        artifact = "svm",
+        group = "org.graalvm.nativeimage",
+        options = {"neverlink": True},
+    ),
     SDK = struct(
         artifact = "graal-sdk",
         group = "org.graalvm.sdk",
+        options = {"neverlink": True},
+        NATIVEIMAGE = struct(
+            artifact = "nativeimage",
+            group = "org.graalvm.sdk",
+            options = {"neverlink": True},
+        )
     ),
     POLYGLOT = struct(
         artifact = "polyglot",
         group = "org.graalvm.polyglot",
+        options = {},
     ),
     TRUFFLE = struct(
         artifact = "truffle-api",
         group = "org.graalvm.truffle",
+        options = {},
         NFI = struct(
             artifact = "truffle-nfi",
             group = "org.graalvm.truffle",
+            options = {},
         ),
     ),
 )
@@ -111,6 +127,7 @@ def _graalvm_maven_artifact(maven, artifact, version):
         artifact = artifact.artifact,
         group = artifact.group,
         version = version,
+        **artifact.options,
     )
 
 # buildifier: disable=name-conventions
@@ -118,6 +135,9 @@ _MavenTools = struct(
     catalog = _MavenArtifacts,
     artifact = _graalvm_maven_artifact,
 )
+
+# buildifier: disable=name-conventions
+MavenTools = _MavenTools
 
 # Exports.
 

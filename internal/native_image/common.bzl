@@ -1,6 +1,10 @@
 "Defines common properties shared by modern and legacy Native Image rules."
 
 load(
+    "@bazel_skylib//lib:dicts.bzl",
+    "dicts",
+)
+load(
     "//internal/native_image:builder.bzl",
     _assemble_native_build_options = "assemble_native_build_options",
 )
@@ -13,6 +17,8 @@ _BAZEL_CURRENT_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:current_cc_toolchain"
 _LINUX_CONSTRAINT = "@platforms//os:linux"
 _MACOS_CONSTRAINT = "@platforms//os:macos"
 _WINDOWS_CONSTRAINT = "@platforms//os:windows"
+_GRAALVM_ISOLATE_HEADER = "graal_isolate.h"
+_GRAALVM_ISOLATE_DYNAMIC_HEADER = "graal_isolate_dynamic.h"
 
 # buildifier: disable=name-conventions
 _NativeImageOptimization = struct(
@@ -38,12 +44,22 @@ _OPTIMIZATION_MODE_CONDITION = select({
     "//conditions:default": _NativeImageOptimization.DEFAULT,  # becomes `-O2` via GraalVM defaults
 })
 
-_NATIVE_IMAGE_ATTRS = {
+_OUTPUT_GROUPS = struct(
+    DEFAULT = "default",
+    SYMBOLS = "symbols",
+    HEADERS = "headers",
+    OBJECTS = "objects",
+    PROFILES = "profiles",
+    RESOURCES = "resources",
+)
+
+_NATIVE_IMAGE_BASE_ATTRS = {
     "deps": attr.label_list(
         providers = [[JavaInfo]],
-        mandatory = True,
+        mandatory = False,
     ),
-    "main_class": attr.string(
+    "module_deps": attr.label_list(
+        providers = [[JavaInfo]],
         mandatory = False,
     ),
     "shared_library": attr.bool(
@@ -61,11 +77,42 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         allow_single_file = True,
     ),
+    "reflection_configurations": attr.label_list(
+        mandatory = False,
+    ),
     "jni_configuration": attr.label(
         mandatory = False,
         allow_single_file = True,
     ),
+    "jni_configurations": attr.label_list(
+        mandatory = False,
+    ),
+    "resource_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
+    "resource_configurations": attr.label_list(
+        mandatory = False,
+    ),
+    "proxy_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
+    "proxy_configurations": attr.label_list(
+        mandatory = False,
+    ),
+    "serialization_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
+    "serialization_configurations": attr.label_list(
+        mandatory = False,
+    ),
     "debug": attr.bool(
+        mandatory = False,
+        default = False,
+    ),
+    "strict": attr.bool(
         mandatory = False,
         default = False,
     ),
@@ -88,6 +135,9 @@ _NATIVE_IMAGE_ATTRS = {
     "initialize_at_run_time": attr.string_list(
         mandatory = False,
     ),
+    "initialize_rerun_at_runtime": attr.string_list(
+        mandatory = False,
+    ),
     "native_features": attr.string_list(
         mandatory = False,
     ),
@@ -106,15 +156,19 @@ _NATIVE_IMAGE_ATTRS = {
     "c_compiler_option": attr.string_list(
         mandatory = False,
     ),
-    "executable_name": attr.string(
-        mandatory = True,
-    ),
     "profiles": attr.label_list(
         allow_files = True,
         mandatory = False,
     ),
+    "additional_outputs": attr.output_list(),
+    "default_outputs": attr.bool(
+        default = True,
+    ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
+    ),
+    "_is_test": attr.bool(
+        default = False,
     ),
     "_linux_constraint": attr.label(
         default = Label(_LINUX_CONSTRAINT),
@@ -133,6 +187,57 @@ _NATIVE_IMAGE_ATTRS = {
     ),
 }
 
+_NATIVE_IMAGE_BIN_ATTRS = dicts.add(_NATIVE_IMAGE_BASE_ATTRS, **{
+    "deps": attr.label_list(
+        providers = [[JavaInfo]],
+        mandatory = True,
+    ),
+    "main_class": attr.string(
+        mandatory = True,
+    ),
+    "main_module": attr.string(
+        mandatory = False,
+    ),
+    "executable_name": attr.string(
+        mandatory = True,
+    ),
+})
+
+_NATIVE_IMAGE_TEST_ATTRS = dicts.add(_NATIVE_IMAGE_BASE_ATTRS, **{
+    "tests": attr.label_list(
+        providers = [[JavaInfo]],
+        mandatory = True,
+    ),
+    "main_class": attr.string(
+        mandatory = False,
+    ),
+    "main_module": attr.string(
+        mandatory = False,
+    ),
+    "discovery": attr.bool(
+        default = True,
+    ),
+    "executable_name": attr.string(
+        mandatory = True,
+    ),
+    "_is_test": attr.bool(
+        default = True,
+    ),
+})
+
+_NATIVE_IMAGE_SHAREDLIB_ATTRS = dicts.add(_NATIVE_IMAGE_BASE_ATTRS, **{
+    "deps": attr.label_list(
+        providers = [[JavaInfo]],
+        mandatory = True,
+    ),
+    "out_headers": attr.output_list(
+        # Emitted headers.
+    ),
+    "lib_name": attr.string(
+        # Shared library name.
+    ),
+})
+
 def _prepare_bin_name(
         name,
         bin_postfix = None):
@@ -148,11 +253,22 @@ def _prepare_native_image_rule_context(
         direct_inputs,
         c_compiler_path,
         gvm_toolchain = None,
-        bin_postfix = None):
+        bin_postfix = None,
+        modulepath_depset = None,
+        injected_features = [],
+        injected_args = []):
     """Prepare a `native-image` build context."""
 
-    out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
+    out_bin_name = None
+    if ctx.attr.shared_library:
+        out_bin_name = ctx.attr.lib_name.replace("%target%", ctx.attr.name)
+    else:
+        out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
+
     binary = ctx.actions.declare_file(_prepare_bin_name(out_bin_name, bin_postfix))
+
+    additional_outputs = []
+    outputs = [binary]
 
     # TODO: This check really should be on the exec platform, not the target platform, but that
     # requires going through a separate rule. Since GraalVM doesn't support cross-compilation, the
@@ -162,18 +278,45 @@ def _prepare_native_image_rule_context(
     else:
         path_list_separator = ":"
 
-    _assemble_native_build_options(
+    # if we are building a shared library, headers will be emitted; by default, the `graal_isolate.h`
+    # and `graal_isolate_dynamic.h` files are included. additional headers can be added by the `out_headers`
+    # attribute.
+    if ctx.attr.shared_library and ctx.attr.default_outputs:
+        additional_outputs.append(_GRAALVM_ISOLATE_HEADER)
+        additional_outputs.append(_GRAALVM_ISOLATE_DYNAMIC_HEADER)
+
+        # append all out headers
+        if len(ctx.attr.out_headers) > 0:
+            outputs.extend(ctx.outputs.out_headers)
+
+    # append all additional outputs
+    if len(additional_outputs) > 0:
+        outputs.extend([ctx.actions.declare_file(f) for f in additional_outputs])
+
+    # append all attr additional outputs
+    if len(ctx.attr.additional_outputs) > 0:
+        outputs.extend(ctx.outputs.additional_outputs)
+
+    # generate options with tempdir for build
+    tempdir = _assemble_native_build_options(
         ctx,
         args,
         binary,
         classpath_depset,
+        modulepath_depset or depset([]),
         direct_inputs,
         c_compiler_path,
         path_list_separator,
         gvm_toolchain,
         bin_postfix,
+        injected_features,
+        injected_args,
     )
-    return binary
+
+    # add native image tempdir to outputs if one was allocated
+    if tempdir != None:
+        outputs.append(tempdir)
+    return outputs
 
 ## Exports.
 
@@ -181,6 +324,7 @@ def _prepare_native_image_rule_context(
 NativeImageOptimization = _NativeImageOptimization
 
 RULES_REPO = _RULES_REPO
+OUTPUT_GROUPS = _OUTPUT_GROUPS
 DEFAULT_GVM_REPO = _DEFAULT_GVM_REPO
 DEBUG_CONDITION = _DEBUG_CONDITION
 COVERAGE_CONDITION = _COVERAGE_CONDITION
@@ -190,5 +334,7 @@ BAZEL_CPP_TOOLCHAIN_TYPE = _BAZEL_CPP_TOOLCHAIN_TYPE
 BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 MACOS_CONSTRAINT = _MACOS_CONSTRAINT
 WINDOWS_CONSTRAINT = _WINDOWS_CONSTRAINT
-NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
+NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_BIN_ATTRS
+NATIVE_IMAGE_SHARED_LIB_ATTRS = _NATIVE_IMAGE_SHAREDLIB_ATTRS
+NATIVE_IMAGE_TEST_ATTRS = _NATIVE_IMAGE_TEST_ATTRS
 prepare_native_image_rule_context = _prepare_native_image_rule_context

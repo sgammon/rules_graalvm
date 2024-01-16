@@ -16,6 +16,10 @@ load(
     "//internal/native_image:toolchain.bzl",
     _resolve_cc_toolchain = "resolve_cc_toolchain",
 )
+load(
+    "@bazel_skylib//lib:paths.bzl",
+    "paths",
+)
 
 def _graal_binary_classic_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
@@ -23,9 +27,13 @@ def _graal_binary_classic_implementation(ctx):
         dep[JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
+    classpath_neverlink_depset = depset(transitive = [
+        dep[JavaInfo].transitive_compile_time_jars
+        for dep in ctx.attr.deps
+    ])
 
     direct_inputs = []
-    transitive_inputs = [classpath_depset]
+    transitive_inputs = [classpath_depset, classpath_neverlink_depset]
 
     if graal_attr != None:
         # otherwise, use the legacy code path. the `graal` value is used in the run
@@ -42,21 +50,26 @@ def _graal_binary_classic_implementation(ctx):
             or install a GraalVM `native-image` toolchain.
         """)
 
+    # resolve graal_home
+    graalvm_home = paths.dirname(graal.dirname)
+
     # resolve the native toolchain
     native_toolchain = _resolve_cc_toolchain(
         ctx,
         transitive_inputs,
         is_windows = ctx.configuration.host_path_separator == ";",
+        graalvm_home = graalvm_home,
     )
 
     args = ctx.actions.args()
-    binary = _prepare_native_image_rule_context(
+    outputs = _prepare_native_image_rule_context(
         ctx,
         args,
         classpath_depset,
         direct_inputs,
         native_toolchain.c_compiler_path,
     )
+    binary = outputs[0]
 
     inputs = depset(
         direct_inputs,
@@ -64,7 +77,7 @@ def _graal_binary_classic_implementation(ctx):
     )
 
     ctx.actions.run(
-        outputs = [binary],
+        outputs = outputs,
         arguments = [args],
         executable = graal,
         inputs = inputs,

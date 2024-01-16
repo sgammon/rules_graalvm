@@ -1,0 +1,13 @@
+load("@rules_java//java:defs.bzl", "java_import")
+
+java_import(
+    name = "jacoco",
+    jars = [
+        "org.jacoco.core-0.8.9.jar",
+        "org.jacoco.agent-0.8.9.jar",
+        "org.jacoco.agent-0.8.9-runtime.jar",
+    ],
+    visibility = [
+        "@//:__subpackages__",
+    ],
+)

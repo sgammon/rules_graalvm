@@ -1,6 +1,6 @@
 load(
     "@rules_graalvm//graalvm:defs.bzl",
-    "native_image",
+    "native_image_shared_library",
 )
 
 java_library(
@@ -8,10 +8,9 @@ java_library(
     srcs = ["Main.java"],
 )
 
-native_image(
+native_image_shared_library(
     name = "lib-native",
     deps = [":java"],
-    shared_library = True,
 )
 
 alias(

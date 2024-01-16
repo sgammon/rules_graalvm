@@ -8,7 +8,5 @@ build:labs --incompatible_strict_action_env
 build:labs --dynamic_local_strategy=worker,sandboxed,standalone
 build:labs --spawn_strategy=worker,sandboxed,local
 
-build:labs-sandbox --experimental_use_sandboxfs=auto
-
-build:labs-broken --experimental_strict_java_deps=error
+build:labs --experimental_strict_java_deps=error
 build:labs-broken --experimental_worker_strict_flagfiles

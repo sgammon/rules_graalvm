@@ -1,7 +1,8 @@
 
 build:disk-cache --disk_cache=~/.cache/bazel
 
-build:buildless --remote_cache=https://global.less.build
+build:buildless --remote_cache=https://bazel.less.build
+build:buildless --remote_upload_local_results=true
 
 build --modify_execution_info=PackageTar=+no-remote
 build --remote_local_fallback
@@ -12,4 +13,3 @@ build --incompatible_default_to_explicit_init_py
 build --experimental_remote_merkle_tree_cache
 build --experimental_remote_cache_compression
 build --experimental_guard_against_concurrent_changes
-

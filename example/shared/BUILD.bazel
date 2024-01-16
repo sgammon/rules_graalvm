@@ -1,6 +1,6 @@
 load(
     "@rules_graalvm//graalvm:defs.bzl",
-    "native_image",
+    "native_image_shared_library",
 )
 load(
     "@rules_java//java:defs.bzl",
@@ -31,15 +31,15 @@ java_binary(
     ],
 )
 
-native_image(
-    name = "main-native",
-    main_class = "Main",
+native_image_shared_library(
+    name = "mylib",
     deps = [":java"],
     strict = True,
+    lib_name = "libmylib",  # becomes `libmylib.so`, `libmylib.dylib`, etc.
     reflection_configuration = ":reflection-config",
 )
 
 alias(
-    name = "native",
-    actual = "main-native",
+    name = "shared",
+    actual = "mylib",
 )

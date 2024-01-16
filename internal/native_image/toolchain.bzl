@@ -20,7 +20,7 @@ load(
     "find_cpp_toolchain",
 )
 
-def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
+def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows, graalvm_home):
     """Build a context struct for accessing the native C toolchain.
 
     Available struct properties:
@@ -32,6 +32,7 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
         ctx: Context from the rule implementation.
         transitive_inputs: List of transitive inputs (mutated).
         is_windows: Whether the target (and hence execution) platform is Windows.
+        graalvm_home: Parent directory which should be used as `GRAALVM_HOME`.
 
     Returns:
         Resulting struct; see method documentation for parameters."""
@@ -118,9 +119,11 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
 
     # seal paths with hack above
     env["PATH"] = ctx.configuration.host_path_separator.join(paths)
+    env["GRAALVM_HOME"] = graalvm_home
 
     return struct(
         c_compiler_path = c_compiler_path,
         env = env,
         execution_requirements = execution_requirements,
+        graalvm_home = graalvm_home,
     )
