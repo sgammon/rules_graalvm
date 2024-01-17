@@ -1,4 +1,3 @@
----
 matrix:
   bazel_version: ["6.3.2", "7.0.0"]
   platform: ["centos7", "debian10", "macos", "ubuntu2004"]
@@ -11,25 +10,6 @@ tasks:
     include_json_profile:
       - build
       - test
-    build_targets:
-      - "//graalvm/..."
-      - "//example/native"
-    test_targets:
-      - "//tests/analysis/..."
----
-bazel: 5.4.0
-
-matrix:
-  platform: ["centos7", "debian10", "macos", "ubuntu2004"]
-
-tasks:
-  build:
-    include_json_profile:
-      - build
-      - test
-    shell_commands:
-      - echo "5.4.0" > .bazelversion
-      - echo "import %workspace%/tools/bazel/bazel5.bazelrc" > version.bazelrc
     build_targets:
       - "//graalvm/..."
       - "//example/native"
