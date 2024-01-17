@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.graalvm.compiler</groupId>
       <artifactId>compiler</artifactId>
-      <version>23.1.1</version>
+      <version>23.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.graalvm.polyglot</groupId>
