@@ -6,7 +6,7 @@ validate_config: 1
 buildifier: latest
 
 tasks:
-  build:
+  ubuntu2004:
     include_json_profile:
       - build
       - test
