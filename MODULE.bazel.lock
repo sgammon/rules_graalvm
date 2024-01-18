@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "fa50be8381e0ebb2e2dd9fbb5eeff1495406335c7141ccc5d5d24800f8374789",
+  "moduleFileHash": "c2eb5269b799c56dbdb00f89216c8fa5fa9e8ec5be66bcac47111f8886b69b5f",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -34,7 +34,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 152,
+            "line": 149,
             "column": 22
           },
           "imports": {
@@ -65,7 +65,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 157,
+                "line": 154,
                 "column": 14
               }
             }
@@ -79,7 +79,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 173,
+            "line": 170,
             "column": 20
           },
           "imports": {
@@ -102,7 +102,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 178,
+                "line": 175,
                 "column": 12
               }
             }
@@ -116,7 +116,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 212,
+            "line": 209,
             "column": 21
           },
           "imports": {},
@@ -130,7 +130,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 217,
+                "line": 214,
                 "column": 15
               }
             }
@@ -144,7 +144,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 219,
+            "line": 216,
             "column": 20
           },
           "imports": {
@@ -164,7 +164,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 224,
+                "line": 221,
                 "column": 23
               }
             }
@@ -2212,7 +2212,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "PkyvavvK5e4FjXXNmFAYYcGB6FofYxEbQwP3Uuc8TR4=",
+        "bzlTransitiveDigest": "wOG253vlEgUecUyoCdXCJJi0qad2DikVZONYbddw7es=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
