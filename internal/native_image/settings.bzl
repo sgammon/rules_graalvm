@@ -40,6 +40,7 @@ _NativeImageInfo = provider(
     """,
 )
 
+# buildifier: disable=unused-variable
 def _gvm_nativeimage_info(ctx):
     """Provide info about a Native Image target's tooling settings."""
 

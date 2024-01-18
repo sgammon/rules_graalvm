@@ -46,4 +46,3 @@ bzl_library(
 gazelle(
     name = "gazelle",
 )
-

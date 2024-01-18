@@ -205,5 +205,6 @@ def graal_binary(
         c_compiler_option = c_compiler_option,
         executable_name = executable_name,
         native_image_tool = native_image_tool,
+        allow_fallback = allow_fallback,
         **kwargs
     )

@@ -10,8 +10,8 @@ java_library(
 
 native_image(
     name = "lib-native",
-    deps = [":java"],
     shared_library = True,
+    deps = [":java"],
 )
 
 alias(

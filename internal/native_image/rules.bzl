@@ -78,7 +78,7 @@ def _graal_binary_implementation(ctx):
         """)
 
     is_macos = ctx.target_platform_has_constraint(
-        ctx.attr._macos_constraint[platform_common.ConstraintValueInfo]
+        ctx.attr._macos_constraint[platform_common.ConstraintValueInfo],
     )
     is_windows = ctx.target_platform_has_constraint(
         ctx.attr._windows_constraint[platform_common.ConstraintValueInfo],
@@ -102,7 +102,7 @@ def _graal_binary_implementation(ctx):
     elif (not is_windows and not is_macos) and ctx.attr.shared_library:
         bin_postfix = _BIN_POSTFIX_SO
 
-    args = ctx.actions.args().use_param_file("@%s", use_always=False)
+    args = ctx.actions.args().use_param_file("@%s", use_always = False)
     binary = _prepare_native_image_rule_context(
         ctx,
         args,

@@ -688,8 +688,8 @@ Normally this name is generated and the user does not have to provide it.
             doc = """
 SHA-256 fingerprint for a custom toolchain. Optional. If unspecified, use of custom
 toolchains may yield hermeticity warnings.
-"""
-        )
+""",
+        ),
     },
     implementation = _graal_bindist_repository_impl,
 )

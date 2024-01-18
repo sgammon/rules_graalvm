@@ -19,6 +19,7 @@ load(
 # Verifies that the new Native Image rules behave as expected, and produce identical binary
 # outputs to the previous rules.
 
+# buildifier: disable=unused-variable
 def _test_gvm_modern_nativeimage(name):
     java_library(
         name = "%s_java" % name,
@@ -35,6 +36,7 @@ def _test_gvm_modern_nativeimage(name):
         target = "%s_native" % name,
     )
 
+# buildifier: disable=unused-variable
 def _test_gvm_default_nativeimage_tool_impl(env, target):
     env.expect.that_target(target).default_outputs().contains(
         "tests/analysis/nativeimage/test_gvm_modern_nativeimage_native-bin",
