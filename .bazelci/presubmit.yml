@@ -7,8 +7,8 @@ buildifier: latest
 
 tasks:
   build_and_test:
-    platform: {{ platform }}
-    bazel: {{ bazel_version }}
+    platform: ${{ platform }}
+    bazel: ${{ bazel_version }}
     include_json_profile:
       - build
       - test
