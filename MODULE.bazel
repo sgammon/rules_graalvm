@@ -1,18 +1,20 @@
 "GraalVM Rules for Bazel"
 
-module(
-    name = "rules_graalvm",
-    version = "0.11.1",
-)
+module(name = "rules_graalvm", version = "0.11.1")
 
+## JVM version to target.
 JAVA_VERSION = "21"
 
+## Node version used for local tooling.
 NODE_VERSION = "20.5.0"
 
+## GraalVM distribution version.
 GRAALVM_VERSION = "21.0.2"
 
+## GraalVM distribution type; one of `oracle` or `ce`.
 GRAALVM_DIST = "ce"
 
+## GraalVM SDK version.
 GRAALVM_SDK_VERSION = "23.1.2"
 
 ##
