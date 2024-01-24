@@ -3,33 +3,33 @@
  
   <groupId>dev.elide</groupId>
   <artifactId>rules_graalvm</artifactId>
-  <version>0.11.0</version>
+  <version>0.11.1</version>
 
   <dependencies>
     <dependency>
       <groupId>org.graalvm.sdk</groupId>
       <artifactId>graal-sdk</artifactId>
-      <version>23.1.1</version>
+      <version>23.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.graalvm.compiler</groupId>
       <artifactId>compiler</artifactId>
-      <version>23.1.1</version>
+      <version>23.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>polyglot</artifactId>
-      <version>23.1.1</version>
+      <version>23.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.graalvm.nativeimage</groupId>
       <artifactId>svm</artifactId>
-      <version>23.1.1</version>
+      <version>23.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.graalvm.nativeimage</groupId>
       <artifactId>native-image-base</artifactId>
-      <version>23.1.1</version>
+      <version>23.1.2</version>
     </dependency>
   </dependencies>
 </project>

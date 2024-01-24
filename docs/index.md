@@ -67,7 +67,7 @@ graalvm_repository(
     name = "graalvm",
     distribution = "ce",  # `oracle`, `ce`, or `community`
     java_version = "21",  # `17`, `20`, or `21`, as supported by the version provided
-    version = "21.0.1",  # earlier version format like `22.x` also supported
+    version = "21.0.2",  # earlier version format like `22.x` also supported
 )
 ```
 
@@ -87,7 +87,7 @@ gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 
 gvm.graalvm(
     name = "graalvm",
-    version = "21.0.1",  # earlier version format like `22.x` also supported
+    version = "21.0.2",  # earlier version format like `22.x` also supported
     distribution = "ce",  # `oracle`, `ce`, or `community`
     java_version = "21",  # `17`, `20`, or `21`, as supported by the version provided
 )

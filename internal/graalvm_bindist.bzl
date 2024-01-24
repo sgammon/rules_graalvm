@@ -756,6 +756,7 @@ def graalvm_repository(
     if ((java_version == "21") or (
         version == "21.0.0" or
         version == "21.0.1" or
+        version == "21.0.2" or
         version == "23.1.0" or
         version == "23.1.1" or
         version == "latest"
