@@ -53,6 +53,7 @@ _ComponentDependencies = {
 # Aligned GraalVM distribution versions.
 # buildifier: disable=name-conventions
 _AlignedVersions = {
+    "21.0.2": "23.1.2",
     "21.0.1": "23.1.1",
     "21.0.0": "23.1.0",
     "20.0.2": "23.0.1",
@@ -64,6 +65,8 @@ _AlignedVersions = {
 # VM release versions for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersions = {
+    "23.1.2": "21.0.2+13.1",
+    "21.0.2": "21.0.2+13.1",
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
@@ -77,6 +80,8 @@ _VmReleaseVersions = {
 # VM release versions (for Oracle GVM) for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersionsOracle = {
+    "23.1.2": "21.0.2+13.1",
+    "21.0.2": "21.0.2+13.1",
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
@@ -2037,6 +2042,106 @@ _GRAALVM_BINDIST = {
         # Oracle GraalVM 21.0.1 (Java 21), Windows (amd64), Version 23.1.1
         "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.1_windows-x64_bin.zip",
         "sha256": "16ec0dbd1d4707870410bd59212186087a5bc126c31917e9836daed8018053c8",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "ce_21.0.2_linux-aarch64_23.1.2": {
+        # GraalVM CE 21.0.2 (Java 21), Linux (arm64), Version 23.1.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-aarch64_bin.tar.gz",
+        "sha256": "a34be691ce68f0acf4655c7c6c63a9a49ed276a11859d7224fd94fc2f657cd7a",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "ce_21.0.2_linux-x64_23.1.2": {
+        # GraalVM CE 21.0.2 (Java 21), Linux (amd64), Version 23.1.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz",
+        "sha256": "b048069aaa3a99b84f5b957b162cc181a32a4330cbc35402766363c5be76ae48",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "ce_21.0.2_macos-aarch64_23.1.2": {
+        # GraalVM CE 21.0.2 (Java 21), macOS (arm64), Version 23.1.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-aarch64_bin.tar.gz",
+        "sha256": "515e3a93acc7e1938daba83eda4272e5495fd302d7cdd99ec7ebf408ed505ab7",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "ce_21.0.2_macos-x64_23.1.2": {
+        # GraalVM CE 21.0.2 (Java 21), macOS (amd64), Version 23.1.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-x64_bin.tar.gz",
+        "sha256": "7a8aa93fa45d1721908477abf4732a32637d420ffcb66ada9fb6456440b0d9e1",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "ce_21.0.2_windows-x64_23.1.2": {
+        # GraalVM CE 21.0.2 (Java 21), Windows (amd64), Version 23.1.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_windows-x64_bin.zip",
+        "sha256": "e17b7bead097bf372a5c75df17815b0a2f30b777a019d25eff7706b21421f7fa",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.2_linux-aarch64_23.1.2": {
+        # Oracle GraalVM 21.0.2 (Java 21), Linux (arm64), Version 23.1.2
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.2_linux-aarch64_bin.tar.gz",
+        "sha256": "dfac8d0e7ff8a128e8e8283e1ed6e3540dc44e7a9084c956e8deb9f84a268338",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.2_linux-x64_23.1.2": {
+        # Oracle GraalVM 21.0.2 (Java 21), Linux (amd64), Version 23.1.2
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.2_linux-x64_bin.tar.gz",
+        "sha256": "ee6286773c659afeefdf2f989a133e7a631c60897f2263ac183794ee1d6438f4",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.2_macos-aarch64_23.1.2": {
+        # Oracle GraalVM 21.0.2 (Java 21), macOS (arm64), Version 23.1.2
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.2_macos-aarch64_bin.tar.gz",
+        "sha256": "b504f7c570836a9c6b1b92813c5123718636d0ff0f832321129a4fe3a7b9a0b3",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.2_macos-x64_23.1.2": {
+        # Oracle GraalVM 21.0.2 (Java 21), macOS (amd64), Version 23.1.2
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.2_macos-x64_bin.tar.gz",
+        "sha256": "3e24632f27be74d039508ea2b0b7862ef8c40784f55785cf6b6e40b4b28d9d53",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.2_windows-x64_23.1.2": {
+        # Oracle GraalVM 21.0.2 (Java 21), Windows (amd64), Version 23.1.2
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.2_windows-x64_bin.zip",
+        "sha256": "bc5027e506775813131509247424d4af839ad23224a7787b7770ae82eeb3b32d",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",

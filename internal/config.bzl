@@ -1,8 +1,8 @@
 "Defines configuration and pinned versions for the GraalVM Rules project."
 
-GRAALVM_VERSION = "21.0.1"
+GRAALVM_VERSION = "21.0.2"
 
-GRAALVM_SDK_VERSION = "23.1.1"
+GRAALVM_SDK_VERSION = "23.1.2"
 
 GRAALVM_DISTRIBUTION = "ce"
 

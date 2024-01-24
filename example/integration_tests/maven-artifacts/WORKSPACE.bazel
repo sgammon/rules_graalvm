@@ -9,9 +9,9 @@ local_repository(
     path = "../../..",
 )
 
-GRAALVM_VERSION = "23.1.0"
+GRAALVM_VERSION = "23.1.2"
 
-GRAALVM_JAVA_VERSION = "21.0.1"
+GRAALVM_JAVA_VERSION = "21.0.2"
 
 load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains", "rules_graalvm_repositories")
 
