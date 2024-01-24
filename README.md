@@ -9,7 +9,7 @@
 
 ---
 
-> Latest release: [`0.11.0`](https://registry.bazel.build/modules/rules_graalvm)
+> Latest release: [`0.11.1`](https://registry.bazel.build/modules/rules_graalvm)
 
 Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 
@@ -47,16 +47,16 @@ Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 
 | Artifact | SHA256 |
 | ------- | ----------- |
-| `rules_graalvm-0.11.0.zip` | `f907041330f7eff8a0af1c19fdf936f0c8f8bc127cb52d5a1dde444784d9df54 ` |
-| `rules_graalvm-0.11.0.tgz` | `07ee6451dd4fd78625b0f0d94b9df9bf673716bf9572a0ab24675bc052928f7a ` |
+| `rules_graalvm-0.11.1.zip` | `None` |
+| `rules_graalvm-0.11.1.tgz` | `None` |
 
 ```starlark
 http_archive(
     name = "rules_graalvm",
-    sha256 = "f907041330f7eff8a0af1c19fdf936f0c8f8bc127cb52d5a1dde444784d9df54",
-    strip_prefix = "rules_graalvm-0.11.0",
+    sha256 = None,
+    strip_prefix = "rules_graalvm-0.11.1",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/releases/download/v0.11.0/rules_graalvm-0.11.0.zip",
+        "https://github.com/sgammon/rules_graalvm/releases/download/v0.11.1/rules_graalvm-0.11.1.zip",
     ],
 )
 ```
@@ -88,11 +88,11 @@ register_graalvm_toolchains()
 
 | Artifact | Integrity value |
 | ------- | --------------- |
-| `rules_graalvm-0.11.0.zip` | `sha256-+QcEEzD37/igrxwZ/fk28Mj4vBJ8tS1aHd5ER4TZ31Q=` |
-| `rules_graalvm-0.11.0.tgz` | `sha256-B+5kUd1P14YlsPDZS535v2c3Fr+VcqCrJGdbwFKSj3o=` |
+| `rules_graalvm-0.11.1.zip` | `None` |
+| `rules_graalvm-0.11.1.tgz` | `None` |
 
 ```starlark
-bazel_dep(name = "rules_graalvm", version = "0.11.0")
+bazel_dep(name = "rules_graalvm", version = "0.11.1")
 ```
 
 ```starlark
