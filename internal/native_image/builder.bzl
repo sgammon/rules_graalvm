@@ -364,7 +364,7 @@ def assemble_native_build_options(
             args,
             ctx.attr.include_resources,
             format = "-H:IncludeResources=%s",
-            context = ctx.attr.profiles,
+            context = ctx.attr.include_resources,
         )
 
     # if a static build is being performed against hermetic zlib, configure it
@@ -378,7 +378,7 @@ def assemble_native_build_options(
     if ctx.files.profiles:
         # pgo profiles support expansion
         args.add_joined(
-            _expand_vars(ctx, ctx.files.profiles, ctx.attr.profiles),
+            _expand_vars(ctx, [f.path for f in ctx.files.profiles], ctx.attr.profiles),
             join_with = ",",
             format_joined = "--pgo=%s",
         )
