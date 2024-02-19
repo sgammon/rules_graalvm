@@ -67,6 +67,19 @@ def _configure_optimization_mode(ctx, args):
             format = "-O%s",
         )
 
+def _configure_proxy(ctx, args, direct_inputs):
+    """Configure proxy settings for a Native Image build.
+
+    Args:
+        ctx: Context of the Native Image rule implementation.
+        args: Args builder for the Native Image build.
+        direct_inputs: Direct Native Image build action inputs.
+
+    """
+    if ctx.attr.proxy_configuration != None:
+        args.add(ctx.file.proxy_configuration, format = "-H:DynamicProxyConfigurationFiles=%s")
+        direct_inputs.append(ctx.file.proxy_configuration)
+
 def _configure_resources(ctx, args, direct_inputs):
     """Configure resource settings for a Native Image build.
 
@@ -220,6 +233,9 @@ def assemble_native_build_options(
 
     # configure resources
     _configure_resources(ctx, args, direct_inputs)
+
+    # configure proxy
+    _configure_proxy(ctx, args, direct_inputs)
 
     # if a static build is being performed against hermetic zlib, configure it
     if ctx.attr.static_zlib != None:
