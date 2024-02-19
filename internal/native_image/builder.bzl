@@ -67,6 +67,22 @@ def _configure_optimization_mode(ctx, args):
             format = "-O%s",
         )
 
+def _configure_resources(ctx, args, direct_inputs):
+    """Configure resource settings for a Native Image build.
+
+    Args:
+        ctx: Context of the Native Image rule implementation.
+        args: Args builder for the Native Image build.
+        direct_inputs: Direct Native Image build action inputs.
+
+    """
+    if ctx.attr.include_resources != None:
+        args.add(ctx.attr.include_resources, format = "-H:IncludeResources=%s")
+
+    if ctx.attr.resource_configuration != None:
+        args.add(ctx.file.resource_configuration, format = "-H:ResourceConfigurationFiles=%s")
+        direct_inputs.append(ctx.file.resource_configuration)
+
 def _configure_reflection(ctx, args, direct_inputs):
     """Configure reflection settings for a Native Image build.
 
@@ -203,8 +219,7 @@ def assemble_native_build_options(
     _configure_reflection(ctx, args, direct_inputs)
 
     # configure resources
-    if ctx.attr.include_resources != None:
-        args.add(ctx.attr.include_resources, format = "-H:IncludeResources=%s")
+    _configure_resources(ctx, args, direct_inputs)
 
     # if a static build is being performed against hermetic zlib, configure it
     if ctx.attr.static_zlib != None:
