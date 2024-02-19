@@ -67,8 +67,8 @@ http_archive(
     name = "com_grail_bazel_toolchain",
     canonical_id = LLVM_TOOLCHAIN_TAG,
     sha256 = LLVM_TOOLCHAIN_SHA,
-    strip_prefix = "bazel-toolchain-{tag}".format(tag = LLVM_TOOLCHAIN_TAG),
-    url = "https://github.com/grailbio/bazel-toolchain/archive/refs/tags/{tag}.tar.gz".format(tag = LLVM_TOOLCHAIN_TAG),
+    strip_prefix = "toolchains_llvm-{tag}".format(tag = LLVM_TOOLCHAIN_TAG),
+    url = "https://github.com/bazel-contrib/toolchains_llvm/archive/refs/tags/{tag}.tar.gz".format(tag = LLVM_TOOLCHAIN_TAG),
 )
 
 http_archive(
