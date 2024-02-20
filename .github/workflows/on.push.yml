@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: "Report: Dependency Graph"
         continue-on-error: true
-        uses: advanced-security/maven-dependency-submission-action@ed72a3242c5331913886b41ca9ea66c9195ebdaa # v4.0.0
+        uses: advanced-security/maven-dependency-submission-action@73da25169f2ac4d336320399ba58070deebc1208 # v4.0.1
 
   build:
     name: "Build (${{ matrix.label }})"
