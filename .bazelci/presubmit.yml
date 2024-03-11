@@ -1,6 +1,6 @@
 matrix:
-  bazel_version: ["6.3.2", "7.0.0"]
-  platform: ["macos", "macos_arm64", "ubuntu2004", "windows"]
+  bazel_version: ["7.0.0"]
+  platform: ["macos", "macos_arm64", "ubuntu2004"]
 
 validate_config: 1
 buildifier: latest

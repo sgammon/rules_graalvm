@@ -1,6 +1,9 @@
 "GraalVM Rules for Bazel"
 
-module(name = "rules_graalvm", version = "0.11.1")
+module(
+    name = "rules_graalvm",
+    version = "0.11.1",
+)
 
 ## JVM version to target.
 JAVA_VERSION = "21"
