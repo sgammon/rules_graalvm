@@ -4,10 +4,6 @@ load(
     "@buildifier_prebuilt//:rules.bzl",
     "buildifier",
 )
-load(
-    "@rules_python//python:pip.bzl",
-    pip_requirements = "compile_pip_requirements",
-)
 
 package(default_visibility = [
     "@//:__pkg__",
@@ -16,17 +12,6 @@ package(default_visibility = [
 exports_files([
     "graalvm_bindist_stamp.txt",
 ])
-
-pip_requirements(
-    name = "python_requirements",
-    extra_args = ["--allow-unsafe"],
-    requirements_in = "//:requirements.txt",
-    requirements_txt = "//:requirements_lock.txt",
-    tags = [
-        "manual",
-        "requires-network",
-    ],
-)
 
 buildifier(
     name = "buildifier.check",

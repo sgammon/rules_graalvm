@@ -25,12 +25,7 @@ load(
     "rules_jvm_external_setup",
 )
 load(
-    "@rules_python//python:repositories.bzl",
-    "python_register_toolchains",
-)
-load(
     "//internal:config.bzl",
-    "PYTHON_VERSION",
     FOREIGN_TOOLCHAINS = "ENABLE_FOREIGN_TOOLCHAINS",
 )
 
@@ -56,6 +51,8 @@ def _rules_graalvm_toolchains(
             "@zig_sdk//toolchain:windows_arm64",
         )
 
+# NOTE: keeping the `python` argument for backwards compatibility
+# buildifier: disable=unused-variable
 def _rules_graalvm_setup_workspace(gazelle = True, maven = False, python = True):
     """Perform second-stage setup of the GraalVM Rules codebase."""
 
@@ -70,14 +67,6 @@ def _rules_graalvm_setup_workspace(gazelle = True, maven = False, python = True)
     # Buildifier
 
     buildifier_prebuilt_register_toolchains()
-
-    # Python
-
-    if python:
-        python_register_toolchains(
-            name = "python",
-            python_version = PYTHON_VERSION,
-        )
 
     if gazelle:
         # Bazel Skylib: Gazelle Plugin

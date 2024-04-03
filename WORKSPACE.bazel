@@ -12,8 +12,6 @@ load(
     "PROTOBUF_VERSION",
     "RULES_JVM_EXTERNAL_SHA",
     "RULES_JVM_EXTERNAL_TAG",
-    "RULES_PYTHON_SHA",
-    "RULES_PYTHON_VERSION",
 )
 
 http_archive(
@@ -52,13 +50,6 @@ http_archive(
     urls = [
         "https://github.com/bazelbuild/rules_java/releases/download/6.4.0/rules_java-6.4.0.tar.gz",
     ],
-)
-
-http_archive(
-    name = "rules_python",
-    sha256 = RULES_PYTHON_SHA,
-    strip_prefix = "rules_python-{}".format(RULES_PYTHON_VERSION),
-    url = "https://github.com/bazelbuild/rules_python/releases/download/{}/rules_python-{}.tar.gz".format(RULES_PYTHON_VERSION, RULES_PYTHON_VERSION),
 )
 
 http_archive(

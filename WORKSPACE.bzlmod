@@ -129,7 +129,6 @@ rules_graalvm_toolchains()
 rules_graalvm_workspace(
     gazelle = False,
     maven = False,
-    python = False,
 )
 
 # Provide a repository hint for Gazelle to inform it that the go package

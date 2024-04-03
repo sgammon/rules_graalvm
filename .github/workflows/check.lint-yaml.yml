@@ -38,7 +38,7 @@ jobs:
   ## Task: Lint workflows via Actionlint
   lint-workflows:
     name: "Lint: Workflows"
-    uses: elide-dev/build-infra/.github/workflows/check.actions-lint.ci.yml@c54d8227f4bd37839a67ab9cb71fb59a0d197aee
+    uses: elide-dev/build-infra/.github/workflows/check.actions-lint.ci.yml@ae4a1343b5e45ea1e2133f0105863058a1d0527c
     permissions:
       checks: write
       pull-requests: read
@@ -56,9 +56,12 @@ jobs:
       pull-requests: "read"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
       - name: "Setup: Checkout"
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: "Lint: YAML"
@@ -80,9 +83,12 @@ jobs:
       pull-requests: "read"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
       - name: "Setup: Checkout"
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: "Lint: YAML"
