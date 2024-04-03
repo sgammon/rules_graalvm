@@ -753,12 +753,13 @@ def graalvm_repository(
             please set the `java_version` to `21`, and the GraalVM `version` to `23.1.0` or greater.
         """)
 
-    if ((java_version == "21") or (
+    if ((java_version == "21" or java_version == "22") or (
         version == "21.0.0" or
         version == "21.0.1" or
         version == "21.0.2" or
         version == "23.1.0" or
         version == "23.1.1" or
+        version == "24.0.0" or
         version == "latest"
     )):
         if len(components) > 0:

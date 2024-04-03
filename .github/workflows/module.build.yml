@@ -122,16 +122,28 @@ jobs:
     continue-on-error: ${{ inputs.labs }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            bazel.less.build:443
+            bcr.bazel.build:443
+            github.com:443
+            github.com:80
+            global.less.build:443
+            mirror.bazel.build:443
+            objects.githubusercontent.com:443
+            releases.bazel.build:443
+            remote.buildbuddy.io:443
       - name: "Setup: Checkout"
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: "Setup: msbuild"
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         if: ${{ contains(inputs.runner, 'windows') }}
       - name: "Setup: Bazel"
-        uses: bazelbuild/setup-bazelisk@95c9bf48d0c570bb3e28e57108f3450cd67c1a44 # v2.0.0
+        uses: bazel-contrib/setup-bazel@b388b84bb637e50cdae241d0f255670d4bd79f29 # 0.8.1
       - name: "Setup: Cache"
         uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
@@ -318,6 +330,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: GVM CE 22
+          - label: GraalVM CE 22
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-22"
+            labs: false
+            skip: false
+
           # Test: Oracle GVM 17
           - label: Oracle GraalVM 17
             target: sample
@@ -342,18 +362,44 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Oracle GVM 22
+          - label: Oracle GraalVM 22
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-oracle-22"
+            labs: false
+            skip: false
+
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            bazel.less.build:443
+            bcr.bazel.build:443
+            github.com:443
+            github.com:80
+            global.less.build:443
+            mirror.bazel.build:443
+            objects.githubusercontent.com:443
+            releases.bazel.build:443
+            download.oracle.com:443
+            gds.oracle.com:443
+            remote.buildbuddy.io:443
+            objectstorage.*.oraclecloud.com:443
+            www.graalvm.org:443
+            repo1.maven.org:443
+            maven.pkg.st:443
       - name: "Setup: Checkout"
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: "Setup: msbuild"
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         if: ${{ contains(inputs.runner, 'windows') }}
       - name: "Setup: Bazel"
-        uses: bazelbuild/setup-bazelisk@95c9bf48d0c570bb3e28e57108f3450cd67c1a44 # v2.0.0
+        uses: bazel-contrib/setup-bazel@b388b84bb637e50cdae241d0f255670d4bd79f29 # 0.8.1
       - name: "Configure: Bazel Version"
         shell: bash
         if: matrix.skip != true && inputs.bazel_version != '' && inputs.bazel_config != ''

@@ -20,9 +20,7 @@ targets:
 
 test_sources:
   tests/*
-  tools/scripts/mapping_generator_tests/*
 
 additional_languages:
   java
   javascript
-  python

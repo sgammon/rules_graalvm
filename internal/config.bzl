@@ -1,8 +1,8 @@
 "Defines configuration and pinned versions for the GraalVM Rules project."
 
-GRAALVM_VERSION = "21.0.2"
+GRAALVM_VERSION = "22.0.0"
 
-GRAALVM_SDK_VERSION = "23.1.2"
+GRAALVM_SDK_VERSION = "24.0.0"
 
 GRAALVM_DISTRIBUTION = "ce"
 
@@ -14,13 +14,7 @@ GO_VERSION = "1.20.5"
 
 LLVM_VERSION = "15.0.6"
 
-PYTHON_VERSION = "3.11"
-
 NODE_VERSION = "20.5.0"
-
-RULES_PYTHON_VERSION = "0.24.0"
-
-RULES_PYTHON_SHA = "0a8003b044294d7840ac7d9d73eef05d6ceb682d7516781a4ec62eeb34702578"
 
 RULES_JVM_EXTERNAL_TAG = "5.3"
 
@@ -56,9 +50,11 @@ TARGET_JAVA_VERSIONS = [
     "19",
     "20",
     "21",
+    "22",
 ]
 
 GRAALVM_KNOWN_RELEASES = [
+    "22.0.0",
     "21.0.1",
     "21.0.0",
     "20.0.2",

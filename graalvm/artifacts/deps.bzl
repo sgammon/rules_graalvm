@@ -1,6 +1,6 @@
 "Provides Maven dependencies for downstream `rules_jvm_external` use."
 
-SDK_VERSION_LATEST = "23.1.1"
+SDK_VERSION_LATEST = "24.0.0"
 
 # Baseline Maven dependencies.
 MAVEN_DEPENDENCIES = [

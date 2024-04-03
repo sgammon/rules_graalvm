@@ -45,8 +45,8 @@ Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 
 **Via `WORKSPACE.bazel`:**
 
-| Artifact | SHA256 |
-| ------- | ----------- |
+| Artifact                   | SHA256                                                             |
+| -------------------------- | ------------------------------------------------------------------ |
 | `rules_graalvm-0.11.1.zip` | `e4fa275b062dcd03b1ecb02bb25f01ead512023006a874a5e0c2cb78ba6d8e73` |
 | `rules_graalvm-0.11.1.tgz` | `0128b4a8664974689fadae56b517de627c5f42141925111baf05dc91c37af1c0` |
 
@@ -69,8 +69,8 @@ load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 graalvm_repository(
     name = "graalvm",
     distribution = "ce",  # `oracle`, `ce`, or `community`
-    java_version = "21",  # `17`, `20`, or `21`, as supported by the version provided
-    version = "21.0.2",  # earlier version format like `22.x` also supported
+    java_version = "22",  # `17`, `20`, `21`, or `22` as supported by the version provided
+    version = "22.0.0",  # gvm sdk version format like `24.x.x` also supported
 )
 ```
 
@@ -86,8 +86,8 @@ register_graalvm_toolchains()
 
 **Or, via `MODULE.bazel`:**
 
-| Artifact | Integrity value |
-| ------- | --------------- |
+| Artifact                   | Integrity value                                       |
+| -------------------------- | ----------------------------------------------------- |
 | `rules_graalvm-0.11.1.zip` | `sha256-5PonWwYtzQOx7LArsl8B6tUSAjAGqHSl4MLLeLptjnM=` |
 | `rules_graalvm-0.11.1.tgz` | `sha256-ASi0qGZJdGifra5WtRfeYnxfQhQZJREbrwXckcN68cA=` |
 
@@ -100,9 +100,9 @@ gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 
 gvm.graalvm(
     name = "graalvm",
-    version = "21.0.2",  # earlier version format like `22.x` also supported
+    version = "22.0.0",  # gvm sdk version format like `24.x.x` also supported
     distribution = "ce",  # `oracle`, `ce`, or `community`
-    java_version = "21",  # `17`, `20`, or `21`, as supported by the version provided
+    java_version = "22",  # `17`, `20`, `21`, or `22` as supported by the version provided
 )
 use_repo(gvm, "graalvm")
 register_toolchains("@graalvm//:jvm")
@@ -141,7 +141,7 @@ register_toolchains("@graalvm//:sdk")
 
 ```
 build --extra_toolchains=@graalvm//:toolchain
-build --java_runtime_version=graalvm_20
+build --java_runtime_version=graalvm_22
 ```
 
 > **Note**

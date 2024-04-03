@@ -75,10 +75,6 @@ load(
     "rules_jvm_external_deps",
 )
 load(
-    "@rules_python//python:repositories.bzl",
-    "py_repositories",
-)
-load(
     "//internal:config.bzl",
     "GO_VERSION",
     "GRAALVM_DISTRIBUTION",
@@ -144,10 +140,6 @@ def _setup_rules_graalvm_repositories(maven = True, go_toolchains = True, linter
     rules_java_dependencies()
 
     rules_java_toolchains()
-
-    # Python
-
-    py_repositories()
 
     # GraalVM
 

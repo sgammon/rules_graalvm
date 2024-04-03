@@ -61,11 +61,6 @@ bazel_dep(
     dev_dependency = True,
 )
 bazel_dep(
-    name = "rules_python",
-    version = "0.25.0",
-    dev_dependency = True,
-)
-bazel_dep(
     name = "rules_testing",
     version = "0.4.0",
     dev_dependency = True,
@@ -146,9 +141,8 @@ MAVEN_ARTIFACTS = [
 ]
 
 MAVEN_REPOSITORIES = [
-    "https://maven.pkg.st",
-    "https://maven.google.com",
     "https://repo1.maven.org/maven2",
+    "https://maven.google.com",
 ]
 
 maven = use_extension(
