@@ -7,7 +7,7 @@ set -o errexit -o nounset -o pipefail
 TAG=${GITHUB_REF_NAME}
 # The prefix is chosen to match what GitHub generates for source archives
 PREFIX="rules_graalvm-${TAG:1}"
-ARCHIVE="rules_graalvm-$TAG.tar.gz"
+ARCHIVE="rules_graalvm-$TAG.tgz"
 git archive --format=tar --prefix=${PREFIX}/ ${TAG} | gzip > $ARCHIVE
 SHA=$(shasum -a 256 $ARCHIVE | awk '{print $1}')
 

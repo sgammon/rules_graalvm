@@ -2,7 +2,7 @@
 
 module(
     name = "rules_graalvm",
-    version = "0.11.1",
+    version = "0.11.2",
 )
 
 ## JVM version to target.
@@ -18,7 +18,7 @@ GRAALVM_VERSION = "21.0.2"
 GRAALVM_DIST = "ce"
 
 ## GraalVM SDK version.
-GRAALVM_SDK_VERSION = "23.1.2"
+GRAALVM_SDK_VERSION = "24.0.1"
 
 ##
 ## Dependencies: API
