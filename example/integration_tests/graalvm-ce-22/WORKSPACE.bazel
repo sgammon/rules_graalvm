@@ -17,5 +17,5 @@ graalvm_repository(
     name = "graalvm",
     distribution = "ce",
     java_version = "22",
-    version = "22.0.0",
+    version = "22.0.1",
 )
