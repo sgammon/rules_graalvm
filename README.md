@@ -9,7 +9,7 @@
 
 ---
 
-> Latest release: [`0.11.1`](https://registry.bazel.build/modules/rules_graalvm)
+> Latest release: [`0.11.2`](https://registry.bazel.build/modules/rules_graalvm)
 
 Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 
@@ -47,16 +47,16 @@ Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 
 | Artifact                   | SHA256                                                             |
 | -------------------------- | ------------------------------------------------------------------ |
-| `rules_graalvm-0.11.1.zip` | `e4fa275b062dcd03b1ecb02bb25f01ead512023006a874a5e0c2cb78ba6d8e73` |
-| `rules_graalvm-0.11.1.tgz` | `0128b4a8664974689fadae56b517de627c5f42141925111baf05dc91c37af1c0` |
+| `rules_graalvm-0.11.2.zip` | `3ef2f1583a4849d03209a43b0b507f172299c3045e585b6ffa7144a2bc12ae18` |
+| `rules_graalvm-0.11.2.tgz` | `49bfa3851b6a1f76e5c18727adf6b0bb61af24ba2566bf75a724ddbca0c2c183` |
 
 ```starlark
 http_archive(
     name = "rules_graalvm",
-    sha256 = "e4fa275b062dcd03b1ecb02bb25f01ead512023006a874a5e0c2cb78ba6d8e73",
-    strip_prefix = "rules_graalvm-0.11.1",
+    sha256 = "3ef2f1583a4849d03209a43b0b507f172299c3045e585b6ffa7144a2bc12ae18",
+    strip_prefix = "rules_graalvm-0.11.2",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/releases/download/v0.11.1/rules_graalvm-0.11.1.zip",
+        "https://github.com/sgammon/rules_graalvm/releases/download/v0.11.2/rules_graalvm-0.11.2.zip",
     ],
 )
 ```
@@ -88,11 +88,11 @@ register_graalvm_toolchains()
 
 | Artifact                   | Integrity value                                       |
 | -------------------------- | ----------------------------------------------------- |
-| `rules_graalvm-0.11.1.zip` | `sha256-5PonWwYtzQOx7LArsl8B6tUSAjAGqHSl4MLLeLptjnM=` |
-| `rules_graalvm-0.11.1.tgz` | `sha256-ASi0qGZJdGifra5WtRfeYnxfQhQZJREbrwXckcN68cA=` |
+| `rules_graalvm-0.11.2.zip` | `sha256-PvLxWDpISdAyCaQ7C1B/FyKZwwReWFtv+nFEorwSrhg=` |
+| `rules_graalvm-0.11.2.tgz` | `sha256-Sb+jhRtqH3blwYcnrfawu2GvJLolZr91pyTdvKDCwYM=` |
 
 ```starlark
-bazel_dep(name = "rules_graalvm", version = "0.11.1")
+bazel_dep(name = "rules_graalvm", version = "0.11.2")
 ```
 
 ```starlark
