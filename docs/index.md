@@ -36,13 +36,13 @@ Use [GraalVM](https://graalvm.org) from [Bazel](https://bazel.build), with suppo
 
 | Artifact                   | SHA256                                                             |
 | -------------------------- | ------------------------------------------------------------------ |
-| `rules_graalvm-0.11.2.zip` | `23ad095cb9fb84d37dc47ff7d8aeaa094bbd2f4475a7194b737e3f7a2deb99d4` |
-| `rules_graalvm-0.11.2.tgz` | `4f7c5cb43a5a08cc9f957ba44481dbb2fefe93eabc22e4b240564580879de93f` |
+| `rules_graalvm-0.11.2.zip` | `3ef2f1583a4849d03209a43b0b507f172299c3045e585b6ffa7144a2bc12ae18` |
+| `rules_graalvm-0.11.2.tgz` | `49bfa3851b6a1f76e5c18727adf6b0bb61af24ba2566bf75a724ddbca0c2c183` |
 
 ```python
 http_archive(
     name = "rules_graalvm",
-    sha256 = "23ad095cb9fb84d37dc47ff7d8aeaa094bbd2f4475a7194b737e3f7a2deb99d4",
+    sha256 = "3ef2f1583a4849d03209a43b0b507f172299c3045e585b6ffa7144a2bc12ae18",
     strip_prefix = "rules_graalvm-0.11.2",
     urls = [
         "https://github.com/sgammon/rules_graalvm/releases/download/v0.11.2/rules_graalvm-0.11.2.zip",
@@ -75,8 +75,8 @@ graalvm_repository(
 
 | Artifact                   | Integrity value                                       |
 | -------------------------- | ----------------------------------------------------- |
-| `rules_graalvm-0.11.2.zip` | `sha256-0NSg75R475U/xKElDxCPjTASDIUXm4KxF0thWlq8hUQ=` |
-| `rules_graalvm-0.11.2.tgz` | `sha256-hJq0EGTqHK15F8TpcoCOBDIpTC2dUXfmpwjIGN4t7Ds=` |
+| `rules_graalvm-0.11.2.zip` | `sha256-PvLxWDpISdAyCaQ7C1B/FyKZwwReWFtv+nFEorwSrhg=` |
+| `rules_graalvm-0.11.2.tgz` | `sha256-Sb+jhRtqH3blwYcnrfawu2GvJLolZr91pyTdvKDCwYM=` |
 
 ```python
 bazel_dep(name = "rules_graalvm", version = "0.11.2")
