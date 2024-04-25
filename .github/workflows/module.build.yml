@@ -138,7 +138,7 @@ jobs:
             releases.bazel.build:443
             remote.buildbuddy.io:443
       - name: "Setup: Checkout"
-        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - name: "Setup: msbuild"
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         if: ${{ contains(inputs.runner, 'windows') }}
@@ -394,7 +394,7 @@ jobs:
             repo1.maven.org:443
             maven.pkg.st:443
       - name: "Setup: Checkout"
-        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - name: "Setup: msbuild"
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         if: ${{ contains(inputs.runner, 'windows') }}
