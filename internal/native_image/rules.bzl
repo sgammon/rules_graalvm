@@ -143,10 +143,13 @@ def _graal_binary_implementation(ctx):
         # https://github.com/oracle/graal/blob/77a7f6a691024d22367ae33be4da0c15ceb6a246/substratevm/src/com.oracle.svm.driver/src/com/oracle/svm/driver/NativeImage.java#L1801-L1808
         xcode_args.add(apple_support.path_placeholders.xcode(), format = "-EDEVELOPER_DIR=%s")
         xcode_args.add(apple_support.path_placeholders.sdkroot(), format = "-ESDKROOT=%s")
+        xcode_config = ctx.attr._xcode_config[apple_common.XcodeVersionConfig]
+        # native-image reads the MACOSX_DEPLOYMENT_TARGET env var to determine target macos version
+        run_params["env"]["MACOSX_DEPLOYMENT_TARGET"] = str(xcode_config.minimum_os_for_platform_type(apple_common.platform_type.macos))
         apple_support.run(
             actions = graal_actions,
             apple_fragment = ctx.fragments.apple,
-            xcode_config = ctx.attr._xcode_config[apple_common.XcodeVersionConfig],
+            xcode_config = xcode_config,
             xcode_path_resolve_level = apple_support.xcode_path_resolve_level.args,
             arguments = [args, xcode_args],
             **run_params
