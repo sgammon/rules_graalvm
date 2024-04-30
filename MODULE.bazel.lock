@@ -2177,7 +2177,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "9NmT+hwMGsPsF9XQCI9vso59c+pVtfnC2OZh0+CUbMI=",
+        "bzlTransitiveDigest": "EAWeNOx/cefzvx+Wf0BZfIy319PSyXN+ldla18CoDsE=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
