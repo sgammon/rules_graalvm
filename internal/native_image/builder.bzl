@@ -262,4 +262,13 @@ def assemble_native_build_options(
 
     # append extra arguments last
     for arg in ctx.attr.extra_args:
-        args.add(arg)
+        # Expand locations of targets in 'data' and make variables provided by 'toolchains'.
+        expanded_arg = ctx.expand_make_variables(
+            "extra_args",
+            ctx.expand_location(arg, ctx.attr.data),
+            {},
+        )
+
+        # Skip over args that become empty after expansion but weren't before.
+        if expanded_arg or not arg:
+            args.add(expanded_arg)
