@@ -144,6 +144,7 @@ def _graal_binary_implementation(ctx):
         xcode_args.add(apple_support.path_placeholders.xcode(), format = "-EDEVELOPER_DIR=%s")
         xcode_args.add(apple_support.path_placeholders.sdkroot(), format = "-ESDKROOT=%s")
         xcode_config = ctx.attr._xcode_config[apple_common.XcodeVersionConfig]
+
         # native-image reads the MACOSX_DEPLOYMENT_TARGET env var to determine target macos version
         run_params["env"]["MACOSX_DEPLOYMENT_TARGET"] = str(xcode_config.minimum_os_for_platform_type(apple_common.platform_type.macos))
         apple_support.run(
