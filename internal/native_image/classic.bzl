@@ -58,6 +58,9 @@ def _graal_binary_classic_implementation(ctx):
         native_toolchain.c_compiler_path,
     )
 
+    if ctx.files.data:
+      direct_inputs.extend(ctx.files.data)
+
     inputs = depset(
         direct_inputs,
         transitive = transitive_inputs,
