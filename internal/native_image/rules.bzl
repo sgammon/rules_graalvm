@@ -37,41 +37,28 @@ def _build_action_message(ctx):
     return (_mode_label[ctx.attr.optimization_mode or "default"])
 
 def _graal_binary_implementation(ctx):
-    graal_attr = ctx.attr.native_image_tool
-    extra_tool_deps = []
-    gvm_toolchain = None
+    graal_attr = ctx.executable.native_image_tool
+
     classpath_depset = depset(transitive = [
         dep[JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
 
-    graal = None
     direct_inputs = []
     transitive_inputs = [classpath_depset]
 
     # resolve via toolchains
-    info = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
+    gvm_toolchain = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
 
-    # but fall back to explicitly-provided tool, which should override, with the
-    # remainder of the resolved toolchain present
-    resolved_graal = graal_attr or info.native_image_bin
-    gvm_toolchain = info
-    extra_tool_deps.append(info.gvm_files)
-
-    graal_inputs, _ = ctx.resolve_tools(tools = [
-        resolved_graal,
-    ] + extra_tool_deps)
-
-    graal = graal_inputs.to_list()[0]
+    # if a native-image tool is explicitly provided, it should override the one
+    # provided by the toolchain, but not the rest of the files it provides
+    graal = graal_attr or gvm_toolchain.native_image_bin.files_to_run
 
     # add toolchain files to transitive inputs
     transitive_inputs.append(gvm_toolchain.gvm_files[DefaultInfo].files)
 
-    # if we're using an explicit tool, add it to the direct inputs
-    if graal:
-        direct_inputs.append(graal)
-    else:
-        # still failed to resolve: cannot resolve via either toolchains or attributes.
+    if not graal:
+        # cannot resolve via either toolchains or attributes.
         fail("""
             No `native-image` tool found. Please either define a `native_image_tool` in your target,
             or install a GraalVM `native-image` toolchain.
