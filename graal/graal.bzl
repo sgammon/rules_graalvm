@@ -52,6 +52,7 @@ def native_image(
         include_resources = None,
         reflection_configuration = None,
         jni_configuration = None,
+        serialization_configuration = None,
         initialize_at_build_time = [],
         initialize_at_run_time = [],
         native_features = [],
@@ -79,6 +80,7 @@ def native_image(
             The special string `%target%`, if present, is replaced with `name`.
         include_resources: Glob to pass to `IncludeResources`. No default; optional.
         reflection_configuration: Reflection configuration file. No default; optional.
+        serialization_configuration: Serialization configuration file. No default; optional.
         jni_configuration: JNI configuration file. No default; optional.
         initialize_at_build_time: Classes or patterns to pass to `--initialize-at-build-time`. No default; optional.
         initialize_at_run_time: Classes or patterns to pass to `--initialize-at-run-time`. No default; optional.
@@ -108,6 +110,7 @@ def native_image(
         include_resources = include_resources,
         reflection_configuration = reflection_configuration,
         jni_configuration = jni_configuration,
+        serialization_configuration = serialization_configuration,
         initialize_at_build_time = initialize_at_build_time,
         initialize_at_run_time = initialize_at_run_time,
         native_features = native_features,
@@ -136,6 +139,7 @@ def graal_binary(
         include_resources = None,
         reflection_configuration = None,
         jni_configuration = None,
+        serialization_configuration = None,
         initialize_at_build_time = [],
         initialize_at_run_time = [],
         native_features = [],
@@ -163,6 +167,7 @@ def graal_binary(
             The special string `%target%`, if present, is replaced with `name`.
         include_resources: Glob to pass to `IncludeResources`. No default; optional.
         reflection_configuration: Reflection configuration file. No default; optional.
+        serialization_configuration: Serialization configuration file. No default; optional.
         jni_configuration: JNI configuration file. No default; optional.
         initialize_at_build_time: Classes or patterns to pass to `--initialize-at-build-time`. No default; optional.
         initialize_at_run_time: Classes or patterns to pass to `--initialize-at-run-time`. No default; optional.
@@ -192,6 +197,7 @@ def graal_binary(
         include_resources = include_resources,
         reflection_configuration = reflection_configuration,
         jni_configuration = jni_configuration,
+        serialization_configuration = serialization_configuration,
         initialize_at_build_time = initialize_at_build_time,
         initialize_at_run_time = initialize_at_run_time,
         native_features = native_features,

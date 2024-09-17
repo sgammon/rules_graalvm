@@ -125,6 +125,10 @@ def _configure_reflection(ctx, args, direct_inputs):
         direct_inputs.append(ctx.file.jni_configuration)
         args.add("-H:+JNI")
 
+    if ctx.attr.serialization_configuration != None:
+        args.add(ctx.file.serialization_configuration, format = "-H:SerializationConfigurationFiles=%s")
+        direct_inputs.append(ctx.file.serialization_configuration)
+
 def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
     """Configure native compiler and linker flags for a Native Image build.
 
