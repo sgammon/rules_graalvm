@@ -2452,6 +2452,16 @@ _GRAALVM_BINDIST = {
             "@rules_graalvm//platform/jvm:java22",
         ],
     },
+    "oracle_22.0.2_macos-x64_24.0.2": {
+        # Oracle GraalVM 22.0.2 (Java 22), macOS (amd64), Version 24.0.2
+        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_macos-x64.tar.gz",
+        "sha256": "9fcbf3ff96f38f31e2f590bb62adf19e065535c82e27b5fd742def005bef3528",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
     "oracle_22.0.2_windows-x64_24.0.2": {
         # Oracle GraalVM 22.0.2 (Java 22), Windows (amd64), Version 24.0.2
         "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_windows-x64_bin.zip",

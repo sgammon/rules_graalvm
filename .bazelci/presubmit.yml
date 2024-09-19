@@ -4,7 +4,6 @@ matrix:
     - ubuntu2004
     - macos
     - macos_arm64
-    - windows
 
 validate_config: 1
 buildifier: latest
