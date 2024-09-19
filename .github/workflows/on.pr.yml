@@ -85,7 +85,13 @@ jobs:
             coverage: false
             flags: --config=linux
           - runner: macos-latest
-            label: macOS
+            label: macOS arm64
+            labs: false
+            main: true
+            coverage: true
+            flags: --config=mac
+          - runner: macos-13-latest
+            label: macOS x86
             labs: false
             main: true
             coverage: true

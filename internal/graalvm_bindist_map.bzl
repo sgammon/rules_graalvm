@@ -53,6 +53,7 @@ _ComponentDependencies = {
 # Aligned GraalVM distribution versions.
 # buildifier: disable=name-conventions
 _AlignedVersions = {
+    "22.0.2": "24.0.2",
     "22.0.1": "24.0.1",
     "22.0.0": "24.0.0",
     "21.0.2": "23.1.2",
@@ -67,6 +68,7 @@ _AlignedVersions = {
 # VM release versions for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersions = {
+    "24.0.2": "22.0.2+9.1",
     "24.0.1": "22.0.1+8.1",
     "24.0.0": "22+36.1",
     "23.1.2": "21.0.2+13.1",
@@ -74,6 +76,7 @@ _VmReleaseVersions = {
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
+    "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
     "22.0.0": "22+36.1",
     "21.0.0": "21+35.1",
@@ -86,6 +89,7 @@ _VmReleaseVersions = {
 # VM release versions (for Oracle GVM) for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersionsOracle = {
+    "24.0.2": "22.0.2+9.1",
     "24.0.1": "22.0.1+8.1",
     "24.0.0": "22+36.1",
     "23.1.2": "21.0.2+13.1",
@@ -93,6 +97,7 @@ _VmReleaseVersionsOracle = {
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
+    "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
     "22.0.0": "22+36.1",
     "21.0.0": "21+35.1",
@@ -129,6 +134,9 @@ def _generate_distribution_coordinate(dist, platform, version, java_version, com
     elif version == "24.0.1" and java_version == "22":
         version = "22.0.1"
         aligned_version = "24.0.1"
+    elif version == "24.0.2" and java_version == "22":
+        version = "22.0.2"
+        aligned_version = "24.0.2"
 
     segments = [
         dist,
@@ -2314,6 +2322,56 @@ _GRAALVM_BINDIST = {
             "@rules_graalvm//platform/jvm:java22",
         ],
     },
+    "ce_22.0.2_linux-aarch64_24.0.2": {
+        # GraalVM CE 22.0.2 (Java 22), Linux (arm64), Version 24.0.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.2/graalvm-community-jdk-22.0.2_linux-aarch64_bin.tar.gz",
+        "sha256": "28ca4c815fa68b86141d9dcf1a46c1f58f74dead41de9042de1202337bb014d9",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "ce_22.0.2_linux-x64_24.0.2": {
+        # GraalVM CE 22.0.2 (Java 22), Linux (amd64), Version 24.0.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.2/graalvm-community-jdk-22.0.2_linux-x64_bin.tar.gz",
+        "sha256": "ebac1dd96a5e0fbcd1dd9804fa58815f146390a40aae966f02a8c26d1974364f",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "ce_22.0.2_macos-aarch64_24.0.2": {
+        # GraalVM CE 22.0.2 (Java 22), macOS (arm64), Version 24.0.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.2/graalvm-community-jdk-22.0.2_macos-aarch64_bin.tar.gz",
+        "sha256": "883dfd503f2bbf9cd824564763c49cafa6b3c5e9d8c024093962131b4ef5101f",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "ce_22.0.2_macos-x64_24.0.2": {
+        # GraalVM CE 22.0.2 (Java 22), macOS (amd64), Version 24.0.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.2/graalvm-community-jdk-22.0.2_macos-x64_bin.tar.gz",
+        "sha256": "0512dda1b1ea569b2a6c3dc6671e102a4d5457e3b2dfa47bf656bd32893d12e4",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "ce_22.0.2_windows-x64_24.0.2": {
+        # GraalVM CE 22.0.2 (Java 22), Windows (amd64), Version 24.0.2
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.2/graalvm-community-jdk-22.0.2_windows-x64_bin.zip",
+        "sha256": "107a37cea666c2ad6ad9eaa408b4041f822a24071a33c5057762ce48833e99a3",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
     "oracle_22.0.1_linux-aarch64_24.0.1": {
         # Oracle GraalVM 22.0.1 (Java 22), Linux (arm64), Version 24.0.1
         "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_linux-aarch64_bin.tar.gz",
@@ -2326,7 +2384,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_22.0.1_linux-x64_24.0.1": {
         # Oracle GraalVM 22.0.1 (Java 22), Linux (amd64), Version 24.0.1
-        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_linux-x64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/22/archive/graalvm-jdk-22.0.1_linux-aarch64_bin.tar.gz",
         "sha256": "d583cdb01ca023a37eed45d9d184b68b7a8d7f50b58dde1369041f294c34f4a3",
         "compatible_with": [
             "@platforms//cpu:x86_64",
@@ -2336,7 +2394,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_22.0.1_macos-aarch64_24.0.1": {
         # Oracle GraalVM 22.0.1 (Java 22), macOS (arm64), Version 24.0.1
-        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_macos-aarch64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/22/archive/graalvm-jdk-22.0.1_macos-aarch64_bin.tar.gz",
         "sha256": "7735153e287cd63a29bb1031f2c018770a2734e5c7cb28ab5143a1bd2b4ad45f",
         "compatible_with": [
             "@platforms//cpu:aarch64",
@@ -2346,7 +2404,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_22.0.1_macos-x64_24.0.1": {
         # Oracle GraalVM 22.0.1 (Java 22), macOS (amd64), Version 24.0.1
-        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_macos-x64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/22/archive/graalvm-jdk-22.0.1_macos-x64_bin.tar.gz",
         "sha256": "c1a477f4be38130f30ce745cebbb580f71c6159d94503e3e10b7ab5a7c4da66b",
         "compatible_with": [
             "@platforms//cpu:x86_64",
@@ -2356,8 +2414,48 @@ _GRAALVM_BINDIST = {
     },
     "oracle_22.0.1_windows-x64_24.0.1": {
         # Oracle GraalVM 22.0.1 (Java 22), Windows (amd64), Version 24.0.1
-        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_windows-x64_bin.zip",
+        "url": "https://download.oracle.com/graalvm/22/archive/graalvm-jdk-22.0.1_windows-x64_bin.zip",
         "sha256": "7af4aa5935af940c937cdb01fe0a106b97cddf0fb3d886afc89f9febb41fd9b9",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "oracle_22.0.2_linux-aarch64_24.0.2": {
+        # Oracle GraalVM 22.0.2 (Java 22), Linux (arm64), Version 24.0.2
+        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_linux-aarch64_bin.tar.gz",
+        "sha256": "b247a6c25814cc9cea9b65cec8a9236e52302a71c34aaa7376e9eb301f8396fb",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "oracle_22.0.2_linux-x64_24.0.2": {
+        # Oracle GraalVM 22.0.2 (Java 22), Linux (amd64), Version 24.0.2
+        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_linux-x64_bin.tar.gz",
+        "sha256": "1881aa2c431b0506ecb170439832b053b757368d7109bd422298ca23e7939cd0",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "oracle_22.0.2_macos-aarch64_24.0.2": {
+        # Oracle GraalVM 22.0.2 (Java 22), macOS (arm64), Version 24.0.2
+        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_macos-aarch64_bin.tar.gz",
+        "sha256": "3b821806404325746b0a3de32128123d58def395b691df1c42679d9737d587e7",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "oracle_22.0.2_windows-x64_24.0.2": {
+        # Oracle GraalVM 22.0.2 (Java 22), Windows (amd64), Version 24.0.2
+        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_windows-x64_bin.zip",
+        "sha256": "43e24d62b40399d3887fd9d107a823c62a69cdefcacc2df5e7170215628c844a",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",

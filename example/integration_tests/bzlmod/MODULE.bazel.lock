@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "a466e67facb291c7492992c68e0d8225dfbfb9cbb1536a23ec459d9efa1a4e1e",
+  "moduleFileHash": "2961ef02ef80f09332bd5f7a980e9c90d8dd1cfa93ee16b1246c1ccbf2104e5f",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -14,7 +14,7 @@
   },
   "localOverrideHashes": {
     "bazel_tools": "922ea6752dc9105de5af957f7a99a6933c0a6a712d23df6aad16a9c399f7e787",
-    "rules_graalvm": "fa50be8381e0ebb2e2dd9fbb5eeff1495406335c7141ccc5d5d24800f8374789"
+    "rules_graalvm": "2b6bff4f462eb50a3146d551d5d35f058cd3ed43193cfa12f21d8605ef1ec40a"
   },
   "moduleDepGraph": {
     "<root>": {
@@ -47,8 +47,8 @@
               "attributeValues": {
                 "name": "graalvm",
                 "distribution": "ce",
-                "java_version": "21",
-                "version": "21.0.1"
+                "java_version": "22",
+                "version": "22.0.1"
               },
               "devDependency": false,
               "location": {
@@ -147,7 +147,7 @@
         }
       ],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.9",
         "rules_cc": "rules_cc@0.0.9",
         "bazel_skylib": "bazel_skylib@1.5.0",
         "rules_proto": "rules_proto@4.0.0",
@@ -172,18 +172,18 @@
     },
     "rules_graalvm@_": {
       "name": "rules_graalvm",
-      "version": "0.11.0",
+      "version": "0.11.2",
       "key": "rules_graalvm@_",
       "repoName": "rules_graalvm",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.9",
         "bazel_features": "bazel_features@1.0.0",
         "rules_java": "rules_java@7.1.0",
         "bazel_skylib": "bazel_skylib@1.5.0",
-        "build_bazel_apple_support": "apple_support@1.8.1",
+        "build_bazel_apple_support": "apple_support@1.15.1",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       }
@@ -315,10 +315,10 @@
         "rules_license": "rules_license@0.0.7",
         "rules_proto": "rules_proto@4.0.0",
         "rules_python": "rules_python@0.4.0",
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.9",
         "com_google_protobuf": "protobuf@3.19.6",
         "zlib": "zlib@1.3",
-        "build_bazel_apple_support": "apple_support@1.8.1",
+        "build_bazel_apple_support": "apple_support@1.15.1",
         "local_config_platform": "local_config_platform@_"
       }
     },
@@ -331,18 +331,36 @@
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.9",
         "bazel_tools": "bazel_tools@_"
       }
     },
-    "platforms@0.0.7": {
+    "platforms@0.0.9": {
       "name": "platforms",
-      "version": "0.0.7",
-      "key": "platforms@0.0.7",
+      "version": "0.0.9",
+      "key": "platforms@0.0.9",
       "repoName": "platforms",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [],
-      "extensionUsages": [],
+      "extensionUsages": [
+        {
+          "extensionBzlFile": "@platforms//host:extension.bzl",
+          "extensionName": "host_platform",
+          "usingModule": "platforms@0.0.9",
+          "location": {
+            "file": "https://bcr.bazel.build/modules/platforms/0.0.9/MODULE.bazel",
+            "line": 9,
+            "column": 30
+          },
+          "imports": {
+            "host_platform": "host_platform"
+          },
+          "devImports": [],
+          "tags": [],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        }
+      ],
       "deps": {
         "rules_license": "rules_license@0.0.7",
         "bazel_tools": "bazel_tools@_",
@@ -354,9 +372,9 @@
         "attributes": {
           "name": "platforms",
           "urls": [
-            "https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz"
+            "https://github.com/bazelbuild/platforms/releases/download/0.0.9/platforms-0.0.9.tar.gz"
           ],
-          "integrity": "sha256-OlYcmee9vpFzqmU/1Xn+hJ8djWc5V4CrR3Cx84FDHVE=",
+          "integrity": "sha256-XtpTnIQSZQMcL4LYrno6ZJC9YhduDAOPxGnqv5H2FJs=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
@@ -392,7 +410,7 @@
         }
       ],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.9",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -425,7 +443,7 @@
       ],
       "extensionUsages": [],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.9",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -550,10 +568,10 @@
         }
       }
     },
-    "apple_support@1.8.1": {
+    "apple_support@1.15.1": {
       "name": "apple_support",
-      "version": "1.8.1",
-      "key": "apple_support@1.8.1",
+      "version": "1.15.1",
+      "key": "apple_support@1.15.1",
       "repoName": "build_bazel_apple_support",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [
@@ -563,10 +581,10 @@
         {
           "extensionBzlFile": "@build_bazel_apple_support//crosstool:setup.bzl",
           "extensionName": "apple_cc_configure_extension",
-          "usingModule": "apple_support@1.8.1",
+          "usingModule": "apple_support@1.15.1",
           "location": {
-            "file": "https://bcr.bazel.build/modules/apple_support/1.8.1/MODULE.bazel",
-            "line": 14,
+            "file": "https://bcr.bazel.build/modules/apple_support/1.15.1/MODULE.bazel",
+            "line": 19,
             "column": 35
           },
           "imports": {
@@ -581,7 +599,7 @@
       ],
       "deps": {
         "bazel_skylib": "bazel_skylib@1.5.0",
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.9",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -589,16 +607,16 @@
         "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "apple_support~1.8.1",
+          "name": "apple_support~1.15.1",
           "urls": [
-            "https://github.com/bazelbuild/apple_support/releases/download/1.8.1/apple_support.1.8.1.tar.gz"
+            "https://github.com/bazelbuild/apple_support/releases/download/1.15.1/apple_support.1.15.1.tar.gz"
           ],
-          "integrity": "sha256-Rda7rVMWycMAh4v3//xP/eE9YgSEyRhHCMkX4guLY/8=",
+          "integrity": "sha256-xLsrc2fEhDgjAK7nW+WYuS+EeJb7MbvSLzojRq32aoA=",
           "strip_prefix": "",
           "remote_patches": {
-            "https://bcr.bazel.build/modules/apple_support/1.8.1/patches/module_dot_bazel_version.patch": "sha256-KiC39AC9hYWZhC2sZwZcY46HVerfh2p9pzF9WXqcxAI="
+            "https://bcr.bazel.build/modules/apple_support/1.15.1/patches/module_dot_bazel_version.patch": "sha256-FvMGp1f0FT1IT38LFbWGUqe5fukTvEyug2Puhimca74="
           },
-          "remote_patch_strip": 0
+          "remote_patch_strip": 1
         }
       }
     },
@@ -704,7 +722,7 @@
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.9",
         "rules_cc": "rules_cc@0.0.9",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -729,24 +747,24 @@
     }
   },
   "moduleExtensions": {
-    "@@apple_support~1.8.1//crosstool:setup.bzl%apple_cc_configure_extension": {
+    "@@apple_support~1.15.1//crosstool:setup.bzl%apple_cc_configure_extension": {
       "general": {
-        "bzlTransitiveDigest": "JFciz9+xRmE31CdyrcEUeZSKFxwiLTQ+PNMg6Bcc6s8=",
+        "bzlTransitiveDigest": "RyR+EbN4fAzxxZSQKwXXrxEtMVrezn79MOR/2mmcmYk=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "local_config_apple_cc": {
-            "bzlFile": "@@apple_support~1.8.1//crosstool:setup.bzl",
+            "bzlFile": "@@apple_support~1.15.1//crosstool:setup.bzl",
             "ruleClassName": "_apple_cc_autoconf",
             "attributes": {
-              "name": "apple_support~1.8.1~apple_cc_configure_extension~local_config_apple_cc"
+              "name": "apple_support~1.15.1~apple_cc_configure_extension~local_config_apple_cc"
             }
           },
           "local_config_apple_cc_toolchains": {
-            "bzlFile": "@@apple_support~1.8.1//crosstool:setup.bzl",
+            "bzlFile": "@@apple_support~1.15.1//crosstool:setup.bzl",
             "ruleClassName": "_apple_cc_autoconf_toolchains",
             "attributes": {
-              "name": "apple_support~1.8.1~apple_cc_configure_extension~local_config_apple_cc_toolchains"
+              "name": "apple_support~1.15.1~apple_cc_configure_extension~local_config_apple_cc_toolchains"
             }
           }
         }
@@ -811,7 +829,7 @@
     },
     "@@rules_graalvm~override//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "PkyvavvK5e4FjXXNmFAYYcGB6FofYxEbQwP3Uuc8TR4=",
+        "bzlTransitiveDigest": "xUo+jq/6dV4zODIkUsq+pAvB3mVhUIa73Jn3n31QEM0=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -820,7 +838,7 @@
             "ruleClassName": "_toolchain_config",
             "attributes": {
               "name": "rules_graalvm~override~graalvm~graalvm_toolchains",
-              "build_file": "\nalias(\n    name = \"toolchain_gvm\",\n    actual = \"gvm\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"gvm\",\n    exec_compatible_with = [\n        \n    ],\n    target_compatible_with = [\n        \n    ],\n    toolchain = \"@graalvm//:gvm\",\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain\",\n    visibility = [\"//visibility:public\"],\n)\n\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_21\"},\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"
+              "build_file": "\nalias(\n    name = \"toolchain_gvm\",\n    actual = \"gvm\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"gvm\",\n    exec_compatible_with = [\n        \n    ],\n    target_compatible_with = [\n        \n    ],\n    toolchain = \"@graalvm//:gvm\",\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain\",\n    visibility = [\"//visibility:public\"],\n)\n\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_22\"},\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"
             }
           },
           "graalvm": {
@@ -828,8 +846,8 @@
             "ruleClassName": "_graalvm_bindist_repository",
             "attributes": {
               "name": "rules_graalvm~override~graalvm~graalvm",
-              "version": "21.0.1",
-              "java_version": "21",
+              "version": "22.0.1",
+              "java_version": "22",
               "distribution": "ce",
               "components": [],
               "setup_actions": [],
