@@ -100,6 +100,9 @@ def _graal_binary_implementation(ctx):
         bin_postfix = bin_postfix,
     )
 
+    if ctx.files.data:
+      direct_inputs.extend(ctx.files.data)
+
     # assemble final inputs
     inputs = depset(
         direct_inputs,
