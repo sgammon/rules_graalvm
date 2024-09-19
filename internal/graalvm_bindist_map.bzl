@@ -2,7 +2,7 @@
 
 # ! THIS FILE IS GENERATED. DO NOT EDIT. !
 
-# Last updated: 2023-08-25T22:39:19.433333 by sam
+# Last updated: 2024-11-19T12:39PDT by sam
 
 # To learn how to regenerate this file, consult the contributor docs for
 # the `rules_graalvm` repository: https://github.com/sgammon/rules_graalvm
