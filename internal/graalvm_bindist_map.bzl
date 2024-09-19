@@ -2424,7 +2424,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_22.0.2_linux-aarch64_24.0.2": {
         # Oracle GraalVM 22.0.2 (Java 22), Linux (arm64), Version 24.0.2
-        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_linux-aarch64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/22/archive/graalvm-jdk-22.0.2_linux-aarch64_bin.tar.gz",
         "sha256": "b247a6c25814cc9cea9b65cec8a9236e52302a71c34aaa7376e9eb301f8396fb",
         "compatible_with": [
             "@platforms//cpu:aarch64",
@@ -2434,7 +2434,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_22.0.2_linux-x64_24.0.2": {
         # Oracle GraalVM 22.0.2 (Java 22), Linux (amd64), Version 24.0.2
-        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_linux-x64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/22/archive/graalvm-jdk-22.0.2_linux-x64_bin.tar.gz",
         "sha256": "1881aa2c431b0506ecb170439832b053b757368d7109bd422298ca23e7939cd0",
         "compatible_with": [
             "@platforms//cpu:x86_64",
@@ -2444,7 +2444,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_22.0.2_macos-aarch64_24.0.2": {
         # Oracle GraalVM 22.0.2 (Java 22), macOS (arm64), Version 24.0.2
-        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_macos-aarch64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/22/archive/graalvm-jdk-22.0.2_macos-aarch64_bin.tar.gz",
         "sha256": "3b821806404325746b0a3de32128123d58def395b691df1c42679d9737d587e7",
         "compatible_with": [
             "@platforms//cpu:aarch64",
@@ -2454,7 +2454,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_22.0.2_macos-x64_24.0.2": {
         # Oracle GraalVM 22.0.2 (Java 22), macOS (amd64), Version 24.0.2
-        "url": "https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_macos-x64.tar.gz",
+        "url": "https://download.oracle.com/graalvm/22/archive/graalvm-jdk-22.0.2_macos-x64_bin.tar.gz",
         "sha256": "9fcbf3ff96f38f31e2f590bb62adf19e065535c82e27b5fd742def005bef3528",
         "compatible_with": [
             "@platforms//cpu:x86_64",
