@@ -71,15 +71,14 @@ jobs:
       matrix:
         runner: [ubuntu-latest]
         main: [true]
-        label: ["Ubuntu"]
+        label: ["Ubuntu amd64"]
         labs: [false]
         flags: ["--config=linux"]
-        testlabel: ["Ubuntu"]
         coverage: [false]
         include:
           # Bazel 7
           - runner: ubuntu-latest
-            label: Ubuntu
+            label: Ubuntu amd64
             labs: false
             main: true
             coverage: false
@@ -90,14 +89,14 @@ jobs:
             main: true
             coverage: true
             flags: --config=mac
-          - runner: macos-13-latest
-            label: macOS x86
+          - runner: macos-13
+            label: macOS amd64
             labs: false
             main: true
             coverage: true
             flags: --config=mac
           - runner: windows-2022
-            label: Windows
+            label: Windows amd64
             labs: false
             main: true
             coverage: false
