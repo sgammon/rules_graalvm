@@ -1,4 +1,3 @@
-
 ## GraalVM Rules for Bazel
 
 > Project Structure & Governance

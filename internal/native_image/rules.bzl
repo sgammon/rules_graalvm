@@ -101,7 +101,7 @@ def _graal_binary_implementation(ctx):
     )
 
     if ctx.files.data:
-      direct_inputs.extend(ctx.files.data)
+        direct_inputs.extend(ctx.files.data)
 
     # assemble final inputs
     inputs = depset(
