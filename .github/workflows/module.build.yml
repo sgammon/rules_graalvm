@@ -143,7 +143,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         if: ${{ contains(inputs.runner, 'windows') }}
       - name: "Setup: Bazel"
-        uses: bazel-contrib/setup-bazel@101c7f5cf1bddf47167b12f60f0a5f90517b835e # 0.8.3
+        uses: bazel-contrib/setup-bazel@0d27eba2b7aa97e33615756555fef507304f07de # 0.8.3
       - name: "Setup: Cache"
         uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
@@ -399,7 +399,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         if: ${{ contains(inputs.runner, 'windows') }}
       - name: "Setup: Bazel"
-        uses: bazel-contrib/setup-bazel@101c7f5cf1bddf47167b12f60f0a5f90517b835e # 0.8.3
+        uses: bazel-contrib/setup-bazel@0d27eba2b7aa97e33615756555fef507304f07de # 0.8.3
       - name: "Configure: Bazel Version"
         shell: bash
         if: matrix.skip != true && inputs.bazel_version != '' && inputs.bazel_config != ''
