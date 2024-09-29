@@ -65,6 +65,10 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         allow_single_file = True,
     ),
+    "serialization_configuration": attr.label(
+        mandatory = False,
+        allow_single_file = True,
+    ),
     "debug": attr.bool(
         mandatory = False,
         default = False,
