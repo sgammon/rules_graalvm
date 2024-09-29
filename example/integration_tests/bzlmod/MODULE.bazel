@@ -22,8 +22,8 @@ gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 gvm.graalvm(
     name = "graalvm",
     distribution = "ce",
-    java_version = "22",
-    version = "22.0.1",  # graalvm-ce-22 / graalvm-oracle-22 tests `22.0.2`
+    java_version = "23",
+    version = "23.0.0",
 )
 use_repo(
     gvm,

@@ -5,7 +5,6 @@ build:buildless --remote_cache=https://global.less.build
 
 build --modify_execution_info=PackageTar=+no-remote
 build --remote_local_fallback
-build --incompatible_remote_results_ignore_disk
 build --noexperimental_check_output_files
 build --nolegacy_important_outputs
 build --incompatible_default_to_explicit_init_py
