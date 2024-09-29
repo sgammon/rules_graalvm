@@ -19,7 +19,6 @@ build:strict --incompatible_no_attr_license
 build:strict --incompatible_py2_outputs_are_suffixed
 build:strict --incompatible_py3_is_default
 build:strict --incompatible_remote_output_paths_relative_to_input_root
-build:strict --incompatible_remote_results_ignore_disk
 build:strict --incompatible_remote_symlinks
 build:strict --incompatible_remove_legacy_whole_archive
 build:strict --incompatible_require_ctx_in_configure_features
