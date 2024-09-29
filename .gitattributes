@@ -27,3 +27,7 @@ Makefile export-ignore
 package.json export-ignore
 example/ export-ignore
 version.bazelrc export-ignore
+maven_install.json linguist-generated=true
+internal/graalvm_bindist_map.bzl linguist-generated=true
+*/MODULE.bazel.lock linguist-generated=true
+MODULE.bazel.lock linguist-generated=true

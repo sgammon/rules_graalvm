@@ -2,7 +2,7 @@
 
 # ! THIS FILE IS GENERATED. DO NOT EDIT. !
 
-# Last updated: 2024-11-19T12:39PDT by sam
+# Last updated: 2024-09-29T13:05PDT by sam
 
 # To learn how to regenerate this file, consult the contributor docs for
 # the `rules_graalvm` repository: https://github.com/sgammon/rules_graalvm
@@ -53,6 +53,7 @@ _ComponentDependencies = {
 # Aligned GraalVM distribution versions.
 # buildifier: disable=name-conventions
 _AlignedVersions = {
+    "23.0.0": "24.1.0",
     "22.0.2": "24.0.2",
     "22.0.1": "24.0.1",
     "22.0.0": "24.0.0",
@@ -68,6 +69,7 @@ _AlignedVersions = {
 # VM release versions for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersions = {
+    "24.1.0": "23+37.1",
     "24.0.2": "22.0.2+9.1",
     "24.0.1": "22.0.1+8.1",
     "24.0.0": "22+36.1",
@@ -76,6 +78,7 @@ _VmReleaseVersions = {
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
+    "23.0.0": "23+37.1",
     "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
     "22.0.0": "22+36.1",
@@ -89,6 +92,7 @@ _VmReleaseVersions = {
 # VM release versions (for Oracle GVM) for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersionsOracle = {
+    "24.1.0": "23+37.1",
     "24.0.2": "22.0.2+9.1",
     "24.0.1": "22.0.1+8.1",
     "24.0.0": "22+36.1",
@@ -97,6 +101,7 @@ _VmReleaseVersionsOracle = {
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
+    "23.0.0": "23+37.1",
     "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
     "22.0.0": "22+36.1",
@@ -137,6 +142,9 @@ def _generate_distribution_coordinate(dist, platform, version, java_version, com
     elif version == "24.0.2" and java_version == "22":
         version = "22.0.2"
         aligned_version = "24.0.2"
+    elif version == "24.1.0" and java_version == "23":
+        version = "23.0.0"
+        aligned_version = "24.1.0"
 
     segments = [
         dist,
@@ -2470,6 +2478,106 @@ _GRAALVM_BINDIST = {
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
             "@rules_graalvm//platform/jvm:java22",
+        ],
+    },
+    "ce_23.0.0_linux-aarch64_24.1.0": {
+        # GraalVM CE 23.0.0 (Java 23), Linux (arm64), Version 24.1.0
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_linux-aarch64_bin.tar.gz",
+        "sha256": "42ae53bdb4112d86eb3e12fe6d30a65b800a4ff8a658c7c3bc77e0a678078b20",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.0_linux-x64_24.1.0": {
+        # GraalVM CE 23.0.0 (Java 23), Linux (amd64), Version 24.1.0
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_linux-x64_bin.tar.gz",
+        "sha256": "440eb64bf548f37086f97d236a028d0a6ccf5cee9ed9caed2f70ded5a68312a0",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.0_macos-aarch64_24.1.0": {
+        # GraalVM CE 23.0.0 (Java 23), macOS (arm64), Version 24.1.0
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_macos-aarch64_bin.tar.gz",
+        "sha256": "cda587f6d15134dc237fbb1111c7e339c8a0b2f4c1a4817a436c7c15d8ba2a9b",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.0_macos-x64_24.1.0": {
+        # GraalVM CE 23.0.0 (Java 23), macOS (amd64), Version 24.1.0
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_macos-x64_bin.tar.gz",
+        "sha256": "1338b838e5c845688643ed9e91bf2a0236e4d53bf1dc9cb4f693bde0409d4daa",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.0_windows-x64_24.1.0": {
+        # GraalVM CE 23.0.0 (Java 23), Windows (amd64), Version 24.1.0
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_windows-x64_bin.zip",
+        "sha256": "ef0e28d9ccdf68e31c911ec2069e010f35f1b484e6f70a4a6cce098f8bf8247e",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.0_linux-aarch64_24.1.0": {
+        # Oracle GraalVM 23.0.0 (Java 23), Linux (arm64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_linux-aarch64_bin.tar.gz",
+        "sha256": "f6a12e7f09f3bc23d46d2dda6f9dc6a16f094489d56549a1dcc11a7e6826ed9f",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.0_linux-x64_24.1.0": {
+        # Oracle GraalVM 23.0.0 (Java 23), Linux (amd64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_linux-x64_bin.tar.gz",
+        "sha256": "9e0632fe4be3d7fed6f03b3afc349b72fd5cb857ec6b69008202257e8a3ed858",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.0_macos-aarch64_24.1.0": {
+        # Oracle GraalVM 23.0.0 (Java 23), macOS (arm64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_macos-aarch64_bin.tar.gz",
+        "sha256": "63290bf6242836ac46ca4c8c4ad048e4482fdb3f8276b9689088f059be430687",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.0_macos-x64_24.1.0": {
+        # Oracle GraalVM 23.0.0 (Java 23), macOS (amd64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_macos-x64_bin.tar.gz",
+        "sha256": "d516ea854e361a821c7679d127ff7126c254b8c43c99e571e203df218df2764b",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.0_windows-x64_24.1.0": {
+        # Oracle GraalVM 23.0.0 (Java 23), Windows (amd64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_windows-x64_bin.zip",
+        "sha256": "42ead2ed36451e746d475c550ca022b81bf777f6dba463a113cb58585574a3b6",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java23",
         ],
     },
 }

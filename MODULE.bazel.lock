@@ -117,8 +117,8 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "RaRFakiZ+w51Z2+MOfzYu/STr2jf8pSLSEsUW7IDKnA=",
-        "usagesDigest": "VvXSjXG2aLZvTgC5uWG+XpB9mgmzb+OKC6pQeEBGjB4=",
+        "bzlTransitiveDigest": "mGoBCKmBglT03o3OM7KZZQSPbxlVYu8KNJpEeqzzsqE=",
+        "usagesDigest": "wriHx346A4xH4lopu/4XUlbL8pFZ32h9X4qAhXk5B/A=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -1436,11 +1436,11 @@
     "@@rules_jvm_external~//:extensions.bzl%maven": {
       "general": {
         "bzlTransitiveDigest": "057b0l5jZBUCBsBt/ud9eiIsDKg9FwPwuNf3sMqBcxM=",
-        "usagesDigest": "JCgJQQAAuSKJDfQ7cVNBRPcfzkm5rNToTJXKJO8kGx4=",
+        "usagesDigest": "k11gKxPc88B7YbPd/vPp3UPXHJf+lsWKuCP7/SjelM0=",
         "recordedFileInputs": {
           "@@stardoc~//maven_install.json": "de0bfa778b4ed6aebb77509362dd87ab8d20fc7c7c18d2a7429cdfee03949a21",
           "@@rules_jvm_external~//rules_jvm_external_deps_install.json": "741ab2ef3843a43eaacb45d1448835c9deb99c95162279f513096eface8acd44",
-          "@@//maven_install.json": "d90b70df08c0d601447d470af463706c7784140b6962e5d5e9c5796937e6f30d"
+          "@@//maven_install.json": "c39d56eb1bfd8d9575e3182f22fcdc70a9d5adeb000547e62cfff435d1a250cd"
         },
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -1463,18 +1463,6 @@
                 "https://maven.google.com/io/grpc/grpc-netty-shaded/1.55.1/grpc-netty-shaded-1.55.1.jar"
               ],
               "downloaded_file_path": "io/grpc/grpc-netty-shaded/1.55.1/grpc-netty-shaded-1.55.1.jar"
-            }
-          },
-          "org_graalvm_nativeimage_native_image_base_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "412e7bbdb0a9f3887f1ded40361b2148859c826dac9c7bd3c4051fbb31d023a9",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/native-image-base/24.0.1/native-image-base-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/nativeimage/native-image-base/24.0.1/native-image-base-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/nativeimage/native-image-base/24.0.1/native-image-base-24.0.1-sources.jar"
             }
           },
           "org_junit_jupiter_junit_jupiter_engine": {
@@ -1619,28 +1607,16 @@
               "downloaded_file_path": "com/google/code/gson/gson/2.10.1/gson-2.10.1.jar"
             }
           },
-          "org_graalvm_nativeimage_objectfile_24_0_1": {
+          "org_graalvm_sdk_collections_24_1_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "sha256": "fb58194f9bf577e164214f72a32a0c0d85c4009909b4482f885165048dceac46",
+              "sha256": "87cf2c267a5cee0e5dfba94bbb4c720911846eee85eaccddce49220b3262b750",
               "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/objectfile/24.0.1/objectfile-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/nativeimage/objectfile/24.0.1/objectfile-24.0.1.jar"
+                "https://repo1.maven.org/maven2/org/graalvm/sdk/collections/24.1.0/collections-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/sdk/collections/24.1.0/collections-24.1.0.jar"
               ],
-              "downloaded_file_path": "org/graalvm/nativeimage/objectfile/24.0.1/objectfile-24.0.1.jar"
-            }
-          },
-          "org_graalvm_truffle_truffle_compiler_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "df557dccb67200db7b180667ddc573dd08f485bdae8363c556a972d9d1f9acdf",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/truffle/truffle-compiler/24.0.1/truffle-compiler-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/truffle/truffle-compiler/24.0.1/truffle-compiler-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/truffle/truffle-compiler/24.0.1/truffle-compiler-24.0.1-sources.jar"
+              "downloaded_file_path": "org/graalvm/sdk/collections/24.1.0/collections-24.1.0.jar"
             }
           },
           "com_google_http_client_google_http_client_gson_1_43_1": {
@@ -1663,6 +1639,18 @@
               "target_name": "org_junit_platform_junit_platform_launcher"
             }
           },
+          "org_graalvm_compiler_compiler_jar_sources_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "63547aaa37adae849abd176ade01f7655cb2a6bc5f7db41ac8698014d8bee697",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/compiler/compiler/24.1.0/compiler-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/compiler/compiler/24.1.0/compiler-24.1.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/compiler/compiler/24.1.0/compiler-24.1.0-sources.jar"
+            }
+          },
           "org_apache_httpcomponents_httpcore_4_4_16": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -1673,6 +1661,18 @@
                 "https://maven.google.com/org/apache/httpcomponents/httpcore/4.4.16/httpcore-4.4.16.jar"
               ],
               "downloaded_file_path": "org/apache/httpcomponents/httpcore/4.4.16/httpcore-4.4.16.jar"
+            }
+          },
+          "org_graalvm_nativeimage_objectfile_jar_sources_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "da61d33ab39d9b40962f9b5c9018cba42785e4680229e2e60fc7a304cbc142de",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/objectfile/24.1.0/objectfile-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/nativeimage/objectfile/24.1.0/objectfile-24.1.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/nativeimage/objectfile/24.1.0/objectfile-24.1.0-sources.jar"
             }
           },
           "org_slf4j_slf4j_simple": {
@@ -1689,6 +1689,30 @@
             "attributes": {
               "generating_repository": "contrib_rules_jvm_deps",
               "target_name": "org_slf4j_slf4j_jdk14"
+            }
+          },
+          "org_graalvm_sdk_word_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "6d5c54d6f15557de89be01e002b838810877c3e4a62041de1ff3f72bd9d70bb4",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/sdk/word/24.1.0/word-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/sdk/word/24.1.0/word-24.1.0.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/sdk/word/24.1.0/word-24.1.0.jar"
+            }
+          },
+          "org_graalvm_sdk_word_jar_sources_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "73a96ad99fd03fcd275c44cbb3033e387ad311aff3d7a485bfb9260cc57ed85e",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/sdk/word/24.1.0/word-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/sdk/word/24.1.0/word-24.1.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/sdk/word/24.1.0/word-24.1.0-sources.jar"
             }
           },
           "com_google_protobuf_protobuf_java": {
@@ -1729,6 +1753,18 @@
                 "https://maven.google.com/io/grpc/grpc-api/1.55.1/grpc-api-1.55.1.jar"
               ],
               "downloaded_file_path": "io/grpc/grpc-api/1.55.1/grpc-api-1.55.1.jar"
+            }
+          },
+          "org_graalvm_nativeimage_svm_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "9b73490cc19d518ea95ebde31423f8a37694eb6d84e2e6fd213dc139ab6c5e57",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/svm/24.1.0/svm-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/nativeimage/svm/24.1.0/svm-24.1.0.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/nativeimage/svm/24.1.0/svm-24.1.0.jar"
             }
           },
           "com_google_protobuf_protobuf_java_util_3_23_1": {
@@ -1826,16 +1862,28 @@
               "target_name": "com_google_code_gson_gson"
             }
           },
-          "org_graalvm_sdk_collections_24_0_1": {
+          "org_graalvm_nativeimage_objectfile_24_1_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "sha256": "f37ba4fc0866fd963748192d86025f141c9ec988fa992d685251cebd6ea5757c",
+              "sha256": "04c0fe283a17974bf0ae8c778446126aa10413256a8c09312dc6b36b46d9a9e1",
               "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/sdk/collections/24.0.1/collections-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/sdk/collections/24.0.1/collections-24.0.1.jar"
+                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/objectfile/24.1.0/objectfile-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/nativeimage/objectfile/24.1.0/objectfile-24.1.0.jar"
               ],
-              "downloaded_file_path": "org/graalvm/sdk/collections/24.0.1/collections-24.0.1.jar"
+              "downloaded_file_path": "org/graalvm/nativeimage/objectfile/24.1.0/objectfile-24.1.0.jar"
+            }
+          },
+          "org_graalvm_truffle_truffle_compiler_jar_sources_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "3642e0e0ad7ce9bad39aefc393d05b35439932fb8b76bf2f351123c165002a3c",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/truffle/truffle-compiler/24.1.0/truffle-compiler-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/truffle/truffle-compiler/24.1.0/truffle-compiler-24.1.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/truffle/truffle-compiler/24.1.0/truffle-compiler-24.1.0-sources.jar"
             }
           },
           "unpinned_maven_gvm": {
@@ -1847,9 +1895,9 @@
                 "{ \"repo_url\": \"https://maven.google.com\" }"
               ],
               "artifacts": [
-                "{ \"group\": \"org.graalvm.nativeimage\", \"artifact\": \"svm\", \"version\": \"24.0.1\" }",
-                "{ \"group\": \"org.graalvm.sdk\", \"artifact\": \"graal-sdk\", \"version\": \"24.0.1\" }",
-                "{ \"group\": \"org.graalvm.polyglot\", \"artifact\": \"polyglot\", \"version\": \"24.0.1\" }"
+                "{ \"group\": \"org.graalvm.nativeimage\", \"artifact\": \"svm\", \"version\": \"24.1.0\" }",
+                "{ \"group\": \"org.graalvm.sdk\", \"artifact\": \"graal-sdk\", \"version\": \"24.1.0\" }",
+                "{ \"group\": \"org.graalvm.polyglot\", \"artifact\": \"polyglot\", \"version\": \"24.1.0\" }"
               ],
               "fail_on_missing_checksum": true,
               "fetch_sources": true,
@@ -1871,18 +1919,6 @@
               "use_starlark_android_rules": false,
               "aar_import_bzl_label": "@build_bazel_rules_android//android:rules.bzl",
               "duplicate_version_warning": "warn"
-            }
-          },
-          "org_graalvm_compiler_compiler_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "f33894c3f4ded00f855f43d22f2220438993b61ee9d1ccf3ab424a0e85d114f5",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/compiler/compiler/24.0.1/compiler-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/compiler/compiler/24.0.1/compiler-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/compiler/compiler/24.0.1/compiler-24.0.1-sources.jar"
             }
           },
           "software_amazon_awssdk_regions_2_20_78": {
@@ -1921,18 +1957,6 @@
               "downloaded_file_path": "com/google/api/grpc/gapic-google-cloud-storage-v2/2.22.3-alpha/gapic-google-cloud-storage-v2-2.22.3-alpha.jar"
             }
           },
-          "org_graalvm_nativeimage_objectfile_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "e601e8499e77dd082662122c9cd824ad7a2cc8b120f9a96fb7316004a6c994dd",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/objectfile/24.0.1/objectfile-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/nativeimage/objectfile/24.0.1/objectfile-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/nativeimage/objectfile/24.0.1/objectfile-24.0.1-sources.jar"
-            }
-          },
           "org_threeten_threetenbp_1_6_8": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -1954,9 +1978,9 @@
                 "{ \"repo_url\": \"https://maven.google.com\" }"
               ],
               "artifacts": [
-                "{ \"group\": \"org.graalvm.nativeimage\", \"artifact\": \"svm\", \"version\": \"24.0.1\" }",
-                "{ \"group\": \"org.graalvm.sdk\", \"artifact\": \"graal-sdk\", \"version\": \"24.0.1\" }",
-                "{ \"group\": \"org.graalvm.polyglot\", \"artifact\": \"polyglot\", \"version\": \"24.0.1\" }"
+                "{ \"group\": \"org.graalvm.nativeimage\", \"artifact\": \"svm\", \"version\": \"24.1.0\" }",
+                "{ \"group\": \"org.graalvm.sdk\", \"artifact\": \"graal-sdk\", \"version\": \"24.1.0\" }",
+                "{ \"group\": \"org.graalvm.polyglot\", \"artifact\": \"polyglot\", \"version\": \"24.1.0\" }"
               ],
               "fetch_sources": true,
               "fetch_javadoc": false,
@@ -1984,6 +2008,18 @@
             "attributes": {
               "generating_repository": "contrib_rules_jvm_deps",
               "target_name": "io_netty_netty_handler_proxy"
+            }
+          },
+          "org_graalvm_nativeimage_pointsto_jar_sources_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "893c908f2468bff50301b3d847e2d6a42a3365cf286d3feb58e64c6a185ae5b4",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/pointsto/24.1.0/pointsto-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/nativeimage/pointsto/24.1.0/pointsto-24.1.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/nativeimage/pointsto/24.1.0/pointsto-24.1.0-sources.jar"
             }
           },
           "com_google_http_client_google_http_client_apache_v2_1_43_1": {
@@ -2070,16 +2106,16 @@
               "duplicate_version_warning": "warn"
             }
           },
-          "org_graalvm_nativeimage_native_image_base_24_0_1": {
+          "org_graalvm_polyglot_polyglot_jar_sources_24_1_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "sha256": "401ee9a5b96b1ffb1262559021ecaab7b9854e3ce9a6210e5e3b60b212fc6e28",
+              "sha256": "de8ba1f64c16d8e9c4eddb547c2323dd864174e539659ec0a092ecc2f786b278",
               "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/native-image-base/24.0.1/native-image-base-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/nativeimage/native-image-base/24.0.1/native-image-base-24.0.1.jar"
+                "https://repo1.maven.org/maven2/org/graalvm/polyglot/polyglot/24.1.0/polyglot-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/polyglot/polyglot/24.1.0/polyglot-24.1.0-sources.jar"
               ],
-              "downloaded_file_path": "org/graalvm/nativeimage/native-image-base/24.0.1/native-image-base-24.0.1.jar"
+              "downloaded_file_path": "org/graalvm/polyglot/polyglot/24.1.0/polyglot-24.1.0-sources.jar"
             }
           },
           "javax_annotation_javax_annotation_api_1_3_2": {
@@ -2131,18 +2167,6 @@
             "attributes": {
               "generating_repository": "contrib_rules_jvm_deps",
               "target_name": "io_opencensus_opencensus_contrib_grpc_metrics"
-            }
-          },
-          "org_graalvm_sdk_nativeimage_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "bef20eedccdaf8cd2a453d0bcacc26a3efc322862681e0f5420f16859021677e",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/sdk/nativeimage/24.0.1/nativeimage-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/sdk/nativeimage/24.0.1/nativeimage-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/sdk/nativeimage/24.0.1/nativeimage-24.0.1-sources.jar"
             }
           },
           "com_google_api_client_google_api_client_2_2_0": {
@@ -2205,6 +2229,18 @@
               "use_starlark_android_rules": false,
               "aar_import_bzl_label": "@build_bazel_rules_android//android:rules.bzl",
               "duplicate_version_warning": "warn"
+            }
+          },
+          "org_graalvm_sdk_graal_sdk_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "5f8e0801a428f43fdd378f95325f738fad9383c5efecdcc26d7a0e2577e1bd67",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/sdk/graal-sdk/24.1.0/graal-sdk-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/sdk/graal-sdk/24.1.0/graal-sdk-24.1.0.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/sdk/graal-sdk/24.1.0/graal-sdk-24.1.0.jar"
             }
           },
           "com_google_http_client_google_http_client_appengine_1_43_1": {
@@ -2276,6 +2312,18 @@
                 "https://maven.google.com/software/amazon/awssdk/aws-core/2.20.78/aws-core-2.20.78.jar"
               ],
               "downloaded_file_path": "software/amazon/awssdk/aws-core/2.20.78/aws-core-2.20.78.jar"
+            }
+          },
+          "org_graalvm_sdk_nativeimage_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "1170fe2adeb8a0b0ec80a07a5cb6cbf4985d9fcfcfbc0e1944d0dd44e5ba1ff0",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/sdk/nativeimage/24.1.0/nativeimage-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/sdk/nativeimage/24.1.0/nativeimage-24.1.0.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/sdk/nativeimage/24.1.0/nativeimage-24.1.0.jar"
             }
           },
           "org_checkerframework_checker_qual_3_33_0": {
@@ -2373,16 +2421,16 @@
               "duplicate_version_warning": "warn"
             }
           },
-          "org_graalvm_nativeimage_pointsto_jar_sources_24_0_1": {
+          "org_graalvm_nativeimage_native_image_base_jar_sources_24_1_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "sha256": "5a1009f928f109d9aa58a310afc5521ccce6ef542ecb54bbcf1c9b4fffbe9f4a",
+              "sha256": "105c6f9d7b3bbeaf526b0cf2c3e7d9f1d1f0a32980aca83d303ac41e60008b2b",
               "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/pointsto/24.0.1/pointsto-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/nativeimage/pointsto/24.0.1/pointsto-24.0.1-sources.jar"
+                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/native-image-base/24.1.0/native-image-base-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/nativeimage/native-image-base/24.1.0/native-image-base-24.1.0-sources.jar"
               ],
-              "downloaded_file_path": "org/graalvm/nativeimage/pointsto/24.0.1/pointsto-24.0.1-sources.jar"
+              "downloaded_file_path": "org/graalvm/nativeimage/native-image-base/24.1.0/native-image-base-24.1.0-sources.jar"
             }
           },
           "io_grpc_grpc_stub": {
@@ -2435,18 +2483,6 @@
                 "https://maven.google.com/io/opencensus/opencensus-contrib-http-util/0.31.1/opencensus-contrib-http-util-0.31.1.jar"
               ],
               "downloaded_file_path": "io/opencensus/opencensus-contrib-http-util/0.31.1/opencensus-contrib-http-util-0.31.1.jar"
-            }
-          },
-          "org_graalvm_polyglot_polyglot_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "c76e5fd977a3a4b848c24320e0b5c07cbfdb99c0eaf18501b2b807a720eda567",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/polyglot/polyglot/24.0.1/polyglot-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/polyglot/polyglot/24.0.1/polyglot-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/polyglot/polyglot/24.0.1/polyglot-24.0.1-sources.jar"
             }
           },
           "stardoc_maven": {
@@ -2506,6 +2542,18 @@
               "downloaded_file_path": "com/google/truth/truth/1.1.3/truth-1.1.3.jar"
             }
           },
+          "org_graalvm_sdk_nativeimage_jar_sources_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "b6567fe6f03c5f0aa59bcf9acbaee423614928d4ff120900fb8196b03b8d72ff",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/sdk/nativeimage/24.1.0/nativeimage-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/sdk/nativeimage/24.1.0/nativeimage-24.1.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/sdk/nativeimage/24.1.0/nativeimage-24.1.0-sources.jar"
+            }
+          },
           "com_google_j2objc_j2objc_annotations_2_8": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -2516,18 +2564,6 @@
                 "https://maven.google.com/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar"
               ],
               "downloaded_file_path": "com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar"
-            }
-          },
-          "org_graalvm_sdk_graal_sdk_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "42af795ce6cc98d47bbd5a02c335ace9ace51ccd56adab61a50f3ce40b56eb16",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/sdk/graal-sdk/24.0.1/graal-sdk-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/sdk/graal-sdk/24.0.1/graal-sdk-24.0.1.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/sdk/graal-sdk/24.0.1/graal-sdk-24.0.1.jar"
             }
           },
           "io_netty_netty_resolver_4_1_86_Final": {
@@ -2645,18 +2681,6 @@
               "target_name": "net_sourceforge_pmd_pmd_dist"
             }
           },
-          "org_graalvm_sdk_nativeimage_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "e8bfac8415fc5c61a8107b5d77fe786c901c86adb2c9cc892f914f4b1edd6189",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/sdk/nativeimage/24.0.1/nativeimage-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/sdk/nativeimage/24.0.1/nativeimage-24.0.1.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/sdk/nativeimage/24.0.1/nativeimage-24.0.1.jar"
-            }
-          },
           "io_grpc_grpc_rls_1_55_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -2757,18 +2781,6 @@
               "target_name": "io_netty_netty_transport_native_unix_common"
             }
           },
-          "org_graalvm_sdk_graal_sdk_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "0cfc0a86bf33f3a801d5f3ab3d1ce0b98b35218127f9417a96f53db7727196b7",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/sdk/graal-sdk/24.0.1/graal-sdk-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/sdk/graal-sdk/24.0.1/graal-sdk-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/sdk/graal-sdk/24.0.1/graal-sdk-24.0.1-sources.jar"
-            }
-          },
           "com_google_api_gax_httpjson_0_113_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -2779,6 +2791,18 @@
                 "https://maven.google.com/com/google/api/gax-httpjson/0.113.1/gax-httpjson-0.113.1.jar"
               ],
               "downloaded_file_path": "com/google/api/gax-httpjson/0.113.1/gax-httpjson-0.113.1.jar"
+            }
+          },
+          "org_graalvm_polyglot_polyglot_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "106475afdcaf85921c01859a2ff1b1fe08a647aef8168739073324b1a155bb7a",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/polyglot/polyglot/24.1.0/polyglot-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/polyglot/polyglot/24.1.0/polyglot-24.1.0.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/polyglot/polyglot/24.1.0/polyglot-24.1.0.jar"
             }
           },
           "org_apache_maven_maven_artifact_3_9_2": {
@@ -2884,6 +2908,30 @@
               "downloaded_file_path": "com/google/api/grpc/grpc-google-cloud-storage-v2/2.22.3-alpha/grpc-google-cloud-storage-v2-2.22.3-alpha.jar"
             }
           },
+          "org_graalvm_truffle_truffle_compiler_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "a988e81b3c5b1a4a05a3a7c878f5e59f565c101c2ac5041870382adbac857f4d",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/truffle/truffle-compiler/24.1.0/truffle-compiler-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/truffle/truffle-compiler/24.1.0/truffle-compiler-24.1.0.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/truffle/truffle-compiler/24.1.0/truffle-compiler-24.1.0.jar"
+            }
+          },
+          "org_graalvm_nativeimage_pointsto_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "3a99dbb5ec019c97eb3464ba87d707da62c5a8e5149b7210f74be18c844d759c",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/pointsto/24.1.0/pointsto-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/nativeimage/pointsto/24.1.0/pointsto-24.1.0.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/nativeimage/pointsto/24.1.0/pointsto-24.1.0.jar"
+            }
+          },
           "com_google_api_grpc_proto_google_iam_v1_1_14_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -2956,6 +3004,30 @@
               "downloaded_file_path": "io/grpc/grpc-context/1.55.1/grpc-context-1.55.1.jar"
             }
           },
+          "org_graalvm_nativeimage_native_image_base_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "2204219d52a4185475d26e014351d340fdd94d51dea00252bbfe45067d4a293d",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/native-image-base/24.1.0/native-image-base-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/nativeimage/native-image-base/24.1.0/native-image-base-24.1.0.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/nativeimage/native-image-base/24.1.0/native-image-base-24.1.0.jar"
+            }
+          },
+          "org_graalvm_sdk_graal_sdk_jar_sources_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "a651b419302ca8d57ac4dd9b60d2c3dd2047b16d62860eb21b5a8308d405faea",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/sdk/graal-sdk/24.1.0/graal-sdk-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/sdk/graal-sdk/24.1.0/graal-sdk-24.1.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/sdk/graal-sdk/24.1.0/graal-sdk-24.1.0-sources.jar"
+            }
+          },
           "io_netty_netty_codec_socks": {
             "bzlFile": "@@rules_jvm_external~//private:compat_repository.bzl",
             "ruleClassName": "compat_repository",
@@ -3002,18 +3074,6 @@
             "attributes": {
               "generating_repository": "contrib_rules_jvm_deps",
               "target_name": "io_grpc_grpc_netty"
-            }
-          },
-          "org_graalvm_polyglot_polyglot_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "15c49893ad462044f40dc033dfa8aa0a06fb4fec1e30e55c3f437e2a93a8763c",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/polyglot/polyglot/24.0.1/polyglot-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/polyglot/polyglot/24.0.1/polyglot-24.0.1.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/polyglot/polyglot/24.0.1/polyglot-24.0.1.jar"
             }
           },
           "io_opencensus_opencensus_api": {
@@ -3124,18 +3184,6 @@
               "target_name": "org_junit_vintage_junit_vintage_engine"
             }
           },
-          "org_graalvm_truffle_truffle_compiler_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "cd043d4a130b7d3ba963bd58a363106fb35e09d82996834faf17d98f81dbadf5",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/truffle/truffle-compiler/24.0.1/truffle-compiler-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/truffle/truffle-compiler/24.0.1/truffle-compiler-24.0.1.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/truffle/truffle-compiler/24.0.1/truffle-compiler-24.0.1.jar"
-            }
-          },
           "org_codehaus_plexus_plexus_utils_3_5_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3146,18 +3194,6 @@
                 "https://maven.google.com/org/codehaus/plexus/plexus-utils/3.5.1/plexus-utils-3.5.1.jar"
               ],
               "downloaded_file_path": "org/codehaus/plexus/plexus-utils/3.5.1/plexus-utils-3.5.1.jar"
-            }
-          },
-          "org_graalvm_nativeimage_pointsto_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "885abecdef8dab7bf8d9767609243970227421032649fe7f801597672283e028",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/pointsto/24.0.1/pointsto-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/nativeimage/pointsto/24.0.1/pointsto-24.0.1.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/nativeimage/pointsto/24.0.1/pointsto-24.0.1.jar"
             }
           },
           "io_grpc_grpc_protobuf_1_55_1": {
@@ -3301,18 +3337,6 @@
               "target_name": "com_google_code_findbugs_jsr305"
             }
           },
-          "org_graalvm_sdk_word_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "7a75975f813dfb7a45809dd708ba6e06977f93d64588c297dedf40d74ddd500c",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/sdk/word/24.0.1/word-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/sdk/word/24.0.1/word-24.0.1.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/sdk/word/24.0.1/word-24.0.1.jar"
-            }
-          },
           "org_slf4j_slf4j_api_1_7_30": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3355,18 +3379,6 @@
                 "https://maven.google.com/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"
               ],
               "downloaded_file_path": "commons-logging/commons-logging/1.2/commons-logging-1.2.jar"
-            }
-          },
-          "org_graalvm_sdk_word_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "4fd2c364b39ca13164c56ce60935c486ec0a0e2229efecf48bc3a256e575f69d",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/sdk/word/24.0.1/word-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/sdk/word/24.0.1/word-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/sdk/word/24.0.1/word-24.0.1-sources.jar"
             }
           },
           "com_google_errorprone_error_prone_annotations_2_18_0": {
@@ -3435,18 +3447,6 @@
             "attributes": {
               "generating_repository": "contrib_rules_jvm_deps",
               "target_name": "com_google_errorprone_error_prone_annotations"
-            }
-          },
-          "org_graalvm_nativeimage_svm_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "64ad811fa4b837368d033646192a42799a8708210d108d5c12905ca067f13ceb",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/svm/24.0.1/svm-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/nativeimage/svm/24.0.1/svm-24.0.1.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/nativeimage/svm/24.0.1/svm-24.0.1.jar"
             }
           },
           "com_google_protobuf_protobuf_java_3_23_1": {
@@ -3576,16 +3576,28 @@
               "target_name": "org_junit_platform_junit_platform_reporting"
             }
           },
-          "org_graalvm_compiler_compiler_24_0_1": {
+          "org_graalvm_nativeimage_svm_jar_sources_24_1_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "sha256": "ccac64aee6871ad5c5dac29b3868922a45a73b3018ae1e37dfd1898ba813ace4",
+              "sha256": "760e692bcf8734b127a0a3bab96c790cebc4a6dce3ec240bb1e52318d9769834",
               "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/compiler/compiler/24.0.1/compiler-24.0.1.jar",
-                "https://maven.google.com/org/graalvm/compiler/compiler/24.0.1/compiler-24.0.1.jar"
+                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/svm/24.1.0/svm-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/nativeimage/svm/24.1.0/svm-24.1.0-sources.jar"
               ],
-              "downloaded_file_path": "org/graalvm/compiler/compiler/24.0.1/compiler-24.0.1.jar"
+              "downloaded_file_path": "org/graalvm/nativeimage/svm/24.1.0/svm-24.1.0-sources.jar"
+            }
+          },
+          "org_graalvm_sdk_collections_jar_sources_24_1_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "sha256": "a1b055fe812ae2acdec3908ea249d9fe9030a5a8244d1df6b7d0d6e66550a62d",
+              "urls": [
+                "https://repo1.maven.org/maven2/org/graalvm/sdk/collections/24.1.0/collections-24.1.0-sources.jar",
+                "https://maven.google.com/org/graalvm/sdk/collections/24.1.0/collections-24.1.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/graalvm/sdk/collections/24.1.0/collections-24.1.0-sources.jar"
             }
           },
           "com_google_errorprone_error_prone_annotations_2_11_0": {
@@ -3786,16 +3798,16 @@
               "downloaded_file_path": "io/netty/netty-handler/4.1.86.Final/netty-handler-4.1.86.Final.jar"
             }
           },
-          "org_graalvm_nativeimage_svm_jar_sources_24_0_1": {
+          "org_graalvm_compiler_compiler_24_1_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "sha256": "2a3716c6a7e0144bfb83fdd99d1d092ca8186f6c3b2c62dce46c907e09fa3584",
+              "sha256": "04c7b3bb77464323601414bde3c05a77149f3532964bfeb1ec40f70e1762fc6b",
               "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/nativeimage/svm/24.0.1/svm-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/nativeimage/svm/24.0.1/svm-24.0.1-sources.jar"
+                "https://repo1.maven.org/maven2/org/graalvm/compiler/compiler/24.1.0/compiler-24.1.0.jar",
+                "https://maven.google.com/org/graalvm/compiler/compiler/24.1.0/compiler-24.1.0.jar"
               ],
-              "downloaded_file_path": "org/graalvm/nativeimage/svm/24.0.1/svm-24.0.1-sources.jar"
+              "downloaded_file_path": "org/graalvm/compiler/compiler/24.1.0/compiler-24.1.0.jar"
             }
           },
           "com_google_api_grpc_proto_google_cloud_storage_v2_2_22_3_alpha": {
@@ -3808,18 +3820,6 @@
                 "https://maven.google.com/com/google/api/grpc/proto-google-cloud-storage-v2/2.22.3-alpha/proto-google-cloud-storage-v2-2.22.3-alpha.jar"
               ],
               "downloaded_file_path": "com/google/api/grpc/proto-google-cloud-storage-v2/2.22.3-alpha/proto-google-cloud-storage-v2-2.22.3-alpha.jar"
-            }
-          },
-          "org_graalvm_sdk_collections_jar_sources_24_0_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "sha256": "dc1039f737ad39cd54143d54eea3f277c424ef596e7875923083c19dd08e234a",
-              "urls": [
-                "https://repo1.maven.org/maven2/org/graalvm/sdk/collections/24.0.1/collections-24.0.1-sources.jar",
-                "https://maven.google.com/org/graalvm/sdk/collections/24.0.1/collections-24.0.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/graalvm/sdk/collections/24.0.1/collections-24.0.1-sources.jar"
             }
           }
         },
@@ -3840,7 +3840,7 @@
     "@@rules_nodejs~//nodejs:extensions.bzl%node": {
       "general": {
         "bzlTransitiveDigest": "jjOwZWHVqDvX5q1yg4T1ym8jJuHrrCSjkJOb8Et0T7w=",
-        "usagesDigest": "RAwNb9TvUkgX12HBFN6fehaSrDPkdX4uLz4FvcQ0oZg=",
+        "usagesDigest": "MNJTgNrD2W1JIFFqWWTvWOyqnAXiUOmW3YinETnR71I=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},

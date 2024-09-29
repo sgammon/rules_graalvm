@@ -9,7 +9,7 @@
 
 ---
 
-> Latest release: [`0.11.2`](https://registry.bazel.build/modules/rules_graalvm)
+> Latest release: [`0.12.0`](https://registry.bazel.build/modules/rules_graalvm)
 
 Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 
@@ -45,18 +45,18 @@ Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 
 **Via `WORKSPACE.bazel`:**
 
-| Artifact                   | SHA256                                                             |
-| -------------------------- | ------------------------------------------------------------------ |
-| `rules_graalvm-0.11.2.zip` | `3ef2f1583a4849d03209a43b0b507f172299c3045e585b6ffa7144a2bc12ae18` |
-| `rules_graalvm-0.11.2.tgz` | `49bfa3851b6a1f76e5c18727adf6b0bb61af24ba2566bf75a724ddbca0c2c183` |
+| Artifact                   | SHA256 |
+| -------------------------- | ------ |
+| `rules_graalvm-0.12.0.zip` | ``     |
+| `rules_graalvm-0.12.0.tgz` | ``     |
 
 ```starlark
 http_archive(
     name = "rules_graalvm",
-    sha256 = "3ef2f1583a4849d03209a43b0b507f172299c3045e585b6ffa7144a2bc12ae18",
-    strip_prefix = "rules_graalvm-0.11.2",
+    sha256 = "",
+    strip_prefix = "rules_graalvm-0.12.0",
     urls = [
-        "https://github.com/sgammon/rules_graalvm/releases/download/v0.11.2/rules_graalvm-0.11.2.zip",
+        "https://github.com/sgammon/rules_graalvm/releases/download/v0.12.0/rules_graalvm-0.12.0.zip",
     ],
 )
 ```
@@ -69,8 +69,8 @@ load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
 graalvm_repository(
     name = "graalvm",
     distribution = "ce",  # `oracle`, `ce`, or `community`
-    java_version = "22",  # `17`, `20`, `21`, or `22` as supported by the version provided
-    version = "22.0.0",  # gvm sdk version format like `24.x.x` also supported
+    java_version = "23",  # `17`, `20`, `22`, `23`, etc.
+    version = "23.0.0",  # pass graalvm or specific jdk version supported by gvm
 )
 ```
 
@@ -86,13 +86,13 @@ register_graalvm_toolchains()
 
 **Or, via `MODULE.bazel`:**
 
-| Artifact                   | Integrity value                                       |
-| -------------------------- | ----------------------------------------------------- |
-| `rules_graalvm-0.11.2.zip` | `sha256-PvLxWDpISdAyCaQ7C1B/FyKZwwReWFtv+nFEorwSrhg=` |
-| `rules_graalvm-0.11.2.tgz` | `sha256-Sb+jhRtqH3blwYcnrfawu2GvJLolZr91pyTdvKDCwYM=` |
+| Artifact                   | Integrity value |
+| -------------------------- | --------------- |
+| `rules_graalvm-0.12.0.zip` | ``              |
+| `rules_graalvm-0.12.0.tgz` | ``              |
 
 ```starlark
-bazel_dep(name = "rules_graalvm", version = "0.11.2")
+bazel_dep(name = "rules_graalvm", version = "0.12.0")
 ```
 
 ```starlark
@@ -100,9 +100,9 @@ gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 
 gvm.graalvm(
     name = "graalvm",
-    version = "22.0.0",  # gvm sdk version format like `24.x.x` also supported
+    version = "23.0.0",  # pass graalvm or specific jdk version supported by gvm
     distribution = "ce",  # `oracle`, `ce`, or `community`
-    java_version = "22",  # `17`, `20`, `21`, or `22` as supported by the version provided
+    java_version = "23",  # `17`, `20`, `22`, `23`, etc.
 )
 use_repo(gvm, "graalvm")
 register_toolchains("@graalvm//:jvm")
