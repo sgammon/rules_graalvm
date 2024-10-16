@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.graalvm.nativeimage</groupId>
       <artifactId>native-image-base</artifactId>
-      <version>24.1.0</version>
+      <version>24.1.1</version>
     </dependency>
   </dependencies>
 </project>
