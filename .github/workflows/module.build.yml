@@ -145,7 +145,7 @@ jobs:
       - name: "Setup: Bazel"
         uses: bazel-contrib/setup-bazel@90b352333885f9fb6bf262d8e659f01b6219cc25 # 0.8.3
       - name: "Setup: Cache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
         with:
           path: "~/.cache/bazel"
           key: bazel-v3
