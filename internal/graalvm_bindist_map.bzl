@@ -53,6 +53,7 @@ _ComponentDependencies = {
 # Aligned GraalVM distribution versions.
 # buildifier: disable=name-conventions
 _AlignedVersions = {
+    "23.0.1": "24.1.1",
     "23.0.0": "24.1.0",
     "22.0.2": "24.0.2",
     "22.0.1": "24.0.1",
@@ -69,6 +70,7 @@ _AlignedVersions = {
 # VM release versions for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersions = {
+    "24.1.1": "23.0.1+11.1",
     "24.1.0": "23+37.1",
     "24.0.2": "22.0.2+9.1",
     "24.0.1": "22.0.1+8.1",
@@ -78,6 +80,7 @@ _VmReleaseVersions = {
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
+    "23.0.1": "23.0.1+11.1",
     "23.0.0": "23+37.1",
     "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
@@ -92,6 +95,7 @@ _VmReleaseVersions = {
 # VM release versions (for Oracle GVM) for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersionsOracle = {
+    "24.1.1": "23.0.1+11.1",
     "24.1.0": "23+37.1",
     "24.0.2": "22.0.2+9.1",
     "24.0.1": "22.0.1+8.1",
@@ -101,6 +105,7 @@ _VmReleaseVersionsOracle = {
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
+    "23.0.1": "23.0.1+11.1",
     "23.0.0": "23+37.1",
     "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
@@ -145,6 +150,9 @@ def _generate_distribution_coordinate(dist, platform, version, java_version, com
     elif version == "24.1.0" and java_version == "23":
         version = "23.0.0"
         aligned_version = "24.1.0"
+    elif version == "24.1.1" and java_version == "23":
+        version = "23.0.1"
+        aligned_version = "24.1.1"
 
     segments = [
         dist,
@@ -2520,7 +2528,7 @@ _GRAALVM_BINDIST = {
             "@rules_graalvm//platform/jvm:java23",
         ],
     },
-    "ce_23.0.0_windows-x64_24.1.0": {
+    "ce_23.0.0_windows-x64_24.1.1": {
         # GraalVM CE 23.0.0 (Java 23), Windows (amd64), Version 24.1.0
         "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_windows-x64_bin.zip",
         "sha256": "ef0e28d9ccdf68e31c911ec2069e010f35f1b484e6f70a4a6cce098f8bf8247e",
@@ -2530,50 +2538,50 @@ _GRAALVM_BINDIST = {
             "@rules_graalvm//platform/jvm:java23",
         ],
     },
-    "oracle_23.0.0_linux-aarch64_24.1.0": {
-        # Oracle GraalVM 23.0.0 (Java 23), Linux (arm64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_linux-aarch64_bin.tar.gz",
-        "sha256": "f6a12e7f09f3bc23d46d2dda6f9dc6a16f094489d56549a1dcc11a7e6826ed9f",
+    "oracle_23.0.1_linux-aarch64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), Linux (arm64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_linux-aarch64_bin.tar.gz",
+        "sha256": "1835a98b87c439c8c654d97956c22d409855952e5560a8127f56c50f3f919d7d",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:linux",
             "@rules_graalvm//platform/jvm:java23",
         ],
     },
-    "oracle_23.0.0_linux-x64_24.1.0": {
-        # Oracle GraalVM 23.0.0 (Java 23), Linux (amd64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_linux-x64_bin.tar.gz",
-        "sha256": "9e0632fe4be3d7fed6f03b3afc349b72fd5cb857ec6b69008202257e8a3ed858",
+    "oracle_23.0.1_linux-x64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), Linux (amd64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_linux-x64_bin.tar.gz",
+        "sha256": "46ec9582ebe114f93470403f2cc123238ac0c7982129c358af7d8e1de52dd663",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:linux",
             "@rules_graalvm//platform/jvm:java23",
         ],
     },
-    "oracle_23.0.0_macos-aarch64_24.1.0": {
-        # Oracle GraalVM 23.0.0 (Java 23), macOS (arm64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_macos-aarch64_bin.tar.gz",
-        "sha256": "63290bf6242836ac46ca4c8c4ad048e4482fdb3f8276b9689088f059be430687",
+    "oracle_23.0.1_macos-aarch64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), macOS (arm64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_macos-aarch64_bin.tar.gz",
+        "sha256": "c00a7a62ce453aa026bff65e5a18c63464f725c01e5a71771856226928ba5b0f",
         "compatible_with": [
             "@platforms//cpu:aarch64",
             "@platforms//os:macos",
             "@rules_graalvm//platform/jvm:java23",
         ],
     },
-    "oracle_23.0.0_macos-x64_24.1.0": {
-        # Oracle GraalVM 23.0.0 (Java 23), macOS (amd64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_macos-x64_bin.tar.gz",
-        "sha256": "d516ea854e361a821c7679d127ff7126c254b8c43c99e571e203df218df2764b",
+    "oracle_23.0.1_macos-x64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), macOS (amd64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_macos-x64_bin.tar.gz",
+        "sha256": "539699d8ff4979623bc7bdf8282ac6f76cd2560f47d14ec5438bada24f136f96",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:macos",
             "@rules_graalvm//platform/jvm:java23",
         ],
     },
-    "oracle_23.0.0_windows-x64_24.1.0": {
-        # Oracle GraalVM 23.0.0 (Java 23), Windows (amd64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_windows-x64_bin.zip",
-        "sha256": "42ead2ed36451e746d475c550ca022b81bf777f6dba463a113cb58585574a3b6",
+    "oracle_23.0.1_windows-x64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), Windows (amd64), Version 24.1.0
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_windows-x64_bin.zip",
+        "sha256": "e758646504cfaf23cf218a22691ad70491f3196448a77d03d78e50dff2145533",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
