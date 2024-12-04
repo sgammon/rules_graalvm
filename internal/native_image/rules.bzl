@@ -64,6 +64,9 @@ def _graal_binary_implementation(ctx):
             or install a GraalVM `native-image` toolchain.
         """)
 
+    is_linux = ctx.target_platform_has_constraint(
+        ctx.attr._linux_constraint[platform_common.ConstraintValueInfo],
+    )
     is_macos = ctx.target_platform_has_constraint(
         ctx.attr._macos_constraint[platform_common.ConstraintValueInfo],
     )
@@ -103,6 +106,16 @@ def _graal_binary_implementation(ctx):
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
 
+    env = native_toolchain.env
+
+    # The native image will use the same native encoding (as determined by "sun.jnu.encoding")
+    # as the build environment, so we need to force a UTF-8 locale. On other platforms, the
+    # encoding is always UTF-8 (on macOS since JEP 400) or determined by the active code page
+    # on Windows.
+    # TODO: Match on the exec platform instead once Graal supports cross-compilation.
+    if is_linux:
+        env["LC_CTYPE"] = "C.UTF-8"
+
     # assemble final inputs
     inputs = depset(
         direct_inputs,
@@ -113,7 +126,7 @@ def _graal_binary_implementation(ctx):
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImage",
-        "env": native_toolchain.env,
+        "env": env,
         "execution_requirements": {k: "" for k in native_toolchain.execution_requirements},
         "progress_message": "Native Image __target__ (__mode__) %{label}"
             .replace("__mode__", _build_action_message(ctx))
