@@ -1,1 +1,6 @@
 build --enable_bzlmod
+build --java_runtime_version=21
+build --extra_toolchains=@graalvm//:toolchain
+build --extra_toolchains=@graalvm//:toolchain_gvm
+build --extra_toolchains=@graalvm//:bootstrap_runtime_toolchain
+build --toolchain_resolution_debug='@@bazel_tools//tools/jdk:toolchain_type'

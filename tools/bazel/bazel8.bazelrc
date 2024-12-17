@@ -23,12 +23,8 @@ build:strict --incompatible_check_testonly_for_output_files
 build:strict --incompatible_disable_starlark_host_transitions
 build:strict --incompatible_fix_package_group_reporoot_syntax
 build:strict --incompatible_package_group_has_public_syntax
-build:strict --incompatible_remote_dangling_symlinks
-build:strict --incompatible_remote_downloader_send_all_headers
 build:strict --incompatible_remote_use_new_exit_code_for_lost_inputs
-build:strict --incompatible_remove_rule_name_parameter
 build:strict --incompatible_sandbox_hermetic_tmp
 build:strict --incompatible_unambiguous_label_stringification
-build:strict --incompatible_use_host_features
 
 build:strict-broken --incompatible_auto_exec_groups

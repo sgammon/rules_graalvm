@@ -11,7 +11,7 @@ native_image(<a href="#native_image-name">name</a>, <a href="#native_image-deps"
              <a href="#native_image-jni_configuration">jni_configuration</a>, <a href="#native_image-initialize_at_build_time">initialize_at_build_time</a>, <a href="#native_image-initialize_at_run_time">initialize_at_run_time</a>, <a href="#native_image-native_features">native_features</a>,
              <a href="#native_image-debug">debug</a>, <a href="#native_image-optimization_mode">optimization_mode</a>, <a href="#native_image-shared_library">shared_library</a>, <a href="#native_image-static_zlib">static_zlib</a>, <a href="#native_image-c_compiler_option">c_compiler_option</a>, <a href="#native_image-data">data</a>,
              <a href="#native_image-extra_args">extra_args</a>, <a href="#native_image-allow_fallback">allow_fallback</a>, <a href="#native_image-check_toolchains">check_toolchains</a>, <a href="#native_image-native_image_tool">native_image_tool</a>, <a href="#native_image-native_image_settings">native_image_settings</a>,
-             <a href="#native_image-profiles">profiles</a>, <a href="#native_image-kwargs">kwargs</a>)
+             <a href="#native_image-resource_configuration">resource_configuration</a>, <a href="#native_image-proxy_configuration">proxy_configuration</a>, <a href="#native_image-profiles">profiles</a>, <a href="#native_image-kwargs">kwargs</a>)
 </pre>
 
 Generates and compiles a GraalVM native image from a Java library target.
@@ -42,6 +42,8 @@ Generates and compiles a GraalVM native image from a Java library target.
 | <a id="native_image-check_toolchains"></a>check_toolchains |  Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.   |  `select({"@bazel_tools//src/conditions:windows": True, "//conditions:default": False})` |
 | <a id="native_image-native_image_tool"></a>native_image_tool |  Specific `native-image` executable target to use.   |  `None` |
 | <a id="native_image-native_image_settings"></a>native_image_settings |  Suite(s) of Native Image build settings to use.   |  `[Label("@rules_graalvm//internal/native_image:defaults")]` |
+| <a id="native_image-resource_configuration"></a>resource_configuration |  Resource configuration file. No default; optional.   |  `None` |
+| <a id="native_image-proxy_configuration"></a>proxy_configuration |  Proxy configuration file. No default; optional.   |  `None` |
 | <a id="native_image-profiles"></a>profiles |  Profiles to use for profile-guided optimization (PGO) and obtained from a native image compiled with `--pgo-instrument`.   |  `[]` |
 | <a id="native_image-kwargs"></a>kwargs |  Extra keyword arguments are passed to the underlying `native_image` rule.   |  none |
 

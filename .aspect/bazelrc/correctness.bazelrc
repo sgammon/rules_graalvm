@@ -48,10 +48,10 @@ build --incompatible_strict_action_env
 # Without this option, you rely on rules authors to manually check the tags you passed
 # and apply relevant ones to the actions they create.
 # See https://github.com/bazelbuild/bazel/issues/8830 for details.
-# Docs: https://bazel.build/reference/command-line-reference#flag--experimental_allow_tags_propagation
-build --experimental_allow_tags_propagation
-fetch --experimental_allow_tags_propagation
-query --experimental_allow_tags_propagation
+# Docs: https://bazel.build/reference/command-line-reference#flag--incompatible_allow_tags_propagation
+build --incompatible_allow_tags_propagation
+fetch --incompatible_allow_tags_propagation
+query --incompatible_allow_tags_propagation
 
 # Do not automatically create `__init__.py` files in the runfiles of Python targets. Fixes the wrong
 # default that comes from Google's internal monorepo by using `__init__.py` to delimit a Python
