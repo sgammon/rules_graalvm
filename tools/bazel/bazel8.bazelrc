@@ -4,6 +4,8 @@ build --remote_build_event_upload=minimal
 build --noexperimental_check_external_repository_files
 build --extra_toolchains=@graalvm//:bootstrap_runtime_toolchain
 
+# Compat: We keep the `bzlmod` config profile because it is injected for pre-Bazel 8 in CI.
+build --enable_bzlmod
 build:bzlmod --enable_bzlmod
 
 build:dev --lockfile_mode=update
@@ -27,4 +29,112 @@ build:strict --incompatible_remote_use_new_exit_code_for_lost_inputs
 build:strict --incompatible_sandbox_hermetic_tmp
 build:strict --incompatible_unambiguous_label_stringification
 
-build:strict-broken --incompatible_auto_exec_groups
+# ---- Inlined `performance.bazelrc` with modifications for Bazel 8
+
+# Speed up all builds by not checking if output files have been modified. Lets you make changes to
+# the output tree without triggering a build for local debugging. For example, you can modify
+# [rules_js](https://github.com/aspect-build/rules_js) 3rd party npm packages in the output tree
+# when local debugging.
+# Docs: https://github.com/bazelbuild/bazel/blob/1af61b21df99edc2fc66939cdf14449c2661f873/src/main/java/com/google/devtools/build/lib/pkgcache/PackageOptions.java#L185
+build --noexperimental_check_output_files
+fetch --noexperimental_check_output_files
+query --noexperimental_check_output_files
+
+# Don't apply `--noremote_upload_local_results` and `--noremote_accept_cached` to the disk cache.
+# If you have both `--noremote_upload_local_results` and `--disk_cache`, then this fixes a bug where
+# Bazel doesn't write to the local disk cache as it treats as a remote cache.
+# Docs: https://bazel.build/reference/command-line-reference#flag--incompatible_remote_results_ignore_disk
+build:notbazel8 --incompatible_remote_results_ignore_disk
+
+# Directories used by sandboxed non-worker execution may be reused to avoid unnecessary setup costs.
+# Save time on Sandbox creation and deletion when many of the same kind of action run during the
+# build.
+# No longer experimental in Bazel 6: https://github.com/bazelbuild/bazel/commit/c1a95501a5611878e5cc43a3cc531f2b9e47835b
+# Docs: https://bazel.build/reference/command-line-reference#flag--reuse_sandbox_directories
+build --experimental_reuse_sandbox_directories
+
+# Do not build runfiles symlink forests for external repositories under
+# `.runfiles/wsname/external/repo` (in addition to `.runfiles/repo`). This reduces runfiles &
+# sandbox creation times & prevents accidentally depending on this feature which may flip to off by
+# default in the future. Note, some rules may fail under this flag, please file issues with the rule
+# author.
+# Docs: https://bazel.build/reference/command-line-reference#flag--legacy_external_runfiles
+build --nolegacy_external_runfiles
+
+# Some actions are always IO-intensive but require little compute. It's wasteful to put the output
+# in the remote cache, it just saturates the network and fills the cache storage causing earlier
+# evictions. It's also not worth sending them for remote execution.
+# For actions like PackageTar it's usually faster to just re-run the work locally every time.
+# You'll have to look at an execution log to figure out what other action mnemonics you care about.
+# In some cases you may need to patch rulesets to add a mnemonic to actions that don't have one.
+# https://bazel.build/reference/command-line-reference#flag--modify_execution_info
+build --modify_execution_info=PackageTar=+no-remote
+
+# ---- End inline
+
+# ---- Inlined `correctness.bazelrc` with modifications for Bazel 8
+
+# Do not upload locally executed action results to the remote cache.
+# This should be the default for local builds so local builds cannot poison the remote cache.
+# It should be flipped to `--remote_upload_local_results` on CI
+# by using `--bazelrc=.aspect/bazelrc/ci.bazelrc`.
+# Docs: https://bazel.build/reference/command-line-reference#flag--remote_upload_local_results
+build --noremote_upload_local_results
+
+# Don't allow network access for build actions in the sandbox.
+# Ensures that you don't accidentally make non-hermetic actions/tests which depend on remote
+# services.
+# Developers should tag targets with `tags=["requires-network"]` to opt-out of the enforcement.
+# Docs: https://bazel.build/reference/command-line-reference#flag--sandbox_default_allow_network
+build --sandbox_default_allow_network=false
+
+# Warn if a test's timeout is significantly longer than the test's actual execution time.
+# Bazel's default for test_timeout is medium (5 min), but most tests should instead be short (1 min).
+# While a test's timeout should be set such that it is not flaky, a test that has a highly
+# over-generous timeout can hide real problems that crop up unexpectedly.
+# For instance, a test that normally executes in a minute or two should not have a timeout of
+# ETERNAL or LONG as these are much, much too generous.
+# Docs: https://bazel.build/docs/user-manual#test-verbose-timeout-warnings
+test --test_verbose_timeout_warnings
+
+# Allow the Bazel server to check directory sources for changes. Ensures that the Bazel server
+# notices when a directory changes, if you have a directory listed in the srcs of some target.
+# Recommended when using
+# [copy_directory](https://github.com/aspect-build/bazel-lib/blob/main/docs/copy_directory.md) and
+# [rules_js](https://github.com/aspect-build/rules_js) since npm package are source directories
+# inputs to copy_directory actions.
+# Docs: https://bazel.build/reference/command-line-reference#flag--host_jvm_args
+startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
+
+# Allow exclusive tests to run in the sandbox. Fixes a bug where Bazel doesn't enable sandboxing for
+# tests with `tags=["exclusive"]`.
+# Docs: https://bazel.build/reference/command-line-reference#flag--incompatible_exclusive_test_sandboxed
+test --incompatible_exclusive_test_sandboxed
+
+# Use a static value for `PATH` and does not inherit `LD_LIBRARY_PATH`. Doesn't let environment
+# variables like `PATH` sneak into the build, which can cause massive cache misses when they change.
+# Use `--action_env=ENV_VARIABLE` if you want to inherit specific environment variables from the
+# client, but note that doing so can prevent cross-user caching if a shared cache is used.
+# Docs: https://bazel.build/reference/command-line-reference#flag--incompatible_strict_action_env
+build --incompatible_strict_action_env
+
+# Propagate tags from a target declaration to the actions' execution requirements.
+# Ensures that tags applied in your BUILD file, like `tags=["no-remote"]`
+# get propagated to actions created by the rule.
+# Without this option, you rely on rules authors to manually check the tags you passed
+# and apply relevant ones to the actions they create.
+# See https://github.com/bazelbuild/bazel/issues/8830 for details.
+# Docs: https://bazel.build/reference/command-line-reference#flag--incompatible_allow_tags_propagation
+build --incompatible_allow_tags_propagation
+fetch --incompatible_allow_tags_propagation
+query --incompatible_allow_tags_propagation
+
+# Do not automatically create `__init__.py` files in the runfiles of Python targets. Fixes the wrong
+# default that comes from Google's internal monorepo by using `__init__.py` to delimit a Python
+# package. Precisely, when a `py_binary` or `py_test` target has `legacy_create_init` set to `auto (the
+# default), it is treated as false if and only if this flag is set. See
+# https://github.com/bazelbuild/bazel/issues/10076.
+# Docs: https://bazel.build/reference/command-line-reference#flag--incompatible_default_to_explicit_init_py
+build --incompatible_default_to_explicit_init_py
+
+# ---- End inline

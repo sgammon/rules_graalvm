@@ -2,10 +2,18 @@
 
 # ! THIS FILE IS GENERATED. DO NOT EDIT. !
 
-# Last updated: 2024-09-29T13:05PDT by sam
+# Last updated: 2024-12-17T17:15PDT by sam
 
 # To learn how to regenerate this file, consult the contributor docs for
 # the `rules_graalvm` repository: https://github.com/sgammon/rules_graalvm
+
+# Latest supported major JVM version.
+# buildifier: disable=name-conventions
+_LatestJvmRelease = "23"
+
+# Symbol which specifies the "latest" version.
+# buildifier: disable=name-conventions
+_LatestVersionSymbol = "latest"
 
 # Enumerates available distribution types.
 # buildifier: disable=name-conventions
@@ -53,6 +61,7 @@ _ComponentDependencies = {
 # Aligned GraalVM distribution versions.
 # buildifier: disable=name-conventions
 _AlignedVersions = {
+    "23.0.1": "24.1.1",
     "23.0.0": "24.1.0",
     "22.0.2": "24.0.2",
     "22.0.1": "24.0.1",
@@ -66,9 +75,20 @@ _AlignedVersions = {
     "17.0.7": "23.0.1",
 }
 
+# Aligned GraalVM distribution versions, at latest.
+# buildifier: disable=name-conventions
+_LatestVersions = {
+    "23": ("23.0.1", "24.1.1"),
+    "22": ("22.0.2", "24.0.2"),
+    "21": ("21.0.2", "23.1.2"),
+    "20": ("20.0.2", "23.0.1"),
+    "17": ("17.0.8", "23.0.1"),
+}
+
 # VM release versions for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersions = {
+    "24.1.1": "23.0.1+11.1",
     "24.1.0": "23+37.1",
     "24.0.2": "22.0.2+9.1",
     "24.0.1": "22.0.1+8.1",
@@ -78,6 +98,7 @@ _VmReleaseVersions = {
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
+    "23.0.1": "23.0.1+11.1",
     "23.0.0": "23+37.1",
     "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
@@ -92,6 +113,7 @@ _VmReleaseVersions = {
 # VM release versions (for Oracle GVM) for calculating prefixes.
 # buildifier: disable=name-conventions
 _VmReleaseVersionsOracle = {
+    "24.1.1": "23.0.1+11.1",
     "24.1.0": "23+37.1",
     "24.0.2": "22.0.2+9.1",
     "24.0.1": "22.0.1+8.1",
@@ -101,6 +123,7 @@ _VmReleaseVersionsOracle = {
     "21.0.1": "21.0.1+12.1",
     "23.1.1": "21.0.1+12.1",
     "23.1.0": "21+35.1",
+    "23.0.1": "23.0.1+11.1",
     "23.0.0": "23+37.1",
     "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
@@ -112,11 +135,42 @@ _VmReleaseVersionsOracle = {
     "17.0.7": "17.0.8+9.1",
 }
 
+def _resolve_version_pair(java_version, version):
+    """Resolve a pair of Java and GraalVM version strings to actual versions of each component.
+
+    Symbolic versions like the string `latest` are resolved by this method. A tuple is returned,
+    with the first position representing a JVM version, and the second representing a GraalVM
+    version.
+
+    If either (or neither) version parameter is symbolic, it/they are returned literally.
+
+    Args:
+        java_version: Java version specified or expected by the developer, which should be resolved.
+        version: GraalVM version specified by the developer, which should be resolved.
+
+    Returns:
+        Tuple of resolved version strings; JVM version in first position, GVM version in second."""
+
+    resolved_jvm = java_version
+    if java_version == _LatestVersionSymbol:
+        resolved_jvm = _LatestJvmRelease
+
+    if version == _LatestVersionSymbol:
+        latest_gvm_for_jvm = _LatestVersions.get(resolved_jvm)
+        if latest_gvm_for_jvm == None:
+            fail("Can't resolve latest GraalVM for JVM version: %s" % resolved_jvm)
+        return (resolved_jvm, latest_gvm_for_jvm)
+
+    # gvm version is non-symbolic so return it literally
+    return (resolved_jvm, version)
+
 def _generate_distribution_coordinate(dist, platform, version, java_version, component = None):
     """Generate a well-formed distribution coordinate key.
 
     Generates a key for the generated binary distribution map, which holds download
     URLs and known-good integrity values.
+
+    The special value "latest" can be specified for either or both of `version` and `java_version`.
 
     Args:
         dist: Distribution for the coordinate (a `DistributionType`).
@@ -130,21 +184,43 @@ def _generate_distribution_coordinate(dist, platform, version, java_version, com
     """
 
     aligned_version = None
-    if version == "23.1.0" and java_version == "21":
-        version = "21.0.0"
-        aligned_version = "23.1.0"
-    elif version == "24.0.0" and java_version == "22":
-        version = "22.0.0"
-        aligned_version = "24.0.0"
-    elif version == "24.0.1" and java_version == "22":
-        version = "22.0.1"
-        aligned_version = "24.0.1"
-    elif version == "24.0.2" and java_version == "22":
-        version = "22.0.2"
-        aligned_version = "24.0.2"
-    elif version == "24.1.0" and java_version == "23":
-        version = "23.0.0"
-        aligned_version = "24.1.0"
+    if not java_version:
+        fail(
+            "Please specify a `java_version` for GraalVM. " +
+            ("Version 17-%s is supported (or set to 'latest')." % _LatestJvmRelease),
+        )
+    if not version:
+        fail(
+            "Please specify a `version` for GraalVM, or use 'latest'.",
+        )
+    if version != _LatestVersionSymbol:
+        if version == "23.1.0" and java_version == "21":
+            version = "21.0.0"
+            aligned_version = "23.1.0"
+        elif version == "24.0.0" and java_version == "22":
+            version = "22.0.0"
+            aligned_version = "24.0.0"
+        elif version == "24.0.1" and java_version == "22":
+            version = "22.0.1"
+            aligned_version = "24.0.1"
+        elif version == "24.0.2" and java_version == "22":
+            version = "22.0.2"
+            aligned_version = "24.0.2"
+        elif version == "24.1.0" and java_version == "23":
+            version = "23.0.0"
+            aligned_version = "24.1.0"
+        elif version == "24.1.1" and java_version == "23":
+            version = "23.0.1"
+            aligned_version = "24.1.1"
+    else:
+        latest_info = _LatestVersions.get(java_version)
+        if not latest_info:
+            fail("Unable to resolve latest GraalVM coordinates for JVM version '%s'." % java_version)
+
+        # otherwise, unpack as versions
+        (latest_jvm, latest_gvm) = latest_info
+        aligned_version = latest_gvm
+        version = latest_jvm
 
     segments = [
         dist,
@@ -2532,7 +2608,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_23.0.0_linux-aarch64_24.1.0": {
         # Oracle GraalVM 23.0.0 (Java 23), Linux (arm64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_linux-aarch64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23_linux-aarch64_bin.tar.gz",
         "sha256": "f6a12e7f09f3bc23d46d2dda6f9dc6a16f094489d56549a1dcc11a7e6826ed9f",
         "compatible_with": [
             "@platforms//cpu:aarch64",
@@ -2542,7 +2618,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_23.0.0_linux-x64_24.1.0": {
         # Oracle GraalVM 23.0.0 (Java 23), Linux (amd64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_linux-x64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23_linux-x64_bin.tar.gz",
         "sha256": "9e0632fe4be3d7fed6f03b3afc349b72fd5cb857ec6b69008202257e8a3ed858",
         "compatible_with": [
             "@platforms//cpu:x86_64",
@@ -2552,7 +2628,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_23.0.0_macos-aarch64_24.1.0": {
         # Oracle GraalVM 23.0.0 (Java 23), macOS (arm64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_macos-aarch64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23_macos-aarch64_bin.tar.gz",
         "sha256": "63290bf6242836ac46ca4c8c4ad048e4482fdb3f8276b9689088f059be430687",
         "compatible_with": [
             "@platforms//cpu:aarch64",
@@ -2562,7 +2638,7 @@ _GRAALVM_BINDIST = {
     },
     "oracle_23.0.0_macos-x64_24.1.0": {
         # Oracle GraalVM 23.0.0 (Java 23), macOS (amd64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_macos-x64_bin.tar.gz",
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23_macos-x64_bin.tar.gz",
         "sha256": "d516ea854e361a821c7679d127ff7126c254b8c43c99e571e203df218df2764b",
         "compatible_with": [
             "@platforms//cpu:x86_64",
@@ -2572,8 +2648,108 @@ _GRAALVM_BINDIST = {
     },
     "oracle_23.0.0_windows-x64_24.1.0": {
         # Oracle GraalVM 23.0.0 (Java 23), Windows (amd64), Version 24.1.0
-        "url": "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_windows-x64_bin.zip",
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23_windows-x64_bin.zip",
         "sha256": "42ead2ed36451e746d475c550ca022b81bf777f6dba463a113cb58585574a3b6",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.1_linux-aarch64_24.1.1": {
+        # GraalVM CE 23.0.1 (Java 23), Linux (arm64), Version 24.1.1
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_linux-aarch64_bin.tar.gz",
+        "sha256": "5a456db9162a89be5fadd50e703c19313d25ef7f5043b750b639cd0460335e60",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.1_linux-x64_24.1.1": {
+        # GraalVM CE 23.0.1 (Java 23), Linux (amd64), Version 24.1.1
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_linux-x64_bin.tar.gz",
+        "sha256": "e26a0a74064b1689c056b5f24d7cc3b271f57f576be063b139d27aafa1322951",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.1_macos-aarch64_24.1.1": {
+        # GraalVM CE 23.0.1 (Java 23), macOS (arm64), Version 24.1.1
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_macos-aarch64_bin.tar.gz",
+        "sha256": "d142ecf3d36775e457cdfe67e31982821dfe2d75ade28083990be19ee955f48f",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.1_macos-x64_24.1.1": {
+        # GraalVM CE 23.0.1 (Java 23), macOS (amd64), Version 24.1.1
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_macos-x64_bin.tar.gz",
+        "sha256": "d8206c29232a68908bbce146012925c52f060722fe2fc2dbb41fe17bd906b210",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "ce_23.0.1_windows-x64_24.1.1": {
+        # GraalVM CE 23.0.1 (Java 23), Windows (amd64), Version 24.1.1
+        "url": "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_windows-x64_bin.zip",
+        "sha256": "be5fe8f734476469f364329d9126c365a35d245755f3fc17a583e3a0f3688d38",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.1_linux-aarch64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), Linux (arm64), Version 24.1.1
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_linux-aarch64_bin.tar.gz",
+        "sha256": "1835a98b87c439c8c654d97956c22d409855952e5560a8127f56c50f3f919d7d",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.1_linux-x64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), Linux (amd64), Version 24.1.1
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_linux-x64_bin.tar.gz",
+        "sha256": "46ec9582ebe114f93470403f2cc123238ac0c7982129c358af7d8e1de52dd663",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.1_macos-aarch64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), macOS (arm64), Version 24.1.1
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_macos-aarch64_bin.tar.gz",
+        "sha256": "c00a7a62ce453aa026bff65e5a18c63464f725c01e5a71771856226928ba5b0f",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.1_macos-x64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), macOS (amd64), Version 24.1.1
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_macos-x64_bin.tar.gz",
+        "sha256": "539699d8ff4979623bc7bdf8282ac6f76cd2560f47d14ec5438bada24f136f96",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java23",
+        ],
+    },
+    "oracle_23.0.1_windows-x64_24.1.1": {
+        # Oracle GraalVM 23.0.1 (Java 23), Windows (amd64), Version 24.1.1
+        "url": "https://download.oracle.com/graalvm/23/archive/graalvm-jdk-23.0.1_windows-x64_bin.zip",
+        "sha256": "e758646504cfaf23cf218a22691ad70491f3196448a77d03d78e50dff2145533",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
@@ -2600,6 +2776,15 @@ ComponentDependencies = _ComponentDependencies
 AlignedVersions = _AlignedVersions
 
 # buildifier: disable=name-conventions
+LatestVersions = _LatestVersions
+
+# buildifier: disable=name-conventions
+LatestJvmRelease = _LatestJvmRelease
+
+# buildifier: disable=name-conventions
+LatestVersionSymbol = _LatestVersionSymbol
+
+# buildifier: disable=name-conventions
 VmReleaseVersions = _VmReleaseVersions
 
 # buildifier: disable=name-conventions
@@ -2607,3 +2792,4 @@ VmReleaseVersionsOracle = _VmReleaseVersionsOracle
 
 generate_distribution_coordinate = _generate_distribution_coordinate
 resolve_distribution_artifact = _resolve_distribution_artifact
+resolve_version_pair = _resolve_version_pair

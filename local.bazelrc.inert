@@ -7,7 +7,6 @@
 # Bzlmod mode is enabled, but only during development, for now.
 
 build --config=dev
-build --config=bzlmod
 
 build --remote_header=x-buildbuddy-api-key=
 build --remote_header=x-api-key=

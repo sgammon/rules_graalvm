@@ -1,5 +1,5 @@
 matrix:
-  bazel_version: ["7.0.0", "7.3.1"]
+  bazel_version: ["8.0.0"]
   platform:
     - ubuntu2004
     - macos

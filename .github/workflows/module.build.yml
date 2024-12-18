@@ -234,6 +234,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Bazel 7
+          - label: Bazel 7
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel7"
+            labs: false
+            skip: false
+
           # Test: Inert
           - label: Inert
             target: sample

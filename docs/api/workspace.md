@@ -7,6 +7,8 @@ Bazel Workspace (non-Bzlmod) definitions.
 ## register_graalvm_toolchains
 
 <pre>
+load("@rules_graalvm//graalvm:workspace.bzl", "register_graalvm_toolchains")
+
 register_graalvm_toolchains(<a href="#register_graalvm_toolchains-name">name</a>, <a href="#register_graalvm_toolchains-register_java_toolchain">register_java_toolchain</a>, <a href="#register_graalvm_toolchains-register_gvm_toolchain">register_gvm_toolchain</a>)
 </pre>
 
@@ -35,6 +37,8 @@ target tool in your `native_image` binary targets.
 ## rules_graalvm_repositories
 
 <pre>
+load("@rules_graalvm//graalvm:workspace.bzl", "rules_graalvm_repositories")
+
 rules_graalvm_repositories(<a href="#rules_graalvm_repositories-omit_rules_java">omit_rules_java</a>, <a href="#rules_graalvm_repositories-omit_bazel_skylib">omit_bazel_skylib</a>, <a href="#rules_graalvm_repositories-omit_apple_support">omit_apple_support</a>)
 </pre>
 

@@ -7,11 +7,13 @@ Target rule definitions, intended for use by rule users.
 ## native_image
 
 <pre>
+load("@rules_graalvm//graalvm:defs.bzl", "native_image")
+
 native_image(<a href="#native_image-name">name</a>, <a href="#native_image-deps">deps</a>, <a href="#native_image-main_class">main_class</a>, <a href="#native_image-executable_name">executable_name</a>, <a href="#native_image-include_resources">include_resources</a>, <a href="#native_image-reflection_configuration">reflection_configuration</a>,
              <a href="#native_image-jni_configuration">jni_configuration</a>, <a href="#native_image-initialize_at_build_time">initialize_at_build_time</a>, <a href="#native_image-initialize_at_run_time">initialize_at_run_time</a>, <a href="#native_image-native_features">native_features</a>,
              <a href="#native_image-debug">debug</a>, <a href="#native_image-optimization_mode">optimization_mode</a>, <a href="#native_image-shared_library">shared_library</a>, <a href="#native_image-static_zlib">static_zlib</a>, <a href="#native_image-c_compiler_option">c_compiler_option</a>, <a href="#native_image-data">data</a>,
              <a href="#native_image-extra_args">extra_args</a>, <a href="#native_image-allow_fallback">allow_fallback</a>, <a href="#native_image-check_toolchains">check_toolchains</a>, <a href="#native_image-native_image_tool">native_image_tool</a>, <a href="#native_image-native_image_settings">native_image_settings</a>,
-             <a href="#native_image-resource_configuration">resource_configuration</a>, <a href="#native_image-proxy_configuration">proxy_configuration</a>, <a href="#native_image-profiles">profiles</a>, <a href="#native_image-kwargs">kwargs</a>)
+             <a href="#native_image-resource_configuration">resource_configuration</a>, <a href="#native_image-proxy_configuration">proxy_configuration</a>, <a href="#native_image-profiles">profiles</a>, <a href="#native_image-kwargs">**kwargs</a>)
 </pre>
 
 Generates and compiles a GraalVM native image from a Java library target.

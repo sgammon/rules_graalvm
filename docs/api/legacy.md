@@ -7,11 +7,13 @@ Rules for building native binaries using the GraalVM `native-image` tool on Baze
 ## graal_binary
 
 <pre>
+load("@rules_graalvm//graal:graal.bzl", "graal_binary")
+
 graal_binary(<a href="#graal_binary-name">name</a>, <a href="#graal_binary-deps">deps</a>, <a href="#graal_binary-main_class">main_class</a>, <a href="#graal_binary-executable_name">executable_name</a>, <a href="#graal_binary-include_resources">include_resources</a>, <a href="#graal_binary-reflection_configuration">reflection_configuration</a>,
              <a href="#graal_binary-jni_configuration">jni_configuration</a>, <a href="#graal_binary-serialization_configuration">serialization_configuration</a>, <a href="#graal_binary-initialize_at_build_time">initialize_at_build_time</a>,
              <a href="#graal_binary-initialize_at_run_time">initialize_at_run_time</a>, <a href="#graal_binary-native_features">native_features</a>, <a href="#graal_binary-debug">debug</a>, <a href="#graal_binary-optimization_mode">optimization_mode</a>, <a href="#graal_binary-shared_library">shared_library</a>,
              <a href="#graal_binary-static_zlib">static_zlib</a>, <a href="#graal_binary-c_compiler_option">c_compiler_option</a>, <a href="#graal_binary-data">data</a>, <a href="#graal_binary-extra_args">extra_args</a>, <a href="#graal_binary-allow_fallback">allow_fallback</a>, <a href="#graal_binary-check_toolchains">check_toolchains</a>,
-             <a href="#graal_binary-native_image_tool">native_image_tool</a>, <a href="#graal_binary-kwargs">kwargs</a>)
+             <a href="#graal_binary-native_image_tool">native_image_tool</a>, <a href="#graal_binary-kwargs">**kwargs</a>)
 </pre>
 
 Alias for the renamed `native_image` rule. Identical.
@@ -50,11 +52,13 @@ Alias for the renamed `native_image` rule. Identical.
 ## native_image
 
 <pre>
+load("@rules_graalvm//graal:graal.bzl", "native_image")
+
 native_image(<a href="#native_image-name">name</a>, <a href="#native_image-deps">deps</a>, <a href="#native_image-main_class">main_class</a>, <a href="#native_image-executable_name">executable_name</a>, <a href="#native_image-include_resources">include_resources</a>, <a href="#native_image-reflection_configuration">reflection_configuration</a>,
              <a href="#native_image-jni_configuration">jni_configuration</a>, <a href="#native_image-serialization_configuration">serialization_configuration</a>, <a href="#native_image-initialize_at_build_time">initialize_at_build_time</a>,
              <a href="#native_image-initialize_at_run_time">initialize_at_run_time</a>, <a href="#native_image-native_features">native_features</a>, <a href="#native_image-debug">debug</a>, <a href="#native_image-optimization_mode">optimization_mode</a>, <a href="#native_image-shared_library">shared_library</a>,
              <a href="#native_image-static_zlib">static_zlib</a>, <a href="#native_image-c_compiler_option">c_compiler_option</a>, <a href="#native_image-data">data</a>, <a href="#native_image-extra_args">extra_args</a>, <a href="#native_image-allow_fallback">allow_fallback</a>, <a href="#native_image-check_toolchains">check_toolchains</a>,
-             <a href="#native_image-native_image_tool">native_image_tool</a>, <a href="#native_image-kwargs">kwargs</a>)
+             <a href="#native_image-native_image_tool">native_image_tool</a>, <a href="#native_image-kwargs">**kwargs</a>)
 </pre>
 
 Generates and compiles a GraalVM native image from a Java library target.
