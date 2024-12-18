@@ -1,0 +1,137 @@
+workspace(name = "rules_graalvm")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load(
+    "//internal:config.bzl",
+    "HERMETIC_CC_TOOLCHAIN_SHA",
+    "HERMETIC_CC_TOOLCHAIN_VERSION",
+    "LLVM_TOOLCHAIN_SHA",
+    "LLVM_TOOLCHAIN_TAG",
+    "PROTOBUF_SHA",
+    "PROTOBUF_VERSION",
+)
+
+http_archive(
+    name = "platforms",
+    sha256 = "3a561c99e7bdbe9173aa653fd579fe849f1d8d67395780ab4770b1f381431d51",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
+        "https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "bazel_skylib",
+    sha256 = "66ffd9315665bfaafc96b52278f57c7e2dd09f5ede279ea6d39b2be471e7e3aa",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "io_bazel_stardoc",
+    sha256 = "62bd2e60216b7a6fec3ac79341aa201e0956477e7c8f6ccc286f279ad1d96432",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/stardoc/releases/download/0.6.2/stardoc-0.6.2.tar.gz",
+        "https://github.com/bazelbuild/stardoc/releases/download/0.6.2/stardoc-0.6.2.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = PROTOBUF_SHA,
+    strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/v%s.tar.gz" % PROTOBUF_VERSION],
+)
+
+http_archive(
+    name = "googleapis",
+    sha256 = "9d1a930e767c93c825398b8f8692eca3fe353b9aaadedfbcf1fca2282c85df88",
+    strip_prefix = "googleapis-64926d52febbf298cb82a8f472ade4a3969ba922",
+    urls = [
+        "https://github.com/googleapis/googleapis/archive/64926d52febbf298cb82a8f472ade4a3969ba922.zip",
+    ],
+)
+
+http_archive(
+    name = "hermetic_cc_toolchain",
+    sha256 = HERMETIC_CC_TOOLCHAIN_SHA,
+    urls = [
+        "https://mirror.bazel.build/github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
+        "https://github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
+    ],
+)
+
+http_archive(
+    name = "com_grail_bazel_toolchain",
+    canonical_id = LLVM_TOOLCHAIN_TAG,
+    sha256 = LLVM_TOOLCHAIN_SHA,
+    strip_prefix = "toolchains_llvm-{tag}".format(tag = LLVM_TOOLCHAIN_TAG),
+    url = "https://github.com/bazel-contrib/toolchains_llvm/archive/refs/tags/{tag}.tar.gz".format(tag = LLVM_TOOLCHAIN_TAG),
+)
+
+http_archive(
+    name = "remote_java_tools",
+    sha256 = "942b3d88ebd785a5face38049077a1f8dab5a3500f5ebd0c0df090244acc4e16",
+    urls = [
+        "https://mirror.bazel.build/bazel_java_tools/releases/java/v12.5/java_tools-v12.5.zip",
+        "https://github.com/bazelbuild/java_tools/releases/download/java_v12.5/java_tools-v12.5.zip",
+    ],
+)
+
+http_archive(
+    name = "remote_java_tools_linux",
+    sha256 = "45dda5441b46385e8ec95d3bc4a04b9337a6ff837bb41bdaa6247d8d36edceae",
+    urls = [
+        "https://mirror.bazel.build/bazel_java_tools/releases/java/v12.5/java_tools_linux-v12.5.zip",
+        "https://github.com/bazelbuild/java_tools/releases/download/java_v12.5/java_tools_linux-v12.5.zip",
+    ],
+)
+
+http_archive(
+    name = "remote_java_tools_windows",
+    sha256 = "0b319cf762e256133f8d0f5f99fd7d35ca4cf00f35e7c0e8aea1b9fcd9cf4fb0",
+    urls = [
+        "https://mirror.bazel.build/bazel_java_tools/releases/java/v12.5/java_tools_windows-v12.5.zip",
+        "https://github.com/bazelbuild/java_tools/releases/download/java_v12.5/java_tools_windows-v12.5.zip",
+    ],
+)
+
+http_archive(
+    name = "remote_java_tools_darwin_x86_64",
+    sha256 = "7e96d0310222e9c27e4c87987978c0c59a0acb97cebdbd838ff652a13abbed77",
+    urls = [
+        "https://mirror.bazel.build/bazel_java_tools/releases/java/v12.5/java_tools_darwin_x86_64-v12.5.zip",
+        "https://github.com/bazelbuild/java_tools/releases/download/java_v12.5/java_tools_darwin_x86_64-v12.5.zip",
+    ],
+)
+
+http_archive(
+    name = "remote_java_tools_darwin_arm64",
+    sha256 = "5fb927b24043dd79010b54be31ec5f18b38ee9dbd9fd03d8353232431a7e2392",
+    urls = [
+        "https://mirror.bazel.build/bazel_java_tools/releases/java/v12.5/java_tools_darwin_arm64-v12.5.zip",
+        "https://github.com/bazelbuild/java_tools/releases/download/java_v12.5/java_tools_darwin_arm64-v12.5.zip",
+    ],
+)
+
+# --------------------------------------------------------------------------------------------------------------
+
+load("//internal:repositories.bzl", "rules_graalvm_repositories")
+
+rules_graalvm_repositories(maven = False)
+
+load("//internal:setup.bzl", "rules_graalvm_toolchains", "rules_graalvm_workspace")
+
+rules_graalvm_toolchains()
+
+rules_graalvm_workspace(
+    gazelle = False,
+    maven = False,
+)
+
+# Provide a repository hint for Gazelle to inform it that the go package
+# github.com/bazelbuild/rules_go is available from io_bazel_rules_go and it
+# doesn't need to duplicatively fetch it.
+# gazelle:repository go_repository name=io_bazel_rules_go importpath=github.com/bazelbuild/rules_go

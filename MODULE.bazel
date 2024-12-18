@@ -18,7 +18,7 @@ GRAALVM_VERSION = "21.0.2"
 GRAALVM_DIST = "ce"
 
 ## GraalVM SDK version.
-GRAALVM_SDK_VERSION = "24.1.0"
+GRAALVM_SDK_VERSION = "24.1.1"
 
 ##
 ## Dependencies: API
