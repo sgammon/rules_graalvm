@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": ["config:recommended"],
   "enabledManagers": ["bazel", "git-submodules", "npm", "bazelisk"],
   "baseBranches": ["main"],
   "pinDigests": true,
@@ -8,6 +8,8 @@
   "updateLockFiles": true,
   "dependencyDashboard": true,
   "dependencyDashboardApproval": true,
-  "lockFileMaintenance": { "enabled": true },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "labels": ["dependencies"]
 }
