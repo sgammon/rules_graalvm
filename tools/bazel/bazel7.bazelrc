@@ -21,7 +21,6 @@ build:strict --incompatible_always_include_files_in_data
 build:strict --incompatible_check_sharding_support
 build:strict --incompatible_check_testonly_for_output_files
 build:strict --incompatible_disable_starlark_host_transitions
-build:strict --incompatible_disallow_symlink_file_to_dir
 build:strict --incompatible_fix_package_group_reporoot_syntax
 build:strict --incompatible_package_group_has_public_syntax
 build:strict --incompatible_remote_dangling_symlinks

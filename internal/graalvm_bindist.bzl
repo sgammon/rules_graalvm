@@ -24,6 +24,7 @@ load(
     "VmReleaseVersions",
     "VmReleaseVersionsOracle",
     "resolve_distribution_artifact",
+    "resolve_version_pair",
     Component = "DistributionComponent",
     Distribution = "DistributionType",
 )
@@ -267,9 +268,12 @@ def _graal_bindist_repository_impl(ctx):
 
     else:
         platform, os, archive = _get_platform(ctx, True)
-        version = ctx.attr.version
+        version_spec = ctx.attr.version
         distribution = ctx.attr.distribution or Distribution.COMMUNITY
-        java_version = ctx.attr.java_version
+        java_version_spec = ctx.attr.java_version
+
+        # resolves potentially symbolic version strings
+        (java_version, version) = resolve_version_pair(java_version_spec, version_spec)
 
         # new gvm distribution check
         _check_version(version, java_version, True)
@@ -286,9 +290,7 @@ def _graal_bindist_repository_impl(ctx):
             fail("Cannot find distribution name for GraalVM: " + ctx.attr.distribution)
 
         # resolve & download vm
-        dist_tag = "{dist}-{version}".format(dist = dist_name, version = ctx.attr.version)
-        version = ctx.attr.version
-        java_version = ctx.attr.java_version
+        dist_tag = "{dist}-{version}".format(dist = dist_name, version = version)
         format_args = {
             "version": version,
             "platform": platform,
@@ -302,7 +304,7 @@ def _graal_bindist_repository_impl(ctx):
             platform,
             version,
             java_version,
-            strict = False,
+            strict = True,
         )
         if config == None:
             fail("Unable to locate GraalVM distribution '%s' at version '%s' for platform '%s'" % (

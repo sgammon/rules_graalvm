@@ -138,14 +138,14 @@ jobs:
             releases.bazel.build:443
             remote.buildbuddy.io:443
       - name: "Setup: Checkout"
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: "Setup: msbuild"
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         if: ${{ contains(inputs.runner, 'windows') }}
       - name: "Setup: Bazel"
         uses: bazel-contrib/setup-bazel@90b352333885f9fb6bf262d8e659f01b6219cc25 # 0.8.3
       - name: "Setup: Cache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         with:
           path: "~/.cache/bazel"
           key: bazel-v3
@@ -231,6 +231,14 @@ jobs:
             target: sample
             action: build
             directory: "./example/integration_tests/bazel6"
+            labs: false
+            skip: false
+
+          # Test: Bazel 7
+          - label: Bazel 7
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel7"
             labs: false
             skip: false
 
@@ -410,7 +418,7 @@ jobs:
             repo1.maven.org:443
             maven.pkg.st:443
       - name: "Setup: Checkout"
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: "Setup: msbuild"
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         if: ${{ contains(inputs.runner, 'windows') }}

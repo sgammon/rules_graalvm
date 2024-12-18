@@ -7,17 +7,12 @@ module(
 
 bazel_dep(
     name = "rules_java",
-    version = "8.6.1",
+    version = "7.1.0",
 )
 bazel_dep(
     name = "rules_graalvm",
     version = "0.0.0",
 )
-bazel_dep(
-    name = "rules_android",
-    version = "0.6.0",
-)
-
 local_path_override(
     module_name = "rules_graalvm",
     path = "../../..",
@@ -28,7 +23,7 @@ gvm.graalvm(
     name = "graalvm",
     distribution = "ce",
     java_version = "23",
-    version = "23.0.1",
+    version = "23.0.0",
 )
 use_repo(
     gvm,

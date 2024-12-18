@@ -1,1 +1,1 @@
-import %workspace%/tools/bazel/bazel7.bazelrc
+import %workspace%/tools/bazel/bazel8.bazelrc

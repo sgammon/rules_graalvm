@@ -1,10 +1,10 @@
-## Usage from modern Bazel
+# Usage from modern Bazel
 
 See instructions below for installation and use of `rules_graalvm` on Bazel 6 or newer, via Bazel Modules.
 Also, you can consult the **Version support matrix** at the bottom of this page to determine the bese way to use GraalVM
 with your Bazel project.
 
-### Installation in `MODULE.bazel`
+## Installation in `MODULE.bazel`
 
 ```starlark
 bazel_dep(name = "rules_graalvm", version = "<version>")
@@ -21,7 +21,7 @@ register_toolchains("@graalvm//:jvm")
 register_toolchains("@graalvm//:sdk")
 ```
 
-### Installation in `WORKSPACE.bazel`
+## Installation in `WORKSPACE.bazel`
 
 If you don't want to use Bzlmod, you can install in a `WORKSPACE` manually:
 
@@ -42,7 +42,7 @@ graalvm_repository(
 )
 ```
 
-## Use as a Java toolchain
+## GraalVM as a Java toolchain
 
 See the [toolchains guide](./toolchain.md) for more information.
 
@@ -56,6 +56,7 @@ See the [toolchains guide](./toolchain.md) for more information.
 
 | GraalVM version     | Bazel version | `rules_graalvm`   | Native Image | Components | Windows | Java Toolchains | Hermetic | Notes                                 |
 | ------------------- | ------------- | ----------------- | ------------ | ---------- | ------- | --------------- | -------- | ------------------------------------- |
+| `21+`/`23+`         | Bazel 8       | `0.13.0+`         | ✅           | ✅         | ✅      | ✅              | ✅       | Use this doc                          |
 | `17.0.7+`/`21+`     | Bazel 7 LTS   | `0.11.0+`         | ✅           | ✅         | ✅      | ✅              | ✅       | Use this doc                          |
 | `17.0.7+`/`20.0.1+` | Bazel 7+      | `0.10.0+`         | ✅           | ✅         | ✅      | ✅              | ✅       | Use this doc                          |
 | `17.0.7+`/`20.0.1+` | Bazel 7+      | `0.9.0`           | ✅           | ⚠️         | ⚠️      | ✅              | ✅       | Use this doc                          |
@@ -72,6 +73,7 @@ errors related to `rules_java`, or Java toolchains, it's worth trying a version 
 
 | GraalVM version     | Bazel version | `rules_graalvm`   | `rules_java` | Notes                                                                         |
 | ------------------- | ------------- | ----------------- | ------------ | ----------------------------------------------------------------------------- |
+| `21+`/`23+`         | Bazel 8       | `0.13.0+`         | `8.0.0+`     | Supports JVM23 and later, **no support** before JVM 21                        |
 | `17.0.7+`/`21+`     | Bazel 7 LTS   | `0.11.0+`         | `7.1.0+`     | Supports JVM21, **no support** for JVM20 (use JVM17 until JVM21 is supported) |
 | `17.0.7+`/`20.0.1+` | Bazel 7+      | `0.9.0+`          | `6.4.0`      |                                                                               |
 | `17.0.7+`/`20.0.1+` | Bazel 6.x     | `0.10.0+`         | `^6.0.0`     |                                                                               |

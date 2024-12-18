@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "eab7a0f7c80745e9a90831d7448e4fe86900d9da23e601f30167ee3b4f9ffa82",
+  "moduleFileHash": "26bf6e4b9372bc7c4e832f2e5f78d8694bd8e4bc4f92bacf3e38960173a71ac0",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -24,6 +24,7 @@
       "repoName": "rules_graalvm_bzlmod_sample",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [
+        "@graalvm//:jvm",
         "@graalvm//:sdk"
       ],
       "extensionUsages": [
@@ -45,13 +46,9 @@
               "tagName": "graalvm",
               "attributeValues": {
                 "name": "graalvm",
-                "components": [
-                  "js",
-                  "wasm"
-                ],
                 "distribution": "ce",
-                "java_version": "17",
-                "version": "17.0.8"
+                "java_version": "23",
+                "version": "23.0.0"
               },
               "devDependency": false,
               "location": {
@@ -841,7 +838,7 @@
             "ruleClassName": "_toolchain_config",
             "attributes": {
               "name": "rules_graalvm~override~graalvm~graalvm_toolchains",
-              "build_file": "\nalias(\n    name = \"toolchain_gvm\",\n    actual = \"gvm\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"gvm\",\n    exec_compatible_with = [\n        \n    ],\n    target_compatible_with = [\n        \n    ],\n    toolchain = \"@graalvm//:gvm\",\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain\",\n    visibility = [\"//visibility:public\"],\n)\n\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_17\"},\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"
+              "build_file": "\nalias(\n    name = \"toolchain_gvm\",\n    actual = \"gvm\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"gvm\",\n    exec_compatible_with = [\n        \n    ],\n    target_compatible_with = [\n        \n    ],\n    toolchain = \"@graalvm//:gvm\",\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain\",\n    visibility = [\"//visibility:public\"],\n)\n\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_23\"},\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"
             }
           },
           "graalvm": {
@@ -849,13 +846,10 @@
             "ruleClassName": "_graalvm_bindist_repository",
             "attributes": {
               "name": "rules_graalvm~override~graalvm~graalvm",
-              "version": "17.0.8",
-              "java_version": "17",
+              "version": "23.0.0",
+              "java_version": "23",
               "distribution": "ce",
-              "components": [
-                "js",
-                "wasm"
-              ],
+              "components": [],
               "setup_actions": [],
               "enable_toolchain": true,
               "toolchain_config": "graalvm_toolchains"

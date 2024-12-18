@@ -7,6 +7,8 @@ Defines Maven helpers and coordinates for GraalVM artifacts.
 ## alias.artifact
 
 <pre>
+load("@rules_graalvm//graalvm/artifacts:maven.bzl", "alias")
+
 alias.artifact(<a href="#alias.artifact-artifact">artifact</a>, <a href="#alias.artifact-repo">repo</a>, <a href="#alias.artifact-version">version</a>)
 </pre>
 
@@ -31,6 +33,8 @@ Artifact target.
 ## alias.coordinate
 
 <pre>
+load("@rules_graalvm//graalvm/artifacts:maven.bzl", "alias")
+
 alias.coordinate(<a href="#alias.coordinate-group">group</a>, <a href="#alias.coordinate-artifact">artifact</a>, <a href="#alias.coordinate-repo">repo</a>, <a href="#alias.coordinate-version">version</a>)
 </pre>
 
@@ -56,6 +60,8 @@ Artifact target.
 ## graalvm.artifact
 
 <pre>
+load("@rules_graalvm//graalvm/artifacts:maven.bzl", "graalvm")
+
 graalvm.artifact(<a href="#graalvm.artifact-maven">maven</a>, <a href="#graalvm.artifact-artifact">artifact</a>, <a href="#graalvm.artifact-version">version</a>)
 </pre>
 
@@ -112,6 +118,8 @@ Maven artifact specification.
 ## graalvm_maven_artifact
 
 <pre>
+load("@rules_graalvm//graalvm/artifacts:maven.bzl", "graalvm_maven_artifact")
+
 graalvm_maven_artifact(<a href="#graalvm_maven_artifact-maven">maven</a>, <a href="#graalvm_maven_artifact-artifact">artifact</a>, <a href="#graalvm_maven_artifact-version">version</a>)
 </pre>
 

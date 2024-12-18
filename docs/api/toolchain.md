@@ -7,6 +7,8 @@ Toolchain types and rules for GraalVM.
 ## register_graalvm_toolchains
 
 <pre>
+load("@rules_graalvm//graalvm:toolchain.bzl", "register_graalvm_toolchains")
+
 register_graalvm_toolchains(<a href="#register_graalvm_toolchains-name">name</a>, <a href="#register_graalvm_toolchains-register_java_toolchain">register_java_toolchain</a>, <a href="#register_graalvm_toolchains-register_gvm_toolchain">register_gvm_toolchain</a>)
 </pre>
 

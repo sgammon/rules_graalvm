@@ -9,5 +9,5 @@ build --noexperimental_check_output_files
 build --nolegacy_important_outputs
 build --incompatible_default_to_explicit_init_py
 build:labs --experimental_remote_merkle_tree_cache
-build:labs --experimental_remote_cache_compression
+build:labs --remote_cache_compression
 build:labs --experimental_guard_against_concurrent_changes

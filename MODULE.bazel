@@ -18,7 +18,7 @@ GRAALVM_VERSION = "21.0.2"
 GRAALVM_DIST = "ce"
 
 ## GraalVM SDK version.
-GRAALVM_SDK_VERSION = "24.1.0"
+GRAALVM_SDK_VERSION = "24.1.1"
 
 ##
 ## Dependencies: API
@@ -26,7 +26,7 @@ GRAALVM_SDK_VERSION = "24.1.0"
 
 bazel_dep(
     name = "platforms",
-    version = "0.0.7",
+    version = "0.0.10",
 )
 bazel_dep(
     name = "bazel_features",
@@ -34,7 +34,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_java",
-    version = "6.4.0",
+    version = "7.1.0",
 )
 bazel_dep(
     name = "bazel_skylib",
@@ -105,7 +105,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "stardoc",
-    version = "0.6.2",
+    version = "0.7.2",
     dev_dependency = True,
     repo_name = "io_bazel_stardoc",
 )

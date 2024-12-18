@@ -7,8 +7,10 @@ Repository rule definitions, intended for use by rule users.
 ## graalvm_repository
 
 <pre>
+load("@rules_graalvm//graalvm:repositories.bzl", "graalvm_repository")
+
 graalvm_repository(<a href="#graalvm_repository-version">version</a>, <a href="#graalvm_repository-java_version">java_version</a>, <a href="#graalvm_repository-name">name</a>, <a href="#graalvm_repository-distribution">distribution</a>, <a href="#graalvm_repository-toolchain">toolchain</a>, <a href="#graalvm_repository-toolchain_prefix">toolchain_prefix</a>,
-                   <a href="#graalvm_repository-target_compatible_with">target_compatible_with</a>, <a href="#graalvm_repository-components">components</a>, <a href="#graalvm_repository-setup_actions">setup_actions</a>, <a href="#graalvm_repository-register_all">register_all</a>, <a href="#graalvm_repository-kwargs">kwargs</a>)
+                   <a href="#graalvm_repository-target_compatible_with">target_compatible_with</a>, <a href="#graalvm_repository-components">components</a>, <a href="#graalvm_repository-setup_actions">setup_actions</a>, <a href="#graalvm_repository-register_all">register_all</a>, <a href="#graalvm_repository-kwargs">**kwargs</a>)
 </pre>
 
 Declare a GraalVM distribution repository, and optionally a Java toolchain to match.

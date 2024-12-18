@@ -80,7 +80,7 @@ Configs: bzlmod
 Targets: //...
 Tests: //...
 Args:
- --config=bzlmod --config=fastbuild
+ --config=fastbuild
 ```
 
 As you can see, the `Makefile` has decided to apply the `fastbuild` config based on having no other inputs (it's the default in Bazel too). Let's see what passing `RELEASE=yes` does:
@@ -100,7 +100,7 @@ Configs: bzlmod
 Targets: //...
 Tests: //...
 Args:
- --config=bzlmod --config=release
+ --config=release
 ```
 
 Makes sense, checks out. You can pass these `Args` and `Targets` yourself directly to Bazel if you want, which is all the `Makefile` will do anyway.

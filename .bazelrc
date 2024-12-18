@@ -2,9 +2,11 @@ common:verbose --announce_rc
 
 # Import Aspect bazelrc presets
 import %workspace%/.aspect/bazelrc/convenience.bazelrc
-import %workspace%/.aspect/bazelrc/correctness.bazelrc
 import %workspace%/.aspect/bazelrc/debug.bazelrc
-import %workspace%/.aspect/bazelrc/performance.bazelrc
+
+# Inlined into `bazel8.bazelrc` because of broken flags at latest. Tests enforce use of latest.
+#import %workspace%/.aspect/bazelrc/correctness.bazelrc
+#import %workspace%/.aspect/bazelrc/performance.bazelrc
 
 # Import project-level presets
 import %workspace%/tools/bazel/base.bazelrc

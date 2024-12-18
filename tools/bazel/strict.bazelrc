@@ -18,14 +18,11 @@ build:strict --incompatible_new_actions_api
 build:strict --incompatible_no_attr_license
 build:strict --incompatible_py2_outputs_are_suffixed
 build:strict --incompatible_py3_is_default
-build:strict --incompatible_remote_output_paths_relative_to_input_root
-build:strict --incompatible_remote_symlinks
 build:strict --incompatible_remove_legacy_whole_archive
 build:strict --incompatible_require_ctx_in_configure_features
 build:strict --incompatible_require_linker_input_cc_api
 build:strict --incompatible_run_shell_command_string
 build:strict --incompatible_strict_action_env
-build:strict --incompatible_struct_has_no_methods
 build:strict --incompatible_top_level_aspects_require_providers
 build:strict --incompatible_use_cc_configure_from_rules_cc
 build:strict --incompatible_use_python_toolchains
