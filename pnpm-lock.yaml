@@ -24,8 +24,8 @@ importers:
         specifier: 3.4.2
         version: 3.4.2
       prettier-plugin-java:
-        specifier: 2.6.4
-        version: 2.6.4
+        specifier: 2.6.5
+        version: 2.6.5
 
 packages:
 
@@ -539,8 +539,8 @@ packages:
     engines: {node: '>=0.10'}
     hasBin: true
 
-  prettier-plugin-java@2.6.4:
-    resolution: {integrity: sha512-57iGIFM4xSCqzHc4G6RLeC0DJk+i6Vd1JDj5xcIe7GsWZjRSl8WWkpL0f4BB0gZ+jDZ8R1uJaxtnMgnRtzjLDQ==}
+  prettier-plugin-java@2.6.5:
+    resolution: {integrity: sha512-2RkPNXyYpP5dRhr04pz45n+e5LXwYWTh1JXrztiCkZTGGokIGYrfwUuGa8csnDoGbP6CDPgVm8zZSIm/9I0SRQ==}
 
   prettier@3.2.5:
     resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
@@ -1199,7 +1199,7 @@ snapshots:
 
   pidtree@0.6.0: {}
 
-  prettier-plugin-java@2.6.4:
+  prettier-plugin-java@2.6.5:
     dependencies:
       java-parser: 2.3.2
       lodash: 4.17.21
