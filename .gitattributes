@@ -1,5 +1,4 @@
 README.md export-ignore
-SECURITY.md export-ignore
 commitlint.config.js export-ignore
 pnpm-lock.yaml export-ignore
 pom.xml export-ignore
@@ -7,7 +6,10 @@ local.bazelrc.inert export-ignore
 .aspect/bazelrc/ export-ignore
 .bazelci/ export-ignore
 .bcr/ export-ignore
-.github/ export-ignore
+.github/*.md export-ignore
+.github/*.yml export-ignore
+.github/codeql export-ignore
+.github/workflows export-ignore
 .husky/ export-ignore
 docs/ export-ignore
 tools/ export-ignore
