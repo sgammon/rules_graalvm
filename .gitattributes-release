@@ -6,6 +6,7 @@ local.bazelrc.inert export-ignore
 .aspect/bazelrc/ export-ignore
 .bazelci/ export-ignore
 .bcr/ export-ignore
+.github/ export-ignore
 .husky/ export-ignore
 docs/ export-ignore
 tools/ export-ignore
