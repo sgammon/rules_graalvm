@@ -14,11 +14,15 @@ load(
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
     _RULES_REPO = "RULES_REPO",
-    _prepare_native_image_rule_context = "prepare_native_image_rule_context",
+    _path_list_separator = "path_list_separator",
 )
 load(
     "//internal/native_image:toolchain.bzl",
     _resolve_cc_toolchain = "resolve_cc_toolchain",
+)
+load(
+    "//internal/native_image:builder.bzl",
+    _assemble_native_build_options = "assemble_native_build_options",
 )
 
 _BIN_POSTFIX_DYLIB = ".dylib"
@@ -92,15 +96,27 @@ def _graal_binary_implementation(ctx):
     elif (not is_windows and not is_macos) and ctx.attr.shared_library:
         bin_postfix = _BIN_POSTFIX_SO
 
-    args = ctx.actions.args().use_param_file("@%s", use_always = False)
-    binary = _prepare_native_image_rule_context(
+    args = ctx.actions.args().use_param_file("@%s", use_always=False)
+
+    binary_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
+    binary = ctx.actions.declare_file("output/" + binary_name)
+    extra_output_files = []
+    for f in ctx.attr.extra_output_files:
+        extra_output_files.append(ctx.actions.declare_file("output/" + f))
+
+    path_list_separator = _path_list_separator(ctx)
+
+    _assemble_native_build_options(
         ctx,
         args,
+        binary_name,
+        binary.dirname,
         classpath_depset,
         direct_inputs,
         native_toolchain.c_compiler_path,
+        path_list_separator,
         gvm_toolchain,
-        bin_postfix = bin_postfix,
+        bin_postfix,
     )
 
     if ctx.files.data:
@@ -122,7 +138,7 @@ def _graal_binary_implementation(ctx):
         transitive = transitive_inputs,
     )
     run_params = {
-        "outputs": [binary],
+        "outputs": [binary] + extra_output_files,
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImage",
@@ -168,7 +184,7 @@ def _graal_binary_implementation(ctx):
 
     return [DefaultInfo(
         executable = binary,
-        files = depset([binary]),
+        files = depset([binary] + extra_output_files),
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,

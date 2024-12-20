@@ -168,7 +168,8 @@ def _configure_native_test_flags(ctx, args):
 def assemble_native_build_options(
         ctx,
         args,
-        binary,
+        binary_name,
+        outdir,
         classpath_depset,
         direct_inputs,
         c_compiler_path,
@@ -204,13 +205,13 @@ def assemble_native_build_options(
     if not ctx.attr.allow_fallback:
         args.add("--no-fallback")
 
-    trimmed_basename = binary.basename
+    trimmed_binary_name = binary_name
     if bin_postfix:
-        trimmed_basename = trimmed_basename[0:-(len(bin_postfix))]
+        trimmed_binary_name = trimmed_binary_name[0:-(len(bin_postfix))]
 
     args.add(ctx.attr.main_class, format = "-H:Class=%s")
-    args.add(trimmed_basename, format = "-H:Name=%s")
-    args.add(binary.dirname, format = "-H:Path=%s")
+    args.add(trimmed_binary_name, format = "-H:Name=%s")
+    args.add(outdir, format = "-H:Path=%s")
     args.add("-H:+ReportExceptionStackTraces")
 
     if not ctx.attr.check_toolchains:
