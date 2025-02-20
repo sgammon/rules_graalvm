@@ -8,14 +8,14 @@ load(
 def _gvm_impl(mctx):
     """Implementation of the GraalVM module extension."""
 
-    selected = None
+    all_tags = []
     all_components = []
     for mod in mctx.modules:
         # gather gvm toolchain info
         for gvm in mod.tags.graalvm:
             if not mod.is_root:
                 fail("graalvm tag is only allowed in the root module, use component tag instead")
-            selected = gvm
+            all_tags.append(gvm)
             if len(gvm.components) > 0:
                 all_components += [i for i in gvm.components if not i in all_components]
 
@@ -24,15 +24,16 @@ def _gvm_impl(mctx):
             if extra_component.name not in all_components:
                 all_components.append(extra_component.name)
 
-    graalvm_repository(
-        name = selected.name,
-        version = selected.version,
-        java_version = selected.java_version,
-        distribution = selected.distribution,
-        toolchain_prefix = selected.toolchain_prefix,
-        components = all_components,
-        setup_actions = selected.setup_actions,
-    )
+    for selected in all_tags:
+        graalvm_repository(
+            name = selected.name,
+            version = selected.version,
+            java_version = selected.java_version,
+            distribution = selected.distribution,
+            toolchain_prefix = selected.toolchain_prefix,
+            components = all_components,
+            setup_actions = selected.setup_actions,
+        )
 
 _graalvm = tag_class(attrs = {
     "name": attr.string(mandatory = True),
