@@ -24,7 +24,7 @@ Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 - [Hermetic compilation on all platforms](./docs/hermeticity.md)
 - [Run tools from GraalVM directly](./docs/binary-targets.md)
 - [Support for Bazel 6-8 (Bzlmod)](./docs/modern-bazel.md)
-- [Support for Bazel 4+, drop-in replacement for `rules_graal`](./legacy-bazel.md)
+- [Support for Bazel 4+, drop-in replacement for `rules_graal`](./docs/legacy-bazel.md)
 - Support for macOS, Linux, Windows (including Native Image!) ([support matrix](./docs/modern-bazel.md))
 - Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
