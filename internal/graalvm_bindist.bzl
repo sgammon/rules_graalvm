@@ -823,11 +823,37 @@ toolchain(
 
     if toolchain:
         toolchain_config_build_file += """
+load("@rules_java//toolchains:default_java_toolchain.bzl", "default_java_toolchain", "DEFAULT_TOOLCHAIN_CONFIGURATION")
+
+config_setting(
+    name = "tool_prefix_version_setting",
+    values = {{"tool_java_runtime_version": "{prefix}_{version}"}},
+    visibility = ["//visibility:private"],
+)
+
+default_java_toolchain(
+    name = "java_toolchain",
+    configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,
+    java_runtime = "{toolchain}",
+    source_version = "{version}",
+    target_version = "{version}",
+)
+
+toolchain(
+    name = "tool_toolchain",
+    target_compatible_with = {target_compatible_with},
+    target_settings = [":tool_prefix_version_setting"],
+    toolchain_type = "@bazel_tools//tools/jdk:toolchain_type",
+    toolchain = ":java_toolchain",
+    visibility = ["//visibility:public"],
+)
+
 config_setting(
     name = "prefix_version_setting",
     values = {{"java_runtime_version": "{prefix}_{version}"}},
     visibility = ["//visibility:private"],
 )
+
 toolchain(
     name = "toolchain",
     target_compatible_with = {target_compatible_with},
@@ -836,6 +862,7 @@ toolchain(
     toolchain = "{toolchain}",
     visibility = ["//visibility:public"],
 )
+
 {bootstrap_runtime_toolchain}
 """.format(
             name = name,

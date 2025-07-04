@@ -1,6 +1,7 @@
 "Defines toolchain registration functions for use in downstream Bazel projects."
 
 _TARGET_JAVA_TOOLCHAIN = ":toolchain"
+_TARGET_JAVA_TOOL_TOOLCHAIN = ":tool_toolchain"
 _TARGET_GVM_TOOLCHAIN = ":toolchain_gvm"
 
 GraalVMToolchainInfo = provider(
@@ -173,6 +174,10 @@ def register_graalvm_toolchains(
     """
 
     if register_java_toolchain:
+        native.register_toolchains(_repo_target(
+            toolchain_repo_name_format % name,
+            _TARGET_JAVA_TOOL_TOOLCHAIN,
+        ))
         native.register_toolchains(_repo_target(
             toolchain_repo_name_format % name,
             _TARGET_JAVA_TOOLCHAIN,
