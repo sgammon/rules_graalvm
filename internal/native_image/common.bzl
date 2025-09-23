@@ -1,5 +1,6 @@
 "Defines common properties shared by modern and legacy Native Image rules."
 
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal/native_image:builder.bzl",
     _assemble_native_build_options = "assemble_native_build_options",

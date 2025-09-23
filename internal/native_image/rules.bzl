@@ -4,6 +4,7 @@ load(
     "@build_bazel_apple_support//lib:apple_support.bzl",
     "apple_support",
 )
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
