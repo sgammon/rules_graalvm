@@ -266,11 +266,43 @@ jobs:
             labs: false
             skip: false
 
-          # Test: Java Toolchain
-          - label: Java Toolchain
+          # Test: Java Toolchain 17
+          - label: Java Toolchain 17
             target: sample
             action: build
-            directory: "./example/integration_tests/java-toolchain"
+            directory: "./example/integration_tests/java-toolchain-17"
+            labs: false
+            skip: false
+
+          # Test: Java Toolchain 20
+          - label: Java Toolchain 20
+            target: sample
+            action: build
+            directory: "./example/integration_tests/java-toolchain-20"
+            labs: false
+            skip: false
+
+          # Test: Java Toolchain 21
+          - label: Java Toolchain 21
+            target: sample
+            action: build
+            directory: "./example/integration_tests/java-toolchain-21"
+            labs: false
+            skip: false
+
+          # Test: Java Toolchain 22
+          - label: Java Toolchain 22
+            target: sample
+            action: build
+            directory: "./example/integration_tests/java-toolchain-22"
+            labs: false
+            skip: false
+
+          # Test: Java Toolchain 23
+          - label: Java Toolchain 23
+            target: sample
+            action: build
+            directory: "./example/integration_tests/java-toolchain-23"
             labs: false
             skip: false
 
