@@ -8,22 +8,38 @@ load(
     "@bazel_tools//tools/build_defs/repo:utils.bzl",
     "maybe",
 )
+load(
+    "//internal:cc_shim.bzl",
+    "cc_shim_repo",
+)
 
 def rules_graalvm_repositories(
         omit_rules_java = False,
         omit_bazel_skylib = False,
-        omit_apple_support = False):
+        omit_apple_support = False,
+        omit_cc_shim = False):
     """Defines dependencies for the GraalVM Rules for Bazel.
 
     This function only needs to be called if consuming the GraalVM Rules from a non-Bzlmod environment.
     The only dependencies the rules have are: (1) `rules_java`, (2) `bazel_skylib`, and
     (3) `apple_support`. Any of those can be omitted with the provided arguments.
 
+    This function also sets up the internal `rules_graalvm_cc_shim` repository, which adapts to
+    the running Bazel version so that `CcInfo` and `cc_common` references work on both legacy
+    (pre-Bazel-9 native) and modern (`@rules_cc`-loaded) Bazel.
+
     Args:
       omit_rules_java: Omit the `rules_java` dependency.
       omit_bazel_skylib: Omit the `bazel_skylib` dependency.
       omit_apple_support: Omit the `apple_support` dependency.
+      omit_cc_shim: Skip setup of the `rules_graalvm_cc_shim` repository (advanced).
     """
+
+    if not omit_cc_shim:
+        maybe(
+            name = "rules_graalvm_cc_shim",
+            repo_rule = cc_shim_repo,
+        )
 
     if not omit_rules_java:
         maybe(
