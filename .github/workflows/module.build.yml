@@ -256,6 +256,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Bazel 9
+          - label: Bazel 9
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel9"
+            labs: false
+            skip: false
+
           # Test: Inert
           - label: Inert
             target: sample
