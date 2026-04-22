@@ -210,6 +210,16 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Bazel 4
+          # Skipped on Windows (unsupported). Bazel 4 is past upstream EOL but is kept in the
+          # matrix so the legacy WORKSPACE + `graal/graal.bzl` path stays regression-tested.
+          - label: Bazel 4
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel4"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'windows') }}
+
           # Test: Bazel 5
           # Skipped on Windows (unsupported) and macOS (pre-existing wrapped_clang toolchain bug
           # under Bazel 5's local_config_cc on macOS).
