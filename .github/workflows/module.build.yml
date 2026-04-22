@@ -234,6 +234,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Bazel 8
+          - label: Bazel 8
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel8"
+            labs: false
+            skip: false
+
           # Test: Inert
           - label: Inert
             target: sample
@@ -306,6 +314,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: GVM CE 25
+          - label: GraalVM CE 25
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-25"
+            labs: false
+            skip: false
+
           # Test: Oracle GVM 17
           - label: Oracle GraalVM 17
             target: sample
@@ -319,6 +335,14 @@ jobs:
             target: sample
             action: build
             directory: "./example/integration_tests/graalvm-oracle-21"
+            labs: false
+            skip: false
+
+          # Test: Oracle GVM 25
+          - label: Oracle GraalVM 25
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-oracle-25"
             labs: false
             skip: false
 
