@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "eab7a0f7c80745e9a90831d7448e4fe86900d9da23e601f30167ee3b4f9ffa82",
+  "moduleFileHash": "6c259b71d1bd0af970b9ff1cbc4f0a8d990ed46fec7de2aedbea2941cff9650f",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -24,6 +24,7 @@
       "repoName": "rules_graalvm_bzlmod_sample",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [
+        "@graalvm//:jvm",
         "@graalvm//:sdk"
       ],
       "extensionUsages": [
@@ -49,7 +50,7 @@
                   "js",
                   "wasm"
                 ],
-                "distribution": "ce",
+                "distribution": "oracle",
                 "java_version": "17",
                 "version": "17.0.8"
               },
@@ -1086,7 +1087,7 @@
               "name": "rules_graalvm~override~graalvm~graalvm",
               "version": "17.0.8",
               "java_version": "17",
-              "distribution": "ce",
+              "distribution": "oracle",
               "components": [
                 "js",
                 "wasm"

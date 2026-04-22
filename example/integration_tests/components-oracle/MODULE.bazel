@@ -1,0 +1,39 @@
+"Sample bzlmod-style project which uses the GraalVM Rules for Bazel."
+
+module(
+    name = "rules_graalvm_bzlmod_sample",
+    version = "0.0.1",
+)
+
+bazel_dep(
+    name = "rules_java",
+    version = "7.1.0",
+)
+bazel_dep(
+    name = "rules_graalvm",
+    version = "0.0.0",
+)
+local_path_override(
+    module_name = "rules_graalvm",
+    path = "../../..",
+)
+
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+gvm.graalvm(
+    name = "graalvm",
+    components = [
+        "js",  # should automatically install `regex` and other dependencies
+        "wasm",
+    ],
+    distribution = "oracle",
+    java_version = "17",
+    version = "17.0.8",
+)
+use_repo(
+    gvm,
+    "graalvm",
+)
+
+register_toolchains("@graalvm//:jvm")
+
+register_toolchains("@graalvm//:sdk")
