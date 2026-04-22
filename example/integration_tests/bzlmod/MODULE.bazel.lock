@@ -283,6 +283,22 @@
         ]
       }
     },
+    "@@rules_graalvm+//internal:cc_shim.bzl%cc_shim_extension": {
+      "general": {
+        "bzlTransitiveDigest": "K0JgeM0rbPx7kkmGU4t0QMFe9cya2aOzJTHQeN2AB5U=",
+        "usagesDigest": "NVpBb5IQRuBV0Y0vPmLCvLused3w3rswVyPndzZclqc=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "rules_graalvm_cc_shim": {
+            "repoRuleId": "@@rules_graalvm+//internal:cc_shim.bzl%cc_shim_repo",
+            "attributes": {}
+          }
+        },
+        "recordedRepoMappingEntries": []
+      }
+    },
     "@@rules_java+//java:rules_java_deps.bzl%compatibility_proxy": {
       "general": {
         "bzlTransitiveDigest": "84xJEZ1jnXXwo8BXMprvBm++rRt4jsTu9liBxz0ivps=",
