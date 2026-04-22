@@ -14,10 +14,9 @@ bazel_dep(
     version = "0.0.0",
 )
 bazel_dep(
-    name = "rules_android",
-    version = "0.6.0",
+    name = "rules_graalvm",
+    version = "0.0.0",
 )
-
 local_path_override(
     module_name = "rules_graalvm",
     path = "../../..",
