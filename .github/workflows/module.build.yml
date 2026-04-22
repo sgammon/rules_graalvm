@@ -302,6 +302,26 @@ jobs:
             labs: false
             skip: ${{ contains(inputs.runner, 'windows') }}
 
+          # Test: Components on CE
+          # Skipped on Windows (no gu/bash support) — components rely on the deprecated
+          # GraalVM Updater, which does not work on Windows.
+          - label: Components (CE)
+            target: sample
+            action: build
+            directory: "./example/integration_tests/components-ce"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'windows') }}
+
+          # Test: Components on Oracle GVM
+          # Skipped on Windows (no gu) and macOS (Oracle's GDS endpoint is unreliable
+          # from macOS runners, producing intermittent timeouts during `gu install`).
+          - label: Components (Oracle)
+            target: sample
+            action: build
+            directory: "./example/integration_tests/components-oracle"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'windows') || contains(inputs.runner, 'macos') }}
+
           # Test: GVM CE 17
           - label: GraalVM CE 17
             target: sample
