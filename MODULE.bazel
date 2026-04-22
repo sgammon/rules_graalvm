@@ -165,7 +165,7 @@ use_repo(
 # rules_graalvm
 ################################################################################
 
-cc_shim = use_extension("//internal:cc_shim.bzl", "cc_shim_extension")
+cc_shim = use_extension("//internal:cc_shim_extensions.bzl", "cc_shim_extension")
 use_repo(cc_shim, "rules_graalvm_cc_shim")
 
 gvm = use_extension(

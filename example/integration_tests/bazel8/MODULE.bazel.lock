@@ -222,10 +222,10 @@
         ]
       }
     },
-    "@@rules_graalvm+//internal:cc_shim.bzl%cc_shim_extension": {
+    "@@rules_graalvm+//internal:cc_shim_extensions.bzl%cc_shim_extension": {
       "general": {
-        "bzlTransitiveDigest": "K0JgeM0rbPx7kkmGU4t0QMFe9cya2aOzJTHQeN2AB5U=",
-        "usagesDigest": "NVpBb5IQRuBV0Y0vPmLCvLused3w3rswVyPndzZclqc=",
+        "bzlTransitiveDigest": "QZZfMlmz9c8jevjMKhv2Qo+N/CDOgPpNxtsCt5TZH/c=",
+        "usagesDigest": "DM9hSk8jMpJTU27XCnpMXd76b0p1pdyU0CbCliylelM=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
