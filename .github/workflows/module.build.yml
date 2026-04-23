@@ -388,6 +388,34 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Native Image Layers
+          # Exercises the `native_image_layer` rule + `layers` attr on `native_image`.
+          # Linux only because the feature is GraalVM 24+ Early Adopter (most stable on Linux)
+          # and because CI disk pressure matters (a base layer `.nil` is multi-GB).
+          # Target is `libbase` (just the base layer), not `sample`, because consuming the
+          # layer from the app hits an upstream mmap bug in GraalVM 25.0.2 (Size exceeds
+          # Integer.MAX_VALUE, fixed in PR #13008 — expected in 25.0.3).
+          - label: Native Image Layers
+            target: "//sample:libbase"
+            action: build
+            directory: "./example/integration_tests/layers"
+            labs: true
+            skip: ${{ contains(inputs.runner, 'windows') || contains(inputs.runner, 'macos') }}
+
+          # Test: Custom URL (Early Adopter pathway)
+          # Exercises `url_per_platform` / `sha256_per_platform` / `strip_prefix_per_platform`
+          # on `graalvm_repository` — the supported path for EA / nightly / dev builds.
+          # Targets `mainjvm` (the Java binary) to keep the test fast: it forces the custom
+          # URL download and toolchain wiring without running native-image. Runs everywhere.
+          # GraalVM CE 25.0.2 does not ship a macos-x64 build, so Intel Macs would fail at
+          # repo fetch — acceptable since GitHub's macos-latest is Apple Silicon.
+          - label: Custom URL
+            target: "//sample:mainjvm"
+            action: build
+            directory: "./example/integration_tests/custom-url"
+            labs: false
+            skip: false
+
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
