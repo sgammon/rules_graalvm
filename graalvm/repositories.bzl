@@ -17,6 +17,13 @@ def graalvm_repository(
         components = [],
         setup_actions = [],
         register_all = False,
+        url = None,
+        urls = None,
+        strip_prefix = None,
+        sha256 = None,
+        url_per_platform = None,
+        sha256_per_platform = None,
+        strip_prefix_per_platform = None,
         **kwargs):
     """Declare a GraalVM distribution repository, and optionally a Java toolchain to match.
 
@@ -33,6 +40,18 @@ def graalvm_repository(
     When installing the `latest` version of GraalVM, it is probably ideal to provide your own `sha256`.
     In this case, the `rules_graalvm` package does not provide an SHA256 hash otherwise.
 
+    ### Custom URL (Early Adopter / nightly / dev builds)
+
+    When `url` or `urls` is provided, the rule bypasses the bundled bindist map and downloads directly
+    from the user-supplied URL(s). This is the recommended path for Early Adopter builds, nightly
+    snapshots, or private dev builds whose archives are not in `graalvm_bindist_map.bzl`.
+
+    Constraints:
+    * `strip_prefix` is required.
+    * `sha256` is strongly recommended; without it, downloads are non-hermetic and a warning is printed.
+    * `components` is not supported with a custom URL — EA / nightly builds rarely ship a working `gu`.
+    * `version` and `java_version` remain required and are used for toolchain naming (e.g. `graalvm_25`).
+
     Args:
         name: Name of the VM repository. Defaults to `graalvm`.
         java_version: Java version to use/declare.
@@ -44,8 +63,33 @@ def graalvm_repository(
         components: Components to install in the target GVM installation.
         setup_actions: GraalVM Updater commands that should be run; pass complete command strings that start with "gu".
         register_all: Register all GraalVM repositories and use `target_compatible_with` (experimental).
+        url: Custom download URL. When set, bypasses the bindist map. Requires `strip_prefix`; see above.
+        urls: Mirror URLs; alternate form of `url`. If both are set, `urls` wins.
+        strip_prefix: Archive-internal prefix to strip. Required when `url` / `urls` is set.
+        sha256: SHA-256 fingerprint of the archive. Strongly recommended when `url` / `urls` is set.
+        url_per_platform: Dict of per-host-platform URLs keyed by platform tag
+          (`linux-x64`, `linux-aarch64`, `macos-x64`, `macos-aarch64`, `windows-x64`). Use this
+          instead of `url` / `urls` for cross-platform declarations.
+        sha256_per_platform: Dict of per-platform SHA-256 hashes, same keys as `url_per_platform`.
+        strip_prefix_per_platform: Dict of per-platform strip prefixes, same keys.
         **kwargs: Passed to the underlying bindist repository rule.
     """
+
+    forwarded = dict(kwargs)
+    if url != None:
+        forwarded["url"] = url
+    if urls != None:
+        forwarded["urls"] = urls
+    if strip_prefix != None:
+        forwarded["strip_prefix"] = strip_prefix
+    if sha256 != None:
+        forwarded["sha256"] = sha256
+    if url_per_platform != None:
+        forwarded["url_per_platform"] = url_per_platform
+    if sha256_per_platform != None:
+        forwarded["sha256_per_platform"] = sha256_per_platform
+    if strip_prefix_per_platform != None:
+        forwarded["strip_prefix_per_platform"] = strip_prefix_per_platform
 
     _graalvm_repository(
         name = name,
@@ -58,5 +102,5 @@ def graalvm_repository(
         components = components,
         setup_actions = setup_actions,
         register_all = register_all,
-        **kwargs
+        **forwarded
     )

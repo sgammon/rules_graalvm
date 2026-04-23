@@ -207,7 +207,77 @@ def _detect_older_gvm_version(ctx):
 def _graal_bindist_repository_impl(ctx):
     """Implements the GraalVM repository rule (`graalvm_repository`)."""
 
-    if ctx.attr.distribution == None or _detect_older_gvm_version(ctx):
+    # Custom URL / EA path: bypass the bindist map entirely. Used for Early Adopter / nightly /
+    # dev builds whose URL is not yet known to the rules. The user supplies a URL (via `url`,
+    # `urls`, or `url_per_platform`), `sha256` (or `sha256_per_platform`), and `strip_prefix`
+    # (or `strip_prefix_per_platform`); the rule downloads that archive and wires it up the
+    # same way as a map-resolved distribution.
+    if ctx.attr.url or ctx.attr.urls or ctx.attr.url_per_platform:
+        platform, os, archive = _get_platform(ctx, True)
+        version = ctx.attr.version
+        java_version = ctx.attr.java_version
+
+        if ctx.attr.url_per_platform:
+            # Multi-platform form — select by the detected platform tag.
+            platform_url = ctx.attr.url_per_platform.get(platform)
+            if not platform_url:
+                fail(("`url_per_platform` does not contain an entry for '{platform}'. " +
+                      "Declared platforms: {known}. Add an entry for this host or use " +
+                      "`target_compatible_with` on the consuming targets to skip it.").format(
+                    platform = platform,
+                    known = sorted(ctx.attr.url_per_platform.keys()),
+                ))
+            urls = [platform_url]
+            sha256 = ctx.attr.sha256_per_platform.get(platform, ctx.attr.sha256)
+            strip_prefix = ctx.attr.strip_prefix_per_platform.get(platform, ctx.attr.strip_prefix)
+        elif ctx.attr.urls:
+            urls = list(ctx.attr.urls)
+            sha256 = ctx.attr.sha256
+            strip_prefix = ctx.attr.strip_prefix
+        else:
+            urls = [ctx.attr.url]
+            sha256 = ctx.attr.sha256
+            strip_prefix = ctx.attr.strip_prefix
+
+        if not sha256:
+            # buildifier: disable=print
+            print("rules_graalvm: custom GraalVM URL '%s' has no sha256; downloads will not be hermetic." % urls[0])
+
+        dist_label = "GraalVM (custom URL)"
+        if ctx.attr.distribution == "oracle":
+            dist_label = "Oracle GraalVM (custom URL)"
+        elif ctx.attr.distribution in ("ce", "community"):
+            dist_label = "GraalVM CE (custom URL)"
+        ctx.report_progress("Downloading %s %s" % (dist_label, version))
+
+        ctx.download_and_extract(
+            url = urls,
+            sha256 = sha256,
+            stripPrefix = strip_prefix,
+        )
+
+        bin_tail = ""
+        shell_tail = ""
+        if "windows" in os:
+            bin_tail = "exe"
+            shell_tail = "cmd"
+
+        _bin_paths = [
+            ("gu", _relative_binpath(bin_tail, "gu", shell_tail), []),
+            ("java", _relative_binpath(bin_tail, "java"), []),
+            ("javac", _relative_binpath(bin_tail, "javac"), []),
+            ("polyglot", _relative_binpath(bin_tail, "polyglot"), []),
+            (Component.NATIVE_IMAGE, _relative_binpath(shell_tail, "native-image"), []),
+        ]
+
+        # `gu` component install is intentionally unsupported on custom URLs — EA and nightly
+        # builds rarely ship a working `gu`, and we'd need per-URL component coordinates we
+        # don't have. Users that need components should fall back to a map-resolved version.
+        if ctx.attr.components and len(ctx.attr.components) > 0:
+            fail("`components` is not supported together with `url` / `urls` / `url_per_platform`; " +
+                 "components require a map-resolved GraalVM version.")
+
+    elif ctx.attr.distribution == None or _detect_older_gvm_version(ctx):
         platform, os, archive = _get_platform(ctx, False)
         version = ctx.attr.version
         java_version = ctx.attr.java_version
@@ -688,8 +758,70 @@ Normally this name is generated and the user does not have to provide it.
         "sha256": attr.string(
             mandatory = False,
             doc = """
-SHA-256 fingerprint for a custom toolchain. Optional. If unspecified, use of custom
-toolchains may yield hermeticity warnings.
+SHA-256 fingerprint for the downloaded archive. Primary integrity input when `url` or `urls` is
+set (a warning is emitted if absent). Otherwise used only as a fallback when a map-resolved
+version is missing its per-platform hash.
+""",
+        ),
+        "url": attr.string(
+            mandatory = False,
+            doc = """
+Custom download URL for a GraalVM distribution. When set, this short-circuits the built-in
+bindist lookup and uses the provided URL directly — useful for Early Adopter, nightly, or
+private dev builds that are not yet in `graalvm_bindist_map.bzl`.
+
+Requires `strip_prefix`. Strongly recommends `sha256` (a non-hermetic warning is emitted when
+it is absent). Mutually shaped with `urls`: if both are set, `urls` wins.
+
+`components` cannot be combined with `url` / `urls`; EA and nightly builds rarely ship a
+functional `gu` component installer.
+""",
+        ),
+        "urls": attr.string_list(
+            mandatory = False,
+            doc = """
+Alternate form of `url` accepting a list of mirror URLs. Identical semantics otherwise; if both
+`url` and `urls` are set, `urls` wins.
+""",
+        ),
+        "strip_prefix": attr.string(
+            mandatory = False,
+            doc = """
+Archive-internal prefix to strip during extraction. Required when using `url` / `urls`; the
+rule cannot template this value for custom distributions. Ignored otherwise.
+""",
+        ),
+        "url_per_platform": attr.string_dict(
+            mandatory = False,
+            doc = """
+Per-host-platform download URLs, keyed by platform tag: `linux-x64`, `linux-aarch64`,
+`macos-x64`, `macos-aarch64`, or `windows-x64`. When set, the rule selects the entry matching
+the current host platform — a host missing from the map causes an analysis-time fail with a
+clear diagnostic listing the declared platforms.
+
+Use this instead of `url` / `urls` when the same `graalvm_repository` declaration needs to
+support multiple host operating systems or architectures (the typical case for cross-platform
+CI). Combine with `sha256_per_platform` and `strip_prefix_per_platform` for full per-platform
+configuration.
+
+Mutually exclusive with `url` and `urls`.
+""",
+        ),
+        "sha256_per_platform": attr.string_dict(
+            mandatory = False,
+            doc = """
+Per-platform SHA-256 fingerprints, keyed by the same platform tags as `url_per_platform`.
+Optional but strongly recommended; missing entries fall back to the top-level `sha256` attr,
+and a non-hermetic warning is printed when neither is set.
+""",
+        ),
+        "strip_prefix_per_platform": attr.string_dict(
+            mandatory = False,
+            doc = """
+Per-platform archive-internal prefixes, keyed by the same platform tags as `url_per_platform`.
+Useful when the same distribution packages its archives differently across platforms (for
+example, macOS archives that include a `Contents/Home` bundle wrapper). Missing entries fall
+back to the top-level `strip_prefix` attr.
 """,
         ),
     },

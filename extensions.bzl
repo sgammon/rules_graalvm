@@ -25,15 +25,35 @@ def _gvm_impl(mctx):
                 all_components.append(extra_component.name)
 
     for selected in all_tags:
-        graalvm_repository(
-            name = selected.name,
-            version = selected.version,
-            java_version = selected.java_version,
-            distribution = selected.distribution,
-            toolchain_prefix = selected.toolchain_prefix,
-            components = all_components,
-            setup_actions = selected.setup_actions,
-        )
+        kwargs = {
+            "name": selected.name,
+            "version": selected.version,
+            "java_version": selected.java_version,
+            "distribution": selected.distribution,
+            "toolchain_prefix": selected.toolchain_prefix,
+            "components": all_components,
+            "setup_actions": selected.setup_actions,
+        }
+
+        # Forward the custom-URL attrs only when set. They are mutually exclusive with map-based
+        # resolution; passing empty strings through would trigger the custom-URL branch in the
+        # underlying rule.
+        if selected.url:
+            kwargs["url"] = selected.url
+        if selected.urls:
+            kwargs["urls"] = list(selected.urls)
+        if selected.strip_prefix:
+            kwargs["strip_prefix"] = selected.strip_prefix
+        if selected.sha256:
+            kwargs["sha256"] = selected.sha256
+        if selected.url_per_platform:
+            kwargs["url_per_platform"] = dict(selected.url_per_platform)
+        if selected.sha256_per_platform:
+            kwargs["sha256_per_platform"] = dict(selected.sha256_per_platform)
+        if selected.strip_prefix_per_platform:
+            kwargs["strip_prefix_per_platform"] = dict(selected.strip_prefix_per_platform)
+
+        graalvm_repository(**kwargs)
 
 _graalvm = tag_class(attrs = {
     "name": attr.string(mandatory = True),
@@ -43,6 +63,34 @@ _graalvm = tag_class(attrs = {
     "toolchain_prefix": attr.string(mandatory = False),
     "components": attr.string_list(mandatory = False),
     "setup_actions": attr.string_list(mandatory = False),
+    "url": attr.string(
+        mandatory = False,
+        doc = "Custom download URL for an Early Adopter / nightly / dev build. Bypasses the bindist map.",
+    ),
+    "urls": attr.string_list(
+        mandatory = False,
+        doc = "Mirror URLs; alternate form of `url`.",
+    ),
+    "strip_prefix": attr.string(
+        mandatory = False,
+        doc = "Archive-internal prefix to strip. Required when `url` / `urls` is set.",
+    ),
+    "sha256": attr.string(
+        mandatory = False,
+        doc = "SHA-256 fingerprint of the archive. Recommended when `url` / `urls` is set.",
+    ),
+    "url_per_platform": attr.string_dict(
+        mandatory = False,
+        doc = "Per-host-platform URLs keyed by platform tag (`linux-x64`, `linux-aarch64`, `macos-x64`, `macos-aarch64`, `windows-x64`). Use for cross-platform declarations.",
+    ),
+    "sha256_per_platform": attr.string_dict(
+        mandatory = False,
+        doc = "Per-platform SHA-256 hashes, same keys as `url_per_platform`.",
+    ),
+    "strip_prefix_per_platform": attr.string_dict(
+        mandatory = False,
+        doc = "Per-platform strip prefixes, same keys as `url_per_platform`.",
+    ),
 })
 
 _component = tag_class(attrs = {
