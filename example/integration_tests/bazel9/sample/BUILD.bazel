@@ -1,8 +1,8 @@
-load("@rules_java//java:defs.bzl", "java_binary", "java_library")
 load(
     "@rules_graalvm//graalvm:defs.bzl",
     "native_image",
 )
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
 
 java_library(
     name = "java",
