@@ -125,7 +125,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "buildifier_prebuilt",
-    version = "8.5.1",
+    version = "6.3.3",
     dev_dependency = True,
 )
 
