@@ -59,6 +59,16 @@ _native_image = rule(
     ],
 )
 
+def _validate_layers(layers, target_name):
+    if len(layers) > 1:
+        fail(
+            "`layers` accepts at most 1 parent layer today; got %d on '%s': %s" % (
+                len(layers),
+                target_name,
+                layers,
+            ),
+        )
+
 # Exports.
 def native_image(
         name,
@@ -85,6 +95,7 @@ def native_image(
         resource_configuration = None,
         proxy_configuration = None,
         profiles = [],
+        layers = [],
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -119,8 +130,11 @@ def native_image(
         profiles: Profiles to use for profile-guided optimization (PGO) and obtained from a native image compiled with `--pgo-instrument`.
         resource_configuration: Resource configuration file. No default; optional.
         proxy_configuration: Proxy configuration file. No default; optional.
+        layers: Parent GraalVM Native Image layer(s) to consume via `--layer-use`. Today accepts at most 1 entry. Entries must be `native_image_layer` targets.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
+
+    _validate_layers(layers, name)
 
     _native_image(
         name = name,
@@ -147,5 +161,6 @@ def native_image(
         profiles = profiles,
         resource_configuration = resource_configuration,
         proxy_configuration = proxy_configuration,
+        layers = layers,
         **kwargs
     )

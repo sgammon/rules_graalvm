@@ -5,6 +5,10 @@ load(
     "//internal/native_image:builder.bzl",
     _assemble_native_build_options = "assemble_native_build_options",
 )
+load(
+    "//internal/native_image:settings.bzl",
+    "NativeImageLayerInfo",
+)
 
 _RULES_REPO = "@rules_graalvm"
 _DEFAULT_GVM_REPO = "@graalvm"
@@ -126,6 +130,12 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         allow_single_file = True,
     ),
+    "layers": attr.label_list(
+        doc = "Parent GraalVM Native Image layer(s) to consume via `--layer-use`. Today: at most 1 entry.",
+        providers = [[NativeImageLayerInfo]],
+        mandatory = False,
+        default = [],
+    ),
     "_cc_toolchain": attr.label(
         default = Label(_BAZEL_CURRENT_CPP_TOOLCHAIN),
     ),
@@ -146,6 +156,27 @@ _NATIVE_IMAGE_ATTRS = {
     ),
 }
 
+# Attribute set excluded from `native_image_layer` — these apply only to executable/shared-lib
+# outputs, not layer archives.
+_LAYER_EXCLUDED_ATTRS = [
+    "main_class",
+    "shared_library",
+    "executable_name",
+    "profiles",
+]
+
+_NATIVE_IMAGE_LAYER_ATTRS = {
+    k: v
+    for k, v in _NATIVE_IMAGE_ATTRS.items()
+    if k not in _LAYER_EXCLUDED_ATTRS
+}
+
+_NATIVE_IMAGE_LAYER_ATTRS["directives"] = attr.string_list(
+    doc = "Content filters emitted after `--layer-create=<path>,...`. Each entry must start with `package=`, `module=`, or `path=`.",
+    mandatory = False,
+    default = [],
+)
+
 def _prepare_bin_name(
         name,
         bin_postfix = None):
@@ -161,7 +192,8 @@ def _prepare_native_image_rule_context(
         direct_inputs,
         c_compiler_path,
         gvm_toolchain = None,
-        bin_postfix = None):
+        bin_postfix = None,
+        propagated = None):
     """Prepare a `native-image` build context."""
 
     out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
@@ -185,6 +217,7 @@ def _prepare_native_image_rule_context(
         path_list_separator,
         gvm_toolchain,
         bin_postfix,
+        propagated = propagated,
     )
     return binary
 
@@ -204,4 +237,5 @@ BAZEL_CURRENT_CPP_TOOLCHAIN = _BAZEL_CURRENT_CPP_TOOLCHAIN
 MACOS_CONSTRAINT = _MACOS_CONSTRAINT
 WINDOWS_CONSTRAINT = _WINDOWS_CONSTRAINT
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
+NATIVE_IMAGE_LAYER_ATTRS = _NATIVE_IMAGE_LAYER_ATTRS
 prepare_native_image_rule_context = _prepare_native_image_rule_context

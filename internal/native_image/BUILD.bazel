@@ -18,9 +18,12 @@ package(default_visibility = [
 ])
 
 exports_files([
+    "action_utils.bzl",
     "builder.bzl",
     "classic.bzl",
     "common.bzl",
+    "layer_builder.bzl",
+    "layer_rules.bzl",
     "rules.bzl",
     "settings.bzl",
     "toolchain.bzl",

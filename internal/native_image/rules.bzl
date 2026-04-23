@@ -6,6 +6,10 @@ load(
 )
 load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
 load(
+    "//internal/native_image:action_utils.bzl",
+    _wrap_actions_for_graal = "wrap_actions_for_graal",
+)
+load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
@@ -18,6 +22,11 @@ load(
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
 )
 load(
+    "//internal/native_image:layer_builder.bzl",
+    _collect_parent_layer_infos = "collect_parent_layer_infos",
+    _merge_propagated_args = "merge_propagated_args",
+)
+load(
     "//internal/native_image:toolchain.bzl",
     _resolve_cc_toolchain = "resolve_cc_toolchain",
 )
@@ -26,6 +35,11 @@ _BIN_POSTFIX_DYLIB = ".dylib"
 _BIN_POSTFIX_EXE = ".exe"
 _BIN_POSTFIX_DLL = ".dll"
 _BIN_POSTFIX_SO = ".so"
+
+# When True, parent-layer list-attrs (initialize_at_*, native_features, extra_args) are
+# propagated additively into the child image build. Classpath propagation and `--layer-use` are
+# independent and always on — SVM's compatibility check requires them.
+_LAYER_AUTO_PROPAGATE = True
 
 def _build_action_message(ctx):
     _mode_label = {
@@ -40,13 +54,28 @@ def _build_action_message(ctx):
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.executable.native_image_tool
 
-    classpath_depset = depset(transitive = [
+    # Collect parent layers (0 or 1 today, per macro validation).
+    parent_infos = _collect_parent_layer_infos(ctx)
+    propagated = _merge_propagated_args(parent_infos, _LAYER_AUTO_PROPAGATE)
+
+    # Classpath includes parent-layer jars first (if any) so SVM sees a superset of the parent's
+    # classpath, as required by the layered-image compatibility check.
+    local_cp = depset(transitive = [
         dep[cc_shim.JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
+    classpath_depset = depset(transitive = [
+        p.classpath_depset
+        for p in parent_infos
+    ] + [local_cp])
 
     direct_inputs = []
     transitive_inputs = [classpath_depset]
+
+    # Parent `.nil` archives flow into the action inputs via their `transitive_layer_files`
+    # depset (which includes the parent plus its own ancestors).
+    for parent in parent_infos:
+        transitive_inputs.append(parent.transitive_layer_files)
 
     # resolve via toolchains
     gvm_toolchain = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
@@ -102,7 +131,13 @@ def _graal_binary_implementation(ctx):
         native_toolchain.c_compiler_path,
         gvm_toolchain,
         bin_postfix = bin_postfix,
+        propagated = propagated,
     )
+
+    # Emit `--layer-use=<ancestor.nil>` for every ancestor, oldest-first.
+    for parent in parent_infos:
+        for ancestor in parent.transitive_layer_files.to_list():
+            args.add(ancestor.path, format = "--layer-use=%s")
 
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
@@ -177,31 +212,6 @@ def _graal_binary_implementation(ctx):
         ),
     )]
 
-def _wrap_actions_for_graal(actions):
-    """Wraps the given ctx.actions struct so that env variables are correctly passed to Graal."""
-    patched_actions = {k: getattr(actions, k) for k in dir(actions)}
-
-    def _run_target(**kwargs):
-        _wrapped_run_for_graal(actions, **kwargs)
-
-    patched_actions["run"] = _run_target
-    return struct(**patched_actions)
-
-def _env_arg_map_each(key_value):
-    return "-E{}={}".format(key_value[0], key_value[1])
-
-def _wrapped_run_for_graal(_original_actions, arguments = [], env = {}, **kwargs):
-    env_args = _original_actions.args()
-    env_args.add_all(env.items(), map_each = _env_arg_map_each)
-    return _original_actions.run(
-        arguments = arguments + [env_args],
-        # We keep the original variables as Bazel has special handling for adding additional
-        # variables (such as DEVELOPER_DIR) based on existing ones when it executes the action
-        # locally.
-        env = env,
-        **kwargs
-    )
-
 # Exports.
 RULES_REPO = _RULES_REPO
 DEFAULT_GVM_REPO = _DEFAULT_GVM_REPO
@@ -212,3 +222,4 @@ GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
 DEBUG_CONDITION = _DEBUG_CONDITION
 OPTIMIZATION_MODE_CONDITION = _OPTIMIZATION_MODE_CONDITION
 graal_binary_implementation = _graal_binary_implementation
+LAYER_AUTO_PROPAGATE = _LAYER_AUTO_PROPAGATE

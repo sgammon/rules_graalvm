@@ -45,24 +45,12 @@ def _configure_static_zlib_compile(ctx, args, direct_inputs):
         direct_inputs.append(zlib_static)
 
 def _configure_debug(ctx, args):
-    """Configure debug symbols for a Native Image build to match Bazel's build settings.
-
-    Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
-    """
-
+    """Configure debug symbols for a Native Image build to match Bazel's build settings."""
     if ctx.attr.debug:
         args.add("-g")
 
 def _configure_optimization_mode(ctx, args):
-    """Configure the Native Image optimization mode to match Bazel's build setting.
-
-    Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
-    """
-
+    """Configure the Native Image optimization mode to match Bazel's build setting."""
     if ctx.attr.optimization_mode:
         args.add(
             ctx.attr.optimization_mode,
@@ -70,27 +58,13 @@ def _configure_optimization_mode(ctx, args):
         )
 
 def _configure_proxy(ctx, args, direct_inputs):
-    """Configure proxy settings for a Native Image build.
-
-    Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
-        direct_inputs: Direct Native Image build action inputs.
-
-    """
+    """Configure proxy settings for a Native Image build."""
     if ctx.attr.proxy_configuration != None:
         args.add(ctx.file.proxy_configuration, format = "-H:DynamicProxyConfigurationFiles=%s")
         direct_inputs.append(ctx.file.proxy_configuration)
 
 def _configure_resources(ctx, args, direct_inputs):
-    """Configure resource settings for a Native Image build.
-
-    Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
-        direct_inputs: Direct Native Image build action inputs.
-
-    """
+    """Configure resource settings for a Native Image build."""
     if ctx.attr.include_resources != None:
         args.add(ctx.attr.include_resources, format = "-H:IncludeResources=%s")
 
@@ -98,22 +72,27 @@ def _configure_resources(ctx, args, direct_inputs):
         args.add(ctx.file.resource_configuration, format = "-H:ResourceConfigurationFiles=%s")
         direct_inputs.append(ctx.file.resource_configuration)
 
-def _configure_reflection(ctx, args, direct_inputs):
-    """Configure reflection settings for a Native Image build.
+def _configure_reflection(ctx, args, direct_inputs, propagated = None):
+    """Configure reflection and class-init settings for a Native Image build.
 
-    Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
-        direct_inputs: Direct Native Image build action inputs.
+    Propagated parent-layer values (if any) are prepended to this rule's values so SVM sees a
+    consistent, additive set of `--initialize-at-*` flags.
     """
-
+    init_build = (
+        (list(propagated.initialize_at_build_time) if propagated else []) +
+        list(ctx.attr.initialize_at_build_time)
+    )
+    init_run = (
+        (list(propagated.initialize_at_run_time) if propagated else []) +
+        list(ctx.attr.initialize_at_run_time)
+    )
     args.add_joined(
-        ctx.attr.initialize_at_build_time,
+        init_build,
         join_with = ",",
         format_joined = "--initialize-at-build-time=%s",
     )
     args.add_joined(
-        ctx.attr.initialize_at_run_time,
+        init_run,
         join_with = ",",
         format_joined = "--initialize-at-run-time=%s",
     )
@@ -132,14 +111,7 @@ def _configure_reflection(ctx, args, direct_inputs):
         direct_inputs.append(ctx.file.serialization_configuration)
 
 def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
-    """Configure native compiler and linker flags for a Native Image build.
-
-    Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
-        c_compiler_path: Path to the C compiler; resolved via toolchains.
-        gvm_toolchain: Resolved GraalVM toolchain, or `None` if a tool target is in use via legacy rules.
-    """
+    """Configure native compiler and linker flags for a Native Image build."""
 
     # configure debug symbols
     _configure_debug(ctx, args)
@@ -157,44 +129,17 @@ def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
     )
 
 def _configure_native_test_flags(ctx, args):
-    """Configure native testing flags; only applies if we are building a test-only target.
-
-    Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
-    """
-
+    """Configure native testing flags; only applies if we are building a test-only target."""
     if ctx.attr.coverage:
         args.add("--tool:coverage")
 
-def assemble_native_build_options(
-        ctx,
-        args,
-        binary,
-        classpath_depset,
-        direct_inputs,
-        c_compiler_path,
-        path_list_separator,
-        gvm_toolchain = None,
-        bin_postfix = None):
-    """Assemble the effective arguments to `native-image`.
+def _configure_output_mode(ctx, args, binary, bin_postfix):
+    """Emit the executable / shared-lib output flags.
 
-    This function is responsible for converting the current rule invocation context into a set of arguments
-    which can be passed to the `native-image` builder.
-
-    Args:
-        ctx: Context of the Native Image rule implementation.
-        args: Args builder for the Native Image build.
-        binary: Target output binary which will be built with Native Image.
-        classpath_depset: Classpath dependency set.
-        direct_inputs: Direct inputs into the native image build (mutable).
-        c_compiler_path: Path to the C compiler; resolved via toolchains.
-        path_list_separator: Platform-specific path separator.
-        gvm_toolchain: Resolved GraalVM toolchain, or `None` if a tool target is in use via legacy rules.
-        bin_postfix: Binary postfix expected from the output file (for example, `.exe` or `.dylib`).
+    Called only for `native_image`, never for `native_image_layer` (layers have no main class,
+    no --shared, and write to a TreeArtifact via --layer-create instead of -H:Path).
     """
 
-    # main class is required unless we are building a shared library
     if ctx.attr.shared_library:
         args.add("--shared")
     elif ctx.attr.main_class == None or ctx.attr.main_class == "":
@@ -203,9 +148,6 @@ def assemble_native_build_options(
             unless `shared_library=True`.
         """)
 
-    if not ctx.attr.allow_fallback:
-        args.add("--no-fallback")
-
     trimmed_basename = binary.basename
     if bin_postfix:
         trimmed_basename = trimmed_basename[0:-(len(bin_postfix))]
@@ -213,6 +155,41 @@ def assemble_native_build_options(
     args.add(ctx.attr.main_class, format = "-H:Class=%s")
     args.add(trimmed_basename, format = "-H:Name=%s")
     args.add(binary.dirname, format = "-H:Path=%s")
+
+    if ctx.files.profiles:
+        args.add_joined(
+            ctx.files.profiles,
+            join_with = ",",
+            format_joined = "--pgo=%s",
+        )
+
+def _configure_common_build_options(
+        ctx,
+        args,
+        classpath_depset,
+        direct_inputs,
+        c_compiler_path,
+        path_list_separator,
+        gvm_toolchain,
+        propagated = None):
+    """Emit all non-output-mode args — shared between `native_image` and `native_image_layer`.
+
+    Args:
+        ctx: Rule context.
+        args: Args builder.
+        classpath_depset: Effective classpath (already includes any parent-layer jars).
+        direct_inputs: Direct inputs (mutable).
+        c_compiler_path: Resolved C compiler path.
+        path_list_separator: Platform path separator for -cp.
+        gvm_toolchain: Resolved GraalVM toolchain, or None for legacy rules.
+        propagated: Optional struct(initialize_at_build_time, initialize_at_run_time,
+            native_features, extra_args) of values inherited from parent layers and prepended to
+            this rule's values.
+    """
+
+    if not ctx.attr.allow_fallback:
+        args.add("--no-fallback")
+
     args.add("-H:+ReportExceptionStackTraces")
 
     if not ctx.attr.check_toolchains:
@@ -225,56 +202,89 @@ def assemble_native_build_options(
         join_with = path_list_separator,
     )
 
+    # merged features (parent-propagated first, this rule's appended)
+    features_list = (
+        (list(propagated.native_features) if propagated else []) +
+        list(ctx.attr.native_features)
+    )
     args.add_joined(
-        ctx.attr.native_features,
+        features_list,
         join_with = ",",
         format_joined = "-H:Features=%s",
     )
 
-    # configure the build optimization mode
     _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain)
-
-    # configure reflection
-    _configure_reflection(ctx, args, direct_inputs)
-
-    # configure resources
+    _configure_reflection(ctx, args, direct_inputs, propagated = propagated)
     _configure_resources(ctx, args, direct_inputs)
-
-    # configure proxy
     _configure_proxy(ctx, args, direct_inputs)
 
-    # if a static build is being performed against hermetic zlib, configure it
     if ctx.attr.static_zlib != None:
-        _configure_static_zlib_compile(
-            ctx,
-            args,
-            direct_inputs,
-        )
+        _configure_static_zlib_compile(ctx, args, direct_inputs)
 
-    if ctx.files.profiles:
-        args.add_joined(
-            ctx.files.profiles,
-            join_with = ",",
-            format_joined = "--pgo=%s",
-        )
+    # `profiles` only exists on the executable (`native_image`) rule — guarded for layer rule.
+    if hasattr(ctx.files, "profiles") and ctx.files.profiles:
         direct_inputs.extend(ctx.files.profiles)
 
-    # add test-related flags, if this is a `testonly` target
     if ctx.attr.testonly:
-        _configure_native_test_flags(
-            ctx,
-            args,
-        )
+        _configure_native_test_flags(ctx, args)
 
-    # append extra arguments last
+    # extra_args: propagated parent values first, then this rule's (last-wins semantics preserved).
+    if propagated and propagated.extra_args:
+        for arg in propagated.extra_args:
+            expanded_arg = ctx.expand_make_variables(
+                "extra_args",
+                ctx.expand_location(arg, ctx.attr.data),
+                {},
+            )
+            if expanded_arg or not arg:
+                args.add(expanded_arg)
+
     for arg in ctx.attr.extra_args:
-        # Expand locations of targets in 'data' and make variables provided by 'toolchains'.
         expanded_arg = ctx.expand_make_variables(
             "extra_args",
             ctx.expand_location(arg, ctx.attr.data),
             {},
         )
-
-        # Skip over args that become empty after expansion but weren't before.
         if expanded_arg or not arg:
             args.add(expanded_arg)
+
+def assemble_native_build_options(
+        ctx,
+        args,
+        binary,
+        classpath_depset,
+        direct_inputs,
+        c_compiler_path,
+        path_list_separator,
+        gvm_toolchain = None,
+        bin_postfix = None,
+        propagated = None):
+    """Assemble the effective arguments to `native-image` for an executable/shared-lib build.
+
+    Args:
+        ctx: Context of the Native Image rule implementation.
+        args: Args builder for the Native Image build.
+        binary: Target output binary which will be built with Native Image.
+        classpath_depset: Classpath dependency set (may already include parent-layer entries).
+        direct_inputs: Direct inputs into the native image build (mutable).
+        c_compiler_path: Path to the C compiler; resolved via toolchains.
+        path_list_separator: Platform-specific path separator.
+        gvm_toolchain: Resolved GraalVM toolchain, or `None` if a tool target is in use via legacy rules.
+        bin_postfix: Binary postfix expected from the output file (for example, `.exe` or `.dylib`).
+        propagated: Optional struct of values propagated from parent layers, prepended additively.
+    """
+    _configure_output_mode(ctx, args, binary, bin_postfix)
+    _configure_common_build_options(
+        ctx,
+        args,
+        classpath_depset,
+        direct_inputs,
+        c_compiler_path,
+        path_list_separator,
+        gvm_toolchain,
+        propagated = propagated,
+    )
+
+# Exports.
+configure_common_build_options = _configure_common_build_options
+configure_output_mode = _configure_output_mode
