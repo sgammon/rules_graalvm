@@ -1,0 +1,32 @@
+load(
+    "@rules_graalvm//graalvm:defs.bzl",
+    "native_image",
+    "native_image_layer",
+)
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+
+ENTRY = "exe.Main"
+
+native_image_layer(
+    name = "libbase",
+    deps = ["//sample/base"],
+    directives = ["package=base"],
+)
+
+java_binary(
+    name = "mainjvm",
+    main_class = ENTRY,
+    runtime_deps = ["//sample/base"],
+)
+
+native_image(
+    name = "main",
+    main_class = ENTRY,
+    deps = ["//sample/exe"],
+    layers = [":libbase"],
+)
+
+alias(
+    name = "sample",
+    actual = "main",
+)

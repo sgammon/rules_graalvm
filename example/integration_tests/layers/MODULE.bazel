@@ -1,0 +1,37 @@
+"Integration test: layered native-image build on Bazel 9.1.0 + Oracle GraalVM 25."
+
+module(
+    name = "rules_graalvm_layers_sample",
+    version = "0.0.1",
+)
+
+bazel_dep(
+    name = "rules_java",
+    version = "9.6.1",
+)
+bazel_dep(
+    name = "rules_graalvm",
+    version = "0.0.0",
+)
+local_path_override(
+    module_name = "rules_graalvm",
+    path = "../../..",
+)
+
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+gvm.graalvm(
+    name = "graalvm",
+    distribution = "oracle",
+    java_version = "25",
+    version = "25.0.2",
+)
+use_repo(
+    gvm,
+    "graalvm",
+)
+
+register_toolchains("@graalvm//:jvm")
+
+register_toolchains("@graalvm//:sdk")
+
+register_toolchains("@graalvm//:bootstrap_runtime_toolchain")

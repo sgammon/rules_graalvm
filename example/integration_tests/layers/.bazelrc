@@ -1,0 +1,2 @@
+build --enable_bzlmod
+build --java_runtime_version=graalvm_25
