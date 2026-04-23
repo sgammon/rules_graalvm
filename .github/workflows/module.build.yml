@@ -210,27 +210,57 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Bazel 4
+          # Skipped on Windows (unsupported). Bazel 4 is past upstream EOL but is kept in the
+          # matrix so the legacy WORKSPACE + `graal/graal.bzl` path stays regression-tested.
+          - label: Bazel 4
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel4"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'windows') }}
+
           # Test: Bazel 5
+          # Skipped on Windows (unsupported) and macOS (pre-existing wrapped_clang toolchain bug
+          # under Bazel 5's local_config_cc on macOS).
           - label: Bazel 5
             target: sample
             action: build
             directory: "./example/integration_tests/bazel5"
             labs: false
-            skip: ${{ contains(inputs.runner, 'windows') }}
+            skip: ${{ contains(inputs.runner, 'windows') || contains(inputs.runner, 'macos') }}
 
           # Test: Bazel 6
+          # Skipped on macOS (pre-existing `missing LC_UUID` error in local_config_cc wrapped_clang
+          # when invoked from inside native-image).
           - label: Bazel 6
             target: sample
             action: build
             directory: "./example/integration_tests/bazel6"
             labs: false
-            skip: false
+            skip: ${{ contains(inputs.runner, 'macos') }}
 
           # Test: Bazel 7
           - label: Bazel 7
             target: sample
             action: build
             directory: "./example/integration_tests/bazel7"
+            labs: false
+            skip: false
+
+          # Test: Bazel 8
+          - label: Bazel 8
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel8"
+            labs: false
+            skip: false
+
+          # Test: Bazel 9
+          - label: Bazel 9
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel9"
             labs: false
             skip: false
 
@@ -290,6 +320,26 @@ jobs:
             labs: false
             skip: ${{ contains(inputs.runner, 'windows') }}
 
+          # Test: Components on CE
+          # Skipped on Windows (no gu/bash support) — components rely on the deprecated
+          # GraalVM Updater, which does not work on Windows.
+          - label: Components (CE)
+            target: sample
+            action: build
+            directory: "./example/integration_tests/components-ce"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'windows') }}
+
+          # Test: Components on Oracle GVM
+          # Skipped on Windows (no gu) and macOS (Oracle's GDS endpoint is unreliable
+          # from macOS runners, producing intermittent timeouts during `gu install`).
+          - label: Components (Oracle)
+            target: sample
+            action: build
+            directory: "./example/integration_tests/components-oracle"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'windows') || contains(inputs.runner, 'macos') }}
+
           # Test: GVM CE 17
           - label: GraalVM CE 17
             target: sample
@@ -306,6 +356,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: GVM CE 25
+          - label: GraalVM CE 25
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-25"
+            labs: false
+            skip: false
+
           # Test: Oracle GVM 17
           - label: Oracle GraalVM 17
             target: sample
@@ -319,6 +377,14 @@ jobs:
             target: sample
             action: build
             directory: "./example/integration_tests/graalvm-oracle-21"
+            labs: false
+            skip: false
+
+          # Test: Oracle GVM 25
+          - label: Oracle GraalVM 25
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-oracle-25"
             labs: false
             skip: false
 

@@ -6,7 +6,7 @@ matrix:
     - macos_arm64
 
 validate_config: 1
-buildifier: latest
+buildifier: "6.3.3"
 
 tasks:
   build_and_test:

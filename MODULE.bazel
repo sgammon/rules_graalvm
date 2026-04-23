@@ -37,6 +37,10 @@ bazel_dep(
     version = "7.1.0",
 )
 bazel_dep(
+    name = "rules_cc",
+    version = "0.0.10",
+)
+bazel_dep(
     name = "bazel_skylib",
     version = "1.5.0",
 )
@@ -53,11 +57,6 @@ bazel_dep(
 bazel_dep(
     name = "rules_license",
     version = "0.0.7",
-    dev_dependency = True,
-)
-bazel_dep(
-    name = "rules_cc",
-    version = "0.0.9",
     dev_dependency = True,
 )
 bazel_dep(
@@ -165,6 +164,9 @@ use_repo(
 ################################################################################
 # rules_graalvm
 ################################################################################
+
+cc_shim = use_extension("//internal:cc_shim_extensions.bzl", "cc_shim_extension")
+use_repo(cc_shim, "rules_graalvm_cc_shim")
 
 gvm = use_extension(
     ":extensions.bzl",
