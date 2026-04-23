@@ -85,25 +85,34 @@ def _merge_propagated_args(parent_infos, gate_enabled):
     return struct(**merged)
 
 def _emit_layer_use(args, parent_infos, transitive_inputs):
-    """Emit `--layer-use=<ancestor.nil>` for each ancestor in bottom-up order.
+    """Emit `-H:LayerUse=<ancestor.nil>` for each ancestor in bottom-up order.
 
     `parent_infos` is the list of direct parents (0 or 1 today). For each, we walk their
     `transitive_layer_files` depset — which already contains that parent plus all of ITS
-    ancestors — and emit one `--layer-use` flag per archive. All archives become action inputs.
+    ancestors — and emit one `-H:LayerUse` flag per archive. All archives become action inputs.
+
+    The layer-related native-image options are experimental, so the caller must also emit
+    `-H:+UnlockExperimentalVMOptions` before any layer flag.
     """
     for parent in parent_infos:
         for ancestor in parent.transitive_layer_files.to_list():
-            args.add(ancestor.path, format = "--layer-use=%s")
+            args.add(ancestor.path, format = "-H:LayerUse=%s")
         transitive_inputs.append(parent.transitive_layer_files)
 
 def _emit_layer_create(ctx, args, layer_tree):
-    """Emit `--layer-create=<tree.nil>[,<directive1>,<directive2>,...]`."""
+    """Emit `-H:LayerCreate=<basename.nil>[,<directive1>,<directive2>,...]`.
+
+    Native-image requires the layer filename in this option to be a simple basename with no path
+    separators — the enclosing directory comes from `-H:Path=<dir>` emitted separately. The
+    option is experimental, so the caller must also emit `-H:+UnlockExperimentalVMOptions`
+    before this flag.
+    """
     directives = list(ctx.attr.directives)
     if directives:
-        payload = "%s,%s" % (layer_tree.path, ",".join(directives))
+        payload = "%s,%s" % (layer_tree.basename, ",".join(directives))
     else:
-        payload = layer_tree.path
-    args.add(payload, format = "--layer-create=%s")
+        payload = layer_tree.basename
+    args.add(payload, format = "-H:LayerCreate=%s")
 
 def assemble_layer_build_options(
         ctx,
@@ -137,10 +146,23 @@ def assemble_layer_build_options(
     # parent-inherited entries. Runs at analysis time.
     _validate_path_directives(ctx.attr.directives, classpath_depset.to_list())
 
-    # Emit `--layer-use` for ancestors first so they are resolved before create-time validation,
-    # then `--layer-create` for this layer's own output.
+    # `-H:LayerCreate` and `-H:LayerUse` are Early-Adopter / experimental in GraalVM 24+, so
+    # unlock them before the first layer flag.
+    args.add("-H:+UnlockExperimentalVMOptions")
+
+    # Emit `-H:LayerUse` for ancestors first so they are resolved before create-time validation,
+    # then `-H:LayerCreate` for this layer's own output.
     _emit_layer_use(args, parent_infos, transitive_inputs)
     _emit_layer_create(ctx, args, layer_tree)
+
+    # native-image requires an image name even for layer builds (`-o <name>` / `-H:Name=<name>`).
+    # Derive it from the declared `.nil` basename, trimming the suffix so the auxiliary `.so`
+    # lands next to the tree with a sensible name.
+    image_name = layer_tree.basename
+    if image_name.endswith(".nil"):
+        image_name = image_name[:-len(".nil")]
+    args.add(image_name, format = "-H:Name=%s")
+    args.add(layer_tree.dirname, format = "-H:Path=%s")
 
     # Reuse the common builder for every non-output flag (classpath, reflection, resources,
     # compiler, optimization, extra_args, etc.).

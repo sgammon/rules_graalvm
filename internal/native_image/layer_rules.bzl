@@ -83,9 +83,11 @@ def _graal_layer_implementation(ctx):
         is_windows = is_windows,
     )
 
-    # The `.nil` output is a TreeArtifact — native-image writes `shared-layer.{so,big,lsb,properties}`
-    # (and potentially reports / diagnostics in future versions) into this directory.
-    layer_tree = ctx.actions.declare_directory(ctx.attr.name + ".nil")
+    # `.nil` is a single-file archive in GraalVM 25+ (empirically: `-H:LayerCreate=<name>.nil`
+    # produces an archive file, and native-image refuses if the path already exists as a dir).
+    # Declared as a regular file; if future NI versions expand this to a directory/report bundle,
+    # switch to `declare_directory` here.
+    layer_tree = ctx.actions.declare_file(ctx.attr.name + ".nil")
 
     path_list_separator = ";" if is_windows else ":"
 

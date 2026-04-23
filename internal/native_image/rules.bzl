@@ -37,7 +37,7 @@ _BIN_POSTFIX_DLL = ".dll"
 _BIN_POSTFIX_SO = ".so"
 
 # When True, parent-layer list-attrs (initialize_at_*, native_features, extra_args) are
-# propagated additively into the child image build. Classpath propagation and `--layer-use` are
+# propagated additively into the child image build. Classpath propagation and `-H:LayerUse` are
 # independent and always on — SVM's compatibility check requires them.
 _LAYER_AUTO_PROPAGATE = True
 
@@ -134,10 +134,15 @@ def _graal_binary_implementation(ctx):
         propagated = propagated,
     )
 
-    # Emit `--layer-use=<ancestor.nil>` for every ancestor, oldest-first.
+    # `-H:LayerUse` is experimental in GraalVM 24+; unlock before emitting it. Only emit the
+    # unlock and the flag when a parent layer is actually present.
+    if parent_infos:
+        args.add("-H:+UnlockExperimentalVMOptions")
+
+    # Emit `-H:LayerUse=<ancestor.nil>` for every ancestor, oldest-first.
     for parent in parent_infos:
         for ancestor in parent.transitive_layer_files.to_list():
-            args.add(ancestor.path, format = "--layer-use=%s")
+            args.add(ancestor.path, format = "-H:LayerUse=%s")
 
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
