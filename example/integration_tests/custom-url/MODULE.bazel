@@ -1,0 +1,73 @@
+"Integration test: custom-URL GraalVM distribution (Early Adopter / nightly path) on Bazel 9.1.0."
+
+module(
+    name = "rules_graalvm_custom_url_sample",
+    version = "0.0.1",
+)
+
+bazel_dep(
+    name = "platforms",
+    version = "0.0.10",
+)
+bazel_dep(
+    name = "rules_java",
+    version = "8.6.1",
+)
+bazel_dep(
+    name = "rules_graalvm",
+    version = "0.0.0",
+)
+local_path_override(
+    module_name = "rules_graalvm",
+    path = "../../..",
+)
+
+# Exercise the `url` / `sha256` / `strip_prefix` attrs on the `graalvm` tag class. This bypasses
+# the built-in bindist map and downloads directly from the user-supplied URL — the path used for
+# Early Adopter, nightly, and private dev builds whose coordinates are not yet in
+# `graalvm_bindist_map.bzl`.
+#
+# For this test we point at a known-stable GraalVM CE 25.0.2 (linux-x64) archive so the
+# workspace is deterministic and the sha256 is meaningful. In real usage `url` would typically
+# be an EA or nightly artifact URL and `version` would carry a `-dev` / `-ea` suffix.
+# The strip prefix varies between platforms: on macOS, the archive embeds `Contents/Home` to
+# make it a proper .app bundle. The `strip_prefix_per_platform` dict captures that variation.
+_GRAALVM_URL_BASE = "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.2"
+
+_GRAALVM_ROOT_PREFIX = "graalvm-community-openjdk-25.0.2+10.1"
+
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+gvm.graalvm(
+    name = "graalvm",
+    distribution = "ce",
+    java_version = "25",
+    version = "25.0.2-custom",
+    url_per_platform = {
+        "linux-x64": "%s/graalvm-community-jdk-25.0.2_linux-x64_bin.tar.gz" % _GRAALVM_URL_BASE,
+        "linux-aarch64": "%s/graalvm-community-jdk-25.0.2_linux-aarch64_bin.tar.gz" % _GRAALVM_URL_BASE,
+        "macos-aarch64": "%s/graalvm-community-jdk-25.0.2_macos-aarch64_bin.tar.gz" % _GRAALVM_URL_BASE,
+        "windows-x64": "%s/graalvm-community-jdk-25.0.2_windows-x64_bin.zip" % _GRAALVM_URL_BASE,
+    },
+    sha256_per_platform = {
+        "linux-x64": "e0be791c8fda4d03b6b0a0cb824fef3149736170057b3a515252b44419606af0",
+        "linux-aarch64": "b4580d9f223d0a4b3a1757e58b18ff4c1db950e67e105fc5cb741457d2384a71",
+        "macos-aarch64": "50201fb8e8e653e7a253d955877a6b6ad634b42e60c84f45df7e1bb51361635f",
+        "windows-x64": "72edc27ce2dd3c156332144a339c97995745cae291205ed2f9b5cc26aa9cb422",
+    },
+    strip_prefix_per_platform = {
+        "linux-x64": _GRAALVM_ROOT_PREFIX,
+        "linux-aarch64": _GRAALVM_ROOT_PREFIX,
+        "macos-aarch64": "%s/Contents/Home" % _GRAALVM_ROOT_PREFIX,
+        "windows-x64": _GRAALVM_ROOT_PREFIX,
+    },
+)
+use_repo(
+    gvm,
+    "graalvm",
+)
+
+register_toolchains("@graalvm//:jvm")
+
+register_toolchains("@graalvm//:sdk")
+
+register_toolchains("@graalvm//:bootstrap_runtime_toolchain")
