@@ -611,6 +611,7 @@ graalvm_sdk(
     name = "gvm",
     native_image_bin = ":native-image",
     gvm_files = ":files",
+    version = "{gvm_version}",
 )
 alias(
     name = "sdk",
@@ -629,6 +630,7 @@ alias(
         bootstrap_toolchain_alias = bootstrap_toolchain_alias,
         rendered_bin_aliases = rendered_bin_aliases,
         bin_java_path = rendered_bin_paths.java,
+        gvm_version = version,
         gvm_toolchain_tags_exec = "",
         gvm_toolchain_tags_target = "",
     )

@@ -5,6 +5,10 @@ load(
     _configure_common_build_options = "configure_common_build_options",
 )
 load(
+    "//internal/native_image:common.bzl",
+    _gvm_supports_experimental_close = "gvm_supports_experimental_close",
+)
+load(
     "//internal/native_image:settings.bzl",
     "NativeImageLayerInfo",
 )
@@ -167,7 +171,11 @@ def assemble_layer_build_options(
     # SBOM is not supported for layers. We must explicitly pass `--enable-sbom=false` to avoid a warning.
     args.add("--enable-sbom=false")
 
-    args.add("-H:-UnlockExperimentalVMOptions")
+    # Close the experimental gate after emitting `-H:LayerCreate` / `-H:LayerUse`, but only on
+    # GraalVM versions that accept the close (22+). On 21 and older drivers, the
+    # `-H:-UnlockExperimentalVMOptions` form is unrecognized and aborts the build.
+    if _gvm_supports_experimental_close(gvm_toolchain.version):
+        args.add("-H:-UnlockExperimentalVMOptions")
 
     # Reuse the common builder for every non-output flag (classpath, reflection, resources,
     # compiler, optimization, extra_args, etc.).

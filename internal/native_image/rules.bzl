@@ -23,6 +23,7 @@ load(
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
     _RULES_REPO = "RULES_REPO",
+    _gvm_supports_experimental_close = "gvm_supports_experimental_close",
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
 )
 load(
@@ -176,6 +177,12 @@ def _graal_binary_implementation(ctx):
             args.add("-H:NativeLinkerOption=-Wl,-rpath,@loader_path/%s" % runtime_libs_dir)
         elif not is_windows:
             args.add("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s" % runtime_libs_dir)
+
+        # Close the experimental gate after emitting the layer-related experimental flags,
+        # but only on GraalVM versions that accept the close (22+). On 21 and older drivers,
+        # the `-H:-UnlockExperimentalVMOptions` form is unrecognized and aborts the build.
+        if _gvm_supports_experimental_close(gvm_toolchain.version):
+            args.add("-H:-UnlockExperimentalVMOptions")
 
     # Must re-lock experimental options if we unlocked them.
     if unlocked:

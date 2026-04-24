@@ -185,6 +185,47 @@ _NATIVE_IMAGE_LAYER_ATTRS["directives"] = attr.string_list(
     default = [],
 )
 
+# GraalVM major version that introduced support for the "gated" form of
+# `-H:-UnlockExperimentalVMOptions` (the explicit close). On 21 and older, the close flag is
+# unrecognized and the driver fails; from 22 onward it is accepted and re-locks experimental
+# access for subsequent args.
+_EXPERIMENTAL_CLOSE_MIN_MAJOR = 22
+
+def _parse_gvm_major_version(version_string):
+    """Return the leading integer from a GraalVM version string, or `None` if unknown.
+
+    Accepted inputs and outputs:
+      - `"25.0.2"`            → 25
+      - `"25.0.2-custom"`     → 25
+      - `"25.1.0-dev+10.1"`   → 25
+      - `"23.0.1"`            → 23
+      - `""` / `"latest"`     → None (version is not concretely known)
+    """
+    if not version_string or version_string == "latest":
+        return None
+    head = version_string.split(".", 1)[0]
+    digits = ""
+    for i in range(len(head)):
+        c = head[i]
+        if c >= "0" and c <= "9":
+            digits += c
+        else:
+            break
+    if not digits:
+        return None
+    return int(digits)
+
+def _gvm_supports_experimental_close(version_string):
+    """Return True if this GraalVM version accepts `-H:-UnlockExperimentalVMOptions`.
+
+    Falls to False for unknown versions so that we never emit a flag an older driver would
+    reject. Older drivers only accept the one-shot open form.
+    """
+    major = _parse_gvm_major_version(version_string)
+    if major == None:
+        return False
+    return major >= _EXPERIMENTAL_CLOSE_MIN_MAJOR
+
 def _prepare_bin_name(
         name,
         bin_postfix = None):
@@ -247,3 +288,5 @@ WINDOWS_CONSTRAINT = _WINDOWS_CONSTRAINT
 NATIVE_IMAGE_ATTRS = _NATIVE_IMAGE_ATTRS
 NATIVE_IMAGE_LAYER_ATTRS = _NATIVE_IMAGE_LAYER_ATTRS
 prepare_native_image_rule_context = _prepare_native_image_rule_context
+gvm_supports_experimental_close = _gvm_supports_experimental_close
+parse_gvm_major_version = _parse_gvm_major_version

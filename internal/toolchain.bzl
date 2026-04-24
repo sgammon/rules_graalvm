@@ -8,6 +8,7 @@ GraalVMToolchainInfo = provider(
     fields = [
         "native_image_bin",
         "gvm_files",
+        "version",
     ],
 )
 
@@ -24,6 +25,7 @@ def _gvm_toolchain_impl(ctx):
         graalvm = GraalVMToolchainInfo(
             native_image_bin = ctx.attr.native_image_bin,
             gvm_files = ctx.attr.gvm_files,
+            version = ctx.attr.version,
         ),
     )
     return [toolchain_info]
@@ -72,6 +74,16 @@ Filegroup which holds the full set of constituent files which are part of this G
 SDK installation.
 
 These files are transitive tool dependencies for any binary built with Native Image.
+""",
+        ),
+        "version": attr.string(
+            mandatory = False,
+            default = "",
+            doc = """
+GraalVM version string associated with this toolchain (e.g. `25.0.2`, `23.0.1`, or a custom
+tag like `25.1.0-dev+10.1` for EA builds). Optional. When present, rules may use this to
+make version-aware decisions — for example, emitting `-H:-UnlockExperimentalVMOptions` only
+on versions new enough to accept the gated close flag.
 """,
         ),
     },
