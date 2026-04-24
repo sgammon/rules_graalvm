@@ -1,8 +1,7 @@
----
 name: Buildifier
 
 # Controls when the action will run.
-"on":
+on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [main]
@@ -24,10 +23,6 @@ name: Buildifier
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
-permissions:
-  contents: read
-
 jobs:
   check:
     runs-on: ubuntu-latest
