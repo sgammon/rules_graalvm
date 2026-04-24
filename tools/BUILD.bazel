@@ -18,7 +18,6 @@ buildifier(
     exclude_patterns = [
         "./.git/*",
         "./bazel-*/*",
-        "./example/*",
     ],
     lint_mode = "warn",
     mode = "diff",

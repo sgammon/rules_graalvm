@@ -3,7 +3,7 @@ load(
     "native_image",
     "native_image_layer",
 )
-load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+load("@rules_java//java:defs.bzl", "java_binary")
 
 ENTRY = "exe.Main"
 
