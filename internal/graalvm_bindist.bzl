@@ -239,6 +239,13 @@ def _graal_bindist_repository_impl(ctx):
             sha256 = ctx.attr.sha256
             strip_prefix = ctx.attr.strip_prefix
 
+        # Pre-flight URL validation — Bazel's downloader otherwise produces an opaque
+        # NullPointerException when a URL lacks an http(s) scheme (the usual case being a
+        # malformed format string). Catch the problem at the rule layer with a clear message.
+        for candidate in urls:
+            if not (candidate.startswith("http://") or candidate.startswith("https://")):
+                fail("not a url: %r (expected http:// or https://)" % candidate)
+
         if not sha256:
             # buildifier: disable=print
             print("rules_graalvm: custom GraalVM URL '%s' has no sha256; downloads will not be hermetic." % urls[0])
