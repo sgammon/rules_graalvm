@@ -192,7 +192,7 @@
   "moduleExtensions": {
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "SeDpBbuLuRWrxpZ/3EU0eo0/mb0YAk543g0EfF67SDk=",
+        "bzlTransitiveDigest": "tCG94R+VtyKGZHgYAr4YB0kNNiO9zzDxE65Ng6X4IqU=",
         "usagesDigest": "ZDBhakUn2X/xzXD1WEu8DRPb/jwEFoasym8kep75kCg=",
         "recordedInputs": [
           "REPO_MAPPING:rules_graalvm+,bazel_skylib bazel_skylib+"

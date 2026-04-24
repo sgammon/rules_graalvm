@@ -249,8 +249,8 @@
     },
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "gAo0d2Vd8bkWqOyQE+zF0s368WjT2P80/SDj0Y+c1HA=",
-        "usagesDigest": "z31NBt2vRiDcdfU5vT3b14yvd81UjeSi7PhLKBc+uDM=",
+        "bzlTransitiveDigest": "tCG94R+VtyKGZHgYAr4YB0kNNiO9zzDxE65Ng6X4IqU=",
+        "usagesDigest": "8gDWSvGNIA5eOpEcQ/qJm6RDNdD1pJwwGVCviHd+Ol4=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -264,7 +264,7 @@
           "graalvm": {
             "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
             "attributes": {
-              "version": "25.0.2",
+              "version": "25.0.1",
               "java_version": "25",
               "distribution": "ce",
               "components": [],
@@ -283,10 +283,10 @@
         ]
       }
     },
-    "@@rules_graalvm+//internal:cc_shim.bzl%cc_shim_extension": {
+    "@@rules_graalvm+//internal:cc_shim_extensions.bzl%cc_shim_extension": {
       "general": {
-        "bzlTransitiveDigest": "K0JgeM0rbPx7kkmGU4t0QMFe9cya2aOzJTHQeN2AB5U=",
-        "usagesDigest": "NVpBb5IQRuBV0Y0vPmLCvLused3w3rswVyPndzZclqc=",
+        "bzlTransitiveDigest": "QZZfMlmz9c8jevjMKhv2Qo+N/CDOgPpNxtsCt5TZH/c=",
+        "usagesDigest": "DM9hSk8jMpJTU27XCnpMXd76b0p1pdyU0CbCliylelM=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},

@@ -188,7 +188,7 @@
     },
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "gAo0d2Vd8bkWqOyQE+zF0s368WjT2P80/SDj0Y+c1HA=",
+        "bzlTransitiveDigest": "tCG94R+VtyKGZHgYAr4YB0kNNiO9zzDxE65Ng6X4IqU=",
         "usagesDigest": "ZO/vaMbH7jLiqhDJVBVEoLaDrAHmilZyDMZzHSrb4xw=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},

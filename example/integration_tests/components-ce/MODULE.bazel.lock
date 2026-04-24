@@ -14,7 +14,7 @@
   },
   "localOverrideHashes": {
     "bazel_tools": "922ea6752dc9105de5af957f7a99a6933c0a6a712d23df6aad16a9c399f7e787",
-    "rules_graalvm": "2998234238aa9c432cef2a725b2d928eefed4e879ba838b9fcfc843ada990ea6"
+    "rules_graalvm": "fcf15dc9aee57ec77899e7eb40db4ca730bba085d57e57657756e28fe10cae50"
   },
   "moduleDepGraph": {
     "<root>": {
@@ -201,7 +201,7 @@
       "toolchainsToRegister": [],
       "extensionUsages": [
         {
-          "extensionBzlFile": "@rules_graalvm//internal:cc_shim.bzl",
+          "extensionBzlFile": "@rules_graalvm//internal:cc_shim_extensions.bzl",
           "extensionName": "cc_shim_extension",
           "usingModule": "rules_graalvm@_",
           "location": {
@@ -1067,7 +1067,7 @@
     },
     "@@rules_graalvm~override//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "gAo0d2Vd8bkWqOyQE+zF0s368WjT2P80/SDj0Y+c1HA=",
+        "bzlTransitiveDigest": "tCG94R+VtyKGZHgYAr4YB0kNNiO9zzDxE65Ng6X4IqU=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -1099,9 +1099,9 @@
         }
       }
     },
-    "@@rules_graalvm~override//internal:cc_shim.bzl%cc_shim_extension": {
+    "@@rules_graalvm~override//internal:cc_shim_extensions.bzl%cc_shim_extension": {
       "general": {
-        "bzlTransitiveDigest": "K0JgeM0rbPx7kkmGU4t0QMFe9cya2aOzJTHQeN2AB5U=",
+        "bzlTransitiveDigest": "QZZfMlmz9c8jevjMKhv2Qo+N/CDOgPpNxtsCt5TZH/c=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {

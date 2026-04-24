@@ -199,8 +199,8 @@
   "moduleExtensions": {
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "KD3TGWyzmHxybxEWB4Z/ft/ylOrPvEJCukAWGjxN6Eo=",
-        "usagesDigest": "Fk8ar5QyLYMJzoxYaOm49LTeTAGVJvuYdbKC2qvklg8=",
+        "bzlTransitiveDigest": "tCG94R+VtyKGZHgYAr4YB0kNNiO9zzDxE65Ng6X4IqU=",
+        "usagesDigest": "X+pGTvpdQ9YmYXvIewrxBcy12i1ymG0apaArEaSTedk=",
         "recordedInputs": [
           "REPO_MAPPING:rules_graalvm+,bazel_skylib bazel_skylib+"
         ],
@@ -238,7 +238,8 @@
                 "linux-aarch64": "graalvm-25.1.0-dev+10.1",
                 "macos-aarch64": "graalvm-25.1.0-dev+10.1/Contents/Home",
                 "windows-x64": "graalvm-25.1.0-dev+10.1"
-              }
+              },
+              "maven_resource_bundle": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/maven-resource-bundle-25.1.0-ea.23.zip"
             }
           }
         }

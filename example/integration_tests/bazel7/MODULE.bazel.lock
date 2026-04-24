@@ -14,7 +14,7 @@
   },
   "localOverrideHashes": {
     "bazel_tools": "922ea6752dc9105de5af957f7a99a6933c0a6a712d23df6aad16a9c399f7e787",
-    "rules_graalvm": "a9ec81dc7aef44bbf62f2145a5ae1bf02b7b05d1c20166219963230fbb34869e"
+    "rules_graalvm": "fcf15dc9aee57ec77899e7eb40db4ca730bba085d57e57657756e28fe10cae50"
   },
   "moduleDepGraph": {
     "<root>": {
@@ -1064,7 +1064,7 @@
     },
     "@@rules_graalvm~override//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "gAo0d2Vd8bkWqOyQE+zF0s368WjT2P80/SDj0Y+c1HA=",
+        "bzlTransitiveDigest": "tCG94R+VtyKGZHgYAr4YB0kNNiO9zzDxE65Ng6X4IqU=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
