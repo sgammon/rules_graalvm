@@ -281,7 +281,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "SeDpBbuLuRWrxpZ/3EU0eo0/mb0YAk543g0EfF67SDk=",
+        "bzlTransitiveDigest": "KD3TGWyzmHxybxEWB4Z/ft/ylOrPvEJCukAWGjxN6Eo=",
         "usagesDigest": "pKj65Qb9OHtY4/syhMnB7NBVWb5JzlRsDC4OgrnprMY=",
         "recordedInputs": [
           "REPO_MAPPING:,bazel_skylib bazel_skylib+"
