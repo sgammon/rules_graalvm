@@ -395,8 +395,10 @@ jobs:
           # Target is `libbase` (just the base layer), not `sample`, because consuming the
           # layer from the app hits an upstream mmap bug in GraalVM 25.0.2 (Size exceeds
           # Integer.MAX_VALUE, fixed in PR #13008 — expected in 25.0.3).
+          # Bare label form `sample:libbase` (no leading `//`) sidesteps Git Bash MSYS path
+          # mangling that collapses `//foo` → `/foo`.
           - label: Native Image Layers
-            target: "//sample:libbase"
+            target: "sample:libbase"
             action: build
             directory: "./example/integration_tests/layers"
             labs: true
@@ -406,15 +408,18 @@ jobs:
           # Exercises `url_per_platform` / `sha256_per_platform` / `strip_prefix_per_platform`
           # on `graalvm_repository` — the supported path for EA / nightly / dev builds.
           # Targets `mainjvm` (the Java binary) to keep the test fast: it forces the custom
-          # URL download and toolchain wiring without running native-image. Runs everywhere.
-          # GraalVM CE 25.0.2 does not ship a macos-x64 build, so Intel Macs would fail at
-          # repo fetch — acceptable since GitHub's macos-latest is Apple Silicon.
+          # URL download and toolchain wiring without running native-image.
+          # Skipped on macOS Intel (runner `macos-15-intel`) because the pinned URL set uses
+          # GraalVM CE 25.0.2 which does not ship a `macos-x64` build — the rule's per-platform
+          # URL check would fail at repo fetch with no matching entry for `macos-x64`.
+          # Bare label form `sample:mainjvm` (no leading `//`) sidesteps Git Bash MSYS path
+          # mangling that collapses `//foo` → `/foo` on Windows.
           - label: Custom URL
-            target: "//sample:mainjvm"
+            target: "sample:mainjvm"
             action: build
             directory: "./example/integration_tests/custom-url"
             labs: false
-            skip: false
+            skip: ${{ contains(inputs.runner, 'intel') }}
 
     steps:
       - name: Harden Runner
