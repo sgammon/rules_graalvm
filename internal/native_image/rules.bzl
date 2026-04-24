@@ -6,6 +6,10 @@ load(
 )
 load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
 load(
+    "//internal:argutil.bzl",
+    _experimental_args = "experimental_args",
+)
+load(
     "//internal/native_image:action_utils.bzl",
     _wrap_actions_for_graal = "wrap_actions_for_graal",
 )
@@ -29,10 +33,6 @@ load(
 load(
     "//internal/native_image:toolchain.bzl",
     _resolve_cc_toolchain = "resolve_cc_toolchain",
-)
-load(
-    "//internal:argutil.bzl",
-    _experimental_args = "experimental_args",
 )
 
 _BIN_POSTFIX_DYLIB = ".dylib"

@@ -2,7 +2,7 @@
 
 def experimental_args(args, added_args):
     """Gate a suite of experimental arguments.
-    
+
     Args:
         args: An Args object to which the arguments should be added.
         added_args: A list of arguments to add, which will be gated by the
@@ -15,7 +15,7 @@ def experimental_args(args, added_args):
 
 def hosted_setting(args, setting, activate):
     """Emit a hosted VM setting.
-    
+
     Args:
         args: An Args object to which the arguments should be added.
         setting: Name of the setting.
@@ -26,7 +26,7 @@ def hosted_setting(args, setting, activate):
 
 def runtime_setting(args, setting, activate):
     """Emit a runtime VM setting.
-    
+
     Args:
         args: An Args object to which the arguments should be added.
         setting: Name of the setting.
