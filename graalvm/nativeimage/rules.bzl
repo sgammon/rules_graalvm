@@ -96,6 +96,7 @@ def native_image(
         proxy_configuration = None,
         profiles = [],
         layers = [],
+        emit_intermediate_dir = False,
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -131,6 +132,7 @@ def native_image(
         resource_configuration: Resource configuration file. No default; optional.
         proxy_configuration: Proxy configuration file. No default; optional.
         layers: Parent GraalVM Native Image layer(s) to consume via `--layer-use`. Today accepts at most 1 entry. Entries must be `native_image_layer` targets.
+        emit_intermediate_dir: If True, preserve native-image's intermediate build directory as a TreeArtifact output (exposed via `OutputGroupInfo(intermediate_dir=...)`) and pass `-H:TempDirectory=<path>` to direct native-image to use it. Enables downstream rules (e.g., staticlib repackers) to consume the intermediate `<image>.o` file.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -162,5 +164,6 @@ def native_image(
         resource_configuration = resource_configuration,
         proxy_configuration = proxy_configuration,
         layers = layers,
+        emit_intermediate_dir = emit_intermediate_dir,
         **kwargs
     )

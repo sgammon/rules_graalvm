@@ -164,6 +164,11 @@ def assemble_layer_build_options(
     args.add(image_name, format = "-H:Name=%s")
     args.add(layer_tree.dirname, format = "-H:Path=%s")
 
+    # SBOM is not supported for layers. We must explicitly pass `--enable-sbom=false` to avoid a warning.
+    args.add("--enable-sbom=false")
+
+    args.add("-H:-UnlockExperimentalVMOptions")
+
     # Reuse the common builder for every non-output flag (classpath, reflection, resources,
     # compiler, optimization, extra_args, etc.).
     _configure_common_build_options(

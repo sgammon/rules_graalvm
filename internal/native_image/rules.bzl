@@ -30,6 +30,10 @@ load(
     "//internal/native_image:toolchain.bzl",
     _resolve_cc_toolchain = "resolve_cc_toolchain",
 )
+load(
+    "//internal:argutil.bzl",
+    _experimental_args = "experimental_args",
+)
 
 _BIN_POSTFIX_DYLIB = ".dylib"
 _BIN_POSTFIX_EXE = ".exe"
@@ -134,9 +138,20 @@ def _graal_binary_implementation(ctx):
         propagated = propagated,
     )
 
+    # Optional TreeArtifact output capturing native-image's intermediate build directory so
+    # downstream rules (e.g., staticlib repackers) can consume `<image>.o`.
+    intermediate_dir = None
+    if ctx.attr.emit_intermediate_dir:
+        intermediate_dir = ctx.actions.declare_directory(ctx.attr.name + ".ni_tmp")
+        _experimental_args(args, [
+            "-H:TempDirectory=%s" % intermediate_dir.path,
+        ])
+
     # `-H:LayerUse` is experimental in GraalVM 24+; unlock before emitting it. Only emit the
     # unlock and the flag when a parent layer is actually present.
+    unlocked = False
     if parent_infos:
+        unlocked = True
         args.add("-H:+UnlockExperimentalVMOptions")
 
     # Emit `-H:LayerUse=<ancestor.nil>` for every ancestor, oldest-first.
@@ -162,6 +177,10 @@ def _graal_binary_implementation(ctx):
         elif not is_windows:
             args.add("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s" % runtime_libs_dir)
 
+    # Must re-lock experimental options if we unlocked them.
+    if unlocked:
+        args.add("-H:-UnlockExperimentalVMOptions")
+
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
 
@@ -180,8 +199,11 @@ def _graal_binary_implementation(ctx):
         direct_inputs,
         transitive = transitive_inputs,
     )
+    outputs = [binary]
+    if intermediate_dir != None:
+        outputs.append(intermediate_dir)
     run_params = {
-        "outputs": [binary],
+        "outputs": outputs,
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImage",
@@ -236,15 +258,22 @@ def _graal_binary_implementation(ctx):
             ctx.actions.symlink(output = staged, target_file = ancestor_lib)
             staged_libs.append(staged)
 
-    return [DefaultInfo(
+    default_files = [binary] + staged_libs
+    if intermediate_dir != None:
+        default_files.append(intermediate_dir)
+
+    providers = [DefaultInfo(
         executable = binary,
-        files = depset([binary] + staged_libs),
+        files = depset(default_files),
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,
             files = staged_libs,
         ),
     )]
+    if intermediate_dir != None:
+        providers.append(OutputGroupInfo(intermediate_dir = depset([intermediate_dir])))
+    return providers
 
 # Exports.
 RULES_REPO = _RULES_REPO

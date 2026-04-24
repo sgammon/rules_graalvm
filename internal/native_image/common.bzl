@@ -118,6 +118,14 @@ _NATIVE_IMAGE_ATTRS = {
     "executable_name": attr.string(
         mandatory = True,
     ),
+    "emit_intermediate_dir": attr.bool(
+        doc = "If True, declare a TreeArtifact and pass `-H:TempDirectory=<path>` so the " +
+              "intermediate build directory (containing `<image>.o` etc.) is preserved as a " +
+              "declared output. Used by downstream rules that need to repack native-image " +
+              "object files into a static library.",
+        mandatory = False,
+        default = False,
+    ),
     "profiles": attr.label_list(
         allow_files = True,
         mandatory = False,

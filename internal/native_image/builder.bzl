@@ -1,6 +1,10 @@
 "Logic to assemble `native-image` options."
 
 load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
+load(
+    "//internal:argutil.bzl",
+    _experimental_args = "experimental_args",
+)
 
 def _configure_static_zlib_compile(ctx, args, direct_inputs):
     """Configure a static image compile against hermetic/static zlib.
@@ -65,8 +69,8 @@ def _configure_proxy(ctx, args, direct_inputs):
 
 def _configure_resources(ctx, args, direct_inputs):
     """Configure resource settings for a Native Image build."""
-    if ctx.attr.include_resources != None:
-        args.add(ctx.attr.include_resources, format = "-H:IncludeResources=%s")
+    if ctx.attr.include_resources != None and ctx.attr.include_resources != "":
+        _experimental_args(args, ["-H:IncludeResources=%s" % ctx.attr.include_resources])
 
     if ctx.attr.resource_configuration != None:
         args.add(ctx.file.resource_configuration, format = "-H:ResourceConfigurationFiles=%s")
@@ -152,10 +156,11 @@ def _configure_output_mode(ctx, args, binary, bin_postfix):
     if bin_postfix:
         trimmed_basename = trimmed_basename[0:-(len(bin_postfix))]
 
-    args.add(ctx.attr.main_class, format = "-H:Class=%s")
-    args.add(trimmed_basename, format = "-H:Name=%s")
-    args.add(binary.dirname, format = "-H:Path=%s")
-
+    _experimental_args(args, [
+        "-H:Class=%s" % ctx.attr.main_class,
+        "-H:Name=%s" % trimmed_basename,
+        "-H:Path=%s" % binary.dirname,
+    ])
     if ctx.files.profiles:
         args.add_joined(
             ctx.files.profiles,
@@ -187,13 +192,10 @@ def _configure_common_build_options(
             this rule's values.
     """
 
-    if not ctx.attr.allow_fallback:
-        args.add("--no-fallback")
-
     args.add("-H:+ReportExceptionStackTraces")
 
     if not ctx.attr.check_toolchains:
-        args.add("-H:-CheckToolchain")
+        _experimental_args(args, ["-H:-CheckToolchain"])
 
     # assemble classpath
     args.add_joined(
