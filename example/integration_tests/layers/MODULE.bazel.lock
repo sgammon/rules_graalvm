@@ -199,8 +199,8 @@
   "moduleExtensions": {
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "gAo0d2Vd8bkWqOyQE+zF0s368WjT2P80/SDj0Y+c1HA=",
-        "usagesDigest": "/UtElHxVahvpwXYrYVbhOK0bLCnq5R/k4IHYtZmaNwo=",
+        "bzlTransitiveDigest": "KD3TGWyzmHxybxEWB4Z/ft/ylOrPvEJCukAWGjxN6Eo=",
+        "usagesDigest": "Fk8ar5QyLYMJzoxYaOm49LTeTAGVJvuYdbKC2qvklg8=",
         "recordedInputs": [
           "REPO_MAPPING:rules_graalvm+,bazel_skylib bazel_skylib+"
         ],
@@ -214,13 +214,31 @@
           "graalvm": {
             "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
             "attributes": {
-              "version": "25.0.2",
+              "version": "25.1.0-dev+10.1",
               "java_version": "25",
               "distribution": "oracle",
               "components": [],
               "setup_actions": [],
               "enable_toolchain": true,
-              "toolchain_config": "graalvm_toolchains"
+              "toolchain_config": "graalvm_toolchains",
+              "url_per_platform": {
+                "linux-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-x64_bin.tar.gz",
+                "linux-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-aarch64_bin.tar.gz",
+                "macos-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_macos-aarch64_bin.tar.gz",
+                "windows-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_windows-x64_bin.zip"
+              },
+              "sha256_per_platform": {
+                "linux-x64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "linux-aarch64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "macos-aarch64": "0a534f83c039c852cf1511d9f4aa5ee0509cf95a473e70d9a61cff9735315d2a",
+                "windows-x64": "b77632236ad440b7c4e46bad608052d39d20f5e0a0932d008a183e031ef98bbc"
+              },
+              "strip_prefix_per_platform": {
+                "linux-x64": "graalvm-25.1.0-dev+10.1",
+                "linux-aarch64": "graalvm-25.1.0-dev+10.1",
+                "macos-aarch64": "graalvm-25.1.0-dev+10.1/Contents/Home",
+                "windows-x64": "graalvm-25.1.0-dev+10.1"
+              }
             }
           }
         }
