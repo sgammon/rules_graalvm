@@ -20,11 +20,15 @@ local_path_override(
 
 gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
 
+_GRAALVM_VERSION = "25.1.0"
+
 _GRAALVM_VERSION_MAJOR = "25.0.2"
 
-_GRAALVM_EA_VERSION = "%s-ea.23" % _GRAALVM_VERSION_MAJOR
+_GRAALVM_EA_RELEASE_NUMBER = "23"
 
-_GRAALVM_INNER_VERSION = "25.1.0-dev+10.1"
+_GRAALVM_EA_VERSION = "%s-ea.%s" % (_GRAALVM_VERSION_MAJOR, _GRAALVM_EA_RELEASE_NUMBER)
+
+_GRAALVM_INNER_VERSION = "%s-dev+10.1" % _GRAALVM_VERSION
 
 _GRAALVM_URL_BASE = "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-%s" % _GRAALVM_EA_VERSION
 
@@ -35,6 +39,7 @@ gvm.graalvm(
     distribution = "oracle",
     java_version = "25",
     version = _GRAALVM_INNER_VERSION,
+    maven_resource_bundle = "%/maven-resource-bundle-%s-ea.%s.zip" % (_GRAALVM_URL_BASE, _GRAALVM_VERSION, _GRAALVM_EA_RELEASE_NUMBER),
     url_per_platform = {
         "linux-x64": "%s/graalvm-jdk-25e1-%s_linux-x64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
         "linux-aarch64": "%s/graalvm-jdk-25e1-%s_linux-aarch64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),

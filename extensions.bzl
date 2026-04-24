@@ -52,6 +52,8 @@ def _gvm_impl(mctx):
             kwargs["sha256_per_platform"] = dict(selected.sha256_per_platform)
         if selected.strip_prefix_per_platform:
             kwargs["strip_prefix_per_platform"] = dict(selected.strip_prefix_per_platform)
+        if selected.maven_resource_bundle:
+            kwargs["maven_resource_bundle"] = selected.maven_resource_bundle
 
         graalvm_repository(**kwargs)
 
@@ -90,6 +92,10 @@ _graalvm = tag_class(attrs = {
     "strip_prefix_per_platform": attr.string_dict(
         mandatory = False,
         doc = "Per-platform strip prefixes, same keys as `url_per_platform`.",
+    ),
+    "maven_resource_bundle": attr.string(
+        mandatory = False,
+        doc = "Optional URL of a GraalVM Maven resource bundle. Only valid with `url` / `urls` / `url_per_platform`. Currently inert; recorded for future wiring.",
     ),
 })
 

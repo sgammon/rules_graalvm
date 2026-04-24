@@ -207,12 +207,20 @@ def _detect_older_gvm_version(ctx):
 def _graal_bindist_repository_impl(ctx):
     """Implements the GraalVM repository rule (`graalvm_repository`)."""
 
+    _is_custom_url = bool(ctx.attr.url or ctx.attr.urls or ctx.attr.url_per_platform)
+
+    # `maven_resource_bundle` is only meaningful for custom-URL toolchains; a map-resolved
+    # distribution already knows its own Maven coordinates.
+    if ctx.attr.maven_resource_bundle and not _is_custom_url:
+        fail("`maven_resource_bundle` is only valid when a custom toolchain URL is set " +
+             "(`url`, `urls`, or `url_per_platform`). Remove it, or switch to a custom URL.")
+
     # Custom URL / EA path: bypass the bindist map entirely. Used for Early Adopter / nightly /
     # dev builds whose URL is not yet known to the rules. The user supplies a URL (via `url`,
     # `urls`, or `url_per_platform`), `sha256` (or `sha256_per_platform`), and `strip_prefix`
     # (or `strip_prefix_per_platform`); the rule downloads that archive and wires it up the
     # same way as a map-resolved distribution.
-    if ctx.attr.url or ctx.attr.urls or ctx.attr.url_per_platform:
+    if _is_custom_url:
         platform, os, archive = _get_platform(ctx, True)
         version = ctx.attr.version
         java_version = ctx.attr.java_version
@@ -245,6 +253,12 @@ def _graal_bindist_repository_impl(ctx):
         for candidate in urls:
             if not (candidate.startswith("http://") or candidate.startswith("https://")):
                 fail("not a url: %r (expected http:// or https://)" % candidate)
+
+        # Accept hashes with a leading "sha256:" multihash/OCI-style prefix — common when
+        # pasting from OCI manifests or `sha256sum --tag` output. Strip it so Bazel's
+        # downloader sees the bare hex digest it expects.
+        if sha256 and sha256.startswith("sha256:"):
+            sha256 = sha256[len("sha256:"):]
 
         if not sha256:
             # buildifier: disable=print
@@ -829,6 +843,21 @@ Per-platform archive-internal prefixes, keyed by the same platform tags as `url_
 Useful when the same distribution packages its archives differently across platforms (for
 example, macOS archives that include a `Contents/Home` bundle wrapper). Missing entries fall
 back to the top-level `strip_prefix` attr.
+""",
+        ),
+        "maven_resource_bundle": attr.string(
+            mandatory = False,
+            doc = """
+Optional URL pointing to a GraalVM Maven resource bundle to associate with a custom toolchain.
+
+**Only valid with a custom URL** — that is, when `url`, `urls`, or `url_per_platform` is set.
+A map-resolved distribution already carries its own Maven coordinates, so passing this attr
+without a custom URL fails at analysis time with a clear diagnostic.
+
+**Currently inert:** the rule accepts and records the value but does nothing with it yet. This
+is a forward-compatible placeholder for a future feature that will resolve GraalVM components
+from a published Maven bundle. Setting it today (with a custom URL) is harmless; tooling that
+later wires this up will read the attribute without a rule-surface change.
 """,
         ),
     },
