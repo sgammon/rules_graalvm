@@ -3,6 +3,6 @@ load("@rules_java//java:defs.bzl", "java_library")
 java_library(
     name = "exe",
     srcs = ["Main.java"],
-    deps = ["//sample/base"],
     visibility = ["//visibility:public"],
+    deps = ["//sample/base"],
 )

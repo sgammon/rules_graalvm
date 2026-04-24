@@ -9,8 +9,8 @@ ENTRY = "exe.Main"
 
 native_image_layer(
     name = "libbase",
-    deps = ["//sample/base"],
     directives = ["package=base"],
+    deps = ["//sample/base"],
 )
 
 java_binary(
@@ -21,9 +21,9 @@ java_binary(
 
 native_image(
     name = "main",
+    layers = [":libbase"],
     main_class = ENTRY,
     deps = ["//sample/exe"],
-    layers = [":libbase"],
 )
 
 alias(

@@ -38,14 +38,7 @@ gvm.graalvm(
     name = "graalvm",
     distribution = "oracle",
     java_version = "25",
-    version = _GRAALVM_INNER_VERSION,
     maven_resource_bundle = "%s/maven-resource-bundle-%s-ea.%s.zip" % (_GRAALVM_URL_BASE, _GRAALVM_VERSION, _GRAALVM_EA_RELEASE_NUMBER),
-    url_per_platform = {
-        "linux-x64": "%s/graalvm-jdk-25e1-%s_linux-x64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
-        "linux-aarch64": "%s/graalvm-jdk-25e1-%s_linux-aarch64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
-        "macos-aarch64": "%s/graalvm-jdk-25e1-%s_macos-aarch64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
-        "windows-x64": "%s/graalvm-jdk-25e1-%s_windows-x64_bin.zip" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
-    },
     sha256_per_platform = {
         "linux-x64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
         "linux-aarch64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
@@ -58,8 +51,14 @@ gvm.graalvm(
         "macos-aarch64": "%s/Contents/Home" % _GRAALVM_ROOT_PREFIX,
         "windows-x64": _GRAALVM_ROOT_PREFIX,
     },
+    url_per_platform = {
+        "linux-x64": "%s/graalvm-jdk-25e1-%s_linux-x64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
+        "linux-aarch64": "%s/graalvm-jdk-25e1-%s_linux-aarch64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
+        "macos-aarch64": "%s/graalvm-jdk-25e1-%s_macos-aarch64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
+        "windows-x64": "%s/graalvm-jdk-25e1-%s_windows-x64_bin.zip" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
+    },
+    version = _GRAALVM_INNER_VERSION,
 )
-
 use_repo(
     gvm,
     "graalvm",
