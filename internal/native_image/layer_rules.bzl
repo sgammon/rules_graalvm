@@ -33,6 +33,12 @@ load(
 # independent and always on — SVM's compat check requires them.
 _LAYER_AUTO_PROPAGATE = True
 
+# Platform-specific shared-library filename extension that native-image emits alongside the
+# `.nil` when building a layer. On Linux it's `.so`, macOS `.dylib`, Windows `.dll`.
+_SHARED_LIB_EXT_LINUX = ".so"
+_SHARED_LIB_EXT_MACOS = ".dylib"
+_SHARED_LIB_EXT_WINDOWS = ".dll"
+
 def _graal_layer_implementation(ctx):
     graal_attr = ctx.executable.native_image_tool
 
@@ -89,6 +95,17 @@ def _graal_layer_implementation(ctx):
     # switch to `declare_directory` here.
     layer_tree = ctx.actions.declare_file(ctx.attr.name + ".nil")
 
+    # The layer build also emits a platform-native shared library next to the `.nil`. Consumers
+    # need this at *runtime* (the application binary is NEEDED-linked against it), so we declare
+    # it as a tracked output and expose it on the provider.
+    if is_macos:
+        shared_lib_ext = _SHARED_LIB_EXT_MACOS
+    elif is_windows:
+        shared_lib_ext = _SHARED_LIB_EXT_WINDOWS
+    else:
+        shared_lib_ext = _SHARED_LIB_EXT_LINUX
+    layer_shared_lib = ctx.actions.declare_file(ctx.attr.name + shared_lib_ext)
+
     path_list_separator = ";" if is_windows else ":"
 
     args = ctx.actions.args().use_param_file("@%s", use_always = False)
@@ -117,7 +134,7 @@ def _graal_layer_implementation(ctx):
     inputs = depset(direct_inputs, transitive = transitive_inputs)
 
     run_params = {
-        "outputs": [layer_tree],
+        "outputs": [layer_tree, layer_shared_lib],
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImageLayer",
@@ -157,6 +174,10 @@ def _graal_layer_implementation(ctx):
         direct = [layer_tree],
         transitive = [p.transitive_layer_files for p in parent_infos],
     )
+    transitive_shared_libs = depset(
+        direct = [layer_shared_lib],
+        transitive = [p.transitive_shared_libs for p in parent_infos],
+    )
 
     merged_propagated = struct(
         initialize_at_build_time = list(propagated.initialize_at_build_time) + list(ctx.attr.initialize_at_build_time),
@@ -167,14 +188,16 @@ def _graal_layer_implementation(ctx):
 
     return [
         DefaultInfo(
-            files = depset([layer_tree]),
-            runfiles = ctx.runfiles(files = [layer_tree]),
+            files = depset([layer_tree, layer_shared_lib]),
+            runfiles = ctx.runfiles(files = [layer_tree, layer_shared_lib]),
         ),
         NativeImageLayerInfo(
             layer_file = layer_tree,
+            shared_lib = layer_shared_lib,
             classpath_depset = classpath_depset,
             propagated_args = merged_propagated,
             transitive_layer_files = transitive_layer_files,
+            transitive_shared_libs = transitive_shared_libs,
         ),
     ]
 

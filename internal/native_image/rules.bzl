@@ -144,6 +144,24 @@ def _graal_binary_implementation(ctx):
         for ancestor in parent.transitive_layer_files.to_list():
             args.add(ancestor.path, format = "-H:LayerUse=%s")
 
+    # Runtime linkage: the consumer binary is NEEDED-linked against each ancestor layer's shared
+    # library (e.g. `libbase.so`). At runtime the dynamic linker needs to find those libraries,
+    # so we:
+    #   (1) embed a per-target-unique relative RUNPATH in the binary, and
+    #   (2) stage a symlink of each ancestor `.so` at that relative path (below, after the
+    #       native-image action is set up).
+    # Symlinks are staged in a per-target subdirectory (`<target>.runtime_libs/`) rather than
+    # adjacent to the binary, so that a layer and its consumer may live in the same Bazel
+    # package without a declared-output collision on `libbase.so`.
+    # Windows uses a different DLL search rule (executable directory is the default), so the
+    # RPATH step is skipped there and only the staging step applies.
+    runtime_libs_dir = ctx.attr.name + ".runtime_libs"
+    if parent_infos:
+        if is_macos:
+            args.add("-H:NativeLinkerOption=-Wl,-rpath,@loader_path/%s" % runtime_libs_dir)
+        elif not is_windows:
+            args.add("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s" % runtime_libs_dir)
+
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
 
@@ -207,13 +225,24 @@ def _graal_binary_implementation(ctx):
             **run_params
         )
 
+    # Stage each ancestor layer's shared library into `<target>.runtime_libs/<libname>` so the
+    # dynamic linker can resolve it via the RPATH we embedded above. Symlinks are cheap (no
+    # copy cost); declaring each as an output makes Bazel include them in runfiles and default
+    # outputs automatically.
+    staged_libs = []
+    for parent in parent_infos:
+        for ancestor_lib in parent.transitive_shared_libs.to_list():
+            staged = ctx.actions.declare_file("%s/%s" % (runtime_libs_dir, ancestor_lib.basename))
+            ctx.actions.symlink(output = staged, target_file = ancestor_lib)
+            staged_libs.append(staged)
+
     return [DefaultInfo(
         executable = binary,
-        files = depset([binary]),
+        files = depset([binary] + staged_libs),
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,
-            files = [],
+            files = staged_libs,
         ),
     )]
 
