@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "graal_isolate.h"
-#include "sharedapi.h"
+#include "libsharedapi.h"
 
 int main(void) {
     graal_isolate_t *isolate = NULL;

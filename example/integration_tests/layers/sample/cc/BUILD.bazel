@@ -5,6 +5,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 native_image(
     name = "libsharedapi",
     shared_library = True,
+    executable_name = "libsharedapi",  # avoid the default %target%-bin suffix; gives clean libsharedapi.so + libsharedapi.h
     deps = ["//sample/api"],
 )
 

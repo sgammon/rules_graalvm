@@ -105,7 +105,12 @@ def build_shared_library_cc_info(ctx, binary, declared_headers):
 
     compilation_context = cc_common.create_compilation_context(
         headers = depset(staged_headers),
+        # quote_includes adds -iquote (for #include "...") and includes adds -I
+        # (for #include <...>). Both are needed: consumer.c uses quote-includes for
+        # the top-level headers, but NI's emitted per-image header itself uses
+        # angle-bracket includes for graal_isolate.h, which only resolves via -I.
         quote_includes = depset([quote_dir]) if quote_dir else depset([]),
+        includes = depset([quote_dir]) if quote_dir else depset([]),
     )
 
     # Link context: surface the `.so` as a dynamic library so consumers' link
