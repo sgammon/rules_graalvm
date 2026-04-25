@@ -21,3 +21,19 @@ sh_test(
     args = ["$(rootpath :shared_consumer)"],
     data = [":shared_consumer"],
 )
+
+cc_binary(
+    name = "dedup_consumer",
+    srcs = ["dedup_consumer.c"],
+    deps = [
+        ":libsharedapi",
+        "//sample/cc2:libsharedapi2",
+    ],
+)
+
+sh_test(
+    name = "dedup_roundtrip_test",
+    srcs = ["run_dedup.sh"],
+    args = ["$(rootpath :dedup_consumer)"],
+    data = [":dedup_consumer"],
+)
