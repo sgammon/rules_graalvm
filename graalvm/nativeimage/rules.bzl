@@ -146,7 +146,8 @@ def native_image(
     if extra_headers and not shared_library:
         fail(
             ("`extra_headers` is only valid when `shared_library = True` " +
-             "(target '%s' has shared_library=%s and extra_headers=%s).") % (
+             "(target '%s' has shared_library=%s and extra_headers=%s). " +
+             "Set `shared_library = True` or remove `extra_headers`.") % (
                 name,
                 shared_library,
                 extra_headers,
