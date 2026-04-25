@@ -115,6 +115,39 @@ _NATIVE_IMAGE_ATTRS = {
     "c_compiler_option": attr.string_list(
         mandatory = False,
     ),
+    "native_linker_option": attr.string_list(
+        doc = "Extra linker options to forward via `-H:NativeLinkerOption=<value>`. Each list " +
+              "entry produces one flag. Use this for `-Wl,...` directives or explicit `-l<name>` " +
+              "entries; for static archives produced by `cc_library` targets, prefer `cc_deps` " +
+              "which stages the archive as an input automatically.",
+        mandatory = False,
+    ),
+    "cc_deps": attr.label_list(
+        doc = "C/C++ static-archive deps to link into the produced binary or layer. Each entry " +
+              "must provide `CcInfo`; the rule extracts the static library from each (preferring " +
+              "PIC over non-PIC), stages it as a direct action input, and emits a matching " +
+              "`-H:NativeLinkerOption=<archive-path>` so native-image's linker invocation pulls " +
+              "it in. Use this to satisfy `@CFunction` / JNI references defined in companion " +
+              "Rust / C / C++ libraries (typical `rust_static_library` outputs surface CcInfo).",
+        providers = [[cc_shim.CcInfo]],
+        mandatory = False,
+    ),
+    "cc_deps_dynamic": attr.label_list(
+        doc = "C/C++ dynamic-library deps (`.so`/`.dylib`/`.dll`) to link into the produced " +
+              "binary or layer at native-image link time and resolve at runtime. Each entry " +
+              "must provide `CcInfo`; the rule walks each linker input, picks the dynamic " +
+              "library (`library.dynamic_library`, falling back to " +
+              "`library.resolved_symlink_dynamic_library` when set — that's how `rules_cc` " +
+              "surfaces unversioned `.so` names), and stages it adjacent to the produced " +
+              "binary under a per-target `<target>.runtime_libs/` subdirectory. Native-image " +
+              "is given `-L<staged-dir>` plus `-l<libname>` so ld performs normal SONAME " +
+              "resolution; on Linux/macOS an `RPATH` of `$ORIGIN`/`@loader_path` is also " +
+              "emitted (Windows uses the executable directory by default, so RPATH is " +
+              "skipped). Use this for dynamic-image variants where the consumer expects a " +
+              "runtime-loaded shared library, not a statically linked archive.",
+        providers = [[cc_shim.CcInfo]],
+        mandatory = False,
+    ),
     "extra_headers": attr.string_list(
         doc = "Additional header filenames Native Image is expected to emit alongside the " +
               "shared library when `shared_library = True`. Each entry is a basename (no " +

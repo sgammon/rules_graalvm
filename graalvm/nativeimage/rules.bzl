@@ -86,6 +86,9 @@ def native_image(
         shared_library = None,
         static_zlib = None,
         c_compiler_option = [],
+        native_linker_option = [],
+        cc_deps = [],
+        cc_deps_dynamic = [],
         extra_headers = [],
         data = [],
         extra_args = [],
@@ -123,6 +126,9 @@ def native_image(
             On Linux, this is used when Graal statically links zlib into the binary, e.g. with
             `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
+        native_linker_option: Extra linker options forwarded as `-H:NativeLinkerOption=<value>`. Each entry produces one flag; use for `-Wl,...` directives or explicit `-l<name>`. No default; optional.
+        cc_deps: `cc_library` / `cc_import` targets whose static archives should be linked into the produced image. The rule extracts each archive (preferring PIC), stages it as an action input, and emits a matching `-H:NativeLinkerOption=<archive>` flag. Use this to satisfy `@CFunction` / JNI references defined in companion Rust / C / C++ libraries. No default; optional.
+        cc_deps_dynamic: `cc_library` / `cc_import` targets whose dynamic libraries (`.so` / `.dylib` / `.dll`) should be linked into the produced binary at native-image link time and resolved at runtime. Each dep's dynamic library is staged adjacent to the binary under `<target>.runtime_libs/`, and on Linux/macOS an RPATH (`$ORIGIN` / `@loader_path`) is embedded so the loader finds it without environment setup. Use this for dynamic-image variants where the consumer expects a runtime-loaded shared library, not a statically linked archive. No default; optional.
         extra_headers: Additional header filenames Native Image is expected to emit alongside
             the shared library. Only valid when `shared_library = True`. Each entry is a basename
             and is declared as an output of the native-image action; the rule surfaces it via
@@ -172,6 +178,9 @@ def native_image(
         check_toolchains = check_toolchains,
         static_zlib = static_zlib,
         c_compiler_option = c_compiler_option,
+        native_linker_option = native_linker_option,
+        cc_deps = cc_deps,
+        cc_deps_dynamic = cc_deps_dynamic,
         extra_headers = extra_headers,
         allow_fallback = allow_fallback,
         executable_name = executable_name,

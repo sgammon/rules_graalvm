@@ -136,6 +136,178 @@ def _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain):
         format_each = "-H:CCompilerOption=%s",
     )
 
+    # add explicit linker options (string-form, e.g. `-Wl,...` directives or `-l<name>`)
+    if hasattr(ctx.attr, "native_linker_option"):
+        args.add_all(
+            ctx.attr.native_linker_option,
+            format_each = "-H:NativeLinkerOption=%s",
+        )
+
+def _configure_cc_deps(ctx, args, direct_inputs):
+    """Stage `cc_deps` static archives as inputs and emit linker flags for each.
+
+    Bazel-side paths for action inputs are execroot-relative (`bazel-out/...`). Native-image
+    spawns its C toolchain (ld / gcc) with a CWD that differs from the Bazel execroot — its
+    own temporary build directory — so a raw execroot-relative path handed to ld does not
+    resolve. This mirrors the behavior seen in `static_zlib` handling.
+
+    To work around that, we:
+      1. Symlink each static archive into a per-target subdir (`<target>_cc_deps/`) so the
+         layer / native_image target owns the staged files and has no path collision when it
+         lives in the same Bazel package as the cc_library producing the archive.
+      2. Emit one `-H:CLibraryPath=<subdir>` — native-image resolves this to an absolute path
+         before forwarding to the C toolchain as `-L<abs-path>`, so ld sees a valid search
+         directory regardless of where it happens to chdir.
+      3. Emit `-H:NativeLinkerOption=-l:<filename>` for each archive, which tells GNU ld to
+         link that exact file from the search path (bypasses ld's default `lib<name>.{so,a}`
+         resolution order).
+    """
+    if not hasattr(ctx.attr, "cc_deps") or not ctx.attr.cc_deps:
+        return
+
+    archives = []
+    for dep in ctx.attr.cc_deps:
+        linking_context = dep[cc_shim.CcInfo].linking_context
+        if linking_context == None:
+            continue
+        linker_inputs = linking_context.linker_inputs.to_list()
+        for linker_input in linker_inputs:
+            libraries = linker_input.libraries
+            if type(libraries) == type(depset([])):
+                libraries = libraries.to_list()
+            for library in libraries:
+                archive = library.pic_static_library or library.static_library
+                if archive == None:
+                    # Pre-built dynamic-only entries (a cc_import without a static member)
+                    # are skipped — they would need separate wiring via `native_linker_option`
+                    # with `-L` / `-l` flags plus runfiles setup for the `.so`.
+                    continue
+                archives.append(archive)
+
+    if not archives:
+        return
+
+    staged_dir_name = ctx.attr.name + "_cc_deps"
+    search_dir = None
+    for archive in archives:
+        staged = ctx.actions.declare_file("%s/%s" % (staged_dir_name, archive.basename))
+        ctx.actions.symlink(output = staged, target_file = archive)
+        direct_inputs.append(staged)
+
+        # Deduplicate basenames at the search-path level: if two archives have the same
+        # filename (e.g. two `libfoo.a` from different cc_library targets), the second
+        # `declare_file` call would collide. `declare_file` already fails loudly in that
+        # case, so we don't need to guard here — but it is worth calling out.
+        if search_dir == None:
+            search_dir = staged.dirname
+
+        # Note: emit one -l:<filename> per archive. Using `-l:foo.a` rather than `-lfoo`
+        # forces ld to pick this exact file, not lib<name>.so if both happen to be on the
+        # search path. All archives share the same search_dir (staged subdir), so a single
+        # -H:CLibraryPath entry below covers them.
+        args.add(archive.basename, format = "-H:NativeLinkerOption=-l:%s")
+
+    if search_dir != None:
+        args.add(search_dir, format = "-H:CLibraryPath=%s")
+
+def _libname_from_dynamic(filename):
+    """Strip the `lib` prefix and the platform-specific shared-library suffix from `filename`.
+
+    Bazel's `library.dynamic_library` / `resolved_symlink_dynamic_library` exposes the basename
+    in the canonical `lib<name>.{so,dylib}` form (or `<name>.dll` on Windows). We feed
+    `<name>` to ld via `-l<name>` so it performs normal SONAME resolution against the staged
+    search directory. This intentionally differs from `cc_deps` (static), which uses the
+    `-l:<filename>` form to force exact-file linkage.
+    """
+
+    # Linux versioned `.so.N.M` is unusual for `cc_library` outputs and would need a more
+    # involved strip; we emit the basename as-is in that case so the failure surfaces at
+    # link time rather than silently producing a wrong `-l` flag.
+    base = filename
+    suffixes = (".so", ".dylib", ".dll")
+    for suffix in suffixes:
+        if base.endswith(suffix):
+            base = base[:-len(suffix)]
+            break
+    if base.startswith("lib"):
+        base = base[len("lib"):]
+    return base
+
+def _configure_cc_deps_dynamic(ctx, args, direct_inputs, runtime_libs_dir):
+    """Stage `cc_deps_dynamic` shared libraries adjacent to the produced binary.
+
+    For each dep, walk `linking_context.linker_inputs.libraries`, select a dynamic library
+    (`library.dynamic_library`, falling back to `library.resolved_symlink_dynamic_library` —
+    `rules_cc` surfaces the unversioned `.so` name there when the canonical artifact is the
+    versioned variant), and symlink it into a per-target `<runtime_libs_dir>/` subdirectory.
+
+    Emits one `-H:CLibraryPath=<staged-dir>` (native-image resolves to an absolute path before
+    forwarding to ld, mirroring the `cc_deps` trick — ld's CWD differs from the Bazel execroot
+    when native-image spawns it). Per-library: `-H:NativeLinkerOption=-L<staged-dir>` plus
+    `-H:NativeLinkerOption=-l<libname>` (NOT the `-l:filename` form — dynamic linkage allows ld
+    to find the SONAME, so we let it do its normal `lib<name>.{so,dylib}` resolution).
+
+    Returns:
+        A list of declared `File`s representing the staged dynamic libraries. Callers should
+        merge these into the rule's `DefaultInfo.files` and `ctx.runfiles(files=...)` so
+        `bazel build` materializes them and `bazel run` resolves them at runtime via the
+        embedded `RPATH` (set up separately by the consuming rule).
+    """
+    if not hasattr(ctx.attr, "cc_deps_dynamic") or not ctx.attr.cc_deps_dynamic:
+        return []
+
+    dynamic_libs = []
+    for dep in ctx.attr.cc_deps_dynamic:
+        linking_context = dep[cc_shim.CcInfo].linking_context
+        if linking_context == None:
+            continue
+        linker_inputs = linking_context.linker_inputs.to_list()
+        for linker_input in linker_inputs:
+            libraries = linker_input.libraries
+            if type(libraries) == type(depset([])):
+                libraries = libraries.to_list()
+            for library in libraries:
+                # Prefer the canonical dynamic_library; fall back to the resolved symlink (which
+                # rules_cc populates with the unversioned `.so` form when the canonical entry is
+                # versioned, e.g. `libfoo.so.1.2`).
+                dyn = library.dynamic_library
+                resolved = getattr(library, "resolved_symlink_dynamic_library", None)
+                if resolved != None:
+                    dyn = resolved
+                if dyn == None:
+                    # Static-only entry — caller probably wanted `cc_deps` instead. Skip rather
+                    # than fail; the link will fail later if a needed symbol is missing.
+                    continue
+                dynamic_libs.append(dyn)
+
+    if not dynamic_libs:
+        return []
+
+    # Dedupe by basename — two deps surfacing the same `.so` (e.g. one declared directly, one
+    # transitively) would otherwise collide on `declare_file`. First-wins.
+    seen_basenames = {}
+    staged_libs = []
+    search_dir = None
+    for dyn in dynamic_libs:
+        if dyn.basename in seen_basenames:
+            continue
+        seen_basenames[dyn.basename] = True
+        staged = ctx.actions.declare_file("%s/%s" % (runtime_libs_dir, dyn.basename))
+        ctx.actions.symlink(output = staged, target_file = dyn)
+        direct_inputs.append(staged)
+        staged_libs.append(staged)
+        if search_dir == None:
+            search_dir = staged.dirname
+
+        libname = _libname_from_dynamic(dyn.basename)
+        args.add(libname, format = "-H:NativeLinkerOption=-l%s")
+
+    if search_dir != None:
+        args.add(search_dir, format = "-H:CLibraryPath=%s")
+        args.add(search_dir, format = "-H:NativeLinkerOption=-L%s")
+
+    return staged_libs
+
 def _configure_native_test_flags(ctx, args):
     """Configure native testing flags; only applies if we are building a test-only target."""
     if ctx.attr.coverage:
@@ -227,6 +399,8 @@ def _configure_common_build_options(
     if ctx.attr.static_zlib != None:
         _configure_static_zlib_compile(ctx, args, direct_inputs)
 
+    _configure_cc_deps(ctx, args, direct_inputs)
+
     # `profiles` only exists on the executable (`native_image`) rule — guarded for layer rule.
     if hasattr(ctx.files, "profiles") and ctx.files.profiles:
         direct_inputs.extend(ctx.files.profiles)
@@ -294,3 +468,4 @@ def assemble_native_build_options(
 # Exports.
 configure_common_build_options = _configure_common_build_options
 configure_output_mode = _configure_output_mode
+configure_cc_deps_dynamic = _configure_cc_deps_dynamic

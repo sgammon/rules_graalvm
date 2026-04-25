@@ -14,6 +14,10 @@ load(
     _wrap_actions_for_graal = "wrap_actions_for_graal",
 )
 load(
+    "//internal/native_image:builder.bzl",
+    _configure_cc_deps_dynamic = "configure_cc_deps_dynamic",
+)
+load(
     "//internal/native_image:cc_info.bzl",
     _build_shared_library_cc_info = "build_shared_library_cc_info",
     _declare_shared_library_headers = "declare_shared_library_headers",
@@ -175,16 +179,67 @@ def _graal_binary_implementation(ctx):
     # Windows uses a different DLL search rule (executable directory is the default), so the
     # RPATH step is skipped there and only the staging step applies.
     runtime_libs_dir = ctx.attr.name + ".runtime_libs"
-    if parent_infos:
+
+    # Stage `cc_deps_dynamic` shared libs into the same `<target>.runtime_libs/` directory used
+    # for layer .so files — both classes of dependency share an `RPATH`. The helper declares
+    # symlink actions, mutates `direct_inputs` (so the native-image action consumes them), and
+    # emits `-H:CLibraryPath` + `-L`/`-l` args. Runfiles plumbing happens below alongside the
+    # ancestor staging.
+    cc_dyn_staged = _configure_cc_deps_dynamic(
+        ctx,
+        args,
+        direct_inputs,
+        runtime_libs_dir,
+    )
+
+    # Stage parent-layer transitive shared libs into the same `runtime_libs_dir` *before* the
+    # native-image action runs, and add them to `direct_inputs`. This is required for `ld` to
+    # resolve the layer's NEEDED entries at link-resolve time:
+    #
+    #   When `stage1_dynamic-bin` is being linked against `libbase_dyn.so` (the layer), `ld`
+    #   walks the layer's NEEDED entries and tries to physically find each `.so` so it can
+    #   verify the symbol references. If `libelideo11y.so` (a transitive dep of the layer)
+    #   isn't on `ld`'s search path, the link aborts with "undefined reference" even though the
+    #   layer itself ships with the reference correctly recorded.
+    #
+    # By staging into `runtime_libs_dir` and emitting `-L` for that dir below, the same files
+    # serve both purposes: link-time resolution AND runtime loading via the embedded RPATH.
+    seen_basenames = {staged.basename: True for staged in cc_dyn_staged}
+    parent_staged_libs = []
+    for parent in parent_infos:
+        for ancestor_lib in parent.transitive_shared_libs.to_list():
+            if ancestor_lib.basename in seen_basenames:
+                continue
+            seen_basenames[ancestor_lib.basename] = True
+            staged = ctx.actions.declare_file("%s/%s" % (runtime_libs_dir, ancestor_lib.basename))
+            ctx.actions.symlink(output = staged, target_file = ancestor_lib)
+            parent_staged_libs.append(staged)
+            direct_inputs.append(staged)
+
+    # Anything in `runtime_libs_dir` (cc_deps_dynamic OR parent-propagated) needs to be on
+    # `ld`'s search path. `_configure_cc_deps_dynamic` already emits `-L`/`-H:CLibraryPath` for
+    # that dir when *it* stages something; if only parent-propagated libs landed there, we need
+    # to emit those flags ourselves so the layer's NEEDED entries resolve at link time.
+    if parent_staged_libs and not cc_dyn_staged:
+        runtime_libs_dirname = parent_staged_libs[0].dirname
+        args.add(runtime_libs_dirname, format = "-H:CLibraryPath=%s")
+        args.add(runtime_libs_dirname, format = "-H:NativeLinkerOption=-L%s")
+
+    # Emit RPATH whenever the binary depends on runtime-loaded shared libs — either from parent
+    # layers or from user-supplied `cc_deps_dynamic`. `LayerUse` flags only fire for layers.
+    needs_rpath = bool(parent_infos) or bool(cc_dyn_staged)
+    if parent_infos or needs_rpath:
         layer_args = []
         for parent in parent_infos:
             for ancestor in parent.transitive_layer_files.to_list():
                 layer_args.append("-H:LayerUse=%s" % ancestor.path)
-        if is_macos:
-            layer_args.append("-H:NativeLinkerOption=-Wl,-rpath,@loader_path/%s" % runtime_libs_dir)
-        elif not is_windows:
-            layer_args.append("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s" % runtime_libs_dir)
-        _experimental_args(args, layer_args, gvm_toolchain = gvm_toolchain)
+        if needs_rpath:
+            if is_macos:
+                layer_args.append("-H:NativeLinkerOption=-Wl,-rpath,@loader_path/%s" % runtime_libs_dir)
+            elif not is_windows:
+                layer_args.append("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s" % runtime_libs_dir)
+        if layer_args:
+            _experimental_args(args, layer_args, gvm_toolchain = gvm_toolchain)
 
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
@@ -252,16 +307,10 @@ def _graal_binary_implementation(ctx):
             **run_params
         )
 
-    # Stage each ancestor layer's shared library into `<target>.runtime_libs/<libname>` so the
-    # dynamic linker can resolve it via the RPATH we embedded above. Symlinks are cheap (no
-    # copy cost); declaring each as an output makes Bazel include them in runfiles and default
-    # outputs automatically.
-    staged_libs = []
-    for parent in parent_infos:
-        for ancestor_lib in parent.transitive_shared_libs.to_list():
-            staged = ctx.actions.declare_file("%s/%s" % (runtime_libs_dir, ancestor_lib.basename))
-            ctx.actions.symlink(output = staged, target_file = ancestor_lib)
-            staged_libs.append(staged)
+    # All `runtime_libs_dir` symlinks (parent-propagated + cc_deps_dynamic) were declared as
+    # action inputs above. Surface them in `files` and `runfiles` so `bazel build` produces
+    # them on disk and `bazel run` resolves the RPATH-relative paths at startup.
+    runtime_libs = parent_staged_libs + cc_dyn_staged
 
     cc_info_provider = None
     cc_info_staged_headers = []
@@ -272,7 +321,7 @@ def _graal_binary_implementation(ctx):
             declared_headers,
         )
 
-    default_files = [binary] + staged_libs + cc_info_staged_headers
+    default_files = [binary] + runtime_libs + cc_info_staged_headers
     if intermediate_dir != None:
         default_files.append(intermediate_dir)
 
@@ -282,7 +331,7 @@ def _graal_binary_implementation(ctx):
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,
-            files = staged_libs,
+            files = runtime_libs,
         ),
     )]
     if intermediate_dir != None:

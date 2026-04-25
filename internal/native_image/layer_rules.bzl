@@ -6,8 +6,16 @@ load(
 )
 load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
 load(
+    "//internal:argutil.bzl",
+    _experimental_args = "experimental_args",
+)
+load(
     "//internal/native_image:action_utils.bzl",
     _wrap_actions_for_graal = "wrap_actions_for_graal",
+)
+load(
+    "//internal/native_image:builder.bzl",
+    _configure_cc_deps_dynamic = "configure_cc_deps_dynamic",
 )
 load(
     "//internal/native_image:common.bzl",
@@ -124,6 +132,45 @@ def _graal_layer_implementation(ctx):
         propagated,
     )
 
+    # Stage `cc_deps_dynamic` shared libs adjacent to the layer's own `.so` so the layer's link
+    # succeeds and the layer's RPATH can resolve them at runtime. The originals also flow into
+    # `transitive_shared_libs` (below) so the final consumer's `runtime_libs/` directory ends up
+    # containing every transitively required `.so` in a single co-located place — that means
+    # the consumer binary's RPATH ($ORIGIN/<consumer-name>.runtime_libs) covers both the layer
+    # `.so` and its dynamic deps without any further wiring. (Background: DT_RUNPATH does not
+    # propagate transitively to dependent shared libs; co-locating everything at the consumer's
+    # rpath dir is the simplest correct setup that avoids relying on system search paths.)
+    runtime_libs_dir = ctx.attr.name + ".runtime_libs"
+    cc_dyn_staged = _configure_cc_deps_dynamic(
+        ctx,
+        args,
+        direct_inputs,
+        runtime_libs_dir,
+    )
+
+    # If we staged any dynamic libs, the layer's `.so` itself needs an RPATH so it can locate
+    # them at load time. We embed *two* search entries:
+    #
+    #   1. `$ORIGIN/<layer>.runtime_libs` — works when the layer's `.so` is loaded from its own
+    #      Bazel output dir (standalone testing, `bazel run` of the layer alone).
+    #   2. `$ORIGIN` — works when the layer's `.so` is loaded from a consuming binary's
+    #      `runtime_libs/` flat directory, where it ends up co-located with its dynamic deps.
+    #
+    # Background: DT_RUNPATH is *not* transitively honoured by `ld.so` — the consumer binary's
+    # RPATH does not help resolve a NEEDED entry of one of its loaded libraries. Each library
+    # has to advertise its own search path. Since we co-locate everything in the consumer's
+    # `runtime_libs/`, `$ORIGIN` covers that case and `$ORIGIN/<layer>.runtime_libs` covers the
+    # standalone case. Skip on Windows (DLL search uses the executable directory by default).
+    if cc_dyn_staged:
+        rpath_args = []
+        if is_macos:
+            rpath_args.append("-H:NativeLinkerOption=-Wl,-rpath,@loader_path/%s" % runtime_libs_dir)
+            rpath_args.append("-H:NativeLinkerOption=-Wl,-rpath,@loader_path")
+        elif not is_windows:
+            rpath_args.append("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s:$ORIGIN" % runtime_libs_dir)
+        if rpath_args:
+            _experimental_args(args, rpath_args, gvm_toolchain = gvm_toolchain)
+
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
 
@@ -174,8 +221,15 @@ def _graal_layer_implementation(ctx):
         direct = [layer_tree],
         transitive = [p.transitive_layer_files for p in parent_infos],
     )
+
+    # Propagate cc_deps_dynamic shared libs through `transitive_shared_libs` so the final
+    # consumer's `runtime_libs/` directory contains them — the consumer's RPATH then covers
+    # all transitively required dynamic libs in a single location. We propagate the staged
+    # symlinks (stable basename, e.g. unversioned `libfoo.so`) rather than the canonical
+    # source artifact so consumers see the same SONAME-resolvable filename ld picked at link
+    # time.
     transitive_shared_libs = depset(
-        direct = [layer_shared_lib],
+        direct = [layer_shared_lib] + cc_dyn_staged,
         transitive = [p.transitive_shared_libs for p in parent_infos],
     )
 
@@ -186,10 +240,11 @@ def _graal_layer_implementation(ctx):
         extra_args = list(propagated.extra_args) + list(ctx.attr.extra_args),
     )
 
+    default_files = [layer_tree, layer_shared_lib] + cc_dyn_staged
     return [
         DefaultInfo(
-            files = depset([layer_tree, layer_shared_lib]),
-            runfiles = ctx.runfiles(files = [layer_tree, layer_shared_lib]),
+            files = depset(default_files),
+            runfiles = ctx.runfiles(files = default_files),
         ),
         NativeImageLayerInfo(
             layer_file = layer_tree,

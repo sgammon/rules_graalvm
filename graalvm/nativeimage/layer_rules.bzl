@@ -85,6 +85,9 @@ def native_image_layer(
         optimization_mode = _OPTIMIZATION_MODE,
         static_zlib = None,
         c_compiler_option = [],
+        native_linker_option = [],
+        cc_deps = [],
+        cc_deps_dynamic = [],
         data = [],
         extra_args = [],
         allow_fallback = False,
@@ -123,6 +126,9 @@ def native_image_layer(
             `--compilation_mode`.
         static_zlib: `cc_library` / `cc_import` target providing a static zlib (Linux only).
         c_compiler_option: Extra C compiler options.
+        native_linker_option: Extra linker options forwarded as `-H:NativeLinkerOption=<value>`. Each entry produces one flag.
+        cc_deps: `cc_library` / `cc_import` targets whose static archives should be linked into the layer. Use this to satisfy `@CFunction` / JNI references defined in companion Rust / C / C++ libraries — typical case: `rust_static_library` outputs whose Rust functions back the layer's Java-side `@CFunction` declarations.
+        cc_deps_dynamic: `cc_library` / `cc_import` targets whose dynamic libraries should be linked at the layer's link time and resolved at runtime. Staged into `<name>.runtime_libs/` adjacent to the layer's `.so`, with RPATH embedded on Linux/macOS so the layer loads them without environment setup. Also propagated through `transitive_shared_libs` so the final consumer's `runtime_libs/` directory is a single co-located drop containing every transitively required `.so`. Use this for dynamic-image layer variants where the produced layer dynamically loads its companion libraries instead of statically linking them.
         data: Data files available during compilation.
         extra_args: Extra `native-image` arguments, appended last. Parent-propagated extra_args
             are prepended; this rule's values come after for last-wins semantics.
@@ -158,6 +164,9 @@ def native_image_layer(
         check_toolchains = check_toolchains,
         static_zlib = static_zlib,
         c_compiler_option = c_compiler_option,
+        native_linker_option = native_linker_option,
+        cc_deps = cc_deps,
+        cc_deps_dynamic = cc_deps_dynamic,
         allow_fallback = allow_fallback,
         native_image_tool = native_image_tool,
         native_image_settings = native_image_settings,
