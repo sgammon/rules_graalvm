@@ -23,7 +23,6 @@ load(
     _NATIVE_IMAGE_ATTRS = "NATIVE_IMAGE_ATTRS",
     _OPTIMIZATION_MODE_CONDITION = "OPTIMIZATION_MODE_CONDITION",
     _RULES_REPO = "RULES_REPO",
-    _gvm_supports_experimental_close = "gvm_supports_experimental_close",
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
 )
 load(
@@ -146,20 +145,11 @@ def _graal_binary_implementation(ctx):
         intermediate_dir = ctx.actions.declare_directory(ctx.attr.name + ".ni_tmp")
         _experimental_args(args, [
             "-H:TempDirectory=%s" % intermediate_dir.path,
-        ])
+        ], gvm_toolchain = gvm_toolchain)
 
-    # `-H:LayerUse` is experimental in GraalVM 24+; unlock before emitting it. Only emit the
-    # unlock and the flag when a parent layer is actually present.
-    unlocked = False
-    if parent_infos:
-        unlocked = True
-        args.add("-H:+UnlockExperimentalVMOptions")
-
-    # Emit `-H:LayerUse=<ancestor.nil>` for every ancestor, oldest-first.
-    for parent in parent_infos:
-        for ancestor in parent.transitive_layer_files.to_list():
-            args.add(ancestor.path, format = "-H:LayerUse=%s")
-
+    # Emit `-H:LayerUse=<ancestor.nil>` for every ancestor, oldest-first, plus the
+    # per-target RUNPATH linker option — all wrapped in `experimental_args()` so the gated
+    # open/close pair is version-correct (close skipped on GraalVM 21 and older).
     # Runtime linkage: the consumer binary is NEEDED-linked against each ancestor layer's shared
     # library (e.g. `libbase.so`). At runtime the dynamic linker needs to find those libraries,
     # so we:
@@ -173,20 +163,15 @@ def _graal_binary_implementation(ctx):
     # RPATH step is skipped there and only the staging step applies.
     runtime_libs_dir = ctx.attr.name + ".runtime_libs"
     if parent_infos:
+        layer_args = []
+        for parent in parent_infos:
+            for ancestor in parent.transitive_layer_files.to_list():
+                layer_args.append("-H:LayerUse=%s" % ancestor.path)
         if is_macos:
-            args.add("-H:NativeLinkerOption=-Wl,-rpath,@loader_path/%s" % runtime_libs_dir)
+            layer_args.append("-H:NativeLinkerOption=-Wl,-rpath,@loader_path/%s" % runtime_libs_dir)
         elif not is_windows:
-            args.add("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s" % runtime_libs_dir)
-
-        # Close the experimental gate after emitting the layer-related experimental flags,
-        # but only on GraalVM versions that accept the close (22+). On 21 and older drivers,
-        # the `-H:-UnlockExperimentalVMOptions` form is unrecognized and aborts the build.
-        if _gvm_supports_experimental_close(gvm_toolchain.version):
-            args.add("-H:-UnlockExperimentalVMOptions")
-
-    # Must re-lock experimental options if we unlocked them.
-    if unlocked:
-        args.add("-H:-UnlockExperimentalVMOptions")
+            layer_args.append("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s" % runtime_libs_dir)
+        _experimental_args(args, layer_args, gvm_toolchain = gvm_toolchain)
 
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)

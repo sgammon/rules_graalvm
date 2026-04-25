@@ -67,10 +67,14 @@ def _configure_proxy(ctx, args, direct_inputs):
         args.add(ctx.file.proxy_configuration, format = "-H:DynamicProxyConfigurationFiles=%s")
         direct_inputs.append(ctx.file.proxy_configuration)
 
-def _configure_resources(ctx, args, direct_inputs):
+def _configure_resources(ctx, args, direct_inputs, gvm_toolchain = None):
     """Configure resource settings for a Native Image build."""
     if ctx.attr.include_resources != None and ctx.attr.include_resources != "":
-        _experimental_args(args, ["-H:IncludeResources=%s" % ctx.attr.include_resources])
+        _experimental_args(
+            args,
+            ["-H:IncludeResources=%s" % ctx.attr.include_resources],
+            gvm_toolchain = gvm_toolchain,
+        )
 
     if ctx.attr.resource_configuration != None:
         args.add(ctx.file.resource_configuration, format = "-H:ResourceConfigurationFiles=%s")
@@ -137,7 +141,7 @@ def _configure_native_test_flags(ctx, args):
     if ctx.attr.coverage:
         args.add("--tool:coverage")
 
-def _configure_output_mode(ctx, args, binary, bin_postfix):
+def _configure_output_mode(ctx, args, binary, bin_postfix, gvm_toolchain = None):
     """Emit the executable / shared-lib output flags.
 
     Called only for `native_image`, never for `native_image_layer` (layers have no main class,
@@ -160,7 +164,7 @@ def _configure_output_mode(ctx, args, binary, bin_postfix):
         "-H:Class=%s" % ctx.attr.main_class,
         "-H:Name=%s" % trimmed_basename,
         "-H:Path=%s" % binary.dirname,
-    ])
+    ], gvm_toolchain = gvm_toolchain)
     if ctx.files.profiles:
         args.add_joined(
             ctx.files.profiles,
@@ -195,7 +199,7 @@ def _configure_common_build_options(
     args.add("-H:+ReportExceptionStackTraces")
 
     if not ctx.attr.check_toolchains:
-        _experimental_args(args, ["-H:-CheckToolchain"])
+        _experimental_args(args, ["-H:-CheckToolchain"], gvm_toolchain = gvm_toolchain)
 
     # assemble classpath
     args.add_joined(
@@ -217,7 +221,7 @@ def _configure_common_build_options(
 
     _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain)
     _configure_reflection(ctx, args, direct_inputs, propagated = propagated)
-    _configure_resources(ctx, args, direct_inputs)
+    _configure_resources(ctx, args, direct_inputs, gvm_toolchain = gvm_toolchain)
     _configure_proxy(ctx, args, direct_inputs)
 
     if ctx.attr.static_zlib != None:
@@ -275,7 +279,7 @@ def assemble_native_build_options(
         bin_postfix: Binary postfix expected from the output file (for example, `.exe` or `.dylib`).
         propagated: Optional struct of values propagated from parent layers, prepended additively.
     """
-    _configure_output_mode(ctx, args, binary, bin_postfix)
+    _configure_output_mode(ctx, args, binary, bin_postfix, gvm_toolchain = gvm_toolchain)
     _configure_common_build_options(
         ctx,
         args,

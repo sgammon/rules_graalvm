@@ -1,12 +1,12 @@
 "Logic to assemble `native-image --layer-create` / `--layer-use` options."
 
 load(
-    "//internal/native_image:builder.bzl",
-    _configure_common_build_options = "configure_common_build_options",
+    "//internal:argutil.bzl",
+    _experimental_args = "experimental_args",
 )
 load(
-    "//internal/native_image:common.bzl",
-    _gvm_supports_experimental_close = "gvm_supports_experimental_close",
+    "//internal/native_image:builder.bzl",
+    _configure_common_build_options = "configure_common_build_options",
 )
 load(
     "//internal/native_image:settings.bzl",
@@ -88,35 +88,36 @@ def _merge_propagated_args(parent_infos, gate_enabled):
         merged["extra_args"] = merged["extra_args"] + list(pa.extra_args)
     return struct(**merged)
 
-def _emit_layer_use(args, parent_infos, transitive_inputs):
-    """Emit `-H:LayerUse=<ancestor.nil>` for each ancestor in bottom-up order.
+def _collect_layer_use_args(parent_infos, transitive_inputs):
+    """Return the list of `-H:LayerUse=<ancestor.nil>` strings, oldest-first.
 
-    `parent_infos` is the list of direct parents (0 or 1 today). For each, we walk their
-    `transitive_layer_files` depset — which already contains that parent plus all of ITS
-    ancestors — and emit one `-H:LayerUse` flag per archive. All archives become action inputs.
+    Walks each direct parent's `transitive_layer_files` depset (already containing that
+    parent plus all of its ancestors) and produces one `-H:LayerUse=<path>` arg per archive.
+    Side effect: appends each parent's depset to `transitive_inputs` so the action sees them.
 
-    The layer-related native-image options are experimental, so the caller must also emit
-    `-H:+UnlockExperimentalVMOptions` before any layer flag.
+    The layer-related native-image options are experimental and must travel inside an
+    `experimental_args()` block; this function only produces the strings.
     """
+    out = []
     for parent in parent_infos:
         for ancestor in parent.transitive_layer_files.to_list():
-            args.add(ancestor.path, format = "-H:LayerUse=%s")
+            out.append("-H:LayerUse=%s" % ancestor.path)
         transitive_inputs.append(parent.transitive_layer_files)
+    return out
 
-def _emit_layer_create(ctx, args, layer_tree):
-    """Emit `-H:LayerCreate=<basename.nil>[,<directive1>,<directive2>,...]`.
+def _layer_create_arg(ctx, layer_tree):
+    """Return the `-H:LayerCreate=<basename.nil>[,<directive>,...]` arg string.
 
-    Native-image requires the layer filename in this option to be a simple basename with no path
-    separators — the enclosing directory comes from `-H:Path=<dir>` emitted separately. The
-    option is experimental, so the caller must also emit `-H:+UnlockExperimentalVMOptions`
-    before this flag.
+    Native-image requires the layer filename in this option to be a simple basename with no
+    path separators — the enclosing directory comes from `-H:Path=<dir>` emitted separately.
+    The option is experimental and must travel inside an `experimental_args()` block.
     """
     directives = list(ctx.attr.directives)
     if directives:
         payload = "%s,%s" % (layer_tree.basename, ",".join(directives))
     else:
         payload = layer_tree.basename
-    args.add(payload, format = "-H:LayerCreate=%s")
+    return "-H:LayerCreate=%s" % payload
 
 def assemble_layer_build_options(
         ctx,
@@ -151,13 +152,17 @@ def assemble_layer_build_options(
     _validate_path_directives(ctx.attr.directives, classpath_depset.to_list())
 
     # `-H:LayerCreate` and `-H:LayerUse` are Early-Adopter / experimental in GraalVM 24+, so
-    # unlock them before the first layer flag.
-    args.add("-H:+UnlockExperimentalVMOptions")
+    # gate them with `experimental_args()`. The helper emits the `-H:+UnlockExperimentalVMOptions`
+    # open before, the gated args between, and the `-H:-UnlockExperimentalVMOptions` close after
+    # — but only when the GraalVM version accepts the close form (22+). On older drivers the
+    # close is skipped to avoid an unrecognized-flag failure.
+    layer_args = []
 
-    # Emit `-H:LayerUse` for ancestors first so they are resolved before create-time validation,
-    # then `-H:LayerCreate` for this layer's own output.
-    _emit_layer_use(args, parent_infos, transitive_inputs)
-    _emit_layer_create(ctx, args, layer_tree)
+    # Emit `-H:LayerUse` for ancestors first (resolved before create-time validation), then
+    # `-H:LayerCreate` for this layer's own output.
+    layer_args.extend(_collect_layer_use_args(parent_infos, transitive_inputs))
+    layer_args.append(_layer_create_arg(ctx, layer_tree))
+    _experimental_args(args, layer_args, gvm_toolchain = gvm_toolchain)
 
     # native-image requires an image name even for layer builds (`-o <name>` / `-H:Name=<name>`).
     # Derive it from the declared `.nil` basename, trimming the suffix so the auxiliary `.so`
@@ -170,12 +175,6 @@ def assemble_layer_build_options(
 
     # SBOM is not supported for layers. We must explicitly pass `--enable-sbom=false` to avoid a warning.
     args.add("--enable-sbom=false")
-
-    # Close the experimental gate after emitting `-H:LayerCreate` / `-H:LayerUse`, but only on
-    # GraalVM versions that accept the close (22+). On 21 and older drivers, the
-    # `-H:-UnlockExperimentalVMOptions` form is unrecognized and aborts the build.
-    if _gvm_supports_experimental_close(gvm_toolchain.version):
-        args.add("-H:-UnlockExperimentalVMOptions")
 
     # Reuse the common builder for every non-output flag (classpath, reflection, resources,
     # compiler, optimization, extra_args, etc.).
