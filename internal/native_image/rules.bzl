@@ -14,6 +14,11 @@ load(
     _wrap_actions_for_graal = "wrap_actions_for_graal",
 )
 load(
+    "//internal/native_image:cc_info.bzl",
+    _build_shared_library_cc_info = "build_shared_library_cc_info",
+    _declare_shared_library_headers = "declare_shared_library_headers",
+)
+load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
     _BAZEL_CURRENT_CPP_TOOLCHAIN = "BAZEL_CURRENT_CPP_TOOLCHAIN",
@@ -138,6 +143,14 @@ def _graal_binary_implementation(ctx):
         propagated = propagated,
     )
 
+    # When building a shared library, declare per-image and canonical isolate
+    # headers as outputs of the native-image action so Bazel tracks them. NI
+    # already emits these into `-H:Path=<binary_dir>` when `--shared` is set;
+    # declaring them brings them under the action's tracked outputs.
+    declared_headers = []
+    if ctx.attr.shared_library:
+        declared_headers = _declare_shared_library_headers(ctx, binary)
+
     # Optional TreeArtifact output capturing native-image's intermediate build directory so
     # downstream rules (e.g., staticlib repackers) can consume `<image>.o`.
     intermediate_dir = None
@@ -191,7 +204,7 @@ def _graal_binary_implementation(ctx):
         direct_inputs,
         transitive = transitive_inputs,
     )
-    outputs = [binary]
+    outputs = [binary] + declared_headers
     if intermediate_dir != None:
         outputs.append(intermediate_dir)
     run_params = {
@@ -250,7 +263,16 @@ def _graal_binary_implementation(ctx):
             ctx.actions.symlink(output = staged, target_file = ancestor_lib)
             staged_libs.append(staged)
 
-    default_files = [binary] + staged_libs
+    cc_info_provider = None
+    cc_info_staged_headers = []
+    if ctx.attr.shared_library:
+        cc_info_provider, cc_info_staged_headers = _build_shared_library_cc_info(
+            ctx,
+            binary,
+            declared_headers,
+        )
+
+    default_files = [binary] + staged_libs + cc_info_staged_headers
     if intermediate_dir != None:
         default_files.append(intermediate_dir)
 
@@ -265,6 +287,8 @@ def _graal_binary_implementation(ctx):
     )]
     if intermediate_dir != None:
         providers.append(OutputGroupInfo(intermediate_dir = depset([intermediate_dir])))
+    if cc_info_provider != None:
+        providers.append(cc_info_provider)
     return providers
 
 # Exports.
