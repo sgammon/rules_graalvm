@@ -86,6 +86,7 @@ def native_image(
         shared_library = None,
         static_zlib = None,
         c_compiler_option = [],
+        extra_headers = [],
         data = [],
         extra_args = [],
         allow_fallback = False,
@@ -122,6 +123,10 @@ def native_image(
             On Linux, this is used when Graal statically links zlib into the binary, e.g. with
             `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
+        extra_headers: Additional header filenames Native Image is expected to emit alongside
+            the shared library. Only valid when `shared_library = True`. Each entry is a basename
+            and is declared as an output of the native-image action; the rule surfaces it via
+            `CcInfo.compilation_context.headers`. No default; optional.
         data: Data files to make available during the compilation. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
@@ -137,6 +142,16 @@ def native_image(
     """
 
     _validate_layers(layers, name)
+
+    if extra_headers and not shared_library:
+        fail(
+            ("`extra_headers` is only valid when `shared_library = True` " +
+             "(target '%s' has shared_library=%s and extra_headers=%s).") % (
+                name,
+                shared_library,
+                extra_headers,
+            ),
+        )
 
     _native_image(
         name = name,
@@ -156,6 +171,7 @@ def native_image(
         check_toolchains = check_toolchains,
         static_zlib = static_zlib,
         c_compiler_option = c_compiler_option,
+        extra_headers = extra_headers,
         allow_fallback = allow_fallback,
         executable_name = executable_name,
         native_image_tool = native_image_tool,

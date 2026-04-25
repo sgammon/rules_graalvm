@@ -115,6 +115,18 @@ _NATIVE_IMAGE_ATTRS = {
     "c_compiler_option": attr.string_list(
         mandatory = False,
     ),
+    "extra_headers": attr.string_list(
+        doc = "Additional header filenames Native Image is expected to emit alongside the " +
+              "shared library when `shared_library = True`. Each entry is a basename (no " +
+              "directory component); the rule declares it as an output of the native-image " +
+              "action and surfaces it via `CcInfo.compilation_context.headers`. Use this for " +
+              "configurations where Native Image emits more than the canonical " +
+              "`<image>.h` / `<image>_dynamic.h` per-image headers — e.g. when custom " +
+              "`@CEntryPoint`-bearing features inject their own headers. Meaningless when " +
+              "`shared_library = False`; the public macro rejects that combination.",
+        mandatory = False,
+        default = [],
+    ),
     "executable_name": attr.string(
         mandatory = True,
     ),
@@ -171,6 +183,7 @@ _LAYER_EXCLUDED_ATTRS = [
     "shared_library",
     "executable_name",
     "profiles",
+    "extra_headers",
 ]
 
 _NATIVE_IMAGE_LAYER_ATTRS = {
