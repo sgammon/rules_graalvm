@@ -1,0 +1,22 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_graalvm//graalvm:defs.bzl", "native_image")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+native_image(
+    name = "libsharedapi",
+    shared_library = True,
+    deps = ["//sample/api"],
+)
+
+cc_binary(
+    name = "shared_consumer",
+    srcs = ["consumer.c"],
+    deps = [":libsharedapi"],
+)
+
+sh_test(
+    name = "shared_roundtrip_test",
+    srcs = ["run_consumer.sh"],
+    args = ["$(rootpath :shared_consumer)"],
+    data = [":shared_consumer"],
+)
