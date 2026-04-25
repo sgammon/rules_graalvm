@@ -29,6 +29,17 @@ GraalVM toolchain — and the compiler picks the first match. If real
 cross-version conflicts ever surface, a follow-up can introduce a hidden
 anchor target; this implementation deliberately avoids the complexity until
 needed.
+
+Known limitation — same-package collision: two `shared_library=True` targets
+in the SAME Bazel package cannot coexist today. The canonical headers are
+declared via `declare_file(name, sibling=binary)`, so both targets compute the
+same output path for `graal_isolate.h` (since `binary.dirname` is the package
+output dir for both), and Bazel rejects the second `declare_file` call as a
+conflicting action. The proper upstream fix is to plumb `-H:Path` through a
+per-target subdirectory (touches `_configure_output_mode` in `builder.bzl`)
+and mirror that subdir in the `declare_file` calls below. Until then, place
+each shared lib in its own package; the integration test's `sample/cc2/`
+sub-package demonstrates the pattern.
 """
 
 load(
