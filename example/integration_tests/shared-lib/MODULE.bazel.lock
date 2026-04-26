@@ -1064,7 +1064,7 @@
     },
     "@@rules_graalvm~override//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "tCG94R+VtyKGZHgYAr4YB0kNNiO9zzDxE65Ng6X4IqU=",
+        "bzlTransitiveDigest": "SjB+tLBDCQO7xkc1CRqFatIw99r0uKeShQQvR0tCbvI=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
