@@ -2,8 +2,8 @@ load("@rules_graalvm//graalvm:defs.bzl", "native_image")
 
 native_image(
     name = "libsharedapi2",
-    shared_library = True,
     executable_name = "libsharedapi2",
-    deps = ["//sample/api2"],
+    shared_library = True,
     visibility = ["//visibility:public"],
+    deps = ["//sample/api2"],
 )
