@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "1719a550e8f1dd0ec895d7d54b57e1d2d2403acfdecb9e4dc68aa3a897160763",
+  "moduleFileHash": "2636aa8310c50c0af68651f23e43572ab205d0dd08a3e1cfa6797a8386d62f0d",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -25,7 +25,8 @@
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [
         "@graalvm//:jvm",
-        "@graalvm//:sdk"
+        "@graalvm//:sdk",
+        "@graalvm//:bootstrap_runtime_toolchain"
       ],
       "extensionUsages": [
         {
