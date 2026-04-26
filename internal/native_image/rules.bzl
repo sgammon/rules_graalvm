@@ -228,7 +228,7 @@ def _graal_binary_implementation(ctx):
     # Emit RPATH whenever the binary depends on runtime-loaded shared libs — either from parent
     # layers or from user-supplied `cc_deps_dynamic`. `LayerUse` flags only fire for layers.
     needs_rpath = bool(parent_infos) or bool(cc_dyn_staged)
-    if parent_infos or needs_rpath:
+    if needs_rpath:
         layer_args = []
         for parent in parent_infos:
             for ancestor in parent.transitive_layer_files.to_list():

@@ -136,7 +136,9 @@ def assemble_layer_build_options(
     Args:
         ctx: Rule context.
         args: Args builder.
-        layer_tree: The declared `.nil` TreeArtifact this layer writes into.
+        layer_tree: The declared `.nil` archive `File` this layer writes into. The name dates
+            back to a TreeArtifact prototype; in practice GraalVM 25+ emits a single-file
+            archive (see comment at the declaration site in `layer_rules.bzl`).
         classpath_depset: Effective classpath (deps + inherited parent jars).
         direct_inputs: Mutable list of direct action inputs.
         c_compiler_path: Resolved C compiler path.

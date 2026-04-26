@@ -217,9 +217,14 @@ def _graal_layer_implementation(ctx):
     # Build this layer's provider. `propagated_args` here bakes in THIS rule's own list-attr
     # values on top of what parents already propagated, so downstream consumers see a single
     # merged view instead of having to walk the chain.
+    # Use topological order so iteration produces ancestors before descendants — i.e.
+    # "oldest-first" for `-H:LayerUse` emission. Default order is post-order in practice but
+    # not contractually guaranteed across Bazel versions, so callers iterating with `to_list()`
+    # would otherwise be relying on undocumented behavior.
     transitive_layer_files = depset(
         direct = [layer_tree],
         transitive = [p.transitive_layer_files for p in parent_infos],
+        order = "topological",
     )
 
     # Propagate cc_deps_dynamic shared libs through `transitive_shared_libs` so the final

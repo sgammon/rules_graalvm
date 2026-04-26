@@ -105,7 +105,7 @@ def native_image_layer(
     reusable layers so shared code is built once and reused.
 
     Args:
-        name: Target name; the `.nil` TreeArtifact is written to `<name>.nil/`.
+        name: Target name; the layer is emitted as a single-file archive at `<name>.nil`.
         deps: `java_library` targets whose classpath content is eligible for inclusion in the
             layer. Matches the semantics of `native_image.deps`.
         layers: Parent layer(s) to extend via `--layer-use`. Today accepts at most 1 entry.

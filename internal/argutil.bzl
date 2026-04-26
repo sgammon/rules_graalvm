@@ -89,18 +89,23 @@ def _toolchain_version(gvm_toolchain):
 def experimental_args(args, added_args, gvm_toolchain = None):
     """Gate a suite of experimental arguments with `-H:+/-UnlockExperimentalVMOptions`.
 
-    Three behaviors based on the resolved GraalVM major version:
+    Two behaviors based on the resolved GraalVM major version, controlled by the
+    `_EXPERIMENTAL_OPEN_MIN_MAJOR` and `_EXPERIMENTAL_CLOSE_MIN_MAJOR` constants at the top
+    of this file (both currently `22`):
 
     * **22+** — emit the gated form: `-H:+UnlockExperimentalVMOptions`, args, and
       `-H:-UnlockExperimentalVMOptions` (re-lock). This is the cleanest output and matches
       what newer drivers expect.
-    * **21 / unknown / `latest`** — emit the open before the args, but skip the close. Older
-      drivers in this band accept the open but not the close. Subsequent args remain in
-      "unlocked" mode for the rest of the command line (equivalent and warning-free).
-    * **20 and older** — emit args bare. Drivers in this band lack the unlock flag entirely
-      and would abort on it (`Could not find option 'UnlockExperimentalVMOptions'`). If a
-      wrapped arg is itself genuinely experimental on such a driver, it will surface its
-      own error — but the unlock flag is not the cause.
+    * **21, 20, unknown, `latest`** — emit args bare. The open/close constants are set
+      conservatively: GraalVM 21 likely does accept the open form (only the close is new in
+      22+), but we have not confirmed this empirically across every minor we ship against,
+      and a wrapped arg that *was* experimental on 21 will surface its own soft warning
+      rather than a hard failure on the older driver. Drivers older than ~20 lack the
+      unlock flag entirely and would abort on it (`Could not find option
+      'UnlockExperimentalVMOptions'`); the bare-emission path is safe there too.
+
+    If you have a 21-only deployment that needs gated emission, lower
+    `_EXPERIMENTAL_OPEN_MIN_MAJOR` to `21`.
 
     Args:
         args: An Args object to which the arguments should be added.
