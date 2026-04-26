@@ -61,6 +61,16 @@ def _image_basename_from_binary(binary_basename):
     we apply the matching transformation here. We do NOT strip the `lib`
     prefix: NI keeps it verbatim in the emitted header filenames (`libfoo.h`,
     `libfoo_dynamic.h` for a `libfoo.so` shared library on Linux).
+
+    Args:
+        binary_basename: The shared library basename produced by the rule
+            (e.g. `libfoo.so`, `libfoo.dylib`, `libfoo.dll`). If no recognized
+            suffix is present the input is returned unchanged.
+
+    Returns:
+        The image basename with the platform shared-library suffix stripped —
+        i.e. the value Native Image uses to derive the per-image header
+        filenames (`<image_basename>.h`, `<image_basename>_dynamic.h`).
     """
     base = binary_basename
     for suffix in _SHARED_LIB_SUFFIXES:
@@ -72,14 +82,28 @@ def _image_basename_from_binary(binary_basename):
 def declare_shared_library_headers(ctx, binary):
     """Declare canonical + per-image header outputs for a `shared_library = True` build.
 
-    Returns a list of `File` outputs:
-      - `graal_isolate.h`, `graal_isolate_dynamic.h` (canonical, emitted by NI for any
-        `--shared` build)
-      - `<image>.h`, `<image>_dynamic.h` (per-image, derived from `binary.basename`)
-      - one entry per `ctx.attr.extra_headers` filename
-    Each is `declare_file()`-ed as a sibling of `binary` (i.e. inside native-image's
-    `-H:Path` target dir) so the action produces them as natural co-located outputs
-    without extra flags.
+    Each declared header is `declare_file()`-ed as a sibling of `binary` (i.e. inside
+    native-image's `-H:Path` target dir) so the action produces them as natural
+    co-located outputs without extra flags.
+
+    Args:
+        ctx: Native Image rule context. The function reads `ctx.attr.extra_headers`
+            (string list) for any user-listed additional header basenames Native
+            Image will emit alongside the shared library.
+        binary: The shared-library `File` output (e.g. `libfoo.so`). Its `basename`
+            seeds the per-image header names and its containing directory is the
+            sibling location for all declared header outputs.
+
+    Returns:
+        A list of declared `File` outputs the caller must add to the native-image
+        action's `outputs`:
+
+        - `graal_isolate.h`, `graal_isolate_dynamic.h` — canonical isolate
+          headers, emitted by Native Image for any `--shared` build.
+        - `<image>.h`, `<image>_dynamic.h` — per-image headers derived from
+          `binary.basename` (suffix stripped); emitted when the build has at
+          least one `@CEntryPoint`-annotated method.
+        - One entry per `ctx.attr.extra_headers` filename, in the order given.
     """
     image_basename = _image_basename_from_binary(binary.basename)
     per_image = ["%s.h" % image_basename, "%s_dynamic.h" % image_basename]
@@ -96,12 +120,34 @@ def build_shared_library_cc_info(ctx, binary, declared_headers):
 
     Stages declared headers into a per-target `<target>_includes/` dir via symlink
     (so the include search root is clean — free of the `.so` and any other build
-    artifacts). Builds a `compilation_context` (headers + quote_includes) and a
-    `linking_context` (dynamic_library = binary).
+    artifacts). Builds a `compilation_context` (headers + quote_includes + includes)
+    and a `linking_context` (dynamic_library = binary).
 
-    Returns: a tuple `(cc_info, staged_headers)`. The caller should add
-    `staged_headers` to `default_files` so `bazel build` materializes the
-    include dir.
+    Args:
+        ctx: Native Image rule context. The function reads `ctx.label.name`,
+            `ctx.actions`, `ctx.features`, and `ctx.disabled_features`, and
+            resolves the C++ toolchain via `find_cpp_toolchain(ctx)`.
+        binary: The produced shared-library `File` (`.so` / `.dylib` / `.dll`).
+            Surfaced in the returned linking context as a dynamic library so
+            consumers' link actions pick it up automatically.
+        declared_headers: List of header `File` outputs from
+            `declare_shared_library_headers` — the four canonical/per-image
+            headers plus any user-listed `extra_headers`. Each is symlinked
+            into the per-target include dir; the resulting symlinks form the
+            compilation context's headers depset.
+
+    Returns:
+        A tuple `(cc_info, staged_headers)`:
+
+        - `cc_info`: a `CcInfo` provider with `compilation_context.headers` =
+          staged-header symlinks, `quote_includes` and `includes` = the staged
+          include directory (`-iquote` for `#include "..."`, `-I` for
+          `#include <...>`; both are needed because Native Image's per-image
+          header itself uses angle-bracket `#include <graal_isolate.h>`), and
+          `linking_context` exposing `binary` as a dynamic library.
+        - `staged_headers`: list of staged header symlink `File`s. The caller
+          must add these to `default_files` so `bazel build` materializes the
+          include dir.
     """
     cc_common = cc_shim.cc_common
 
