@@ -164,6 +164,18 @@ def _graal_binary_implementation(ctx):
             "-H:TempDirectory=%s" % intermediate_dir.path,
         ], gvm_toolchain = gvm_toolchain)
 
+    # Optional TreeArtifact output capturing the `resources/` tree that
+    # native-image emits next to the binary when `-H:+CopyLanguageResources`
+    # is in effect (Truffle language homes — GraalPy, Ruby, etc.). The
+    # location is hard-coded by SVM as `<H:Path>/resources/`, so we declare
+    # a tree artifact at `<package>/resources/` to capture it. If multiple
+    # native_image targets in the same Bazel package use this, a name-
+    # collision on `resources/` would surface at analysis time — make the
+    # binary live in its own package or `subpackage_visibility` it.
+    language_resources_dir = None
+    if ctx.attr.emit_language_resources:
+        language_resources_dir = ctx.actions.declare_directory("resources")
+
     # Emit `-H:LayerUse=<ancestor.nil>` for every ancestor, oldest-first, plus the
     # per-target RUNPATH linker option — all wrapped in `experimental_args()` so the gated
     # open/close pair is version-correct (close skipped on GraalVM 21 and older).
@@ -262,6 +274,8 @@ def _graal_binary_implementation(ctx):
     outputs = [binary] + declared_headers
     if intermediate_dir != None:
         outputs.append(intermediate_dir)
+    if language_resources_dir != None:
+        outputs.append(language_resources_dir)
     run_params = {
         "outputs": outputs,
         "executable": graal,
@@ -324,6 +338,8 @@ def _graal_binary_implementation(ctx):
     default_files = [binary] + runtime_libs + cc_info_staged_headers
     if intermediate_dir != None:
         default_files.append(intermediate_dir)
+    if language_resources_dir != None:
+        default_files.append(language_resources_dir)
 
     providers = [DefaultInfo(
         executable = binary,
@@ -334,8 +350,13 @@ def _graal_binary_implementation(ctx):
             files = runtime_libs,
         ),
     )]
+    output_groups = {}
     if intermediate_dir != None:
-        providers.append(OutputGroupInfo(intermediate_dir = depset([intermediate_dir])))
+        output_groups["intermediate_dir"] = depset([intermediate_dir])
+    if language_resources_dir != None:
+        output_groups["language_resources"] = depset([language_resources_dir])
+    if output_groups:
+        providers.append(OutputGroupInfo(**output_groups))
     if cc_info_provider != None:
         providers.append(cc_info_provider)
     return providers

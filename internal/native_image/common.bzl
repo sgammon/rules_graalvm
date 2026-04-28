@@ -171,6 +171,18 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         default = False,
     ),
+    "emit_language_resources": attr.bool(
+        doc = "If True, declare a TreeArtifact for the `<binary_dir>/resources/` tree that " +
+              "native-image emits when `-H:+CopyLanguageResources` is set. Truffle languages " +
+              "(GraalPy, Ruby, ...) read filesystem-rooted paths under this tree at startup " +
+              "(e.g. GraalPy needs `python/python-home/lib/graalpy<ver>/` to resolve " +
+              "`--python.{CoreHome,SysPrefix,StdLibHome,CAPI}`). The tree artifact is exposed " +
+              "via `DefaultInfo.files` and runfiles so downstream `bazel run` / packaging " +
+              "rules can stage it next to the binary. Caller must also pass " +
+              "`-H:-IncludeLanguageResources -H:+CopyLanguageResources` in `extra_args`.",
+        mandatory = False,
+        default = False,
+    ),
     "profiles": attr.label_list(
         allow_files = True,
         mandatory = False,
