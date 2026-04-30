@@ -108,6 +108,38 @@ register_toolchains("@graalvm//:jvm")
 register_toolchains("@graalvm//:sdk")
 ```
 
+### All-platforms toolchain registration (bzlmod, experimental)
+
+By default, `gvm.graalvm(...)` registers JDK + native-image toolchains only for the
+host platform. To register toolchains for **every** supported platform — useful for
+remote build execution (RBE) targeting linux x64/aarch64, macOS x64/aarch64, or
+windows x64 — set `register_all = True`:
+
+```starlark
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+
+gvm.graalvm(
+    name = "graalvm",
+    version = "23.0.0",
+    distribution = "ce",
+    java_version = "23",
+    register_all = True,
+)
+use_repo(gvm, "graalvm", "graalvm_toolchains")
+
+register_toolchains("@graalvm_toolchains//:all")
+```
+
+This creates per-platform repos (`graalvm_linux_x64`, `graalvm_linux_aarch64`,
+`graalvm_macos_x64`, `graalvm_macos_aarch64`, `graalvm_windows_x64`) and a
+`graalvm_toolchains` aggregator that registers the matching JDK and native-image
+toolchains with `target_compatible_with`/`exec_compatible_with` constraints. Bazel's
+toolchain resolution will then pick the correct toolchain for whichever platform an
+action runs on.
+
+See [`example/integration_tests/bzlmod_all_platforms`](./example/integration_tests/bzlmod_all_platforms)
+for an end-to-end RBE example using this flag.
+
 ## Examples
 
 See the list of [examples](./docs/examples.md), which are used as continuous integration tests. Examples are available

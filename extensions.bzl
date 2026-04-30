@@ -33,6 +33,7 @@ def _gvm_impl(mctx):
             toolchain_prefix = selected.toolchain_prefix,
             components = all_components,
             setup_actions = selected.setup_actions,
+            register_all = selected.register_all,
         )
 
 _graalvm = tag_class(attrs = {
@@ -43,6 +44,7 @@ _graalvm = tag_class(attrs = {
     "toolchain_prefix": attr.string(mandatory = False),
     "components": attr.string_list(mandatory = False),
     "setup_actions": attr.string_list(mandatory = False),
+    "register_all": attr.bool(mandatory = False, default = False),
 })
 
 _component = tag_class(attrs = {

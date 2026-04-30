@@ -27,6 +27,7 @@ load(
     "resolve_version_pair",
     Component = "DistributionComponent",
     Distribution = "DistributionType",
+    Platform = "DistributionPlatform",
 )
 load(
     "//internal:jdk_build_file.bzl",
@@ -44,6 +45,20 @@ _LEGACY_X86_TAG = "amd64"
 _NONLEGACY_X86_TAG = "x64"
 _LEGACY_DARWIN_TAG = "darwin"
 _NONLEGACY_DARWIN_TAG = "macos"
+
+_PLATFORM_CONSTRAINTS = {
+    Platform.LINUX_X64: ["@platforms//os:linux", "@platforms//cpu:x86_64"],
+    Platform.LINUX_AARCH64: ["@platforms//os:linux", "@platforms//cpu:aarch64"],
+    Platform.MACOS_X64: ["@platforms//os:macos", "@platforms//cpu:x86_64"],
+    Platform.MACOS_AARCH64: ["@platforms//os:macos", "@platforms//cpu:aarch64"],
+    Platform.WINDOWS_X64: ["@platforms//os:windows", "@platforms//cpu:x86_64"],
+}
+
+_OS_ARCHIVE_TYPE = {
+    "linux": "tar.gz",
+    "macos": "tar.gz",
+    "windows": "zip",
+}
 
 def _get_artifact_info(ctx, dist, platform, version, component = None, strict = True):
     info = resolve_distribution_artifact(
@@ -69,25 +84,24 @@ def _get_platform_legacy(ctx, legacy):
     else:
         fail("Unsupported operating system: " + ctx.os.name)
 
-def _get_platform(ctx, newdist):
-    arch_labels = {
-        "x86_64": "x64",
-        "amd64": "x64",
-        "aarch64": "aarch64",
-    }
-
-    # fix: before bazel5, the `arch` property did not exist on `repository_os`, so we need
-    # to do without it and simply assume `amd64`.
-    if not newdist or not versions.is_at_least("5", versions.get()):
-        return _get_platform_legacy(ctx, not newdist)
-    elif ctx.os.name == "linux":
-        return ("linux-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "linux", "tar.gz")
-    elif ctx.os.name == "mac os x":
-        return ("macos-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "macos", "tar.gz")
-    elif "windows" in ctx.os.name:
-        return ("windows-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "windows", "zip")
-    else:
-        fail("Unsupported operating system: " + ctx.os.name)
+def _detect_host_platform_key(ctx):
+    """Detect the platform key from the host OS."""
+    os = ctx.os.name
+    arch = ctx.os.arch
+    if os == "linux":
+        if arch in ("x86_64", "amd64"):
+            return Platform.LINUX_X64
+        elif arch == "aarch64":
+            return Platform.LINUX_AARCH64
+    elif os == "mac os x":
+        if arch in ("x86_64", "amd64"):
+            return Platform.MACOS_X64
+        elif arch == "aarch64":
+            return Platform.MACOS_AARCH64
+    elif "windows" in os:
+        if arch in ("x86_64", "amd64"):
+            return Platform.WINDOWS_X64
+    fail("Unsupported platform: %s %s" % (os, arch))
 
 def _check_version(version, java_version, newdist):
     java_version_numeric = int(java_version)
@@ -105,8 +119,121 @@ def _check_version(version, java_version, newdist):
         fail("Legacy GraalVM distributions not available at version '%s'" % version)
 
 def _toolchain_config_impl(ctx):
+    # Resolve host platform — either explicit or auto-detected from the local machine.
+    platform_key = ctx.attr.platform_key
+    if not platform_key:
+        platform_key = _detect_host_platform_key(ctx)
+
+    sdk_repo = ctx.attr.sdk_repo
+    register_all = len(ctx.attr.extra_platforms) > 0
+
+    if register_all:
+        toolchains = [(pk, "%s_%s" % (sdk_repo, pk.replace("-", "_"))) for pk in ctx.attr.extra_platforms]
+    else:
+        toolchains = [(platform_key, sdk_repo)]
+
+    host_entry = "gvm_%s" % platform_key.replace("-", "_")
+
+    platform_content = ""
+    for pk, repo_name in toolchains:
+        entry_name = "gvm_%s" % pk.replace("-", "_")
+        constraints = ", ".join(['"%s"' % c for c in _PLATFORM_CONSTRAINTS[pk]])
+        platform_content += """
+alias(
+    name = "toolchain_{entry_name}",
+    actual = "{entry_name}",
+    visibility = ["//visibility:public"],
+)
+toolchain(
+    name = "{entry_name}",
+    exec_compatible_with = [{constraints}],
+    target_compatible_with = [{constraints}],
+    toolchain = "@{repo_name}//:gvm",
+    toolchain_type = "@rules_graalvm//graalvm/toolchain",
+    visibility = ["//visibility:public"],
+)
+""".format(entry_name = entry_name, repo_name = repo_name, constraints = constraints)
+
+    # Backward-compat aliases: "gvm" and "toolchain_gvm" point to the host platform entry.
+    gvm_content = """
+alias(
+    name = "toolchain_gvm",
+    actual = "{host_entry}",
+    visibility = ["//visibility:public"],
+)
+alias(
+    name = "gvm",
+    actual = "{host_entry}",
+    visibility = ["//visibility:public"],
+)
+""".format(host_entry = host_entry)
+
+    # Java runtime toolchain — only emitted when enable_java_toolchain is set.
+    # Users can disable this with `toolchain = False` in graalvm_repository() if they
+    # only need GraalVM for native-image and don't want to register it as a Java runtime.
+    java_content = ""
+    if ctx.attr.enable_java_toolchain:
+        prefix = ctx.attr.toolchain_prefix or "graalvm"
+        java_version = ctx.attr.java_version
+        host_jdk_entry = "jdk_%s" % platform_key.replace("-", "_")
+
+        java_content = """
+config_setting(
+    name = "prefix_version_setting",
+    values = {{"java_runtime_version": "{prefix}_{version}"}},
+    visibility = ["//visibility:private"],
+)
+""".format(prefix = prefix, version = java_version)
+
+        for pk, repo_name in toolchains:
+            jdk_entry_name = "jdk_%s" % pk.replace("-", "_")
+            constraints = ", ".join(['"%s"' % c for c in _PLATFORM_CONSTRAINTS[pk]])
+            java_content += """
+toolchain(
+    name = "{jdk_entry_name}",
+    exec_compatible_with = [{constraints}],
+    target_compatible_with = [{constraints}],
+    target_settings = [":prefix_version_setting"],
+    toolchain_type = "@bazel_tools//tools/jdk:runtime_toolchain_type",
+    toolchain = "@{repo_name}//:jdk",
+    visibility = ["//visibility:public"],
+)
+""".format(jdk_entry_name = jdk_entry_name, constraints = constraints, repo_name = repo_name)
+
+        java_content += """
+alias(
+    name = "toolchain",
+    actual = "{host_jdk_entry}",
+    visibility = ["//visibility:public"],
+)
+""".format(host_jdk_entry = host_jdk_entry)
+
+        if versions.is_at_least("7", versions.get()):
+            for pk, repo_name in toolchains:
+                bootstrap_entry_name = "bootstrap_%s" % pk.replace("-", "_")
+                constraints = ", ".join(['"%s"' % c for c in _PLATFORM_CONSTRAINTS[pk]])
+                java_content += """
+toolchain(
+    name = "{bootstrap_entry_name}",
+    exec_compatible_with = [{constraints}],
+    target_compatible_with = [{constraints}],
+    target_settings = [":prefix_version_setting"],
+    toolchain_type = "@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type",
+    toolchain = "@{repo_name}//:jdk",
+    visibility = ["//visibility:public"],
+)
+""".format(bootstrap_entry_name = bootstrap_entry_name, constraints = constraints, repo_name = repo_name)
+
+            java_content += """
+alias(
+    name = "bootstrap_runtime_toolchain",
+    actual = "bootstrap_{host_platform}",
+    visibility = ["//visibility:public"],
+)
+""".format(host_platform = platform_key.replace("-", "_"))
+
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
-    ctx.file("BUILD.bazel", ctx.attr.build_file)
+    ctx.file("BUILD.bazel", platform_content + gvm_content + java_content)
 
 def _graal_updater_path(os):
     cmd = paths.join("bin", "gu")
@@ -207,8 +334,10 @@ def _detect_older_gvm_version(ctx):
 def _graal_bindist_repository_impl(ctx):
     """Implements the GraalVM repository rule (`graalvm_repository`)."""
 
+    _platform_key = getattr(ctx.attr, "platform_key", None) or None
+
     if ctx.attr.distribution == None or _detect_older_gvm_version(ctx):
-        platform, os, archive = _get_platform(ctx, False)
+        platform, os, archive = _get_platform_legacy(ctx, True)
         version = ctx.attr.version
         java_version = ctx.attr.java_version
         format_args = {
@@ -267,7 +396,9 @@ def _graal_bindist_repository_impl(ctx):
         _graal_postinstall_actions(ctx, os)
 
     else:
-        platform, os, archive = _get_platform(ctx, True)
+        platform = _platform_key or _detect_host_platform_key(ctx)
+        os = platform.split("-")[0]
+        archive = _OS_ARCHIVE_TYPE[os]
         version_spec = ctx.attr.version
         distribution = ctx.attr.distribution or Distribution.COMMUNITY
         java_version_spec = ctx.attr.java_version
@@ -538,8 +669,6 @@ alias(
         bootstrap_toolchain_alias = bootstrap_toolchain_alias,
         rendered_bin_aliases = rendered_bin_aliases,
         bin_java_path = rendered_bin_paths.java,
-        gvm_toolchain_tags_exec = "",
-        gvm_toolchain_tags_target = "",
     )
 
     ctx.file(
@@ -692,6 +821,14 @@ SHA-256 fingerprint for a custom toolchain. Optional. If unspecified, use of cus
 toolchains may yield hermeticity warnings.
 """,
         ),
+        "platform_key": attr.string(
+            mandatory = False,
+            doc = """
+Explicit platform to download GraalVM for, instead of auto-detecting the host.
+Must be a key from _PLATFORM_CONSTRAINTS (e.g. 'linux-x64', 'macos-aarch64').
+Used by register_all to create per-platform SDK repositories.
+""",
+        ),
     },
     implementation = _graal_bindist_repository_impl,
 )
@@ -700,7 +837,13 @@ _toolchain_config = repository_rule(
     local = True,
     implementation = _toolchain_config_impl,
     attrs = {
-        "build_file": attr.string(),
+        "sdk_repo": attr.string(mandatory = True),
+        "platform_key": attr.string(mandatory = False),
+        "extra_platforms": attr.string_list(mandatory = False),
+        "enable_java_toolchain": attr.bool(default = True),
+        "toolchain_prefix": attr.string(mandatory = False),
+        "java_version": attr.string(mandatory = False),
+        "target_compatible_with": attr.string_list(mandatory = False),
     },
 )
 
@@ -774,97 +917,41 @@ def graalvm_repository(
 
     toolchain_repo_name = toolchain_repo_name or (name + "_toolchains")
 
-    # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
-    # it doesn't yet exist in Bazel's internals.
-    bootstrap_runtime_toolchain = ""
-    if versions.is_at_least("7", versions.get()):
-        bootstrap_runtime_toolchain = """
-toolchain(
-    name = "bootstrap_runtime_toolchain",
-    # These constraints are not required for correctness, but prevent fetches of remote JDK for
-    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in
-    # the same configuration, this constraint will not result in toolchain resolution failures.
-    exec_compatible_with = {target_compatible_with},
-    target_settings = [":prefix_version_setting"],
-    toolchain_type = "@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type",
-    toolchain = "{toolchain}",
-    visibility = ["//visibility:public"],
-)
-""".format(
-            prefix = toolchain_prefix or "graalvm",
-            version = java_version,
-            target_compatible_with = target_compatible_with,
-            toolchain = "@{repo}//:jdk".format(repo = name),
-        )
-
-    toolchain_config_build_file = """
-alias(
-    name = "toolchain_gvm",
-    actual = "gvm",
-    visibility = ["//visibility:public"],
-)
-toolchain(
-    name = "gvm",
-    exec_compatible_with = [
-        {gvm_toolchain_tags_exec}
-    ],
-    target_compatible_with = [
-        {gvm_toolchain_tags_target}
-    ],
-    toolchain = "@{name}//:gvm",
-    toolchain_type = "@rules_graalvm//graalvm/toolchain",
-    visibility = ["//visibility:public"],
-)
-""".format(
-        name = name,
-        gvm_toolchain_tags_exec = "",
-        gvm_toolchain_tags_target = "",
-    )
-
-    if toolchain:
-        toolchain_config_build_file += """
-config_setting(
-    name = "prefix_version_setting",
-    values = {{"java_runtime_version": "{prefix}_{version}"}},
-    visibility = ["//visibility:private"],
-)
-toolchain(
-    name = "toolchain",
-    target_compatible_with = {target_compatible_with},
-    target_settings = [":prefix_version_setting"],
-    toolchain_type = "@bazel_tools//tools/jdk:runtime_toolchain_type",
-    toolchain = "{toolchain}",
-    visibility = ["//visibility:public"],
-)
-{bootstrap_runtime_toolchain}
-""".format(
-            name = name,
-            prefix = toolchain_prefix or "graalvm",
-            version = java_version,
-            target_compatible_with = target_compatible_with,
-            toolchain = "@{repo}//:jdk".format(repo = name),
-            bootstrap_runtime_toolchain = bootstrap_runtime_toolchain,
-            gvm_toolchain_tags_exec = "",
-            gvm_toolchain_tags_target = "",
-        )
+    extra_platforms = list(_PLATFORM_CONSTRAINTS.keys()) if register_all else []
 
     _toolchain_config(
         name = toolchain_repo_name,
-        build_file = toolchain_config_build_file,
+        sdk_repo = name,
+        extra_platforms = extra_platforms,
+        enable_java_toolchain = toolchain,
+        toolchain_prefix = toolchain_prefix,
+        java_version = java_version,
+        target_compatible_with = target_compatible_with,
     )
 
-    if not register_all:
-        # register a specific GraalVM version at the host OS/arch pair
-        _graalvm_bindist_repository(
-            name = name,
-            version = version,
-            java_version = java_version,
-            distribution = distribution,
-            components = components,
-            setup_actions = setup_actions,
-            enable_toolchain = toolchain,
-            toolchain_config = toolchain_repo_name,
-            **kwargs
-        )
-    else:
-        fail("GraalVM rules `register_all` is not supported yet.")
+    _graalvm_bindist_repository(
+        name = name,
+        version = version,
+        java_version = java_version,
+        distribution = distribution,
+        components = components,
+        setup_actions = setup_actions,
+        enable_toolchain = toolchain,
+        toolchain_config = toolchain_repo_name,
+        **kwargs
+    )
+
+    if register_all:
+        for pk in _PLATFORM_CONSTRAINTS:
+            _graalvm_bindist_repository(
+                name = "%s_%s" % (name, pk.replace("-", "_")),
+                version = version,
+                java_version = java_version,
+                distribution = distribution,
+                components = components,
+                setup_actions = setup_actions,
+                enable_toolchain = toolchain,
+                toolchain_config = toolchain_repo_name,
+                platform_key = pk,
+                **kwargs
+            )

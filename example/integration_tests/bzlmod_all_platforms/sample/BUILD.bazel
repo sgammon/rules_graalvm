@@ -1,0 +1,42 @@
+load(
+    "@rules_graalvm//graalvm:defs.bzl",
+    "native_image",
+)
+
+java_library(
+    name = "java",
+    srcs = ["Main.java"],
+)
+
+java_binary(
+    name = "main",
+    main_class = "Main",
+    runtime_deps = [
+        ":java",
+    ],
+)
+
+sh_test(
+    name = "main_test",
+    srcs = ["run_bin.sh"],
+    args = ["$(rootpath :main)"],
+    data = [":main"],
+)
+
+native_image(
+    name = "main-native",
+    main_class = "Main",
+    deps = [":java"],
+)
+
+sh_test(
+    name = "main-native_test",
+    srcs = ["run_bin.sh"],
+    args = ["$(rootpath :main-native)"],
+    data = [":main-native"],
+)
+
+alias(
+    name = "sample",
+    actual = "main-native",
+)
