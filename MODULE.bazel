@@ -189,7 +189,17 @@ use_repo(
 )
 
 register_toolchains(
-    "@graalvm_toolchains//:all",
+    "@graalvm_toolchains//:toolchain",
+    dev_dependency = True,
+)
+
+register_toolchains(
+    "@graalvm_toolchains//:toolchain_gvm",
+    dev_dependency = True,
+)
+
+register_toolchains(
+    "@graalvm//:bootstrap_runtime_toolchain",
     dev_dependency = True,
 )
 
