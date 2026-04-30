@@ -33,6 +33,7 @@ def _gvm_impl(mctx):
             "toolchain_prefix": selected.toolchain_prefix,
             "components": all_components,
             "setup_actions": selected.setup_actions,
+            "register_all": selected.register_all,
         }
 
         # Forward the custom-URL attrs only when set. They are mutually exclusive with map-based
@@ -65,6 +66,7 @@ _graalvm = tag_class(attrs = {
     "toolchain_prefix": attr.string(mandatory = False),
     "components": attr.string_list(mandatory = False),
     "setup_actions": attr.string_list(mandatory = False),
+    "register_all": attr.bool(mandatory = False, default = False),
     "url": attr.string(
         mandatory = False,
         doc = "Custom download URL for an Early Adopter / nightly / dev build. Bypasses the bindist map.",

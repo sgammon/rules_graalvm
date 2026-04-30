@@ -1,0 +1,53 @@
+"Sample bzlmod project using register_all with platform-aware toolchains."
+
+module(
+    name = "rules_graalvm_all_platforms_sample",
+    version = "0.0.1",
+)
+
+bazel_dep(
+    name = "platforms",
+    version = "1.0.0",
+)
+bazel_dep(
+    name = "rules_cc",
+    version = "0.0.17",
+)
+bazel_dep(
+    name = "rules_java",
+    version = "8.6.1",
+)
+bazel_dep(
+    name = "rules_graalvm",
+    version = "0.0.0",
+)
+
+local_path_override(
+    module_name = "rules_graalvm",
+    path = "../../..",
+)
+
+################################################################################
+# GraalVM
+################################################################################
+
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+gvm.graalvm(
+    name = "graalvm",
+    distribution = "ce",
+    java_version = "21",
+    version = "21.0.2",
+    register_all = True,
+)
+use_repo(
+    gvm,
+    "graalvm",
+    "graalvm_toolchains",
+)
+
+register_toolchains("@graalvm_toolchains//:all")
+
+register_toolchains(
+    "//tools/remote:linux_x86_64_cc",
+    "//tools/remote:linux_aarch64_cc",
+)
