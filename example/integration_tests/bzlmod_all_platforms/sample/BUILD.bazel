@@ -2,6 +2,18 @@ load(
     "@rules_graalvm//graalvm:defs.bzl",
     "native_image",
 )
+load(":sdk_probe.bzl", "sdk_probe")
+
+# Records the SDK files the resolved GraalVM toolchain selects. Under a cross/RBE platform the
+# paths must come from that platform's SDK repo (e.g. `graalvm_linux_x64`), not the host's.
+sdk_probe(name = "sdk_probe")
+
+sh_test(
+    name = "sdk_probe_test",
+    srcs = ["provenance_test.sh"],
+    args = ["$(rootpath :sdk_probe)"],
+    data = [":sdk_probe"],
+)
 
 java_library(
     name = "java",
