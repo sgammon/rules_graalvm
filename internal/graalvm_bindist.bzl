@@ -119,20 +119,26 @@ def _check_version(version, java_version, newdist):
         fail("Legacy GraalVM distributions not available at version '%s'" % version)
 
 def _toolchain_config_impl(ctx):
-    # Resolve host platform — either explicit or auto-detected from the local machine.
-    platform_key = ctx.attr.platform_key
-    if not platform_key:
-        platform_key = _detect_host_platform_key(ctx)
-
+    # The host platform of the machine evaluating this repo. Always auto-detected: this repo
+    # aggregates toolchains across platforms, so it is never pinned to a single `platform_key`.
+    host_pk = ctx.attr.platform_key or _detect_host_platform_key(ctx)
     sdk_repo = ctx.attr.sdk_repo
-    register_all = len(ctx.attr.extra_platforms) > 0
 
-    if register_all:
-        toolchains = [(pk, "%s_%s" % (sdk_repo, pk.replace("-", "_"))) for pk in ctx.attr.extra_platforms]
-    else:
-        toolchains = [(platform_key, sdk_repo)]
+    # An empty `extra_platforms` is host-only mode; otherwise generate the requested set.
+    selected = list(ctx.attr.extra_platforms) if ctx.attr.extra_platforms else [host_pk]
+    host_in_set = host_pk in selected
 
-    host_entry = "gvm_%s" % platform_key.replace("-", "_")
+    # (platform_key, sdk_repo_name) per selected platform. The host platform reuses the primary
+    # `@<sdk_repo>//` SDK repo (which users also address directly, e.g. `@graalvm//:native-image`)
+    # rather than a duplicate `@<sdk_repo>_<host>//`, so the host SDK is downloaded only once.
+    toolchains = []
+    for pk in selected:
+        repo_name = sdk_repo if pk == host_pk else "%s_%s" % (sdk_repo, pk.replace("-", "_"))
+        toolchains.append((pk, repo_name))
+
+    host_entry = "gvm_%s" % host_pk.replace("-", "_")
+    host_jdk_entry = "jdk_%s" % host_pk.replace("-", "_")
+    host_bootstrap_entry = "bootstrap_%s" % host_pk.replace("-", "_")
 
     platform_content = ""
     for pk, repo_name in toolchains:
@@ -154,8 +160,13 @@ toolchain(
 )
 """.format(entry_name = entry_name, repo_name = repo_name, constraints = constraints)
 
-    # Backward-compat aliases: "gvm" and "toolchain_gvm" point to the host platform entry.
-    gvm_content = """
+    # Host convenience aliases for the native-image toolchain. Only emitted when the host platform
+    # is in the selected set (an explicit host-excluding subset is a pure cross/RBE setup). Names:
+    # `gvm` / `toolchain_gvm` are kept for backward compatibility; `native_image` is the ergonomic
+    # alias.
+    gvm_content = ""
+    if host_in_set:
+        gvm_content = """
 alias(
     name = "toolchain_gvm",
     actual = "{host_entry}",
@@ -163,6 +174,11 @@ alias(
 )
 alias(
     name = "gvm",
+    actual = "{host_entry}",
+    visibility = ["//visibility:public"],
+)
+alias(
+    name = "native_image",
     actual = "{host_entry}",
     visibility = ["//visibility:public"],
 )
@@ -175,7 +191,6 @@ alias(
     if ctx.attr.enable_java_toolchain:
         prefix = ctx.attr.toolchain_prefix or "graalvm"
         java_version = ctx.attr.java_version
-        host_jdk_entry = "jdk_%s" % platform_key.replace("-", "_")
 
         java_content = """
 config_setting(
@@ -200,9 +215,16 @@ toolchain(
 )
 """.format(jdk_entry_name = jdk_entry_name, constraints = constraints, repo_name = repo_name)
 
-        java_content += """
+        # Host convenience aliases for the Java runtime: `toolchain` (back-compat) and `java_runtime`.
+        if host_in_set:
+            java_content += """
 alias(
     name = "toolchain",
+    actual = "{host_jdk_entry}",
+    visibility = ["//visibility:public"],
+)
+alias(
+    name = "java_runtime",
     actual = "{host_jdk_entry}",
     visibility = ["//visibility:public"],
 )
@@ -224,13 +246,14 @@ toolchain(
 )
 """.format(bootstrap_entry_name = bootstrap_entry_name, constraints = constraints, repo_name = repo_name)
 
-            java_content += """
+            if host_in_set:
+                java_content += """
 alias(
     name = "bootstrap_runtime_toolchain",
-    actual = "bootstrap_{host_platform}",
+    actual = "{host_bootstrap_entry}",
     visibility = ["//visibility:public"],
 )
-""".format(host_platform = platform_key.replace("-", "_"))
+""".format(host_bootstrap_entry = host_bootstrap_entry)
 
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
     ctx.file("BUILD.bazel", platform_content + gvm_content + java_content)
@@ -998,7 +1021,7 @@ later wires this up will read the attribute without a rule-surface change.
             doc = """
 Explicit platform to download GraalVM for, instead of auto-detecting the host.
 Must be a key from _PLATFORM_CONSTRAINTS (e.g. 'linux-x64', 'macos-aarch64').
-Used by register_all to create per-platform SDK repositories.
+Used by multi-platform `platforms` selection to create per-platform SDK repositories.
 """,
         ),
     },
@@ -1019,6 +1042,40 @@ _toolchain_config = repository_rule(
     },
 )
 
+def _resolve_platforms(platforms, register_all):
+    """Resolve the `platforms` / legacy `register_all` inputs to a list of platform keys.
+
+    Returns an empty list for host-only mode (the toolchain config repo then auto-detects the
+    host platform) or a non-empty list of platform keys for multi-platform mode.
+    """
+    all_keys = list(_PLATFORM_CONSTRAINTS.keys())
+
+    if register_all != None:
+        if platforms != None:
+            fail("Set either `platforms` or the legacy `register_all`, not both.")
+        return all_keys if register_all else []
+
+    # Legacy WORKSPACE entry point with neither attr set: preserve host-only behavior.
+    if platforms == None:
+        return []
+
+    # Bzlmod default (`[]`) and the explicit `["all"]` sentinel mean every platform.
+    if platforms == [] or platforms == ["all"]:
+        return all_keys
+    if platforms == ["host"]:
+        return []
+
+    for p in platforms:
+        if p in ("all", "host"):
+            fail(("`platforms` may not combine the '{sentinel}' sentinel with explicit platform " +
+                  "keys; use [\"{sentinel}\"] alone, or list only platform keys.").format(sentinel = p))
+        if p not in _PLATFORM_CONSTRAINTS:
+            fail("Unknown platform '%s' in `platforms`. Valid keys: %s (or 'host' / 'all')." % (
+                p,
+                sorted(all_keys),
+            ))
+    return list(platforms)
+
 def graalvm_repository(
         name,
         java_version,
@@ -1029,7 +1086,8 @@ def graalvm_repository(
         target_compatible_with = [],
         components = [],
         setup_actions = [],
-        register_all = False,
+        platforms = None,
+        register_all = None,
         toolchain_repo_name = None,
         **kwargs):
     """Declare a GraalVM distribution repository, and optionally a Java toolchain to match.
@@ -1057,7 +1115,15 @@ def graalvm_repository(
         target_compatible_with: Compatibility tags to apply.
         components: Components to install in the target GVM installation.
         setup_actions: GraalVM Updater commands that should be run; pass complete command strings that start with "gu".
-        register_all: Register all GraalVM repositories and use `target_compatible_with` (experimental).
+        platforms: Which platforms to generate and register toolchains for. `None` (the default for the
+          legacy WORKSPACE entry point) or `["host"]` generates only the host-platform toolchain; `[]` or
+          `["all"]` generates toolchains for every supported platform; an explicit list such as
+          `["linux-x64", "linux-aarch64"]` selects a subset. The Bzlmod `gvm.graalvm` tag defaults this to
+          `[]` (all platforms). Valid keys: `linux-x64`, `linux-aarch64`, `macos-x64`, `macos-aarch64`,
+          `windows-x64`. The `"host"` / `"all"` sentinels may not be combined with explicit keys.
+        register_all: Deprecated alias for `platforms` retained for the legacy WORKSPACE entry point.
+          `True` is equivalent to `platforms = []` (all platforms); `False` to `platforms = ["host"]`.
+          Cannot be combined with `platforms`.
         toolchain_repo_name: Explicit name to give to the toolchain config repo; if `None` (default), a sensible
           name is used in the format `<name>_toolchains`.
         **kwargs: Passed to the underlying bindist repository rule.
@@ -1089,7 +1155,9 @@ def graalvm_repository(
 
     toolchain_repo_name = toolchain_repo_name or (name + "_toolchains")
 
-    extra_platforms = list(_PLATFORM_CONSTRAINTS.keys()) if register_all else []
+    # Resolve the requested platform set. An empty `extra_platforms` selects host-only mode (the
+    # toolchain config repo auto-detects the host); a non-empty list selects multi-platform mode.
+    extra_platforms = _resolve_platforms(platforms, register_all)
 
     _toolchain_config(
         name = toolchain_repo_name,
@@ -1113,17 +1181,20 @@ def graalvm_repository(
         **kwargs
     )
 
-    if register_all:
-        for pk in _PLATFORM_CONSTRAINTS:
-            _graalvm_bindist_repository(
-                name = "%s_%s" % (name, pk.replace("-", "_")),
-                version = version,
-                java_version = java_version,
-                distribution = distribution,
-                components = components,
-                setup_actions = setup_actions,
-                enable_toolchain = toolchain,
-                toolchain_config = toolchain_repo_name,
-                platform_key = pk,
-                **kwargs
-            )
+    # In multi-platform mode, declare a per-platform SDK repo for each selected platform. These
+    # are fetched lazily: only the SDK for a platform whose toolchain is actually selected gets
+    # downloaded. The host platform's repo is declared here too but goes unreferenced (the host
+    # toolchain points at `@<name>//`), so it is never fetched.
+    for pk in extra_platforms:
+        _graalvm_bindist_repository(
+            name = "%s_%s" % (name, pk.replace("-", "_")),
+            version = version,
+            java_version = java_version,
+            distribution = distribution,
+            components = components,
+            setup_actions = setup_actions,
+            enable_toolchain = toolchain,
+            toolchain_config = toolchain_repo_name,
+            platform_key = pk,
+            **kwargs
+        )

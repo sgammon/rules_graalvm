@@ -16,7 +16,8 @@ def graalvm_repository(
         target_compatible_with = [],
         components = [],
         setup_actions = [],
-        register_all = False,
+        platforms = None,
+        register_all = None,
         url = None,
         urls = None,
         strip_prefix = None,
@@ -63,7 +64,14 @@ def graalvm_repository(
         target_compatible_with: Compatibility tags to apply.
         components: Components to install in the target GVM installation.
         setup_actions: GraalVM Updater commands that should be run; pass complete command strings that start with "gu".
-        register_all: Register all GraalVM repositories and use `target_compatible_with` (experimental).
+        platforms: Which platforms to generate and register toolchains for. `None` (the WORKSPACE default)
+          or `["host"]` generates only the host-platform toolchain; `[]` or `["all"]` generates every
+          supported platform (`linux-x64`, `linux-aarch64`, `macos-x64`, `macos-aarch64`, `windows-x64`);
+          an explicit list selects a subset. The Bzlmod `gvm.graalvm` tag defaults this to all platforms.
+          Registering all platforms is lazy — only the SDK of a selected toolchain is fetched — so it is
+          free for host-only builds and makes RBE work out of the box.
+        register_all: Deprecated alias for `platforms`. `True` ≡ `platforms = []` (all platforms);
+          `False` ≡ `platforms = ["host"]`. Cannot be combined with `platforms`.
         url: Custom download URL. When set, bypasses the bindist map. Requires `strip_prefix`; see above.
         urls: Mirror URLs; alternate form of `url`. If both are set, `urls` wins.
         strip_prefix: Archive-internal prefix to strip. Required when `url` / `urls` is set.
@@ -108,6 +116,7 @@ def graalvm_repository(
         target_compatible_with = target_compatible_with,
         components = components,
         setup_actions = setup_actions,
+        platforms = platforms,
         register_all = register_all,
         **forwarded
     )

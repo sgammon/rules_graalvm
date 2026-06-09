@@ -33,7 +33,7 @@ def _gvm_impl(mctx):
             "toolchain_prefix": selected.toolchain_prefix,
             "components": all_components,
             "setup_actions": selected.setup_actions,
-            "register_all": selected.register_all,
+            "platforms": list(selected.platforms),
         }
 
         # Forward the custom-URL attrs only when set. They are mutually exclusive with map-based
@@ -66,7 +66,20 @@ _graalvm = tag_class(attrs = {
     "toolchain_prefix": attr.string(mandatory = False),
     "components": attr.string_list(mandatory = False),
     "setup_actions": attr.string_list(mandatory = False),
-    "register_all": attr.bool(mandatory = False, default = False),
+    "platforms": attr.string_list(
+        mandatory = False,
+        doc = """Which platforms to generate and register GraalVM toolchains for.
+
+Unset (the default), `[]`, or `["all"]` registers toolchains for every supported platform
+(`linux-x64`, `linux-aarch64`, `macos-x64`, `macos-aarch64`, `windows-x64`) so that both
+host builds and remote build execution (RBE) work out of the box. Bazel fetches only the
+SDK for the platform a toolchain is actually selected on, so registering all platforms is
+free for host-only builds.
+
+Use `["host"]` to generate only the host-platform toolchain, or an explicit subset such as
+`["linux-x64", "linux-aarch64"]` for a narrow / pure-RBE setup. The `"host"` and `"all"`
+sentinels may not be combined with explicit platform keys.""",
+    ),
     "url": attr.string(
         mandatory = False,
         doc = "Custom download URL for an Early Adopter / nightly / dev build. Bypasses the bindist map.",
