@@ -11,7 +11,14 @@ sdk_probe(name = "sdk_probe")
 sh_test(
     name = "sdk_probe_test",
     srcs = ["provenance_test.sh"],
-    args = ["$(rootpath :sdk_probe)"],
+    # Default (host) config: the host platform always folds into the `graalvm` repo (the dedup),
+    # so assert that, plus require the SVM link essentials so a missing-archive regression is
+    # caught here too.
+    args = [
+        "$(rootpath :sdk_probe)",
+        "graalvm",
+        "libjvm,liblibchelper,libffi",
+    ],
     data = [":sdk_probe"],
 )
 

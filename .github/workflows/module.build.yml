@@ -494,7 +494,10 @@ jobs:
         working-directory: ./example/integration_tests/bzlmod_all_platforms
         shell: bash
         run: |
-          args="--platforms=//tools/remote:linux_aarch64 --extra_execution_platforms=//tools/remote:linux_aarch64"
-          bazel build //sample:sdk_probe $args
-          out="$(bazel cquery //sample:sdk_probe --output=files $args 2>/dev/null)"
-          bash sample/provenance_test.sh "$out" graalvm_linux_aarch64
+          bazel build //sample:sdk_probe \
+            --platforms=//tools/remote:linux_aarch64 \
+            --extra_execution_platforms=//tools/remote:linux_aarch64
+          out="$(bazel cquery //sample:sdk_probe --output=files \
+            --platforms=//tools/remote:linux_aarch64 \
+            --extra_execution_platforms=//tools/remote:linux_aarch64 2>/dev/null)"
+          bash sample/provenance_test.sh "$out" graalvm_linux_aarch64 libjvm,liblibchelper,libffi

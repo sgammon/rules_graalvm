@@ -291,7 +291,7 @@
     },
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "QHyMZv/fofKbJ7vHA5db4DciN0rmxZQ11p7We+tfTuc=",
+        "bzlTransitiveDigest": "Hm7f1BLBpAaWJLiKCPyuL5u35As+9I/hEHokLzihPGQ=",
         "usagesDigest": "OGXSrnfena86TIWOYvkXUeVeg2X+z2yF4IzHBRmhzfo=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},

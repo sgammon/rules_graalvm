@@ -795,10 +795,16 @@ alias(
     )
 
     # Static archives for a fully-static native-image link, exposed as cc_library targets so a
-    # consumer can feed `static_link_libs` straight into a cc_* rule. SVM clibraries are
-    # platform-flat; JDK static libs are flat on macOS/Windows but split by libc on Linux. Each
-    # per-platform SDK repo holds only its own platform dir, so the `*` wildcard is unambiguous.
-    # Kept out of the .format()'d alias template so the select()'s braces need no escaping.
+    # consumer can feed `static_link_libs` straight into a cc_* rule. The on-disk layout varies by
+    # GraalVM version/OS, so the globs are recursive and only the libc dimension is split:
+    #   - SVM clibraries: `lib/svm/clibraries/<plat>/*.a` (flat: CE 21, macOS) OR
+    #     `lib/svm/clibraries/<plat>/{glibc,musl}/*.a` (libc-nested: GraalVM 24/25+).
+    #   - SVM macros (e.g. truffle's libffi): `lib/svm/macros/**/...*.a` (depth varies by version).
+    #   - JDK static libs: `lib/static/<plat>/*.a` (flat: macOS) OR `lib/static/<plat>/{glibc,musl}/*.a`.
+    # Each per-platform SDK repo holds only its own platform dir. Recursive `**` catches every depth;
+    # the per-variant `exclude` drops the other libc (a no-op on flat layouts, so both variants are
+    # identical there). Kept out of the .format()'d alias template so the select()'s braces need no
+    # escaping.
     static_link_libs_build = """
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
@@ -806,10 +812,11 @@ cc_library(
     name = "static_link_libs_glibc",
     srcs = glob(
         [
-            "lib/svm/clibraries/*/*.a",
-            "lib/static/*/*.a",
-            "lib/static/*/glibc/*.a",
+            "lib/svm/clibraries/**/*.a",
+            "lib/svm/macros/**/*.a",
+            "lib/static/**/*.a",
         ],
+        exclude = ["**/musl/**"],
         allow_empty = True,
     ),
     visibility = ["//visibility:public"],
@@ -819,10 +826,11 @@ cc_library(
     name = "static_link_libs_musl",
     srcs = glob(
         [
-            "lib/svm/clibraries/*/*.a",
-            "lib/static/*/*.a",
-            "lib/static/*/musl/*.a",
+            "lib/svm/clibraries/**/*.a",
+            "lib/svm/macros/**/*.a",
+            "lib/static/**/*.a",
         ],
+        exclude = ["**/glibc/**"],
         allow_empty = True,
     ),
     visibility = ["//visibility:public"],
