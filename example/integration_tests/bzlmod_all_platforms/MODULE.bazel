@@ -1,4 +1,4 @@
-"Sample bzlmod project using register_all with platform-aware toolchains."
+"Sample bzlmod project using platform-aware toolchains (all platforms by default)."
 
 module(
     name = "rules_graalvm_all_platforms_sample",
@@ -21,7 +21,6 @@ bazel_dep(
     name = "rules_graalvm",
     version = "0.0.0",
 )
-
 local_path_override(
     module_name = "rules_graalvm",
     path = "../../..",
@@ -37,7 +36,8 @@ gvm.graalvm(
     distribution = "ce",
     java_version = "21",
     version = "21.0.2",
-    register_all = True,
+    # `platforms` defaults to all supported platforms; `@graalvm_toolchains//:all`
+    # registers them. Bazel fetches only the SDK for a selected toolchain's platform.
 )
 use_repo(
     gvm,

@@ -281,7 +281,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "0Laf2DkSXOnCSA9pPZSW9bejmAQeOjjHfx9wzr+MK8I=",
+        "bzlTransitiveDigest": "IWq8xCKEYD91oMCOJ+ekDejHrSSvM01M5vrcekEV4Rg=",
         "usagesDigest": "pKj65Qb9OHtY4/syhMnB7NBVWb5JzlRsDC4OgrnprMY=",
         "recordedInputs": [
           "REPO_MAPPING:,bazel_skylib bazel_skylib+"
@@ -291,7 +291,13 @@
             "repoRuleId": "@@//internal:graalvm_bindist.bzl%_toolchain_config",
             "attributes": {
               "sdk_repo": "graalvm",
-              "extra_platforms": [],
+              "extra_platforms": [
+                "linux-x64",
+                "linux-aarch64",
+                "macos-x64",
+                "macos-aarch64",
+                "windows-x64"
+              ],
               "enable_java_toolchain": true,
               "toolchain_prefix": "",
               "java_version": "21",
@@ -308,6 +314,71 @@
               "setup_actions": [],
               "enable_toolchain": true,
               "toolchain_config": "graalvm_toolchains"
+            }
+          },
+          "graalvm_linux_x64": {
+            "repoRuleId": "@@//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "21.0.2",
+              "java_version": "21",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "linux-x64"
+            }
+          },
+          "graalvm_linux_aarch64": {
+            "repoRuleId": "@@//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "21.0.2",
+              "java_version": "21",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "linux-aarch64"
+            }
+          },
+          "graalvm_macos_x64": {
+            "repoRuleId": "@@//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "21.0.2",
+              "java_version": "21",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "macos-x64"
+            }
+          },
+          "graalvm_macos_aarch64": {
+            "repoRuleId": "@@//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "21.0.2",
+              "java_version": "21",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "macos-aarch64"
+            }
+          },
+          "graalvm_windows_x64": {
+            "repoRuleId": "@@//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "21.0.2",
+              "java_version": "21",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "windows-x64"
             }
           }
         }

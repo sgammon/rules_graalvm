@@ -1,8 +1,9 @@
 # Testing GraalVM platform support #
 
-End-to-end check that `gvm.graalvm(register_all = True)` registers both the
-**GraalVM JDK** and **native-image** toolchains for every supported exec/target
-platform — verified by running a `java_binary` and a `native_image` of the same
+End-to-end check that `gvm.graalvm(...)` — which registers every supported
+platform by default — provides both the **GraalVM JDK** and **native-image**
+toolchains for each exec/target platform, verified by running a `java_binary`
+and a `native_image` of the same
 class on remote linux/amd64 and linux/arm64 executors. The `.bazelrc` pins
 `--java_runtime_version=graalvm_21` so the `java_binary` resolves to GraalVM.
 
