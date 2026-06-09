@@ -158,6 +158,36 @@ keys. Individual toolchains are addressable as `@graalvm_toolchains//:gvm_<platf
 See [`example/integration_tests/bzlmod_all_platforms`](./example/integration_tests/bzlmod_all_platforms)
 for an end-to-end RBE example.
 
+#### Consuming SDK files from the resolved toolchain
+
+Toolchain *resolution* is per-platform, but a rule that reaches into the SDK by raw
+`@graalvm//:lib/...` label always gets the **host** download — which breaks a cross/RBE build
+(e.g. a macOS host building a Linux target gets macOS files even though native-image resolved
+the Linux toolchain). To get the **target platform's** files, read them from the toolchain
+provider instead:
+
+```starlark
+def _impl(ctx):
+    gvm = ctx.toolchains["@rules_graalvm//graalvm/toolchain"].graalvm
+    cc_info = gvm.static_link_libs[CcInfo]          # SVM + JDK static archives for a static link
+    class_roots = gvm.class_roots.files             # lib/modules, lib/jrt-fs.jar, lib/ct.sym
+    jdk = gvm.jdk_runtime                            # java_runtime target (JavaRuntimeInfo)
+    # ...
+
+my_rule = rule(_impl, toolchains = ["@rules_graalvm//graalvm/toolchain"])
+```
+
+Provider fields (`GraalVMToolchainInfo`): `native_image_bin`, `home`, `jdk_runtime`,
+`class_roots`, `static_link_libs`, `static_link_libs_musl`, `version` (`gvm_files` is retained
+for back-compat). Each resolves to the selected platform's SDK repo.
+
+**libc:** `static_link_libs` follows `@rules_graalvm//graalvm/config:libc` (default `glibc`) for
+direct references, and the `@graalvm//:static_link_libs_{glibc,musl}` targets are addressable
+directly. Through the toolchain provider the flag resolves to its default (the toolchain is
+analyzed in the exec configuration), so for a **musl** link read the `static_link_libs_musl`
+field — a concrete target that survives the exec transition. On macOS/Windows the two are
+identical (no libc split).
+
 ## Examples
 
 See the list of [examples](./docs/examples.md), which are used as continuous integration tests. Examples are available
