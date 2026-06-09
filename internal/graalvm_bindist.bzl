@@ -767,6 +767,11 @@ graalvm_sdk(
     name = "gvm",
     native_image_bin = ":native-image",
     gvm_files = ":files",
+    home = ":files",
+    jdk_runtime = ":jdk",
+    class_roots = ":class_roots",
+    static_link_libs = ":static_link_libs",
+    static_link_libs_musl = ":static_link_libs_musl",
     version = "{gvm_version}",
 )
 alias(
@@ -789,6 +794,55 @@ alias(
         gvm_version = version,
     )
 
+    # Static archives for a fully-static native-image link, exposed as cc_library targets so a
+    # consumer can feed `static_link_libs` straight into a cc_* rule. SVM clibraries are
+    # platform-flat; JDK static libs are flat on macOS/Windows but split by libc on Linux. Each
+    # per-platform SDK repo holds only its own platform dir, so the `*` wildcard is unambiguous.
+    # Kept out of the .format()'d alias template so the select()'s braces need no escaping.
+    static_link_libs_build = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "static_link_libs_glibc",
+    srcs = glob(
+        [
+            "lib/svm/clibraries/*/*.a",
+            "lib/static/*/*.a",
+            "lib/static/*/glibc/*.a",
+        ],
+        allow_empty = True,
+    ),
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "static_link_libs_musl",
+    srcs = glob(
+        [
+            "lib/svm/clibraries/*/*.a",
+            "lib/static/*/*.a",
+            "lib/static/*/musl/*.a",
+        ],
+        allow_empty = True,
+    ),
+    visibility = ["//visibility:public"],
+)
+
+# `static_link_libs` follows `@rules_graalvm//graalvm/config:libc` for *direct* references (built
+# in the target configuration). Accessed through the toolchain provider it resolves with the
+# libc value in the toolchain's exec configuration (glibc by default); musl consumers read the
+# provider's `static_link_libs_musl` field, which is a concrete target and so survives the
+# toolchain's exec transition.
+alias(
+    name = "static_link_libs",
+    actual = select({
+        "@rules_graalvm//graalvm/config:musl": ":static_link_libs_musl",
+        "//conditions:default": ":static_link_libs_glibc",
+    }),
+    visibility = ["//visibility:public"],
+)
+"""
+
     ctx.file(
         "BUILD.bazel",
         """
@@ -809,7 +863,7 @@ filegroup(
 {aliases}
 """.format(
             toolchain = toolchain_template.format(RUNTIME_VERSION = java_version),
-            aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
+            aliases = ctx.attr.enable_toolchain and (toolchain_aliases_template + static_link_libs_build) or "",
             rendered_bin_targets = rendered_bin_targets,
         ),
     )
