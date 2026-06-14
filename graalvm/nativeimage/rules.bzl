@@ -101,6 +101,7 @@ def native_image(
         profiles = [],
         layers = [],
         emit_intermediate_dir = False,
+        emit_obfuscation_mapping = False,
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -144,6 +145,7 @@ def native_image(
         proxy_configuration: Proxy configuration file. No default; optional.
         layers: Parent GraalVM Native Image layer(s) to consume via `--layer-use`. Today accepts at most 1 entry. Entries must be `native_image_layer` targets.
         emit_intermediate_dir: If True, preserve native-image's intermediate build directory as a TreeArtifact output (exposed via `OutputGroupInfo(intermediate_dir=...)`) and pass `-H:TempDirectory=<path>` to direct native-image to use it. Enables downstream rules (e.g., staticlib repackers) to consume the intermediate `<image>.o` file.
+        emit_obfuscation_mapping: If True, declare `<image-name>.obfuscation-mapping.json` (the obfuscation symbol map native-image writes next to the binary when `-H:AdvancedObfuscation=export-mapping` is set) as an output, exposed via `OutputGroupInfo(obfuscation_mapping=...)`. Not added to `DefaultInfo.files` (the map can be tens of MiB). Opt-in: the caller must also pass `-H:AdvancedObfuscation=export-mapping` in `extra_args` in tandem, or the declared output is never written and the build fails.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -191,5 +193,6 @@ def native_image(
         proxy_configuration = proxy_configuration,
         layers = layers,
         emit_intermediate_dir = emit_intermediate_dir,
+        emit_obfuscation_mapping = emit_obfuscation_mapping,
         **kwargs
     )

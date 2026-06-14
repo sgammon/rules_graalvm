@@ -183,6 +183,20 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         default = False,
     ),
+    "emit_obfuscation_mapping": attr.bool(
+        doc = "If True, declare `<image-name>.obfuscation-mapping.json` (the obfuscation " +
+              "symbol map native-image writes next to the binary when " +
+              "`-H:AdvancedObfuscation=export-mapping` is in effect) as an output of the " +
+              "native-image action, exposed via `OutputGroupInfo(obfuscation_mapping=...)`. " +
+              "The file is NOT added to `DefaultInfo.files` — it can be tens of MiB, so only " +
+              "output-group consumers pull it; plain consumers of the binary don't drag it " +
+              "along. The mapping is not produced for every image, so this is opt-in: the " +
+              "caller MUST also pass `-H:AdvancedObfuscation=export-mapping` in `extra_args` in " +
+              "tandem, otherwise the declared output is never written and the build fails " +
+              "(declared-but-unwritten output).",
+        mandatory = False,
+        default = False,
+    ),
     "profiles": attr.label_list(
         allow_files = True,
         mandatory = False,

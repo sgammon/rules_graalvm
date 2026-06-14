@@ -176,6 +176,21 @@ def _graal_binary_implementation(ctx):
     if ctx.attr.emit_language_resources:
         language_resources_dir = ctx.actions.declare_directory("resources")
 
+    # Optional declared output capturing the obfuscation symbol map native-image writes next to
+    # the binary when `-H:AdvancedObfuscation=export-mapping` is in `extra_args`. SVM names the
+    # file `<image-name>.obfuscation-mapping.json` and drops it in `-H:Path` (the binary's dir),
+    # so we declare it as a sibling of the binary using the SAME image-name derivation that
+    # `_configure_output_mode` uses for `-H:Name`: `out_bin_name` (executable_name with `%target%`
+    # substituted), i.e. the binary's basename with any platform `bin_postfix` (`.exe`/`.so`/...)
+    # trimmed off. The mapping is not produced unless the caller also passes the export-mapping
+    # flag, so this output is opt-in; declared-but-unwritten would fail the action. It is added to
+    # `outputs` and surfaced ONLY via `OutputGroupInfo(obfuscation_mapping=...)` (not
+    # `default_files`) — the file can be tens of MiB and plain binary consumers shouldn't drag it.
+    obfuscation_mapping = None
+    if ctx.attr.emit_obfuscation_mapping:
+        out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
+        obfuscation_mapping = ctx.actions.declare_file(out_bin_name + ".obfuscation-mapping.json")
+
     # Emit `-H:LayerUse=<ancestor.nil>` for every ancestor, oldest-first, plus the
     # per-target RUNPATH linker option — all wrapped in `experimental_args()` so the gated
     # open/close pair is version-correct (close skipped on GraalVM 21 and older).
@@ -276,6 +291,8 @@ def _graal_binary_implementation(ctx):
         outputs.append(intermediate_dir)
     if language_resources_dir != None:
         outputs.append(language_resources_dir)
+    if obfuscation_mapping != None:
+        outputs.append(obfuscation_mapping)
     run_params = {
         "outputs": outputs,
         "executable": graal,
@@ -355,6 +372,9 @@ def _graal_binary_implementation(ctx):
         output_groups["intermediate_dir"] = depset([intermediate_dir])
     if language_resources_dir != None:
         output_groups["language_resources"] = depset([language_resources_dir])
+    if obfuscation_mapping != None:
+        # Output-group only (deliberately NOT in `default_files`): the map can be tens of MiB.
+        output_groups["obfuscation_mapping"] = depset([obfuscation_mapping])
     if output_groups:
         providers.append(OutputGroupInfo(**output_groups))
     if cc_info_provider != None:
