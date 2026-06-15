@@ -1,12 +1,12 @@
 matrix:
-  bazel_version: ["8.0.0"]
+  bazel_version: ["9.1.0"]
   platform:
     - ubuntu2004
     - macos
     - macos_arm64
 
 validate_config: 1
-buildifier: latest
+buildifier: "6.3.3"
 
 tasks:
   build_and_test:

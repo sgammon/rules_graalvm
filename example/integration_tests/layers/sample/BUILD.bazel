@@ -1,0 +1,63 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load(
+    "@rules_graalvm//graalvm:defs.bzl",
+    "native_image",
+    "native_image_layer",
+)
+load("@rules_java//java:defs.bzl", "java_binary")
+
+ENTRY = "exe.Main"
+
+native_image_layer(
+    name = "libbase",
+    directives = ["package=base"],
+    deps = ["//sample/base"],
+)
+
+java_binary(
+    name = "mainjvm",
+    main_class = ENTRY,
+    runtime_deps = ["//sample/base"],
+)
+
+native_image(
+    name = "main",
+    layers = [":libbase"],
+    main_class = ENTRY,
+    deps = ["//sample/exe"],
+)
+
+alias(
+    name = "sample",
+    actual = "main",
+)
+
+# `cc_deps_dynamic` sanity sample — minimal exercise of the dynamic-link path on
+# both `native_image_layer` and the consuming `native_image`. We don't call into
+# `libdyn` from Java; this purely validates the rules-level wiring (NEEDED
+# entries, RPATH on the layer `.so` and the binary, and `runtime_libs/`
+# staging). Real-world invocation is exercised separately in HEATWAVE.
+cc_library(
+    name = "dyn",
+    srcs = ["dyn.c"],
+)
+
+native_image_layer(
+    name = "libbase_dyn",
+    cc_deps_dynamic = [":dyn"],
+    directives = ["package=base"],
+    # `--no-as-needed` keeps the NEEDED entry alive even though no Java code
+    # references `dyn_meaning` — the goal here is to verify the linkage and
+    # RPATH wiring, not to exercise call-through. Real consumers (HEATWAVE)
+    # have actual symbol references and don't need this.
+    extra_args = ["-H:NativeLinkerOption=-Wl,--no-as-needed"],
+    deps = ["//sample/base"],
+)
+
+native_image(
+    name = "main_dyn",
+    extra_args = ["-H:NativeLinkerOption=-Wl,--no-as-needed"],
+    layers = [":libbase_dyn"],
+    main_class = ENTRY,
+    deps = ["//sample/exe"],
+)

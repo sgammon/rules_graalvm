@@ -40,6 +40,21 @@ _NativeImageInfo = provider(
     """,
 )
 
+_NativeImageLayerInfo = provider(
+    fields = {
+        "layer_file": "The `.nil` archive file produced by this layer's native-image invocation.",
+        "shared_lib": "The layer's runtime shared library (`.so` / `.dylib` / `.dll`). Consumers must stage this next to the produced binary so the dynamic linker can find it at runtime.",
+        "classpath_depset": "depset[File] of transitive runtime JARs composing this layer's classpath. Merged into child builds so SVM's compatibility check passes.",
+        "propagated_args": "struct(initialize_at_build_time, initialize_at_run_time, native_features, extra_args) — additively propagated to children when the `_LAYER_AUTO_PROPAGATE` gate is True.",
+        "transitive_layer_files": "depset[File] of all ancestor `.nil` archives (this layer + all parents), ordered so oldest ancestors come first.",
+        "transitive_shared_libs": "depset[File] of all ancestor shared libraries (this layer + all parents). Consumers iterate over this to stage every ancestor's `.so` next to their binary.",
+    },
+    doc = """
+    Info about a GraalVM Native Image layer (`.nil`) that downstream layers or images consume via
+    the `layers` attribute. Produced by `native_image_layer` targets.
+    """,
+)
+
 # buildifier: disable=unused-variable
 def _gvm_nativeimage_info(ctx):
     """Provide info about a Native Image target's tooling settings."""
@@ -121,6 +136,9 @@ GraalVMLibC = _GraalVMLibC
 GraalVMCompilerBackend = _GraalVMCompilerBackend
 
 NativeImageInfo = _NativeImageInfo
+
+# buildifier: disable=name-conventions
+NativeImageLayerInfo = _NativeImageLayerInfo
 
 ALL_SETTINGS = _ALL_SETTINGS
 DEFAULT_LIBC = _DEFAULT_LIBC

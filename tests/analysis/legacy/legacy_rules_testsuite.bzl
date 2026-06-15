@@ -33,6 +33,7 @@ def _test_gvm_legacy_nativeimage(name):
         name = name,
         impl = _test_gvm_default_nativeimage_tool_impl,
         target = "%s_native" % name,
+        attr_values = {"size": "small"},
     )
 
 def _test_gvm_default_nativeimage_tool_impl(env, target):

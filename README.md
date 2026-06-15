@@ -108,6 +108,86 @@ register_toolchains("@graalvm//:jvm")
 register_toolchains("@graalvm//:sdk")
 ```
 
+### Platform-aware toolchain registration (bzlmod)
+
+By default, `gvm.graalvm(...)` generates JDK + native-image toolchains for **every**
+supported platform (`linux-x64`, `linux-aarch64`, `macos-x64`, `macos-aarch64`,
+`windows-x64`) and exposes them through a single `graalvm_toolchains` aggregator.
+Register them all with one line:
+
+```starlark
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+
+gvm.graalvm(
+    name = "graalvm",
+    version = "23.0.0",
+    distribution = "ce",
+    java_version = "23",
+)
+use_repo(gvm, "graalvm", "graalvm_toolchains")
+
+register_toolchains("@graalvm_toolchains//:all")
+```
+
+This is the recommended setup for both local host builds and remote build execution
+(RBE). Registering every platform is **free for host-only builds**: Bazel only fetches
+the GraalVM SDK for a platform whose toolchain is actually selected, so a local build
+downloads exactly one SDK while RBE workers resolve the toolchain matching their
+platform. Toolchain resolution picks the right one via
+`target_compatible_with`/`exec_compatible_with` constraints.
+
+To narrow the set, use the `platforms` attribute:
+
+```starlark
+gvm.graalvm(
+    name = "graalvm",
+    version = "23.0.0",
+    distribution = "ce",
+    java_version = "23",
+    platforms = ["host"],                    # host only
+    # platforms = ["linux-x64", "linux-aarch64"],  # explicit subset (e.g. linux RBE)
+)
+```
+
+`["host"]` generates only the host-platform toolchain; an explicit list selects a
+subset. The `"host"` / `"all"` sentinels may not be combined with explicit platform
+keys. Individual toolchains are addressable as `@graalvm_toolchains//:gvm_<platform>`,
+`:jdk_<platform>`, and `:bootstrap_<platform>`; the host toolchains are also aliased as
+`@graalvm_toolchains//:native_image` and `:java_runtime`.
+
+See [`example/integration_tests/bzlmod_all_platforms`](./example/integration_tests/bzlmod_all_platforms)
+for an end-to-end RBE example.
+
+#### Consuming SDK files from the resolved toolchain
+
+Toolchain *resolution* is per-platform, but a rule that reaches into the SDK by raw
+`@graalvm//:lib/...` label always gets the **host** download — which breaks a cross/RBE build
+(e.g. a macOS host building a Linux target gets macOS files even though native-image resolved
+the Linux toolchain). To get the **target platform's** files, read them from the toolchain
+provider instead:
+
+```starlark
+def _impl(ctx):
+    gvm = ctx.toolchains["@rules_graalvm//graalvm/toolchain"].graalvm
+    cc_info = gvm.static_link_libs[CcInfo]          # SVM + JDK static archives for a static link
+    class_roots = gvm.class_roots.files             # lib/modules, lib/jrt-fs.jar, lib/ct.sym
+    jdk = gvm.jdk_runtime                            # java_runtime target (JavaRuntimeInfo)
+    # ...
+
+my_rule = rule(_impl, toolchains = ["@rules_graalvm//graalvm/toolchain"])
+```
+
+Provider fields (`GraalVMToolchainInfo`): `native_image_bin`, `home`, `jdk_runtime`,
+`class_roots`, `static_link_libs`, `static_link_libs_musl`, `version` (`gvm_files` is retained
+for back-compat). Each resolves to the selected platform's SDK repo.
+
+**libc:** `static_link_libs` follows `@rules_graalvm//graalvm/config:libc` (default `glibc`) for
+direct references, and the `@graalvm//:static_link_libs_{glibc,musl}` targets are addressable
+directly. Through the toolchain provider the flag resolves to its default (the toolchain is
+analyzed in the exec configuration), so for a **musl** link read the `static_link_libs_musl`
+field — a concrete target that survives the exec transition. On macOS/Windows the two are
+identical (no libc split).
+
 ## Examples
 
 See the list of [examples](./docs/examples.md), which are used as continuous integration tests. Examples are available

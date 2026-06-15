@@ -1,0 +1,101 @@
+load(":cc_toolchain_config.bzl", "system_cc_toolchain_config")
+
+platform(
+    name = "linux_x86_64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+platform(
+    name = "linux_aarch64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+filegroup(name = "empty")
+
+system_cc_toolchain_config(
+    name = "linux_x86_64_cc_config",
+    cxx_builtin_include_directories = [
+        "/usr/include",
+        "/usr/local/include",
+        "/usr/lib/gcc/x86_64-linux-gnu/11/include",
+        "/usr/lib/gcc/x86_64-linux-gnu/11/include-fixed",
+        "/usr/include/x86_64-linux-gnu",
+    ],
+    target_cpu = "x86_64",
+    target_system_name = "x86_64-linux-gnu",
+    toolchain_identifier = "linux_x86_64_system",
+)
+
+cc_toolchain(
+    name = "linux_x86_64_cc_toolchain",
+    all_files = ":empty",
+    ar_files = ":empty",
+    as_files = ":empty",
+    compiler_files = ":empty",
+    dwp_files = ":empty",
+    linker_files = ":empty",
+    objcopy_files = ":empty",
+    strip_files = ":empty",
+    toolchain_config = ":linux_x86_64_cc_config",
+)
+
+toolchain(
+    name = "linux_x86_64_cc",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    toolchain = ":linux_x86_64_cc_toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+system_cc_toolchain_config(
+    name = "linux_aarch64_cc_config",
+    cxx_builtin_include_directories = [
+        "/usr/include",
+        "/usr/local/include",
+        "/usr/lib/gcc/aarch64-linux-gnu/11/include",
+        "/usr/lib/gcc/aarch64-linux-gnu/11/include-fixed",
+        "/usr/include/aarch64-linux-gnu",
+    ],
+    target_cpu = "aarch64",
+    target_system_name = "aarch64-linux-gnu",
+    toolchain_identifier = "linux_aarch64_system",
+)
+
+cc_toolchain(
+    name = "linux_aarch64_cc_toolchain",
+    all_files = ":empty",
+    ar_files = ":empty",
+    as_files = ":empty",
+    compiler_files = ":empty",
+    dwp_files = ":empty",
+    linker_files = ":empty",
+    objcopy_files = ":empty",
+    strip_files = ":empty",
+    toolchain_config = ":linux_aarch64_cc_config",
+)
+
+toolchain(
+    name = "linux_aarch64_cc",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+    toolchain = ":linux_aarch64_cc_toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)

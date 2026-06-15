@@ -5,10 +5,16 @@ _TARGET_GVM_TOOLCHAIN = ":toolchain_gvm"
 
 GraalVMToolchainInfo = provider(
     doc = "Information about the GraalVM runtime and compiler.",
-    fields = [
-        "native_image_bin",
-        "gvm_files",
-    ],
+    fields = {
+        "native_image_bin": "The `native-image` tool for this platform (executable; exec-configured).",
+        "gvm_files": "Filegroup of the full SDK installation (exec-configured). Back-compat; prefer `home`.",
+        "home": "Target whose files are the SDK root for this platform (a runnable GraalVM home).",
+        "jdk_runtime": "The `java_runtime` target for this platform (carries `JavaRuntimeInfo`).",
+        "class_roots": "Target whose files are the JDK class roots (`lib/modules`, `lib/jrt-fs.jar`, `lib/ct.sym`).",
+        "static_link_libs": "A target providing `CcInfo` (index it `target[CcInfo]`) bundling this platform's SVM + JDK static archives for a static native link, or `None`. Default libc; see `static_link_libs_musl`.",
+        "static_link_libs_musl": "Like `static_link_libs` but the musl JDK static libs on Linux (identical full set on macOS/Windows). Use this for a musl link through the toolchain, since the libc flag does not survive the toolchain's exec configuration.",
+        "version": "GraalVM version string associated with this toolchain (may be empty).",
+    },
 )
 
 GraalVMEngineInfo = provider(
@@ -24,6 +30,12 @@ def _gvm_toolchain_impl(ctx):
         graalvm = GraalVMToolchainInfo(
             native_image_bin = ctx.attr.native_image_bin,
             gvm_files = ctx.attr.gvm_files,
+            home = ctx.attr.home,
+            jdk_runtime = ctx.attr.jdk_runtime,
+            class_roots = ctx.attr.class_roots,
+            static_link_libs = ctx.attr.static_link_libs,
+            static_link_libs_musl = ctx.attr.static_link_libs_musl,
+            version = ctx.attr.version,
         ),
     )
     return [toolchain_info]
@@ -72,6 +84,60 @@ Filegroup which holds the full set of constituent files which are part of this G
 SDK installation.
 
 These files are transitive tool dependencies for any binary built with Native Image.
+""",
+        ),
+        "home": attr.label(
+            mandatory = False,
+            allow_files = True,
+            doc = """
+Target whose files constitute the SDK root for this platform — enough to assemble a runnable
+GraalVM home. Resolved per-platform via toolchain resolution, so a cross/RBE build gets the
+target platform's home rather than the host's.
+""",
+        ),
+        "jdk_runtime": attr.label(
+            mandatory = False,
+            doc = """
+The `java_runtime` target for this platform, carrying `JavaRuntimeInfo`. Suitable as the
+`java_runtime` of a `default_java_toolchain`, resolved for the target platform.
+""",
+        ),
+        "class_roots": attr.label(
+            mandatory = False,
+            allow_files = True,
+            doc = """
+Target whose files are the JDK class roots — `lib/modules`, `lib/jrt-fs.jar`, and `lib/ct.sym`
+— for this platform.
+""",
+        ),
+        "static_link_libs": attr.label(
+            mandatory = False,
+            doc = """
+A `cc_library` target bundling this platform's SVM and JDK static archives
+(`lib/svm/clibraries/<plat>/*.a`, `lib/static/<plat>/[<libc>/]*.a`) for a fully static
+native-image link. The provider carries the target; a consumer reads its `CcInfo`
+(`target[CcInfo]`) and feeds it into a `cc_*` rule rather than naming individual `.a` paths.
+On Linux the libc variant follows `@rules_graalvm//graalvm/config:libc` for direct references;
+through the toolchain it resolves to the default (glibc) — see `static_link_libs_musl`.
+""",
+        ),
+        "static_link_libs_musl": attr.label(
+            mandatory = False,
+            doc = """
+The musl-libc variant of `static_link_libs` (on Linux; on macOS/Windows it is the same full
+static-lib set, since those platforms have no libc split). A concrete target, so — unlike the
+flag-driven `static_link_libs` — it survives the toolchain's exec configuration and can be read
+straight from the provider for a musl link.
+""",
+        ),
+        "version": attr.string(
+            mandatory = False,
+            default = "",
+            doc = """
+GraalVM version string associated with this toolchain (e.g. `25.0.2`, `23.0.1`, or a custom
+tag like `25.1.0-dev+10.1` for EA builds). Optional. When present, rules may use this to
+make version-aware decisions — for example, emitting `-H:-UnlockExperimentalVMOptions` only
+on versions new enough to accept the gated close flag.
 """,
         ),
     },

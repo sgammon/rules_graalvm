@@ -4,7 +4,24 @@ load(
     "@build_bazel_apple_support//lib:apple_support.bzl",
     "apple_support",
 )
-load("@rules_java//java:defs.bzl", "JavaInfo")
+load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
+load(
+    "//internal:argutil.bzl",
+    _experimental_args = "experimental_args",
+)
+load(
+    "//internal/native_image:action_utils.bzl",
+    _wrap_actions_for_graal = "wrap_actions_for_graal",
+)
+load(
+    "//internal/native_image:builder.bzl",
+    _configure_cc_deps_dynamic = "configure_cc_deps_dynamic",
+)
+load(
+    "//internal/native_image:cc_info.bzl",
+    _build_shared_library_cc_info = "build_shared_library_cc_info",
+    _declare_shared_library_headers = "declare_shared_library_headers",
+)
 load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
@@ -18,6 +35,11 @@ load(
     _prepare_native_image_rule_context = "prepare_native_image_rule_context",
 )
 load(
+    "//internal/native_image:layer_builder.bzl",
+    _collect_parent_layer_infos = "collect_parent_layer_infos",
+    _merge_propagated_args = "merge_propagated_args",
+)
+load(
     "//internal/native_image:toolchain.bzl",
     _resolve_cc_toolchain = "resolve_cc_toolchain",
 )
@@ -26,6 +48,11 @@ _BIN_POSTFIX_DYLIB = ".dylib"
 _BIN_POSTFIX_EXE = ".exe"
 _BIN_POSTFIX_DLL = ".dll"
 _BIN_POSTFIX_SO = ".so"
+
+# When True, parent-layer list-attrs (initialize_at_*, native_features, extra_args) are
+# propagated additively into the child image build. Classpath propagation and `-H:LayerUse` are
+# independent and always on — SVM's compatibility check requires them.
+_LAYER_AUTO_PROPAGATE = True
 
 def _build_action_message(ctx):
     _mode_label = {
@@ -40,13 +67,28 @@ def _build_action_message(ctx):
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.executable.native_image_tool
 
-    classpath_depset = depset(transitive = [
-        dep[JavaInfo].transitive_runtime_jars
+    # Collect parent layers (0 or 1 today, per macro validation).
+    parent_infos = _collect_parent_layer_infos(ctx)
+    propagated = _merge_propagated_args(parent_infos, _LAYER_AUTO_PROPAGATE)
+
+    # Classpath includes parent-layer jars first (if any) so SVM sees a superset of the parent's
+    # classpath, as required by the layered-image compatibility check.
+    local_cp = depset(transitive = [
+        dep[cc_shim.JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
+    classpath_depset = depset(transitive = [
+        p.classpath_depset
+        for p in parent_infos
+    ] + [local_cp])
 
     direct_inputs = []
     transitive_inputs = [classpath_depset]
+
+    # Parent `.nil` archives flow into the action inputs via their `transitive_layer_files`
+    # depset (which includes the parent plus its own ancestors).
+    for parent in parent_infos:
+        transitive_inputs.append(parent.transitive_layer_files)
 
     # resolve via toolchains
     gvm_toolchain = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
@@ -102,7 +144,140 @@ def _graal_binary_implementation(ctx):
         native_toolchain.c_compiler_path,
         gvm_toolchain,
         bin_postfix = bin_postfix,
+        propagated = propagated,
     )
+
+    # When building a shared library, declare per-image and canonical isolate
+    # headers as outputs of the native-image action so Bazel tracks them. NI
+    # already emits these into `-H:Path=<binary_dir>` when `--shared` is set;
+    # declaring them brings them under the action's tracked outputs.
+    declared_headers = []
+    if ctx.attr.shared_library:
+        declared_headers = _declare_shared_library_headers(ctx, binary)
+
+    # Optional TreeArtifact output capturing native-image's intermediate build directory so
+    # downstream rules (e.g., staticlib repackers) can consume `<image>.o`.
+    intermediate_dir = None
+    if ctx.attr.emit_intermediate_dir:
+        intermediate_dir = ctx.actions.declare_directory(ctx.attr.name + ".ni_tmp")
+        _experimental_args(args, [
+            "-H:TempDirectory=%s" % intermediate_dir.path,
+        ], gvm_toolchain = gvm_toolchain)
+
+        # Route the GraalVM polyglot internal-resource cache into the (writable, declared)
+        # intermediate dir. The optimizing Truffle runtime makes the builder install the
+        # `truffleattach` resource into this cache; its default `$HOME/.cache` (or `/tmp`) is
+        # not writable on RBE executors, which aborts the build. The value is taken as-is and
+        # `toAbsolutePath()`-resolved by the builder JVM against its CWD (the exec root), so a
+        # path relative to the exec root lands inside the declared TreeArtifact. `-J-D` ⇒
+        # builder JVM only. See the `relocate_polyglot_cache` attribute doc. No-op when the
+        # attribute is False; gated here so it only applies when `intermediate_dir` exists.
+        if ctx.attr.relocate_polyglot_cache:
+            args.add("-J-Dpolyglot.engine.userResourceCache=%s/polyglot-resources" % intermediate_dir.path)
+
+    # Optional TreeArtifact output capturing the `resources/` tree that
+    # native-image emits next to the binary when `-H:+CopyLanguageResources`
+    # is in effect (Truffle language homes — GraalPy, Ruby, etc.). The
+    # location is hard-coded by SVM as `<H:Path>/resources/`, so we declare
+    # a tree artifact at `<package>/resources/` to capture it. If multiple
+    # native_image targets in the same Bazel package use this, a name-
+    # collision on `resources/` would surface at analysis time — make the
+    # binary live in its own package or `subpackage_visibility` it.
+    language_resources_dir = None
+    if ctx.attr.emit_language_resources:
+        language_resources_dir = ctx.actions.declare_directory("resources")
+
+    # Optional declared output capturing the obfuscation symbol map native-image writes next to
+    # the binary when `-H:AdvancedObfuscation=export-mapping` is in `extra_args`. SVM names the
+    # file `<image-name>.obfuscation-mapping.json` and drops it in `-H:Path` (the binary's dir),
+    # so we declare it as a sibling of the binary using the SAME image-name derivation that
+    # `_configure_output_mode` uses for `-H:Name`: `out_bin_name` (executable_name with `%target%`
+    # substituted), i.e. the binary's basename with any platform `bin_postfix` (`.exe`/`.so`/...)
+    # trimmed off. The mapping is not produced unless the caller also passes the export-mapping
+    # flag, so this output is opt-in; declared-but-unwritten would fail the action. It is added to
+    # `outputs` and surfaced ONLY via `OutputGroupInfo(obfuscation_mapping=...)` (not
+    # `default_files`) — the file can be tens of MiB and plain binary consumers shouldn't drag it.
+    obfuscation_mapping = None
+    if ctx.attr.emit_obfuscation_mapping:
+        out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
+        obfuscation_mapping = ctx.actions.declare_file(out_bin_name + ".obfuscation-mapping.json")
+
+    # Emit `-H:LayerUse=<ancestor.nil>` for every ancestor, oldest-first, plus the
+    # per-target RUNPATH linker option — all wrapped in `experimental_args()` so the gated
+    # open/close pair is version-correct (close skipped on GraalVM 21 and older).
+    # Runtime linkage: the consumer binary is NEEDED-linked against each ancestor layer's shared
+    # library (e.g. `libbase.so`). At runtime the dynamic linker needs to find those libraries,
+    # so we:
+    #   (1) embed a per-target-unique relative RUNPATH in the binary, and
+    #   (2) stage a symlink of each ancestor `.so` at that relative path (below, after the
+    #       native-image action is set up).
+    # Symlinks are staged in a per-target subdirectory (`<target>.runtime_libs/`) rather than
+    # adjacent to the binary, so that a layer and its consumer may live in the same Bazel
+    # package without a declared-output collision on `libbase.so`.
+    # Windows uses a different DLL search rule (executable directory is the default), so the
+    # RPATH step is skipped there and only the staging step applies.
+    runtime_libs_dir = ctx.attr.name + ".runtime_libs"
+
+    # Stage `cc_deps_dynamic` shared libs into the same `<target>.runtime_libs/` directory used
+    # for layer .so files — both classes of dependency share an `RPATH`. The helper declares
+    # symlink actions, mutates `direct_inputs` (so the native-image action consumes them), and
+    # emits `-H:CLibraryPath` + `-L`/`-l` args. Runfiles plumbing happens below alongside the
+    # ancestor staging.
+    cc_dyn_staged = _configure_cc_deps_dynamic(
+        ctx,
+        args,
+        direct_inputs,
+        runtime_libs_dir,
+    )
+
+    # Stage parent-layer transitive shared libs into the same `runtime_libs_dir` *before* the
+    # native-image action runs, and add them to `direct_inputs`. This is required for `ld` to
+    # resolve the layer's NEEDED entries at link-resolve time:
+    #
+    #   When `stage1_dynamic-bin` is being linked against `libbase_dyn.so` (the layer), `ld`
+    #   walks the layer's NEEDED entries and tries to physically find each `.so` so it can
+    #   verify the symbol references. If `libelideo11y.so` (a transitive dep of the layer)
+    #   isn't on `ld`'s search path, the link aborts with "undefined reference" even though the
+    #   layer itself ships with the reference correctly recorded.
+    #
+    # By staging into `runtime_libs_dir` and emitting `-L` for that dir below, the same files
+    # serve both purposes: link-time resolution AND runtime loading via the embedded RPATH.
+    seen_basenames = {staged.basename: True for staged in cc_dyn_staged}
+    parent_staged_libs = []
+    for parent in parent_infos:
+        for ancestor_lib in parent.transitive_shared_libs.to_list():
+            if ancestor_lib.basename in seen_basenames:
+                continue
+            seen_basenames[ancestor_lib.basename] = True
+            staged = ctx.actions.declare_file("%s/%s" % (runtime_libs_dir, ancestor_lib.basename))
+            ctx.actions.symlink(output = staged, target_file = ancestor_lib)
+            parent_staged_libs.append(staged)
+            direct_inputs.append(staged)
+
+    # Anything in `runtime_libs_dir` (cc_deps_dynamic OR parent-propagated) needs to be on
+    # `ld`'s search path. `_configure_cc_deps_dynamic` already emits `-L`/`-H:CLibraryPath` for
+    # that dir when *it* stages something; if only parent-propagated libs landed there, we need
+    # to emit those flags ourselves so the layer's NEEDED entries resolve at link time.
+    if parent_staged_libs and not cc_dyn_staged:
+        runtime_libs_dirname = parent_staged_libs[0].dirname
+        args.add(runtime_libs_dirname, format = "-H:CLibraryPath=%s")
+        args.add(runtime_libs_dirname, format = "-H:NativeLinkerOption=-L%s")
+
+    # Emit RPATH whenever the binary depends on runtime-loaded shared libs — either from parent
+    # layers or from user-supplied `cc_deps_dynamic`. `LayerUse` flags only fire for layers.
+    needs_rpath = bool(parent_infos) or bool(cc_dyn_staged)
+    if needs_rpath:
+        layer_args = []
+        for parent in parent_infos:
+            for ancestor in parent.transitive_layer_files.to_list():
+                layer_args.append("-H:LayerUse=%s" % ancestor.path)
+        if needs_rpath:
+            if is_macos:
+                layer_args.append("-H:NativeLinkerOption=-Wl,-rpath,@loader_path/%s" % runtime_libs_dir)
+            elif not is_windows:
+                layer_args.append("-H:NativeLinkerOption=-Wl,-rpath,$ORIGIN/%s" % runtime_libs_dir)
+        if layer_args:
+            _experimental_args(args, layer_args, gvm_toolchain = gvm_toolchain)
 
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
@@ -122,8 +297,15 @@ def _graal_binary_implementation(ctx):
         direct_inputs,
         transitive = transitive_inputs,
     )
+    outputs = [binary] + declared_headers
+    if intermediate_dir != None:
+        outputs.append(intermediate_dir)
+    if language_resources_dir != None:
+        outputs.append(language_resources_dir)
+    if obfuscation_mapping != None:
+        outputs.append(obfuscation_mapping)
     run_params = {
-        "outputs": [binary],
+        "outputs": outputs,
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImage",
@@ -167,40 +349,48 @@ def _graal_binary_implementation(ctx):
             **run_params
         )
 
-    return [DefaultInfo(
+    # All `runtime_libs_dir` symlinks (parent-propagated + cc_deps_dynamic) were declared as
+    # action inputs above. Surface them in `files` and `runfiles` so `bazel build` produces
+    # them on disk and `bazel run` resolves the RPATH-relative paths at startup.
+    runtime_libs = parent_staged_libs + cc_dyn_staged
+
+    cc_info_provider = None
+    cc_info_staged_headers = []
+    if ctx.attr.shared_library:
+        cc_info_provider, cc_info_staged_headers = _build_shared_library_cc_info(
+            ctx,
+            binary,
+            declared_headers,
+        )
+
+    default_files = [binary] + runtime_libs + cc_info_staged_headers
+    if intermediate_dir != None:
+        default_files.append(intermediate_dir)
+    if language_resources_dir != None:
+        default_files.append(language_resources_dir)
+
+    providers = [DefaultInfo(
         executable = binary,
-        files = depset([binary]),
+        files = depset(default_files),
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,
-            files = [],
+            files = runtime_libs,
         ),
     )]
-
-def _wrap_actions_for_graal(actions):
-    """Wraps the given ctx.actions struct so that env variables are correctly passed to Graal."""
-    patched_actions = {k: getattr(actions, k) for k in dir(actions)}
-
-    def _run_target(**kwargs):
-        _wrapped_run_for_graal(actions, **kwargs)
-
-    patched_actions["run"] = _run_target
-    return struct(**patched_actions)
-
-def _env_arg_map_each(key_value):
-    return "-E{}={}".format(key_value[0], key_value[1])
-
-def _wrapped_run_for_graal(_original_actions, arguments = [], env = {}, **kwargs):
-    env_args = _original_actions.args()
-    env_args.add_all(env.items(), map_each = _env_arg_map_each)
-    return _original_actions.run(
-        arguments = arguments + [env_args],
-        # We keep the original variables as Bazel has special handling for adding additional
-        # variables (such as DEVELOPER_DIR) based on existing ones when it executes the action
-        # locally.
-        env = env,
-        **kwargs
-    )
+    output_groups = {}
+    if intermediate_dir != None:
+        output_groups["intermediate_dir"] = depset([intermediate_dir])
+    if language_resources_dir != None:
+        output_groups["language_resources"] = depset([language_resources_dir])
+    if obfuscation_mapping != None:
+        # Output-group only (deliberately NOT in `default_files`): the map can be tens of MiB.
+        output_groups["obfuscation_mapping"] = depset([obfuscation_mapping])
+    if output_groups:
+        providers.append(OutputGroupInfo(**output_groups))
+    if cc_info_provider != None:
+        providers.append(cc_info_provider)
+    return providers
 
 # Exports.
 RULES_REPO = _RULES_REPO
@@ -212,3 +402,4 @@ GVM_TOOLCHAIN_TYPE = _GVM_TOOLCHAIN_TYPE
 DEBUG_CONDITION = _DEBUG_CONDITION
 OPTIMIZATION_MODE_CONDITION = _OPTIMIZATION_MODE_CONDITION
 graal_binary_implementation = _graal_binary_implementation
+LAYER_AUTO_PROPAGATE = _LAYER_AUTO_PROPAGATE

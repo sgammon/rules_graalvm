@@ -89,7 +89,7 @@ jobs:
             main: true
             coverage: true
             flags: --config=mac
-          - runner: macos-13
+          - runner: macos-15-intel
             label: macOS amd64
             labs: false
             main: true

@@ -59,6 +59,16 @@ _native_image = rule(
     ],
 )
 
+def _validate_layers(layers, target_name):
+    if len(layers) > 1:
+        fail(
+            "`layers` accepts at most 1 parent layer today; got %d on '%s': %s" % (
+                len(layers),
+                target_name,
+                layers,
+            ),
+        )
+
 # Exports.
 def native_image(
         name,
@@ -76,6 +86,10 @@ def native_image(
         shared_library = None,
         static_zlib = None,
         c_compiler_option = [],
+        native_linker_option = [],
+        cc_deps = [],
+        cc_deps_dynamic = [],
+        extra_headers = [],
         data = [],
         extra_args = [],
         allow_fallback = False,
@@ -85,6 +99,9 @@ def native_image(
         resource_configuration = None,
         proxy_configuration = None,
         profiles = [],
+        layers = [],
+        emit_intermediate_dir = False,
+        emit_obfuscation_mapping = False,
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -110,6 +127,13 @@ def native_image(
             On Linux, this is used when Graal statically links zlib into the binary, e.g. with
             `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
+        native_linker_option: Extra linker options forwarded as `-H:NativeLinkerOption=<value>`. Each entry produces one flag; use for `-Wl,...` directives or explicit `-l<name>`. No default; optional.
+        cc_deps: `cc_library` / `cc_import` targets whose static archives should be linked into the produced image. The rule extracts each archive (preferring PIC), stages it as an action input, and emits a matching `-H:NativeLinkerOption=<archive>` flag. Use this to satisfy `@CFunction` / JNI references defined in companion Rust / C / C++ libraries. No default; optional.
+        cc_deps_dynamic: `cc_library` / `cc_import` targets whose dynamic libraries (`.so` / `.dylib` / `.dll`) should be linked into the produced binary at native-image link time and resolved at runtime. Each dep's dynamic library is staged adjacent to the binary under `<target>.runtime_libs/`, and on Linux/macOS an RPATH (`$ORIGIN` / `@loader_path`) is embedded so the loader finds it without environment setup. Use this for dynamic-image variants where the consumer expects a runtime-loaded shared library, not a statically linked archive. No default; optional.
+        extra_headers: Additional header filenames Native Image is expected to emit alongside
+            the shared library. Only valid when `shared_library = True`. Each entry is a basename
+            and is declared as an output of the native-image action; the rule surfaces it via
+            `CcInfo.compilation_context.headers`. No default; optional.
         data: Data files to make available during the compilation. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
@@ -119,8 +143,24 @@ def native_image(
         profiles: Profiles to use for profile-guided optimization (PGO) and obtained from a native image compiled with `--pgo-instrument`.
         resource_configuration: Resource configuration file. No default; optional.
         proxy_configuration: Proxy configuration file. No default; optional.
+        layers: Parent GraalVM Native Image layer(s) to consume via `--layer-use`. Today accepts at most 1 entry. Entries must be `native_image_layer` targets.
+        emit_intermediate_dir: If True, preserve native-image's intermediate build directory as a TreeArtifact output (exposed via `OutputGroupInfo(intermediate_dir=...)`) and pass `-H:TempDirectory=<path>` to direct native-image to use it. Enables downstream rules (e.g., staticlib repackers) to consume the intermediate `<image>.o` file.
+        emit_obfuscation_mapping: If True, declare `<image-name>.obfuscation-mapping.json` (the obfuscation symbol map native-image writes next to the binary when `-H:AdvancedObfuscation=export-mapping` is set) as an output, exposed via `OutputGroupInfo(obfuscation_mapping=...)`. Not added to `DefaultInfo.files` (the map can be tens of MiB). Opt-in: the caller must also pass `-H:AdvancedObfuscation=export-mapping` in `extra_args` in tandem, or the declared output is never written and the build fails.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
+
+    _validate_layers(layers, name)
+
+    if extra_headers and not shared_library:
+        fail(
+            ("`extra_headers` is only valid when `shared_library = True` " +
+             "(target '%s' has shared_library=%s and extra_headers=%s). " +
+             "Set `shared_library = True` or remove `extra_headers`.") % (
+                name,
+                shared_library,
+                extra_headers,
+            ),
+        )
 
     _native_image(
         name = name,
@@ -140,6 +180,10 @@ def native_image(
         check_toolchains = check_toolchains,
         static_zlib = static_zlib,
         c_compiler_option = c_compiler_option,
+        native_linker_option = native_linker_option,
+        cc_deps = cc_deps,
+        cc_deps_dynamic = cc_deps_dynamic,
+        extra_headers = extra_headers,
         allow_fallback = allow_fallback,
         executable_name = executable_name,
         native_image_tool = native_image_tool,
@@ -147,5 +191,8 @@ def native_image(
         profiles = profiles,
         resource_configuration = resource_configuration,
         proxy_configuration = proxy_configuration,
+        layers = layers,
+        emit_intermediate_dir = emit_intermediate_dir,
+        emit_obfuscation_mapping = emit_obfuscation_mapping,
         **kwargs
     )

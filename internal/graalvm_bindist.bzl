@@ -27,6 +27,7 @@ load(
     "resolve_version_pair",
     Component = "DistributionComponent",
     Distribution = "DistributionType",
+    Platform = "DistributionPlatform",
 )
 load(
     "//internal:jdk_build_file.bzl",
@@ -44,6 +45,20 @@ _LEGACY_X86_TAG = "amd64"
 _NONLEGACY_X86_TAG = "x64"
 _LEGACY_DARWIN_TAG = "darwin"
 _NONLEGACY_DARWIN_TAG = "macos"
+
+_PLATFORM_CONSTRAINTS = {
+    Platform.LINUX_X64: ["@platforms//os:linux", "@platforms//cpu:x86_64"],
+    Platform.LINUX_AARCH64: ["@platforms//os:linux", "@platforms//cpu:aarch64"],
+    Platform.MACOS_X64: ["@platforms//os:macos", "@platforms//cpu:x86_64"],
+    Platform.MACOS_AARCH64: ["@platforms//os:macos", "@platforms//cpu:aarch64"],
+    Platform.WINDOWS_X64: ["@platforms//os:windows", "@platforms//cpu:x86_64"],
+}
+
+_OS_ARCHIVE_TYPE = {
+    "linux": "tar.gz",
+    "macos": "tar.gz",
+    "windows": "zip",
+}
 
 def _get_artifact_info(ctx, dist, platform, version, component = None, strict = True):
     info = resolve_distribution_artifact(
@@ -69,25 +84,41 @@ def _get_platform_legacy(ctx, legacy):
     else:
         fail("Unsupported operating system: " + ctx.os.name)
 
-def _get_platform(ctx, newdist):
-    arch_labels = {
-        "x86_64": "x64",
-        "amd64": "x64",
-        "aarch64": "aarch64",
-    }
+def _host_arch(ctx):
+    """Host CPU arch, canonicalized (`x86_64` / `aarch64`).
 
-    # fix: before bazel5, the `arch` property did not exist on `repository_os`, so we need
-    # to do without it and simply assume `amd64`.
-    if not newdist or not versions.is_at_least("5", versions.get()):
-        return _get_platform_legacy(ctx, not newdist)
-    elif ctx.os.name == "linux":
-        return ("linux-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "linux", "tar.gz")
-    elif ctx.os.name == "mac os x":
-        return ("macos-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "macos", "tar.gz")
-    elif "windows" in ctx.os.name:
-        return ("windows-%s" % (arch_labels[ctx.os.arch] or ctx.os.arch), "windows", "zip")
-    else:
-        fail("Unsupported operating system: " + ctx.os.name)
+    `repository_ctx.os.arch` exists only on Bazel 7+. On Bazel 4-6 it is absent,
+    so fall back to `uname -m` (POSIX) or `%PROCESSOR_ARCHITECTURE%` (Windows),
+    then normalize to the tags the callers expect (`arm64` -> `aarch64`, etc.).
+    """
+    arch = getattr(ctx.os, "arch", None)
+    if arch:
+        return arch
+    uname = ctx.execute(["uname", "-m"])
+    if uname.return_code == 0:
+        arch = uname.stdout.strip()
+    else:  # Windows has no `uname`; the Bazel 4 CI skips Windows, but be defensive.
+        arch = ctx.os.environ.get("PROCESSOR_ARCHITECTURE", "")
+    return {"arm64": "aarch64", "AMD64": "x86_64", "x64": "x86_64"}.get(arch, arch)
+
+def _detect_host_platform_key(ctx):
+    """Detect the platform key from the host OS."""
+    os = ctx.os.name
+    arch = _host_arch(ctx)
+    if os == "linux":
+        if arch in ("x86_64", "amd64"):
+            return Platform.LINUX_X64
+        elif arch == "aarch64":
+            return Platform.LINUX_AARCH64
+    elif os == "mac os x":
+        if arch in ("x86_64", "amd64"):
+            return Platform.MACOS_X64
+        elif arch == "aarch64":
+            return Platform.MACOS_AARCH64
+    elif "windows" in os:
+        if arch in ("x86_64", "amd64"):
+            return Platform.WINDOWS_X64
+    fail("Unsupported platform: %s %s" % (os, arch))
 
 def _check_version(version, java_version, newdist):
     java_version_numeric = int(java_version)
@@ -105,8 +136,144 @@ def _check_version(version, java_version, newdist):
         fail("Legacy GraalVM distributions not available at version '%s'" % version)
 
 def _toolchain_config_impl(ctx):
+    # The host platform of the machine evaluating this repo. Always auto-detected: this repo
+    # aggregates toolchains across platforms, so it is never pinned to a single `platform_key`.
+    host_pk = ctx.attr.platform_key or _detect_host_platform_key(ctx)
+    sdk_repo = ctx.attr.sdk_repo
+
+    # An empty `extra_platforms` is host-only mode; otherwise generate the requested set.
+    selected = list(ctx.attr.extra_platforms) if ctx.attr.extra_platforms else [host_pk]
+    host_in_set = host_pk in selected
+
+    # (platform_key, sdk_repo_name) per selected platform. The host platform reuses the primary
+    # `@<sdk_repo>//` SDK repo (which users also address directly, e.g. `@graalvm//:native-image`)
+    # rather than a duplicate `@<sdk_repo>_<host>//`, so the host SDK is downloaded only once.
+    toolchains = []
+    for pk in selected:
+        repo_name = sdk_repo if pk == host_pk else "%s_%s" % (sdk_repo, pk.replace("-", "_"))
+        toolchains.append((pk, repo_name))
+
+    host_entry = "gvm_%s" % host_pk.replace("-", "_")
+    host_jdk_entry = "jdk_%s" % host_pk.replace("-", "_")
+    host_bootstrap_entry = "bootstrap_%s" % host_pk.replace("-", "_")
+
+    platform_content = ""
+    for pk, repo_name in toolchains:
+        entry_name = "gvm_%s" % pk.replace("-", "_")
+        constraints = ", ".join(['"%s"' % c for c in _PLATFORM_CONSTRAINTS[pk]])
+        platform_content += """
+alias(
+    name = "toolchain_{entry_name}",
+    actual = "{entry_name}",
+    visibility = ["//visibility:public"],
+)
+toolchain(
+    name = "{entry_name}",
+    exec_compatible_with = [{constraints}],
+    target_compatible_with = [{constraints}],
+    toolchain = "@{repo_name}//:gvm",
+    toolchain_type = "@rules_graalvm//graalvm/toolchain",
+    visibility = ["//visibility:public"],
+)
+""".format(entry_name = entry_name, repo_name = repo_name, constraints = constraints)
+
+    # Host convenience aliases for the native-image toolchain. Only emitted when the host platform
+    # is in the selected set (an explicit host-excluding subset is a pure cross/RBE setup). Names:
+    # `gvm` / `toolchain_gvm` are kept for backward compatibility; `native_image` is the ergonomic
+    # alias.
+    gvm_content = ""
+    if host_in_set:
+        gvm_content = """
+alias(
+    name = "toolchain_gvm",
+    actual = "{host_entry}",
+    visibility = ["//visibility:public"],
+)
+alias(
+    name = "gvm",
+    actual = "{host_entry}",
+    visibility = ["//visibility:public"],
+)
+alias(
+    name = "native_image",
+    actual = "{host_entry}",
+    visibility = ["//visibility:public"],
+)
+""".format(host_entry = host_entry)
+
+    # Java runtime toolchain — only emitted when enable_java_toolchain is set.
+    # Users can disable this with `toolchain = False` in graalvm_repository() if they
+    # only need GraalVM for native-image and don't want to register it as a Java runtime.
+    java_content = ""
+    if ctx.attr.enable_java_toolchain:
+        prefix = ctx.attr.toolchain_prefix or "graalvm"
+        java_version = ctx.attr.java_version
+
+        java_content = """
+config_setting(
+    name = "prefix_version_setting",
+    values = {{"java_runtime_version": "{prefix}_{version}"}},
+    visibility = ["//visibility:private"],
+)
+""".format(prefix = prefix, version = java_version)
+
+        for pk, repo_name in toolchains:
+            jdk_entry_name = "jdk_%s" % pk.replace("-", "_")
+            constraints = ", ".join(['"%s"' % c for c in _PLATFORM_CONSTRAINTS[pk]])
+            java_content += """
+toolchain(
+    name = "{jdk_entry_name}",
+    exec_compatible_with = [{constraints}],
+    target_compatible_with = [{constraints}],
+    target_settings = [":prefix_version_setting"],
+    toolchain_type = "@bazel_tools//tools/jdk:runtime_toolchain_type",
+    toolchain = "@{repo_name}//:jdk",
+    visibility = ["//visibility:public"],
+)
+""".format(jdk_entry_name = jdk_entry_name, constraints = constraints, repo_name = repo_name)
+
+        # Host convenience aliases for the Java runtime: `toolchain` (back-compat) and `java_runtime`.
+        if host_in_set:
+            java_content += """
+alias(
+    name = "toolchain",
+    actual = "{host_jdk_entry}",
+    visibility = ["//visibility:public"],
+)
+alias(
+    name = "java_runtime",
+    actual = "{host_jdk_entry}",
+    visibility = ["//visibility:public"],
+)
+""".format(host_jdk_entry = host_jdk_entry)
+
+        if versions.is_at_least("7", versions.get()):
+            for pk, repo_name in toolchains:
+                bootstrap_entry_name = "bootstrap_%s" % pk.replace("-", "_")
+                constraints = ", ".join(['"%s"' % c for c in _PLATFORM_CONSTRAINTS[pk]])
+                java_content += """
+toolchain(
+    name = "{bootstrap_entry_name}",
+    exec_compatible_with = [{constraints}],
+    target_compatible_with = [{constraints}],
+    target_settings = [":prefix_version_setting"],
+    toolchain_type = "@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type",
+    toolchain = "@{repo_name}//:jdk",
+    visibility = ["//visibility:public"],
+)
+""".format(bootstrap_entry_name = bootstrap_entry_name, constraints = constraints, repo_name = repo_name)
+
+            if host_in_set:
+                java_content += """
+alias(
+    name = "bootstrap_runtime_toolchain",
+    actual = "{host_bootstrap_entry}",
+    visibility = ["//visibility:public"],
+)
+""".format(host_bootstrap_entry = host_bootstrap_entry)
+
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
-    ctx.file("BUILD.bazel", ctx.attr.build_file)
+    ctx.file("BUILD.bazel", platform_content + gvm_content + java_content)
 
 def _graal_updater_path(os):
     cmd = paths.join("bin", "gu")
@@ -207,8 +374,135 @@ def _detect_older_gvm_version(ctx):
 def _graal_bindist_repository_impl(ctx):
     """Implements the GraalVM repository rule (`graalvm_repository`)."""
 
-    if ctx.attr.distribution == None or _detect_older_gvm_version(ctx):
-        platform, os, archive = _get_platform(ctx, False)
+    _platform_key = getattr(ctx.attr, "platform_key", None) or None
+
+    _is_custom_url = bool(ctx.attr.url or ctx.attr.urls or ctx.attr.url_per_platform)
+
+    # `maven_resource_bundle` is only meaningful for custom-URL toolchains; a map-resolved
+    # distribution already knows its own Maven coordinates.
+    if ctx.attr.maven_resource_bundle and not _is_custom_url:
+        fail("`maven_resource_bundle` is only valid when a custom toolchain URL is set " +
+             "(`url`, `urls`, or `url_per_platform`). Remove it, or switch to a custom URL.")
+    if ctx.attr.maven_resource_bundle_sha256 and not ctx.attr.maven_resource_bundle:
+        fail("`maven_resource_bundle_sha256` is only valid together with `maven_resource_bundle`.")
+
+    # Filled in (custom-URL path) when a Maven resource bundle is downloaded; appended to the
+    # generated BUILD so the extracted tree is exposed as the `maven_resource_bundle` filegroup.
+    maven_bundle_build = ""
+
+    # Custom URL / EA path: bypass the bindist map entirely. Used for Early Adopter / nightly /
+    # dev builds whose URL is not yet known to the rules. The user supplies a URL (via `url`,
+    # `urls`, or `url_per_platform`), `sha256` (or `sha256_per_platform`), and `strip_prefix`
+    # (or `strip_prefix_per_platform`); the rule downloads that archive and wires it up the
+    # same way as a map-resolved distribution.
+    if _is_custom_url:
+        platform = _platform_key or _detect_host_platform_key(ctx)
+        os = platform.split("-")[0]
+        archive = _OS_ARCHIVE_TYPE[os]
+        version = ctx.attr.version
+        java_version = ctx.attr.java_version
+
+        if ctx.attr.url_per_platform:
+            # Multi-platform form — select by the detected platform tag.
+            platform_url = ctx.attr.url_per_platform.get(platform)
+            if not platform_url:
+                fail(("`url_per_platform` does not contain an entry for '{platform}'. " +
+                      "Declared platforms: {known}. Add an entry for this host or use " +
+                      "`target_compatible_with` on the consuming targets to skip it.").format(
+                    platform = platform,
+                    known = sorted(ctx.attr.url_per_platform.keys()),
+                ))
+            urls = [platform_url]
+            sha256 = ctx.attr.sha256_per_platform.get(platform, ctx.attr.sha256)
+            strip_prefix = ctx.attr.strip_prefix_per_platform.get(platform, ctx.attr.strip_prefix)
+        elif ctx.attr.urls:
+            urls = list(ctx.attr.urls)
+            sha256 = ctx.attr.sha256
+            strip_prefix = ctx.attr.strip_prefix
+        else:
+            urls = [ctx.attr.url]
+            sha256 = ctx.attr.sha256
+            strip_prefix = ctx.attr.strip_prefix
+
+        # Pre-flight URL validation — Bazel's downloader otherwise produces an opaque
+        # NullPointerException when a URL lacks an http(s) scheme (the usual case being a
+        # malformed format string). Catch the problem at the rule layer with a clear message.
+        for candidate in urls:
+            if not (candidate.startswith("http://") or candidate.startswith("https://")):
+                fail("not a url: %r (expected http:// or https://)" % candidate)
+
+        # Accept hashes with a leading "sha256:" multihash/OCI-style prefix — common when
+        # pasting from OCI manifests or `sha256sum --tag` output. Strip it so Bazel's
+        # downloader sees the bare hex digest it expects.
+        if sha256 and sha256.startswith("sha256:"):
+            sha256 = sha256[len("sha256:"):]
+
+        if not sha256:
+            # buildifier: disable=print
+            print("rules_graalvm: custom GraalVM URL '%s' has no sha256; downloads will not be hermetic." % urls[0])
+
+        dist_label = "GraalVM (custom URL)"
+        if ctx.attr.distribution == "oracle":
+            dist_label = "Oracle GraalVM (custom URL)"
+        elif ctx.attr.distribution in ("ce", "community"):
+            dist_label = "GraalVM CE (custom URL)"
+        ctx.report_progress("Downloading %s %s" % (dist_label, version))
+
+        ctx.download_and_extract(
+            url = urls,
+            sha256 = sha256,
+            stripPrefix = strip_prefix,
+        )
+
+        # Maven resource bundle: download + extract under `maven-bundle/`, hash-verified by
+        # `maven_resource_bundle_sha256` (hermetic + hash-locked when provided). Exposed as the
+        # `maven_resource_bundle` filegroup in the generated BUILD (below).
+        if ctx.attr.maven_resource_bundle:
+            bundle_sha256 = ctx.attr.maven_resource_bundle_sha256
+            if bundle_sha256 and bundle_sha256.startswith("sha256:"):
+                bundle_sha256 = bundle_sha256[len("sha256:"):]
+            if not bundle_sha256:
+                # buildifier: disable=print
+                print("rules_graalvm: maven_resource_bundle '%s' has no sha256; download will not be hermetic." % ctx.attr.maven_resource_bundle)
+            ctx.report_progress("Downloading GraalVM Maven resource bundle")
+            ctx.download_and_extract(
+                url = [ctx.attr.maven_resource_bundle],
+                output = "maven-bundle",
+                sha256 = bundle_sha256,
+            )
+            maven_bundle_build = "\n".join([
+                "",
+                "filegroup(",
+                '    name = "maven_resource_bundle",',
+                '    srcs = glob(["maven-bundle/**"], allow_empty = True),',
+                '    visibility = ["//visibility:public"],',
+                ")",
+                "",
+            ])
+
+        bin_tail = ""
+        shell_tail = ""
+        if "windows" in os:
+            bin_tail = "exe"
+            shell_tail = "cmd"
+
+        _bin_paths = [
+            ("gu", _relative_binpath(bin_tail, "gu", shell_tail), []),
+            ("java", _relative_binpath(bin_tail, "java"), []),
+            ("javac", _relative_binpath(bin_tail, "javac"), []),
+            ("polyglot", _relative_binpath(bin_tail, "polyglot"), []),
+            (Component.NATIVE_IMAGE, _relative_binpath(shell_tail, "native-image"), []),
+        ]
+
+        # `gu` component install is intentionally unsupported on custom URLs — EA and nightly
+        # builds rarely ship a working `gu`, and we'd need per-URL component coordinates we
+        # don't have. Users that need components should fall back to a map-resolved version.
+        if ctx.attr.components and len(ctx.attr.components) > 0:
+            fail("`components` is not supported together with `url` / `urls` / `url_per_platform`; " +
+                 "components require a map-resolved GraalVM version.")
+
+    elif ctx.attr.distribution == None or _detect_older_gvm_version(ctx):
+        platform, os, archive = _get_platform_legacy(ctx, True)
         version = ctx.attr.version
         java_version = ctx.attr.java_version
         format_args = {
@@ -267,7 +561,9 @@ def _graal_bindist_repository_impl(ctx):
         _graal_postinstall_actions(ctx, os)
 
     else:
-        platform, os, archive = _get_platform(ctx, True)
+        platform = _platform_key or _detect_host_platform_key(ctx)
+        os = platform.split("-")[0]
+        archive = _OS_ARCHIVE_TYPE[os]
         version_spec = ctx.attr.version
         distribution = ctx.attr.distribution or Distribution.COMMUNITY
         java_version_spec = ctx.attr.java_version
@@ -520,6 +816,12 @@ graalvm_sdk(
     name = "gvm",
     native_image_bin = ":native-image",
     gvm_files = ":files",
+    home = ":files",
+    jdk_runtime = ":jdk",
+    class_roots = ":class_roots",
+    static_link_libs = ":static_link_libs",
+    static_link_libs_musl = ":static_link_libs_musl",
+    version = "{gvm_version}",
 )
 alias(
     name = "sdk",
@@ -538,9 +840,65 @@ alias(
         bootstrap_toolchain_alias = bootstrap_toolchain_alias,
         rendered_bin_aliases = rendered_bin_aliases,
         bin_java_path = rendered_bin_paths.java,
-        gvm_toolchain_tags_exec = "",
-        gvm_toolchain_tags_target = "",
+        gvm_version = version,
     )
+
+    # Static archives for a fully-static native-image link, exposed as cc_library targets so a
+    # consumer can feed `static_link_libs` straight into a cc_* rule. The on-disk layout varies by
+    # GraalVM version/OS, so the globs are recursive and only the libc dimension is split:
+    #   - SVM clibraries: `lib/svm/clibraries/<plat>/*.a` (flat: CE 21, macOS) OR
+    #     `lib/svm/clibraries/<plat>/{glibc,musl}/*.a` (libc-nested: GraalVM 24/25+).
+    #   - SVM macros (e.g. truffle's libffi): `lib/svm/macros/**/...*.a` (depth varies by version).
+    #   - JDK static libs: `lib/static/<plat>/*.a` (flat: macOS) OR `lib/static/<plat>/{glibc,musl}/*.a`.
+    # Each per-platform SDK repo holds only its own platform dir. Recursive `**` catches every depth;
+    # the per-variant `exclude` drops the other libc (a no-op on flat layouts, so both variants are
+    # identical there). Kept out of the .format()'d alias template so the select()'s braces need no
+    # escaping.
+    static_link_libs_build = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "static_link_libs_glibc",
+    srcs = glob(
+        [
+            "lib/svm/clibraries/**/*.a",
+            "lib/svm/macros/**/*.a",
+            "lib/static/**/*.a",
+        ],
+        exclude = ["**/musl/**"],
+        allow_empty = True,
+    ),
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "static_link_libs_musl",
+    srcs = glob(
+        [
+            "lib/svm/clibraries/**/*.a",
+            "lib/svm/macros/**/*.a",
+            "lib/static/**/*.a",
+        ],
+        exclude = ["**/glibc/**"],
+        allow_empty = True,
+    ),
+    visibility = ["//visibility:public"],
+)
+
+# `static_link_libs` follows `@rules_graalvm//graalvm/config:libc` for *direct* references (built
+# in the target configuration). Accessed through the toolchain provider it resolves with the
+# libc value in the toolchain's exec configuration (glibc by default); musl consumers read the
+# provider's `static_link_libs_musl` field, which is a concrete target and so survives the
+# toolchain's exec transition.
+alias(
+    name = "static_link_libs",
+    actual = select({
+        "@rules_graalvm//graalvm/config:musl": ":static_link_libs_musl",
+        "//conditions:default": ":static_link_libs_glibc",
+    }),
+    visibility = ["//visibility:public"],
+)
+"""
 
     ctx.file(
         "BUILD.bazel",
@@ -560,10 +918,14 @@ filegroup(
 
 # Aliases
 {aliases}
+
+# Maven resource bundle (custom-URL toolchains that set `maven_resource_bundle`; empty otherwise)
+{maven_bundle}
 """.format(
             toolchain = toolchain_template.format(RUNTIME_VERSION = java_version),
-            aliases = ctx.attr.enable_toolchain and toolchain_aliases_template or "",
+            aliases = ctx.attr.enable_toolchain and (toolchain_aliases_template + static_link_libs_build) or "",
             rendered_bin_targets = rendered_bin_targets,
+            maven_bundle = maven_bundle_build,
         ),
     )
 
@@ -688,8 +1050,102 @@ Normally this name is generated and the user does not have to provide it.
         "sha256": attr.string(
             mandatory = False,
             doc = """
-SHA-256 fingerprint for a custom toolchain. Optional. If unspecified, use of custom
-toolchains may yield hermeticity warnings.
+SHA-256 fingerprint for the downloaded archive. Primary integrity input when `url` or `urls` is
+set (a warning is emitted if absent). Otherwise used only as a fallback when a map-resolved
+version is missing its per-platform hash.
+""",
+        ),
+        "url": attr.string(
+            mandatory = False,
+            doc = """
+Custom download URL for a GraalVM distribution. When set, this short-circuits the built-in
+bindist lookup and uses the provided URL directly — useful for Early Adopter, nightly, or
+private dev builds that are not yet in `graalvm_bindist_map.bzl`.
+
+Requires `strip_prefix`. Strongly recommends `sha256` (a non-hermetic warning is emitted when
+it is absent). Mutually shaped with `urls`: if both are set, `urls` wins.
+
+`components` cannot be combined with `url` / `urls`; EA and nightly builds rarely ship a
+functional `gu` component installer.
+""",
+        ),
+        "urls": attr.string_list(
+            mandatory = False,
+            doc = """
+Alternate form of `url` accepting a list of mirror URLs. Identical semantics otherwise; if both
+`url` and `urls` are set, `urls` wins.
+""",
+        ),
+        "strip_prefix": attr.string(
+            mandatory = False,
+            doc = """
+Archive-internal prefix to strip during extraction. Required when using `url` / `urls`; the
+rule cannot template this value for custom distributions. Ignored otherwise.
+""",
+        ),
+        "url_per_platform": attr.string_dict(
+            mandatory = False,
+            doc = """
+Per-host-platform download URLs, keyed by platform tag: `linux-x64`, `linux-aarch64`,
+`macos-x64`, `macos-aarch64`, or `windows-x64`. When set, the rule selects the entry matching
+the current host platform — a host missing from the map causes an analysis-time fail with a
+clear diagnostic listing the declared platforms.
+
+Use this instead of `url` / `urls` when the same `graalvm_repository` declaration needs to
+support multiple host operating systems or architectures (the typical case for cross-platform
+CI). Combine with `sha256_per_platform` and `strip_prefix_per_platform` for full per-platform
+configuration.
+
+Mutually exclusive with `url` and `urls`.
+""",
+        ),
+        "sha256_per_platform": attr.string_dict(
+            mandatory = False,
+            doc = """
+Per-platform SHA-256 fingerprints, keyed by the same platform tags as `url_per_platform`.
+Optional but strongly recommended; missing entries fall back to the top-level `sha256` attr,
+and a non-hermetic warning is printed when neither is set.
+""",
+        ),
+        "strip_prefix_per_platform": attr.string_dict(
+            mandatory = False,
+            doc = """
+Per-platform archive-internal prefixes, keyed by the same platform tags as `url_per_platform`.
+Useful when the same distribution packages its archives differently across platforms (for
+example, macOS archives that include a `Contents/Home` bundle wrapper). Missing entries fall
+back to the top-level `strip_prefix` attr.
+""",
+        ),
+        "maven_resource_bundle": attr.string(
+            mandatory = False,
+            doc = """
+Optional URL pointing to a GraalVM Maven resource bundle to associate with a custom toolchain.
+
+**Only valid with a custom URL** — that is, when `url`, `urls`, or `url_per_platform` is set.
+A map-resolved distribution already carries its own Maven coordinates, so passing this attr
+without a custom URL fails at analysis time with a clear diagnostic.
+
+When set, the bundle is downloaded and extracted under `maven-bundle/` in the repo and exposed
+as the `maven_resource_bundle` filegroup. Provide `maven_resource_bundle_sha256` to make the
+download hermetic + hash-locked (a warning is printed otherwise). The bundle is not yet
+consumed to resolve components; this makes it available + verified for that future feature.
+""",
+        ),
+        "maven_resource_bundle_sha256": attr.string(
+            mandatory = False,
+            doc = """
+SHA-256 of the `maven_resource_bundle` archive. **Only valid with `maven_resource_bundle`**;
+setting it without the bundle URL fails at analysis time. Strongly recommended when the bundle
+is set — without it the download is non-hermetic (a warning is printed). Accepts a leading
+`sha256:` multihash prefix (stripped automatically).
+""",
+        ),
+        "platform_key": attr.string(
+            mandatory = False,
+            doc = """
+Explicit platform to download GraalVM for, instead of auto-detecting the host.
+Must be a key from _PLATFORM_CONSTRAINTS (e.g. 'linux-x64', 'macos-aarch64').
+Used by multi-platform `platforms` selection to create per-platform SDK repositories.
 """,
         ),
     },
@@ -700,9 +1156,49 @@ _toolchain_config = repository_rule(
     local = True,
     implementation = _toolchain_config_impl,
     attrs = {
-        "build_file": attr.string(),
+        "sdk_repo": attr.string(mandatory = True),
+        "platform_key": attr.string(mandatory = False),
+        "extra_platforms": attr.string_list(mandatory = False),
+        "enable_java_toolchain": attr.bool(default = True),
+        "toolchain_prefix": attr.string(mandatory = False),
+        "java_version": attr.string(mandatory = False),
+        "target_compatible_with": attr.string_list(mandatory = False),
     },
 )
+
+def _resolve_platforms(platforms, register_all):
+    """Resolve the `platforms` / legacy `register_all` inputs to a list of platform keys.
+
+    Returns an empty list for host-only mode (the toolchain config repo then auto-detects the
+    host platform) or a non-empty list of platform keys for multi-platform mode.
+    """
+    all_keys = list(_PLATFORM_CONSTRAINTS.keys())
+
+    if register_all != None:
+        if platforms != None:
+            fail("Set either `platforms` or the legacy `register_all`, not both.")
+        return all_keys if register_all else []
+
+    # Legacy WORKSPACE entry point with neither attr set: preserve host-only behavior.
+    if platforms == None:
+        return []
+
+    # Bzlmod default (`[]`) and the explicit `["all"]` sentinel mean every platform.
+    if platforms == [] or platforms == ["all"]:
+        return all_keys
+    if platforms == ["host"]:
+        return []
+
+    for p in platforms:
+        if p in ("all", "host"):
+            fail(("`platforms` may not combine the '{sentinel}' sentinel with explicit platform " +
+                  "keys; use [\"{sentinel}\"] alone, or list only platform keys.").format(sentinel = p))
+        if p not in _PLATFORM_CONSTRAINTS:
+            fail("Unknown platform '%s' in `platforms`. Valid keys: %s (or 'host' / 'all')." % (
+                p,
+                sorted(all_keys),
+            ))
+    return list(platforms)
 
 def graalvm_repository(
         name,
@@ -714,7 +1210,8 @@ def graalvm_repository(
         target_compatible_with = [],
         components = [],
         setup_actions = [],
-        register_all = False,
+        platforms = None,
+        register_all = None,
         toolchain_repo_name = None,
         **kwargs):
     """Declare a GraalVM distribution repository, and optionally a Java toolchain to match.
@@ -742,7 +1239,15 @@ def graalvm_repository(
         target_compatible_with: Compatibility tags to apply.
         components: Components to install in the target GVM installation.
         setup_actions: GraalVM Updater commands that should be run; pass complete command strings that start with "gu".
-        register_all: Register all GraalVM repositories and use `target_compatible_with` (experimental).
+        platforms: Which platforms to generate and register toolchains for. `None` (the default for the
+          legacy WORKSPACE entry point) or `["host"]` generates only the host-platform toolchain; `[]` or
+          `["all"]` generates toolchains for every supported platform; an explicit list such as
+          `["linux-x64", "linux-aarch64"]` selects a subset. The Bzlmod `gvm.graalvm` tag defaults this to
+          `[]` (all platforms). Valid keys: `linux-x64`, `linux-aarch64`, `macos-x64`, `macos-aarch64`,
+          `windows-x64`. The `"host"` / `"all"` sentinels may not be combined with explicit keys.
+        register_all: Deprecated alias for `platforms` retained for the legacy WORKSPACE entry point.
+          `True` is equivalent to `platforms = []` (all platforms); `False` to `platforms = ["host"]`.
+          Cannot be combined with `platforms`.
         toolchain_repo_name: Explicit name to give to the toolchain config repo; if `None` (default), a sensible
           name is used in the format `<name>_toolchains`.
         **kwargs: Passed to the underlying bindist repository rule.
@@ -774,89 +1279,39 @@ def graalvm_repository(
 
     toolchain_repo_name = toolchain_repo_name or (name + "_toolchains")
 
-    # if we're running on Bazel before 7, we need to omit the bootstrap toolchain, because
-    # it doesn't yet exist in Bazel's internals.
-    bootstrap_runtime_toolchain = ""
-    if versions.is_at_least("7", versions.get()):
-        bootstrap_runtime_toolchain = """
-toolchain(
-    name = "bootstrap_runtime_toolchain",
-    # These constraints are not required for correctness, but prevent fetches of remote JDK for
-    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in
-    # the same configuration, this constraint will not result in toolchain resolution failures.
-    exec_compatible_with = {target_compatible_with},
-    target_settings = [":prefix_version_setting"],
-    toolchain_type = "@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type",
-    toolchain = "{toolchain}",
-    visibility = ["//visibility:public"],
-)
-""".format(
-            prefix = toolchain_prefix or "graalvm",
-            version = java_version,
-            target_compatible_with = target_compatible_with,
-            toolchain = "@{repo}//:jdk".format(repo = name),
-        )
-
-    toolchain_config_build_file = """
-alias(
-    name = "toolchain_gvm",
-    actual = "gvm",
-    visibility = ["//visibility:public"],
-)
-toolchain(
-    name = "gvm",
-    exec_compatible_with = [
-        {gvm_toolchain_tags_exec}
-    ],
-    target_compatible_with = [
-        {gvm_toolchain_tags_target}
-    ],
-    toolchain = "@{name}//:gvm",
-    toolchain_type = "@rules_graalvm//graalvm/toolchain",
-    visibility = ["//visibility:public"],
-)
-""".format(
-        name = name,
-        gvm_toolchain_tags_exec = "",
-        gvm_toolchain_tags_target = "",
-    )
-
-    if toolchain:
-        toolchain_config_build_file += """
-config_setting(
-    name = "prefix_version_setting",
-    values = {{"java_runtime_version": "{prefix}_{version}"}},
-    visibility = ["//visibility:private"],
-)
-toolchain(
-    name = "toolchain",
-    target_compatible_with = {target_compatible_with},
-    target_settings = [":prefix_version_setting"],
-    toolchain_type = "@bazel_tools//tools/jdk:runtime_toolchain_type",
-    toolchain = "{toolchain}",
-    visibility = ["//visibility:public"],
-)
-{bootstrap_runtime_toolchain}
-""".format(
-            name = name,
-            prefix = toolchain_prefix or "graalvm",
-            version = java_version,
-            target_compatible_with = target_compatible_with,
-            toolchain = "@{repo}//:jdk".format(repo = name),
-            bootstrap_runtime_toolchain = bootstrap_runtime_toolchain,
-            gvm_toolchain_tags_exec = "",
-            gvm_toolchain_tags_target = "",
-        )
+    # Resolve the requested platform set. An empty `extra_platforms` selects host-only mode (the
+    # toolchain config repo auto-detects the host); a non-empty list selects multi-platform mode.
+    extra_platforms = _resolve_platforms(platforms, register_all)
 
     _toolchain_config(
         name = toolchain_repo_name,
-        build_file = toolchain_config_build_file,
+        sdk_repo = name,
+        extra_platforms = extra_platforms,
+        enable_java_toolchain = toolchain,
+        toolchain_prefix = toolchain_prefix,
+        java_version = java_version,
+        target_compatible_with = target_compatible_with,
     )
 
-    if not register_all:
-        # register a specific GraalVM version at the host OS/arch pair
+    _graalvm_bindist_repository(
+        name = name,
+        version = version,
+        java_version = java_version,
+        distribution = distribution,
+        components = components,
+        setup_actions = setup_actions,
+        enable_toolchain = toolchain,
+        toolchain_config = toolchain_repo_name,
+        **kwargs
+    )
+
+    # In multi-platform mode, declare a per-platform SDK repo for each selected platform. These
+    # are fetched lazily: only the SDK for a platform whose toolchain is actually selected gets
+    # downloaded. The host platform's repo is declared here too but goes unreferenced (the host
+    # toolchain points at `@<name>//`), so it is never fetched.
+    for pk in extra_platforms:
         _graalvm_bindist_repository(
-            name = name,
+            name = "%s_%s" % (name, pk.replace("-", "_")),
             version = version,
             java_version = java_version,
             distribution = distribution,
@@ -864,7 +1319,6 @@ toolchain(
             setup_actions = setup_actions,
             enable_toolchain = toolchain,
             toolchain_config = toolchain_repo_name,
+            platform_key = pk,
             **kwargs
         )
-    else:
-        fail("GraalVM rules `register_all` is not supported yet.")

@@ -210,27 +210,57 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Bazel 4
+          # Skipped on Windows (unsupported). Bazel 4 is past upstream EOL but is kept in the
+          # matrix so the legacy WORKSPACE + `graal/graal.bzl` path stays regression-tested.
+          - label: Bazel 4
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel4"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'windows') }}
+
           # Test: Bazel 5
+          # Skipped on Windows (unsupported) and macOS (pre-existing wrapped_clang toolchain bug
+          # under Bazel 5's local_config_cc on macOS).
           - label: Bazel 5
             target: sample
             action: build
             directory: "./example/integration_tests/bazel5"
             labs: false
-            skip: ${{ contains(inputs.runner, 'windows') }}
+            skip: ${{ contains(inputs.runner, 'windows') || contains(inputs.runner, 'macos') }}
 
           # Test: Bazel 6
+          # Skipped on macOS (pre-existing `missing LC_UUID` error in local_config_cc wrapped_clang
+          # when invoked from inside native-image).
           - label: Bazel 6
             target: sample
             action: build
             directory: "./example/integration_tests/bazel6"
             labs: false
-            skip: false
+            skip: ${{ contains(inputs.runner, 'macos') }}
 
           # Test: Bazel 7
           - label: Bazel 7
             target: sample
             action: build
             directory: "./example/integration_tests/bazel7"
+            labs: false
+            skip: false
+
+          # Test: Bazel 8
+          - label: Bazel 8
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel8"
+            labs: false
+            skip: false
+
+          # Test: Bazel 9
+          - label: Bazel 9
+            target: sample
+            action: build
+            directory: "./example/integration_tests/bazel9"
             labs: false
             skip: false
 
@@ -290,6 +320,16 @@ jobs:
             labs: false
             skip: ${{ contains(inputs.runner, 'windows') }}
 
+          # Test: Components on CE
+          # Skipped on Windows (no gu/bash support) — components rely on the deprecated
+          # GraalVM Updater, which does not work on Windows.
+          - label: Components (CE)
+            target: sample
+            action: build
+            directory: "./example/integration_tests/components-ce"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'windows') }}
+
           # Test: GVM CE 17
           - label: GraalVM CE 17
             target: sample
@@ -303,6 +343,14 @@ jobs:
             target: sample
             action: build
             directory: "./example/integration_tests/graalvm-ce-21"
+            labs: false
+            skip: false
+
+          # Test: GVM CE 25
+          - label: GraalVM CE 25
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-25"
             labs: false
             skip: false
 
@@ -321,6 +369,47 @@ jobs:
             directory: "./example/integration_tests/graalvm-oracle-21"
             labs: false
             skip: false
+
+          # Test: Oracle GVM 25
+          - label: Oracle GraalVM 25
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-oracle-25"
+            labs: false
+            skip: false
+
+          # Test: Native Image Layers
+          # Exercises the `native_image_layer` rule + `layers` attr on `native_image`.
+          # Linux only because the feature is GraalVM 24+ Early Adopter (most stable on Linux)
+          # and because CI disk pressure matters (a base layer `.nil` is multi-GB).
+          # Target is `libbase` (just the base layer), not `sample`, because consuming the
+          # layer from the app hits an upstream mmap bug in GraalVM 25.0.2 (Size exceeds
+          # Integer.MAX_VALUE, fixed in PR #13008 — expected in 25.0.3).
+          # Bare label form `sample:libbase` (no leading `//`) sidesteps Git Bash MSYS path
+          # mangling that collapses `//foo` → `/foo`.
+          - label: Native Image Layers
+            target: "sample:libbase"
+            action: build
+            directory: "./example/integration_tests/layers"
+            labs: true
+            skip: ${{ contains(inputs.runner, 'windows') || contains(inputs.runner, 'macos') }}
+
+          # Test: Custom URL (Early Adopter pathway)
+          # Exercises `url_per_platform` / `sha256_per_platform` / `strip_prefix_per_platform`
+          # on `graalvm_repository` — the supported path for EA / nightly / dev builds.
+          # Targets `mainjvm` (the Java binary) to keep the test fast: it forces the custom
+          # URL download and toolchain wiring without running native-image.
+          # Skipped on macOS Intel (runner `macos-15-intel`) because the pinned URL set uses
+          # GraalVM CE 25.0.2 which does not ship a `macos-x64` build — the rule's per-platform
+          # URL check would fail at repo fetch with no matching entry for `macos-x64`.
+          # Bare label form `sample:mainjvm` (no leading `//`) sidesteps Git Bash MSYS path
+          # mangling that collapses `//foo` → `/foo` on Windows.
+          - label: Custom URL
+            target: "sample:mainjvm"
+            action: build
+            directory: "./example/integration_tests/custom-url"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'intel') }}
 
     steps:
       - name: Harden Runner
@@ -370,3 +459,45 @@ jobs:
         working-directory: ${{ matrix.directory }}
         shell: bash
         run: bazel ${{ matrix.action || 'build' }} "${{ matrix.target || '//...' }}"
+
+  # Per-target SDK *file* selection. Resolves the linux/aarch64 GraalVM toolchain from this
+  # x86_64 host and asserts every SDK file the toolchain provider surfaces originates from that
+  # platform's SDK repo (not the host's) — the cross-platform / RBE bug this guards against.
+  # `ctx.actions.write` is in-process, so no executor for the target platform is needed; this is
+  # the file-selection assertion and requires no RBE. (A full remote *execution* smoke test on
+  # BuildBuddy is tracked separately — it needs RBE-platform exec_properties for the example.)
+  sdk-file-selection:
+    name: "SDK File Selection"
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    continue-on-error: ${{ inputs.labs }}
+    if: inputs.main
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            bcr.bazel.build:443
+            github.com:443
+            github.com:80
+            mirror.bazel.build:443
+            objects.githubusercontent.com:443
+            releases.bazel.build:443
+            www.graalvm.org:443
+      - name: "Setup: Checkout"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: "Setup: Bazel"
+        uses: bazel-contrib/setup-bazel@f3f50ea6791b9b0f4c4eeabba4507422426462f5 # 0.8.3
+      - name: "Test: per-target SDK file selection (cross-platform)"
+        working-directory: ./example/integration_tests/bzlmod_all_platforms
+        shell: bash
+        run: |
+          bazel build //sample:sdk_probe \
+            --platforms=//tools/remote:linux_aarch64 \
+            --extra_execution_platforms=//tools/remote:linux_aarch64
+          out="$(bazel cquery //sample:sdk_probe --output=files \
+            --platforms=//tools/remote:linux_aarch64 \
+            --extra_execution_platforms=//tools/remote:linux_aarch64 2>/dev/null)"
+          bash sample/provenance_test.sh "$out" graalvm_linux_aarch64 libjvm,liblibchelper,libffi
