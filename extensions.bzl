@@ -55,6 +55,8 @@ def _gvm_impl(mctx):
             kwargs["strip_prefix_per_platform"] = dict(selected.strip_prefix_per_platform)
         if selected.maven_resource_bundle:
             kwargs["maven_resource_bundle"] = selected.maven_resource_bundle
+        if selected.maven_resource_bundle_sha256:
+            kwargs["maven_resource_bundle_sha256"] = selected.maven_resource_bundle_sha256
 
         graalvm_repository(**kwargs)
 
@@ -110,7 +112,11 @@ sentinels may not be combined with explicit platform keys.""",
     ),
     "maven_resource_bundle": attr.string(
         mandatory = False,
-        doc = "Optional URL of a GraalVM Maven resource bundle. Only valid with `url` / `urls` / `url_per_platform`. Currently inert; recorded for future wiring.",
+        doc = "Optional URL of a GraalVM Maven resource bundle. Only valid with `url` / `urls` / `url_per_platform`. Downloaded + extracted under `maven-bundle/` and exposed as the `maven_resource_bundle` filegroup.",
+    ),
+    "maven_resource_bundle_sha256": attr.string(
+        mandatory = False,
+        doc = "SHA-256 of the `maven_resource_bundle` archive. Only valid with `maven_resource_bundle`; makes the bundle download hermetic + hash-locked.",
     ),
 })
 

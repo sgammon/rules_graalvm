@@ -200,8 +200,8 @@
   "moduleExtensions": {
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "SjB+tLBDCQO7xkc1CRqFatIw99r0uKeShQQvR0tCbvI=",
-        "usagesDigest": "XN5/IzeEc9Q4dcBndMWItkE5ABFNf1vhBmwp/o5R9xg=",
+        "bzlTransitiveDigest": "CrNeEXnNWWgJReVPNvcDRabqh+xjdOd3EDTbr5rgN4c=",
+        "usagesDigest": "0xCHfNapcDFtI6g16Fzlpbvqpes1WL/Zln9ZnxOIH04=",
         "recordedInputs": [
           "REPO_MAPPING:rules_graalvm+,bazel_skylib bazel_skylib+"
         ],
@@ -209,7 +209,18 @@
           "graalvm_toolchains": {
             "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_toolchain_config",
             "attributes": {
-              "build_file": "\nalias(\n    name = \"toolchain_gvm\",\n    actual = \"gvm\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"gvm\",\n    exec_compatible_with = [\n        \n    ],\n    target_compatible_with = [\n        \n    ],\n    toolchain = \"@graalvm//:gvm\",\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain\",\n    visibility = [\"//visibility:public\"],\n)\n\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_25\"},\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"
+              "sdk_repo": "graalvm",
+              "extra_platforms": [
+                "linux-x64",
+                "linux-aarch64",
+                "macos-x64",
+                "macos-aarch64",
+                "windows-x64"
+              ],
+              "enable_java_toolchain": true,
+              "toolchain_prefix": "",
+              "java_version": "25",
+              "target_compatible_with": []
             }
           },
           "graalvm": {
@@ -240,7 +251,173 @@
                 "macos-aarch64": "graalvm-25.1.0-dev+10.1/Contents/Home",
                 "windows-x64": "graalvm-25.1.0-dev+10.1"
               },
-              "maven_resource_bundle": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/maven-resource-bundle-25.1.0-ea.23.zip"
+              "maven_resource_bundle": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/maven-resource-bundle-25.1.0-ea.23.zip",
+              "maven_resource_bundle_sha256": "0b8fb652357004e959313f6dcc905a0f16b66ee486de2cd6c9c66c8847ed2c9e"
+            }
+          },
+          "graalvm_linux_x64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.1.0-dev+10.1",
+              "java_version": "25",
+              "distribution": "oracle",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "linux-x64",
+              "url_per_platform": {
+                "linux-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-x64_bin.tar.gz",
+                "linux-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-aarch64_bin.tar.gz",
+                "macos-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_macos-aarch64_bin.tar.gz",
+                "windows-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_windows-x64_bin.zip"
+              },
+              "sha256_per_platform": {
+                "linux-x64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "linux-aarch64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "macos-aarch64": "0a534f83c039c852cf1511d9f4aa5ee0509cf95a473e70d9a61cff9735315d2a",
+                "windows-x64": "b77632236ad440b7c4e46bad608052d39d20f5e0a0932d008a183e031ef98bbc"
+              },
+              "strip_prefix_per_platform": {
+                "linux-x64": "graalvm-25.1.0-dev+10.1",
+                "linux-aarch64": "graalvm-25.1.0-dev+10.1",
+                "macos-aarch64": "graalvm-25.1.0-dev+10.1/Contents/Home",
+                "windows-x64": "graalvm-25.1.0-dev+10.1"
+              },
+              "maven_resource_bundle": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/maven-resource-bundle-25.1.0-ea.23.zip",
+              "maven_resource_bundle_sha256": "0b8fb652357004e959313f6dcc905a0f16b66ee486de2cd6c9c66c8847ed2c9e"
+            }
+          },
+          "graalvm_linux_aarch64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.1.0-dev+10.1",
+              "java_version": "25",
+              "distribution": "oracle",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "linux-aarch64",
+              "url_per_platform": {
+                "linux-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-x64_bin.tar.gz",
+                "linux-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-aarch64_bin.tar.gz",
+                "macos-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_macos-aarch64_bin.tar.gz",
+                "windows-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_windows-x64_bin.zip"
+              },
+              "sha256_per_platform": {
+                "linux-x64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "linux-aarch64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "macos-aarch64": "0a534f83c039c852cf1511d9f4aa5ee0509cf95a473e70d9a61cff9735315d2a",
+                "windows-x64": "b77632236ad440b7c4e46bad608052d39d20f5e0a0932d008a183e031ef98bbc"
+              },
+              "strip_prefix_per_platform": {
+                "linux-x64": "graalvm-25.1.0-dev+10.1",
+                "linux-aarch64": "graalvm-25.1.0-dev+10.1",
+                "macos-aarch64": "graalvm-25.1.0-dev+10.1/Contents/Home",
+                "windows-x64": "graalvm-25.1.0-dev+10.1"
+              },
+              "maven_resource_bundle": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/maven-resource-bundle-25.1.0-ea.23.zip",
+              "maven_resource_bundle_sha256": "0b8fb652357004e959313f6dcc905a0f16b66ee486de2cd6c9c66c8847ed2c9e"
+            }
+          },
+          "graalvm_macos_x64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.1.0-dev+10.1",
+              "java_version": "25",
+              "distribution": "oracle",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "macos-x64",
+              "url_per_platform": {
+                "linux-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-x64_bin.tar.gz",
+                "linux-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-aarch64_bin.tar.gz",
+                "macos-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_macos-aarch64_bin.tar.gz",
+                "windows-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_windows-x64_bin.zip"
+              },
+              "sha256_per_platform": {
+                "linux-x64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "linux-aarch64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "macos-aarch64": "0a534f83c039c852cf1511d9f4aa5ee0509cf95a473e70d9a61cff9735315d2a",
+                "windows-x64": "b77632236ad440b7c4e46bad608052d39d20f5e0a0932d008a183e031ef98bbc"
+              },
+              "strip_prefix_per_platform": {
+                "linux-x64": "graalvm-25.1.0-dev+10.1",
+                "linux-aarch64": "graalvm-25.1.0-dev+10.1",
+                "macos-aarch64": "graalvm-25.1.0-dev+10.1/Contents/Home",
+                "windows-x64": "graalvm-25.1.0-dev+10.1"
+              },
+              "maven_resource_bundle": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/maven-resource-bundle-25.1.0-ea.23.zip",
+              "maven_resource_bundle_sha256": "0b8fb652357004e959313f6dcc905a0f16b66ee486de2cd6c9c66c8847ed2c9e"
+            }
+          },
+          "graalvm_macos_aarch64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.1.0-dev+10.1",
+              "java_version": "25",
+              "distribution": "oracle",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "macos-aarch64",
+              "url_per_platform": {
+                "linux-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-x64_bin.tar.gz",
+                "linux-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-aarch64_bin.tar.gz",
+                "macos-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_macos-aarch64_bin.tar.gz",
+                "windows-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_windows-x64_bin.zip"
+              },
+              "sha256_per_platform": {
+                "linux-x64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "linux-aarch64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "macos-aarch64": "0a534f83c039c852cf1511d9f4aa5ee0509cf95a473e70d9a61cff9735315d2a",
+                "windows-x64": "b77632236ad440b7c4e46bad608052d39d20f5e0a0932d008a183e031ef98bbc"
+              },
+              "strip_prefix_per_platform": {
+                "linux-x64": "graalvm-25.1.0-dev+10.1",
+                "linux-aarch64": "graalvm-25.1.0-dev+10.1",
+                "macos-aarch64": "graalvm-25.1.0-dev+10.1/Contents/Home",
+                "windows-x64": "graalvm-25.1.0-dev+10.1"
+              },
+              "maven_resource_bundle": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/maven-resource-bundle-25.1.0-ea.23.zip",
+              "maven_resource_bundle_sha256": "0b8fb652357004e959313f6dcc905a0f16b66ee486de2cd6c9c66c8847ed2c9e"
+            }
+          },
+          "graalvm_windows_x64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.1.0-dev+10.1",
+              "java_version": "25",
+              "distribution": "oracle",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "windows-x64",
+              "url_per_platform": {
+                "linux-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-x64_bin.tar.gz",
+                "linux-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_linux-aarch64_bin.tar.gz",
+                "macos-aarch64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_macos-aarch64_bin.tar.gz",
+                "windows-x64": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/graalvm-jdk-25e1-25.0.2-ea.23_windows-x64_bin.zip"
+              },
+              "sha256_per_platform": {
+                "linux-x64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "linux-aarch64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+                "macos-aarch64": "0a534f83c039c852cf1511d9f4aa5ee0509cf95a473e70d9a61cff9735315d2a",
+                "windows-x64": "b77632236ad440b7c4e46bad608052d39d20f5e0a0932d008a183e031ef98bbc"
+              },
+              "strip_prefix_per_platform": {
+                "linux-x64": "graalvm-25.1.0-dev+10.1",
+                "linux-aarch64": "graalvm-25.1.0-dev+10.1",
+                "macos-aarch64": "graalvm-25.1.0-dev+10.1/Contents/Home",
+                "windows-x64": "graalvm-25.1.0-dev+10.1"
+              },
+              "maven_resource_bundle": "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-25.0.2-ea.23/maven-resource-bundle-25.1.0-ea.23.zip",
+              "maven_resource_bundle_sha256": "0b8fb652357004e959313f6dcc905a0f16b66ee486de2cd6c9c66c8847ed2c9e"
             }
           }
         }

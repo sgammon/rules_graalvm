@@ -26,6 +26,7 @@ def graalvm_repository(
         sha256_per_platform = None,
         strip_prefix_per_platform = None,
         maven_resource_bundle = None,
+        maven_resource_bundle_sha256 = None,
         **kwargs):
     """Declare a GraalVM distribution repository, and optionally a Java toolchain to match.
 
@@ -83,8 +84,11 @@ def graalvm_repository(
         strip_prefix_per_platform: Dict of per-platform strip prefixes, same keys.
         maven_resource_bundle: Optional URL of a GraalVM Maven resource bundle to associate with
           a custom toolchain. Only valid together with `url` / `urls` / `url_per_platform`;
-          fails analysis if set on a map-resolved distribution. Inert today — recorded on the
-          repo for forward compatibility with a future component-from-Maven resolution path.
+          fails analysis if set on a map-resolved distribution. Downloaded + extracted under
+          `maven-bundle/` and exposed as the repo's `maven_resource_bundle` filegroup, for a
+          future component-from-Maven resolution path.
+        maven_resource_bundle_sha256: SHA-256 of the `maven_resource_bundle` archive. Only valid
+          together with `maven_resource_bundle`; makes the bundle download hermetic + hash-locked.
         **kwargs: Passed to the underlying bindist repository rule.
     """
 
@@ -105,6 +109,8 @@ def graalvm_repository(
         forwarded["strip_prefix_per_platform"] = strip_prefix_per_platform
     if maven_resource_bundle != None:
         forwarded["maven_resource_bundle"] = maven_resource_bundle
+    if maven_resource_bundle_sha256 != None:
+        forwarded["maven_resource_bundle_sha256"] = maven_resource_bundle_sha256
 
     _graalvm_repository(
         name = name,

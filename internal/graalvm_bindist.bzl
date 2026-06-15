@@ -84,10 +84,27 @@ def _get_platform_legacy(ctx, legacy):
     else:
         fail("Unsupported operating system: " + ctx.os.name)
 
+def _host_arch(ctx):
+    """Host CPU arch, canonicalized (`x86_64` / `aarch64`).
+
+    `repository_ctx.os.arch` exists only on Bazel 7+. On Bazel 4-6 it is absent,
+    so fall back to `uname -m` (POSIX) or `%PROCESSOR_ARCHITECTURE%` (Windows),
+    then normalize to the tags the callers expect (`arm64` -> `aarch64`, etc.).
+    """
+    arch = getattr(ctx.os, "arch", None)
+    if arch:
+        return arch
+    uname = ctx.execute(["uname", "-m"])
+    if uname.return_code == 0:
+        arch = uname.stdout.strip()
+    else:  # Windows has no `uname`; the Bazel 4 CI skips Windows, but be defensive.
+        arch = ctx.os.environ.get("PROCESSOR_ARCHITECTURE", "")
+    return {"arm64": "aarch64", "AMD64": "x86_64", "x64": "x86_64"}.get(arch, arch)
+
 def _detect_host_platform_key(ctx):
     """Detect the platform key from the host OS."""
     os = ctx.os.name
-    arch = ctx.os.arch
+    arch = _host_arch(ctx)
     if os == "linux":
         if arch in ("x86_64", "amd64"):
             return Platform.LINUX_X64
@@ -366,6 +383,12 @@ def _graal_bindist_repository_impl(ctx):
     if ctx.attr.maven_resource_bundle and not _is_custom_url:
         fail("`maven_resource_bundle` is only valid when a custom toolchain URL is set " +
              "(`url`, `urls`, or `url_per_platform`). Remove it, or switch to a custom URL.")
+    if ctx.attr.maven_resource_bundle_sha256 and not ctx.attr.maven_resource_bundle:
+        fail("`maven_resource_bundle_sha256` is only valid together with `maven_resource_bundle`.")
+
+    # Filled in (custom-URL path) when a Maven resource bundle is downloaded; appended to the
+    # generated BUILD so the extracted tree is exposed as the `maven_resource_bundle` filegroup.
+    maven_bundle_build = ""
 
     # Custom URL / EA path: bypass the bindist map entirely. Used for Early Adopter / nightly /
     # dev builds whose URL is not yet known to the rules. The user supplies a URL (via `url`,
@@ -430,6 +453,32 @@ def _graal_bindist_repository_impl(ctx):
             sha256 = sha256,
             stripPrefix = strip_prefix,
         )
+
+        # Maven resource bundle: download + extract under `maven-bundle/`, hash-verified by
+        # `maven_resource_bundle_sha256` (hermetic + hash-locked when provided). Exposed as the
+        # `maven_resource_bundle` filegroup in the generated BUILD (below).
+        if ctx.attr.maven_resource_bundle:
+            bundle_sha256 = ctx.attr.maven_resource_bundle_sha256
+            if bundle_sha256 and bundle_sha256.startswith("sha256:"):
+                bundle_sha256 = bundle_sha256[len("sha256:"):]
+            if not bundle_sha256:
+                # buildifier: disable=print
+                print("rules_graalvm: maven_resource_bundle '%s' has no sha256; download will not be hermetic." % ctx.attr.maven_resource_bundle)
+            ctx.report_progress("Downloading GraalVM Maven resource bundle")
+            ctx.download_and_extract(
+                url = [ctx.attr.maven_resource_bundle],
+                output = "maven-bundle",
+                sha256 = bundle_sha256,
+            )
+            maven_bundle_build = "\n".join([
+                "",
+                "filegroup(",
+                '    name = "maven_resource_bundle",',
+                '    srcs = glob(["maven-bundle/**"], allow_empty = True),',
+                '    visibility = ["//visibility:public"],',
+                ")",
+                "",
+            ])
 
         bin_tail = ""
         shell_tail = ""
@@ -869,10 +918,14 @@ filegroup(
 
 # Aliases
 {aliases}
+
+# Maven resource bundle (custom-URL toolchains that set `maven_resource_bundle`; empty otherwise)
+{maven_bundle}
 """.format(
             toolchain = toolchain_template.format(RUNTIME_VERSION = java_version),
             aliases = ctx.attr.enable_toolchain and (toolchain_aliases_template + static_link_libs_build) or "",
             rendered_bin_targets = rendered_bin_targets,
+            maven_bundle = maven_bundle_build,
         ),
     )
 
@@ -1072,10 +1125,19 @@ Optional URL pointing to a GraalVM Maven resource bundle to associate with a cus
 A map-resolved distribution already carries its own Maven coordinates, so passing this attr
 without a custom URL fails at analysis time with a clear diagnostic.
 
-**Currently inert:** the rule accepts and records the value but does nothing with it yet. This
-is a forward-compatible placeholder for a future feature that will resolve GraalVM components
-from a published Maven bundle. Setting it today (with a custom URL) is harmless; tooling that
-later wires this up will read the attribute without a rule-surface change.
+When set, the bundle is downloaded and extracted under `maven-bundle/` in the repo and exposed
+as the `maven_resource_bundle` filegroup. Provide `maven_resource_bundle_sha256` to make the
+download hermetic + hash-locked (a warning is printed otherwise). The bundle is not yet
+consumed to resolve components; this makes it available + verified for that future feature.
+""",
+        ),
+        "maven_resource_bundle_sha256": attr.string(
+            mandatory = False,
+            doc = """
+SHA-256 of the `maven_resource_bundle` archive. **Only valid with `maven_resource_bundle`**;
+setting it without the bundle URL fails at analysis time. Strongly recommended when the bundle
+is set — without it the download is non-hermetic (a warning is printed). Accepts a leading
+`sha256:` multihash prefix (stripped automatically).
 """,
         ),
         "platform_key": attr.string(
