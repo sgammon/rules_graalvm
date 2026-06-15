@@ -171,6 +171,23 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         default = False,
     ),
+    "relocate_polyglot_cache": attr.bool(
+        doc = "If True, point the GraalVM polyglot internal-resource cache " +
+              "(`polyglot.engine.userResourceCache`) at a subdirectory of the intermediate " +
+              "build directory rather than its default `$HOME/.cache/org.graalvm.polyglot`. " +
+              "Requires `emit_intermediate_dir = True` (the cache is written under that " +
+              "TreeArtifact); it is a silent no-op otherwise. With the optimizing Truffle " +
+              "runtime active, the native-image *builder* installs the `truffleattach` " +
+              "resource into this cache at build time; on remote executors (RBE) where " +
+              "`$HOME` and `/tmp` are not writable, the default location fails the build with " +
+              "\"resource cache folder ... is not a readable and writable directory\" " +
+              "(`JDKSupport`/`InternalResourceCache`). The intermediate dir is a declared " +
+              "output and is writable on every executor, so routing the cache there fixes it. " +
+              "Affects the builder JVM only (`-J-D`); the image's own runtime resource cache " +
+              "(resolved from the executable location) is untouched.",
+        mandatory = False,
+        default = False,
+    ),
     "emit_language_resources": attr.bool(
         doc = "If True, declare a TreeArtifact for the `<binary_dir>/resources/` tree that " +
               "native-image emits when `-H:+CopyLanguageResources` is set. Truffle languages " +

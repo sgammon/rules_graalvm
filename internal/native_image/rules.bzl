@@ -164,6 +164,17 @@ def _graal_binary_implementation(ctx):
             "-H:TempDirectory=%s" % intermediate_dir.path,
         ], gvm_toolchain = gvm_toolchain)
 
+        # Route the GraalVM polyglot internal-resource cache into the (writable, declared)
+        # intermediate dir. The optimizing Truffle runtime makes the builder install the
+        # `truffleattach` resource into this cache; its default `$HOME/.cache` (or `/tmp`) is
+        # not writable on RBE executors, which aborts the build. The value is taken as-is and
+        # `toAbsolutePath()`-resolved by the builder JVM against its CWD (the exec root), so a
+        # path relative to the exec root lands inside the declared TreeArtifact. `-J-D` ⇒
+        # builder JVM only. See the `relocate_polyglot_cache` attribute doc. No-op when the
+        # attribute is False; gated here so it only applies when `intermediate_dir` exists.
+        if ctx.attr.relocate_polyglot_cache:
+            args.add("-J-Dpolyglot.engine.userResourceCache=%s/polyglot-resources" % intermediate_dir.path)
+
     # Optional TreeArtifact output capturing the `resources/` tree that
     # native-image emits next to the binary when `-H:+CopyLanguageResources`
     # is in effect (Truffle language homes — GraalPy, Ruby, etc.). The
