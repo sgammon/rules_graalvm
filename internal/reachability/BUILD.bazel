@@ -1,0 +1,19 @@
+"Reachability metadata resolution internals."
+
+load("@rules_java//java:defs.bzl", "java_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "reachability.bzl",
+])
+
+java_binary(
+    name = "resolver",
+    srcs = glob(["resolver/src/main/java/dev/elide/tools/graalvm/reachability/*.java"]),
+    main_class = "dev.elide.tools.graalvm.reachability.Resolver",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@rules_graalvm_maven//:org_graalvm_buildtools_graalvm_reachability_metadata",
+    ],
+)
