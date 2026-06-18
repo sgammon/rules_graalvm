@@ -16,6 +16,7 @@ Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 - [Build native shared libraries from Java or polyglot code](./docs/shared-libraries.md)
 - [Use GraalVM as a Bazel Java toolchain](./docs/toolchain.md)
 - [Easily use GraalVM Maven artifacts](./docs/maven-artifacts.md)
+- [Resolve upstream reachability metadata for native images](./docs/reachability-metadata.md)
 - [Install components with `gu`](./docs/components.md)
 
 **Additional features:**

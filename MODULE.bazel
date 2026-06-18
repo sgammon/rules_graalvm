@@ -45,6 +45,10 @@ bazel_dep(
     version = "1.15.1",
     repo_name = "build_bazel_apple_support",
 )
+bazel_dep(
+    name = "rules_jvm_external",
+    version = "5.3",
+)
 
 ##
 ## Dependencies: Development
@@ -97,11 +101,6 @@ bazel_dep(
     version = "0.32.0",
     dev_dependency = True,
     repo_name = "bazel_gazelle",
-)
-bazel_dep(
-    name = "rules_jvm_external",
-    version = "5.3",
-    dev_dependency = True,
 )
 bazel_dep(
     name = "stardoc",
@@ -160,6 +159,37 @@ use_repo(
     maven,
     "maven_gvm",
     "unpinned_maven_gvm",
+)
+
+################################################################################
+# reachability metadata
+################################################################################
+
+maven_resolver = use_extension(
+    "@rules_jvm_external//:extensions.bzl",
+    "maven",
+)
+maven_resolver.install(
+    name = "rules_graalvm_maven",
+    artifacts = [
+        "org.graalvm.buildtools:graalvm-reachability-metadata:1.1.2",
+    ],
+    lock_file = "//:maven_reachability_install.json",
+    repositories = MAVEN_REPOSITORIES,
+)
+use_repo(
+    maven_resolver,
+    "rules_graalvm_maven",
+    "unpinned_rules_graalvm_maven",
+)
+
+reachability = use_extension(
+    ":extensions.bzl",
+    "reachability_metadata",
+)
+use_repo(
+    reachability,
+    "graalvm_reachability_metadata",
 )
 
 ################################################################################

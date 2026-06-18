@@ -1,5 +1,6 @@
 "Defines extensions for use with Bzlmod."
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
 load(
     "//graalvm:repositories.bzl",
     "graalvm_repository",
@@ -55,4 +56,47 @@ graalvm = module_extension(
         "graalvm": _graalvm,
         "component": _component,
     },
+)
+
+##
+## Reachability metadata
+##
+
+# Default pinned snapshot of `oracle/graalvm-reachability-metadata`. Release zips hold the metadata
+# tree (the group directories) at the archive root. Override via the `repository` tag in the root
+# module. Bump when a release that tests newer dependency versions ships.
+_DEFAULT_REACHABILITY_METADATA_URL = "https://github.com/oracle/graalvm-reachability-metadata/releases/download/1.0.3/graalvm-reachability-metadata-1.0.3.zip"
+_DEFAULT_REACHABILITY_METADATA_INTEGRITY = "sha256-FTxgQ+y8eUHu7qXlHBtXqoqpBvrt7bha5TomUbXL2bs="
+
+def _reachability_metadata_impl(module_ctx):
+    """Implementation of the reachability metadata module extension."""
+
+    url = _DEFAULT_REACHABILITY_METADATA_URL
+    integrity = _DEFAULT_REACHABILITY_METADATA_INTEGRITY
+    for mod in module_ctx.modules:
+        for tag in mod.tags.repository:
+            if tag.url:
+                url = tag.url
+            if tag.integrity:
+                integrity = tag.integrity
+
+    http_file(
+        name = "graalvm_reachability_metadata",
+        url = url,
+        integrity = integrity,
+        downloaded_file_path = "repository.zip",
+    )
+    return module_ctx.extension_metadata(reproducible = True)
+
+_reachability_repository = tag_class(attrs = {
+    "url": attr.string(mandatory = False, doc = "Archive URL of the metadata snapshot; defaults to the pinned release."),
+    "integrity": attr.string(mandatory = False, doc = "Subresource integrity of the archive; defaults to the pinned release."),
+})
+
+reachability_metadata = module_extension(
+    implementation = _reachability_metadata_impl,
+    tag_classes = {
+        "repository": _reachability_repository,
+    },
+    doc = "Fetches a pinned snapshot of `oracle/graalvm-reachability-metadata` as `@graalvm_reachability_metadata//file`.",
 )

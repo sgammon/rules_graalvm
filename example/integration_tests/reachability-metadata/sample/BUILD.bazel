@@ -1,0 +1,42 @@
+load(
+    "@rules_graalvm//graalvm:defs.bzl",
+    "native_image",
+    "reachability_metadata",
+)
+
+java_library(
+    name = "java",
+    srcs = ["Main.java"],
+    deps = [
+        "@maven//:commons_logging_commons_logging",
+    ],
+)
+
+reachability_metadata(
+    name = "metadata-only",
+    deps = [
+        "@maven//:commons_logging_commons_logging",
+    ],
+)
+
+# Same code, two images: one that opts in to upstream reachability metadata, one that does not.
+# Build and run both to compare: `sample-without-metadata` fails at runtime with
+# LogConfigurationException because LogFactoryImpl is not reflectively accessible.
+native_image(
+    name = "sample-with-metadata",
+    main_class = "Main",
+    resolve_upstream_reachability_metadata = True,
+    deps = [":java"],
+)
+
+native_image(
+    name = "sample-without-metadata",
+    main_class = "Main",
+    resolve_upstream_reachability_metadata = False,
+    deps = [":java"],
+)
+
+alias(
+    name = "sample",
+    actual = "sample-with-metadata",
+)

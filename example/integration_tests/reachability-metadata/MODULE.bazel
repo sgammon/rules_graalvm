@@ -1,0 +1,58 @@
+"Sample bzlmod-style project which resolves GraalVM reachability metadata."
+
+module(
+    name = "rules_graalvm_reachability_sample",
+    version = "0.0.1",
+)
+
+bazel_dep(
+    name = "rules_java",
+    version = "8.6.1",
+)
+bazel_dep(
+    name = "rules_graalvm",
+    version = "0.0.0",
+)
+bazel_dep(
+    name = "rules_jvm_external",
+    version = "6.3",
+)
+
+local_path_override(
+    module_name = "rules_graalvm",
+    path = "../../..",
+)
+
+## -- GraalVM toolchain
+
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+gvm.graalvm(
+    name = "graalvm",
+    distribution = "ce",
+    java_version = "23",
+    version = "23.0.1",
+)
+use_repo(
+    gvm,
+    "graalvm",
+)
+
+register_toolchains("@graalvm//:jvm")
+
+register_toolchains("@graalvm//:sdk")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+maven.install(
+    artifacts = [
+        # commons-logging ships no native-image metadata of its own and discovers its LogFactory
+        # implementation reflectively; the curated upstream metadata registers those classes.
+        "commons-logging:commons-logging:1.2",
+    ],
+    repositories = [
+        "https://repo1.maven.org/maven2",
+    ],
+)
+use_repo(
+    maven,
+    "maven",
+)
