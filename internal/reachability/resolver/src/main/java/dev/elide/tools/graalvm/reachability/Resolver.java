@@ -31,17 +31,22 @@ public final class Resolver {
     private static final long FIXED_TIME = 1262304000000L;
 
     public static void main(String[] args) throws IOException {
+
+        if (args.length != 6) {
+            throw new IllegalArgumentException("--repository, --coordinates and --output are required");
+        }
+
         Path repository = null;
         Path coordinates = null;
         Path output = null;
-        for (int i = 0; i < args.length; i++) {
+        for (int i = 0; i < args.length; i += 2) {
             String arg = args[i];
             if (arg.equals("--repository")) {
-                repository = Path.of(args[++i]);
+                repository = Path.of(args[i + 1]);
             } else if (arg.equals("--coordinates")) {
-                coordinates = Path.of(args[++i]);
+                coordinates = Path.of(args[i + 1]);
             } else if (arg.equals("--output")) {
-                output = Path.of(args[++i]);
+                output = Path.of(args[i + 1]);
             } else {
                 throw new IllegalArgumentException("Unknown argument: " + arg);
             }
@@ -50,30 +55,37 @@ public final class Resolver {
             throw new IllegalArgumentException("--repository, --coordinates and --output are required");
         }
 
-        Path work = Files.createTempDirectory("reachability");
-        Path metadataRoot = unzip(repository, work.resolve("repo"));
+        Path outputPath = output.toAbsolutePath().normalize();
+        Path work = outputPath.resolveSibling("." + outputPath.getFileName() + ".work");
+        deleteTree(work);
+        Files.createDirectories(work);
+        try {
+            Path metadataRoot = unzip(repository, work.resolve("repo"));
 
-        List<String> gavs = new ArrayList<>();
-        for (String line : Files.readAllLines(coordinates)) {
-            if (!line.isBlank()) {
-                gavs.add(line.trim());
+            List<String> gavs = new ArrayList<>();
+            for (String line : Files.readAllLines(coordinates)) {
+                if (!line.isBlank()) {
+                    gavs.add(line.trim());
+                }
             }
+
+            FileSystemRepository repo = new FileSystemRepository(metadataRoot);
+            Set<DirectoryConfiguration> configs = repo.findConfigurationsFor(query -> {
+                query.forArtifacts(gavs);
+                // Match the Gradle/Maven plugins, which do this unconditionally: when the exact
+                // version is untested, fall back to the module's latest tested config (releases lag,
+                // so pinned versions are routinely newer than the repo's tested set).
+                query.useLatestConfigWhenVersionIsUntested();
+            });
+
+            Path staging = work.resolve("staging");
+            Files.createDirectories(staging);
+            DirectoryConfiguration.copy(configs, staging);
+
+            zipTree(staging, outputPath);
+        } finally {
+            deleteTree(work);
         }
-
-        FileSystemRepository repo = new FileSystemRepository(metadataRoot);
-        Set<DirectoryConfiguration> configs = repo.findConfigurationsFor(query -> {
-            query.forArtifacts(gavs);
-            // Match the Gradle/Maven plugins, which do this unconditionally: when the exact
-            // version is untested, fall back to the module's latest tested config (releases lag,
-            // so pinned versions are routinely newer than the repo's tested set).
-            query.useLatestConfigWhenVersionIsUntested();
-        });
-
-        Path staging = work.resolve("staging");
-        Files.createDirectories(staging);
-        DirectoryConfiguration.copy(configs, staging);
-
-        zipTree(staging, output);
     }
 
     private static Path unzip(Path zip, Path out) throws IOException {
@@ -112,6 +124,17 @@ public final class Resolver {
                 zos.putNextEntry(entry);
                 Files.copy(file, zos);
                 zos.closeEntry();
+            }
+        }
+    }
+
+    private static void deleteTree(Path root) throws IOException {
+        if (Files.exists(root)) {
+            try (var paths = Files.walk(root)) {
+                List<Path> sorted = paths.sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+                for (Path path : sorted) {
+                    Files.delete(path);
+                }
             }
         }
     }

@@ -188,7 +188,7 @@
     },
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "LIIiDK3S8rz61Q8jw3U5AyZiEveIGOuY7poKxNHigXU=",
+        "bzlTransitiveDigest": "+Q23Q2c5JORYmnEDncuT2UnqKMV5bgkal9y4GKXrC7k=",
         "usagesDigest": "f1fiG2ftU8MGjHq+ucFlu08c9dn17J090rYN49A8wwg=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
@@ -218,6 +218,11 @@
             "rules_graalvm+",
             "bazel_skylib",
             "bazel_skylib+"
+          ],
+          [
+            "rules_graalvm+",
+            "bazel_tools",
+            "bazel_tools"
           ]
         ]
       }

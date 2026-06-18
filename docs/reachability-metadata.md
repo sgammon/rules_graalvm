@@ -84,7 +84,7 @@ The `reachability_metadata` rule produces a resource-only `JavaInfo`, so adding 
 ### The pinned snapshot
 
 The upstream repository is fetched as a pinned, integrity-checked release archive, exposed as
-`@graalvm_reachability_metadata//:repository`.
+`@graalvm_reachability_metadata//file`.
 
 A default pin ships with the rules; you do not need to declare anything. To override it (for
 example, to track a newer release that tests dependency versions you need), use the

@@ -82,7 +82,7 @@ reachability_metadata = rule(
         ),
         "repository": attr.label(
             allow_single_file = True,
-            default = "@graalvm_reachability_metadata//:repository",
+            default = "@graalvm_reachability_metadata//file",
             doc = "Pinned `oracle/graalvm-reachability-metadata` snapshot archive.",
         ),
         "_resolver": attr.label(
