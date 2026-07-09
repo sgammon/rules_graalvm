@@ -327,12 +327,14 @@ jobs:
             skip: false
 
           # Test: GVM CE 25
+          # Skipped on Intel macOS: GraalVM stopped shipping macos-x64 archives
+          # as of 25.0.2.
           - label: GraalVM CE 25
             target: sample
             action: build
             directory: "./example/integration_tests/graalvm-ce-25"
             labs: false
-            skip: false
+            skip: ${{ contains(inputs.runner, 'intel') }}
 
           # Test: Oracle GVM 17
           - label: Oracle GraalVM 17
@@ -351,12 +353,14 @@ jobs:
             skip: false
 
           # Test: Oracle GVM 25
+          # Skipped on Intel macOS: GraalVM stopped shipping macos-x64 archives
+          # as of 25.0.2.
           - label: Oracle GraalVM 25
             target: sample
             action: build
             directory: "./example/integration_tests/graalvm-oracle-25"
             labs: false
-            skip: false
+            skip: ${{ contains(inputs.runner, 'intel') }}
 
     steps:
       - name: Harden Runner
