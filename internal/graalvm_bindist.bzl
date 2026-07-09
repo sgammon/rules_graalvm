@@ -107,6 +107,9 @@ def _check_version(version, java_version, newdist):
 def _toolchain_config_impl(ctx):
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
     ctx.file("BUILD.bazel", ctx.attr.build_file)
+    if hasattr(ctx, "repo_metadata"):
+        return ctx.repo_metadata(reproducible = True)
+    return None
 
 def _graal_updater_path(os):
     cmd = paths.join("bin", "gu")
@@ -579,6 +582,10 @@ workspace(name = \"{name}\")
 
     _graal_postinstall_actions(ctx, os)
     # Done.
+
+    if hasattr(ctx, "repo_metadata"):
+        return ctx.repo_metadata(reproducible = True)
+    return None
 
 _graalvm_bindist_repository = repository_rule(
     attrs = {
