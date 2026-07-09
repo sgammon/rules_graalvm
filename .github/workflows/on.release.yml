@@ -8,25 +8,30 @@ name: Release
 
   workflow_dispatch:
     inputs:
-      prerelease:
-        description: Pre-release
-        type: boolean
-        default: false
-      artifact:
-        description: Artifact
+      tag_name:
+        description: git tag to (re-)release
+        required: true
         type: string
-        default: "rules_graalvm"
-      dry:
-        description: Dry-run
-        type: boolean
-        default: false
 
 permissions:
-  contents: read
+  id-token: write
+  attestations: write
+  contents: write
 
 jobs:
   release:
-    name: "Release: BCR"
-    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v2
+    name: "Release: GitHub"
+    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v7.2.2
     with:
-      release_files: rules_graalvm-*.*
+      release_files: rules_graalvm-*.tgz
+      prerelease: false
+      tag_name: ${{ inputs.tag_name || github.ref_name }}
+
+  publish:
+    name: "Release: BCR"
+    needs: release
+    uses: ./.github/workflows/publish.yaml
+    with:
+      tag_name: ${{ inputs.tag_name || github.ref_name }}
+    secrets:
+      publish_token: ${{ secrets.publish_token || secrets.BCR_PUBLISH_TOKEN }}
