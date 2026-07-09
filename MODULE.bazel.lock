@@ -184,7 +184,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "bIbyrBjHlqD4jBA9nGDclq9LwuqVkZoKcZgYlqqj17Q=",
+        "bzlTransitiveDigest": "8s5FuFebtEoCWx8ocnPZqaG/xvCMwxm0aD/Deq1fypA=",
         "usagesDigest": "pKj65Qb9OHtY4/syhMnB7NBVWb5JzlRsDC4OgrnprMY=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
@@ -216,6 +216,22 @@
             "bazel_skylib+"
           ]
         ]
+      }
+    },
+    "//internal:cc_shim_extensions.bzl%cc_shim_extension": {
+      "general": {
+        "bzlTransitiveDigest": "QZZfMlmz9c8jevjMKhv2Qo+N/CDOgPpNxtsCt5TZH/c=",
+        "usagesDigest": "BsYdoWXctEt+M3+hmhjkmfRTUEDtjdw89nQ7yasBT2g=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "rules_graalvm_cc_shim": {
+            "repoRuleId": "@@//internal:cc_shim.bzl%cc_shim_repo",
+            "attributes": {}
+          }
+        },
+        "recordedRepoMappingEntries": []
       }
     },
     "@@apple_support+//crosstool:setup.bzl%apple_cc_configure_extension": {
