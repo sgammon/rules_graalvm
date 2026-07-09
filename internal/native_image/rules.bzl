@@ -4,7 +4,7 @@ load(
     "@build_bazel_apple_support//lib:apple_support.bzl",
     "apple_support",
 )
-load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
@@ -41,7 +41,7 @@ def _graal_binary_implementation(ctx):
     graal_attr = ctx.executable.native_image_tool
 
     classpath_depset = depset(transitive = [
-        dep[cc_shim.JavaInfo].transitive_runtime_jars
+        dep[JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
 
