@@ -1,6 +1,6 @@
 "Logic to assemble `native-image` options."
 
-load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
+load("@rules_cc//cc/common:cc_info.bzl", "CcInfo")
 
 def _configure_static_zlib_compile(ctx, args, direct_inputs):
     """Configure a static image compile against hermetic/static zlib.
@@ -10,8 +10,8 @@ def _configure_static_zlib_compile(ctx, args, direct_inputs):
         args: Args builder for the Native Image build.
         direct_inputs: Inputs into the image build (mutable). """
 
-    if cc_shim.CcInfo in ctx.attr.static_zlib and ctx.target_platform_has_constraint(ctx.attr._linux_constraint[platform_common.ConstraintValueInfo]):
-        linking_context = ctx.attr.static_zlib[cc_shim.CcInfo].linking_context
+    if CcInfo in ctx.attr.static_zlib and ctx.target_platform_has_constraint(ctx.attr._linux_constraint[platform_common.ConstraintValueInfo]):
+        linking_context = ctx.attr.static_zlib[CcInfo].linking_context
         linker_inputs = linking_context.linker_inputs.to_list()
         if len(linker_inputs) != 1:
             fail("Expected exactly one LinkerInput for static_zlib, got %s" % repr(linker_inputs))
