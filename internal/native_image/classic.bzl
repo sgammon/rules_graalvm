@@ -1,5 +1,6 @@
 "Legacy ('classic') rules for building with GraalVM on Bazel."
 
+load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
 load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",
@@ -20,7 +21,7 @@ load(
 def _graal_binary_classic_implementation(ctx):
     graal_attr = ctx.attr.native_image_tool
     classpath_depset = depset(transitive = [
-        dep[JavaInfo].transitive_runtime_jars
+        dep[cc_shim.JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
 
