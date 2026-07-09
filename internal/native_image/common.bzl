@@ -150,7 +150,7 @@ def _prepare_bin_name(
         name,
         bin_postfix = None):
     """Handle postfix for the output binary on various platforms."""
-    if bin_postfix:
+    if bin_postfix and not name.endswith(bin_postfix):
         return "%s%s" % (name, bin_postfix)
     return name
 
