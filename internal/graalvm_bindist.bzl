@@ -323,7 +323,13 @@ def _graal_bindist_repository_impl(ctx):
             # map other properties
             urls = [config["url"]]
 
-            if version in VmReleaseVersions:
+            # an explicit per-entry prefix wins over the computed one; this is
+            # needed for releases whose archives do not follow the usual
+            # `graalvm-community-openjdk-<version>` layout (e.g. the
+            # "Innovation" line of GraalVM CE releases).
+            if "prefix" in config:
+                prefix = config["prefix"]
+            elif version in VmReleaseVersions:
                 if dist_name == Distribution.ORACLE:
                     prefix_version = VmReleaseVersionsOracle[version]
                     prefix = "graalvm-jdk-%s" % (prefix_version)
