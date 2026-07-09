@@ -1,6 +1,6 @@
 "Defines common properties shared by modern and legacy Native Image rules."
 
-load("@rules_java//java:defs.bzl", "JavaInfo")
+load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
 load(
     "//internal/native_image:builder.bzl",
     _assemble_native_build_options = "assemble_native_build_options",
@@ -41,7 +41,7 @@ _OPTIMIZATION_MODE_CONDITION = select({
 
 _NATIVE_IMAGE_ATTRS = {
     "deps": attr.label_list(
-        providers = [[JavaInfo]],
+        providers = [[cc_shim.JavaInfo]],
         mandatory = True,
     ),
     "main_class": attr.string(
@@ -97,7 +97,7 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
     ),
     "static_zlib": attr.label(
-        providers = [[CcInfo]],
+        providers = [[cc_shim.CcInfo]],
     ),
     "data": attr.label_list(
         allow_files = True,
