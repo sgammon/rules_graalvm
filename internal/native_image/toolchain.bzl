@@ -20,8 +20,8 @@ load(
     "find_cpp_toolchain",
 )
 load(
-    "@rules_graalvm_cc_shim//:cc_shim.bzl",
-    "cc_shim",
+    "@rules_cc//cc/common:cc_common.bzl",
+    "cc_common",
 )
 
 def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
@@ -44,53 +44,53 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
     cc_toolchain = find_cpp_toolchain(ctx)
     transitive_inputs.append(cc_toolchain.all_files)
 
-    feature_configuration = cc_shim.cc_common.configure_features(
+    feature_configuration = cc_common.configure_features(
         ctx = ctx,
         cc_toolchain = cc_toolchain,
         requested_features = ctx.features,
         unsupported_features = ctx.disabled_features,
     )
-    c_compiler_path = cc_shim.cc_common.get_tool_for_action(
+    c_compiler_path = cc_common.get_tool_for_action(
         feature_configuration = feature_configuration,
         action_name = C_COMPILE_ACTION_NAME,
     )
-    ld_executable_path = cc_shim.cc_common.get_tool_for_action(
+    ld_executable_path = cc_common.get_tool_for_action(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
     )
-    ld_static_lib_path = cc_shim.cc_common.get_tool_for_action(
+    ld_static_lib_path = cc_common.get_tool_for_action(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_STATIC_LIBRARY_ACTION_NAME,
     )
-    ld_dynamic_lib_path = cc_shim.cc_common.get_tool_for_action(
+    ld_dynamic_lib_path = cc_common.get_tool_for_action(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_DYNAMIC_LIBRARY_ACTION_NAME,
     )
-    compile_variables = cc_shim.cc_common.create_compile_variables(
+    compile_variables = cc_common.create_compile_variables(
         cc_toolchain = cc_toolchain,
         feature_configuration = feature_configuration,
     )
-    compile_env = cc_shim.cc_common.get_environment_variables(
+    compile_env = cc_common.get_environment_variables(
         feature_configuration = feature_configuration,
         action_name = C_COMPILE_ACTION_NAME,
         variables = compile_variables,
     )
-    compile_requirements = cc_shim.cc_common.get_execution_requirements(
+    compile_requirements = cc_common.get_execution_requirements(
         feature_configuration = feature_configuration,
         action_name = C_COMPILE_ACTION_NAME,
     )
-    link_variables = cc_shim.cc_common.create_link_variables(
+    link_variables = cc_common.create_link_variables(
         cc_toolchain = cc_toolchain,
         feature_configuration = feature_configuration,
     )
 
     # We assume that all link actions use the same environment and execution requirements.
-    link_env = cc_shim.cc_common.get_environment_variables(
+    link_env = cc_common.get_environment_variables(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
         variables = link_variables,
     )
-    link_requirements = cc_shim.cc_common.get_execution_requirements(
+    link_requirements = cc_common.get_execution_requirements(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
     )

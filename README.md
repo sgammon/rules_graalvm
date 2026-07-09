@@ -23,8 +23,8 @@ Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 - [Example projects for all use cases](./docs/examples.md)
 - [Hermetic compilation on all platforms](./docs/hermeticity.md)
 - [Run tools from GraalVM directly](./docs/binary-targets.md)
-- [Support for Bazel 6-8 (Bzlmod)](./docs/modern-bazel.md)
-- [Support for Bazel 5, drop-in replacement for `rules_graal`](./docs/legacy-bazel.md)
+- [Support for Bazel 7-9 (Bzlmod)](./docs/modern-bazel.md)
+- [Legacy API, drop-in replacement for `rules_graal`](./docs/legacy-bazel.md)
 - Support for macOS, Linux, Windows (including Native Image!) ([support matrix](./docs/modern-bazel.md))
 - Support for the latest modern GraalVM releases (Community Edition and Oracle GraalVM)
 
@@ -33,8 +33,8 @@ Use [GraalVM](https://graalvm.org) with [Bazel](https://bazel.build) to:
 - [Installation](#installation)
 - [Examples](#examples)
 - [Usage: Java Toolchains](#usage-java-toolchains)
-- [Usage: Native Image (Bazel 6+)](#usage-native-image-modern-bazel)
-- [Usage: Native Image (Bazel 5)](#usage-native-image-legacy-bazel)
+- [Usage: Native Image](#usage-native-image-modern-bazel)
+- [Usage: Native Image (legacy API)](#usage-native-image-legacy-bazel)
 - [Hermeticity & Strictness](#hermeticity-strictness)
 - [GraalVM Toolchains](#graalvm-toolchains)
 
@@ -111,7 +111,7 @@ register_toolchains("@graalvm//:sdk")
 ## Examples
 
 See the list of [examples](./docs/examples.md), which are used as continuous integration tests. Examples are available
-for Bazel 5-8.
+for Bazel 7-9.
 
 ## Usage: Java Toolchains
 
@@ -148,7 +148,7 @@ build --java_runtime_version=graalvm_22
 
 <a id="usage-native-image-modern-bazel"></a>
 
-## Usage: Native Image (Bazel 6+)
+## Usage: Native Image
 
 > API docs for [`native_image`](./api/defs.md)
 
@@ -203,7 +203,7 @@ native_image(
 
 <a id="usage-native-image-legacy-bazel"></a>
 
-## Usage: Native Image (Bazel 5)
+## Usage: Native Image (legacy API)
 
 > API docs for legacy [`native_image`](./api/legacy.md) rule
 
@@ -232,7 +232,7 @@ native_image(
 
 ## Hermeticity & Strictness
 
-These rules attempt to strike as optimal a balance as possible between older Bazel support (starting at Bazel 5) and the
+These rules attempt to strike as optimal a balance as possible between older Bazel support (starting at Bazel 7) and the
 maximum possible strictness/hermeticity for action execution.
 
 [Bazel Toolchains][1] are used to resolve the C++ compiler which is provided to `native-image`.

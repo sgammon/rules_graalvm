@@ -122,7 +122,6 @@
     "https://bcr.bazel.build/modules/rules_java/4.0.0/MODULE.bazel": "5a78a7ae82cd1a33cef56dc578c7d2a46ed0dca12643ee45edbb8417899e6f74",
     "https://bcr.bazel.build/modules/rules_java/5.3.5/MODULE.bazel": "a4ec4f2db570171e3e5eb753276ee4b389bae16b96207e9d3230895c99644b86",
     "https://bcr.bazel.build/modules/rules_java/6.5.2/MODULE.bazel": "1d440d262d0e08453fa0c4d8f699ba81609ed0e9a9a0f02cd10b3e7942e61e31",
-    "https://bcr.bazel.build/modules/rules_java/7.1.0/MODULE.bazel": "30d9135a2b6561c761bd67bd4990da591e6bdc128790ce3e7afd6a3558b2fb64",
     "https://bcr.bazel.build/modules/rules_java/7.10.0/MODULE.bazel": "530c3beb3067e870561739f1144329a21c851ff771cd752a49e06e3dc9c2e71a",
     "https://bcr.bazel.build/modules/rules_java/7.12.2/MODULE.bazel": "579c505165ee757a4280ef83cda0150eea193eed3bef50b1004ba88b99da6de6",
     "https://bcr.bazel.build/modules/rules_java/7.2.0/MODULE.bazel": "06c0334c9be61e6cef2c8c84a7800cef502063269a5af25ceb100b192453d4ab",
@@ -192,7 +191,7 @@
   "moduleExtensions": {
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "gAo0d2Vd8bkWqOyQE+zF0s368WjT2P80/SDj0Y+c1HA=",
+        "bzlTransitiveDigest": "8s5FuFebtEoCWx8ocnPZqaG/xvCMwxm0aD/Deq1fypA=",
         "usagesDigest": "ZO/vaMbH7jLiqhDJVBVEoLaDrAHmilZyDMZzHSrb4xw=",
         "recordedInputs": [
           "REPO_MAPPING:rules_graalvm+,bazel_skylib bazel_skylib+"
@@ -215,19 +214,6 @@
               "enable_toolchain": true,
               "toolchain_config": "graalvm_toolchains"
             }
-          }
-        }
-      }
-    },
-    "@@rules_graalvm+//internal:cc_shim_extensions.bzl%cc_shim_extension": {
-      "general": {
-        "bzlTransitiveDigest": "QZZfMlmz9c8jevjMKhv2Qo+N/CDOgPpNxtsCt5TZH/c=",
-        "usagesDigest": "DM9hSk8jMpJTU27XCnpMXd76b0p1pdyU0CbCliylelM=",
-        "recordedInputs": [],
-        "generatedRepoSpecs": {
-          "rules_graalvm_cc_shim": {
-            "repoRuleId": "@@rules_graalvm+//internal:cc_shim.bzl%cc_shim_repo",
-            "attributes": {}
           }
         }
       }

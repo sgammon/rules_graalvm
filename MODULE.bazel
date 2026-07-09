@@ -3,6 +3,7 @@
 module(
     name = "rules_graalvm",
     version = "0.12.0",
+    bazel_compatibility = [">=7.0.0"],
 )
 
 ## JVM version to target.
@@ -34,11 +35,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_java",
-    version = "7.1.0",
+    version = "8.6.1",
 )
 bazel_dep(
     name = "rules_cc",
-    version = "0.0.10",
+    version = "0.1.1",
 )
 bazel_dep(
     name = "bazel_skylib",
@@ -164,9 +165,6 @@ use_repo(
 ################################################################################
 # rules_graalvm
 ################################################################################
-
-cc_shim = use_extension("//internal:cc_shim_extensions.bzl", "cc_shim_extension")
-use_repo(cc_shim, "rules_graalvm_cc_shim")
 
 gvm = use_extension(
     ":extensions.bzl",
