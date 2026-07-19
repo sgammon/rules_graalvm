@@ -82,8 +82,8 @@ stardoc(
     out = "legacy.md",
     input = "//graal:graal.bzl",
     deps = [
-        "//lib/nativeimage:classic",
         "//lib:tooling",
+        "//lib/nativeimage:classic",
         "@bazel_skylib//lib:dicts",
         "@bazel_skylib//lib:paths",
         "@rules_cc//cc:bzl_srcs",
