@@ -34,6 +34,8 @@ stardoc(
         "@bazel_skylib//lib:new_sets",
         "@bazel_skylib//lib:paths",
         "@rules_cc//cc:bzl_srcs",
+        "@rules_cc//cc/common:common",
+        "@rules_java//java/common:common",
     ],
 )
 
@@ -80,10 +82,12 @@ stardoc(
     out = "legacy.md",
     input = "//graal:graal.bzl",
     deps = [
-        "//lib:tooling",
         "//lib/nativeimage:classic",
+        "//lib:tooling",
         "@bazel_skylib//lib:dicts",
         "@bazel_skylib//lib:paths",
         "@rules_cc//cc:bzl_srcs",
+        "@rules_cc//cc/common:common",
+        "@rules_java//java/common:common",
     ],
 )
