@@ -89,12 +89,6 @@ jobs:
             main: true
             coverage: true
             flags: --config=mac
-          - runner: macos-15-intel
-            label: macOS amd64
-            labs: false
-            main: true
-            coverage: true
-            flags: --config=mac
           - runner: windows-2022
             label: Windows amd64
             labs: false
