@@ -13,6 +13,9 @@ package(default_visibility = [
 bzl_library(
     name = "builder",
     srcs = ["//internal/native_image:builder.bzl"],
+    deps = [
+        "@rules_cc//cc/common",
+    ],
 )
 
 bzl_library(
@@ -22,6 +25,7 @@ bzl_library(
         ":builder",
         ":common",
         ":toolchain",
+        "@rules_java//java/common",
     ],
 )
 
@@ -31,6 +35,8 @@ bzl_library(
     deps = [
         ":builder",
         ":toolchain",
+        "@rules_cc//cc/common",
+        "@rules_java//java/common",
     ],
 )
 
@@ -57,6 +63,7 @@ bzl_library(
     srcs = ["//internal/native_image:rules.bzl"],
     deps = [
         "@build_bazel_apple_support//:apple_support",
+        "@rules_java//java/common",
     ],
 )
 
@@ -65,5 +72,6 @@ bzl_library(
     srcs = ["//internal/native_image:toolchain.bzl"],
     deps = [
         "@bazel_skylib//lib:dicts",
+        "@rules_cc//cc/common",
     ],
 )
