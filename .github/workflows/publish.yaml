@@ -36,7 +36,10 @@ jobs:
       tag_name: ${{ inputs.tag_name }}
       # GitHub repository which is a fork of the upstream where the Pull Request will be opened.
       registry_fork: fmeum/bazel-central-registry
-      draft: false
+      draft: true
+      # Necessary with a fine-grained PAT token in BCR_PUBLISH_TOKEN.
+      # https://github.com/bazel-contrib/publish-to-bcr/blob/50f1b384d16021a0fb35fd310bd0c246e8c93313/README.md?plain=1#L81
+      open_pull_request: false
     permissions:
       attestations: write
       contents: write
