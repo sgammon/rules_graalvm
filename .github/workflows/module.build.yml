@@ -316,6 +316,16 @@ jobs:
             labs: false
             skip: ${{ contains(inputs.runner, 'intel') }}
 
+          # Test: GVM CE 25.2 ("25 Innovation 2")
+          # Skipped on Intel macOS: GraalVM stopped shipping macos-x64 archives
+          # as of 25.0.2.
+          - label: GraalVM CE 25.2
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-25.2"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'intel') }}
+
           # Test: Oracle GVM 17
           - label: Oracle GraalVM 17
             target: sample
@@ -339,6 +349,16 @@ jobs:
             target: sample
             action: build
             directory: "./example/integration_tests/graalvm-oracle-25"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'intel') }}
+
+          # Test: Oracle GVM 25.1 ("25 Innovation 1")
+          # Skipped on Intel macOS: GraalVM stopped shipping macos-x64 archives
+          # as of 25.0.2.
+          - label: Oracle GraalVM 25.1
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-oracle-25.1"
             labs: false
             skip: ${{ contains(inputs.runner, 'intel') }}
 
