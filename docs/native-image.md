@@ -40,3 +40,25 @@ Then, from your terminal:
 ```
 bazel build //some/package:native
 ```
+
+### Configuration directories
+
+Use `configuration_file_directories` for Native Image's directory-format metadata (including
+`reachability-metadata.json`). Each label must resolve to a directory TreeArtifact or files sharing
+one parent directory. `native_image` declares all of those files as action inputs and derives a
+deterministic execution-root-relative `-H:ConfigurationFileDirectories=` argument; labels are never
+expanded through `extra_args`.
+
+```starlark
+filegroup(
+    name = "native_image_configuration",
+    srcs = ["native-image/reachability-metadata.json"],
+)
+
+native_image(
+    name = "native",
+    deps = [":main"],
+    main_class = "Main",
+    configuration_file_directories = [":native_image_configuration"],
+)
+```

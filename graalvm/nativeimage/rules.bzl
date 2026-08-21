@@ -91,6 +91,7 @@ def native_image(
         cc_deps_dynamic = [],
         extra_headers = [],
         data = [],
+        configuration_file_directories = [],
         extra_args = [],
         allow_fallback = False,
         check_toolchains = _DEFAULT_CHECK_TOOLCHAINS_CONDITION,
@@ -135,6 +136,12 @@ def native_image(
             and is declared as an output of the native-image action; the rule surfaces it via
             `CcInfo.compilation_context.headers`. No default; optional.
         data: Data files to make available during the compilation. No default; optional.
+        configuration_file_directories: Declared targets that each represent one Native Image
+            configuration directory. Each target must expose one directory TreeArtifact or files
+            sharing one execution-root-relative parent. The rule declares every resolved file as
+            an action input and emits a deterministic, platform-separated
+            `-H:ConfigurationFileDirectories=` argument. Use this for directory-format
+            reachability metadata; do not expand labels through `extra_args`.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
@@ -176,6 +183,7 @@ def native_image(
         optimization_mode = optimization_mode,
         shared_library = shared_library,
         data = data,
+        configuration_file_directories = configuration_file_directories,
         extra_args = extra_args,
         check_toolchains = check_toolchains,
         static_zlib = static_zlib,

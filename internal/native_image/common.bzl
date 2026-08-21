@@ -106,6 +106,18 @@ _NATIVE_IMAGE_ATTRS = {
     "data": attr.label_list(
         allow_files = True,
     ),
+    "configuration_file_directories": attr.label_list(
+        doc = "Declared Native Image configuration-directory targets. Each target must resolve " +
+              "to one non-empty, execution-root-relative directory (either a directory " +
+              "TreeArtifact or files sharing one parent). Every resolved file is a direct " +
+              "Native Image action input, and the rule emits one deterministic " +
+              "`-H:ConfigurationFileDirectories=` path list. Use this for GraalVM's " +
+              "directory-format reachability metadata; do not encode label paths in " +
+              "`extra_args`.",
+        allow_files = True,
+        mandatory = False,
+        default = [],
+    ),
     "extra_args": attr.string_list(
         mandatory = False,
     ),
@@ -260,6 +272,7 @@ _LAYER_EXCLUDED_ATTRS = [
     "executable_name",
     "profiles",
     "extra_headers",
+    "configuration_file_directories",
 ]
 
 _NATIVE_IMAGE_LAYER_ATTRS = {
