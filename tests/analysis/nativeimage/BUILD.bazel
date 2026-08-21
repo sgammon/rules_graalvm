@@ -2,6 +2,12 @@ load(
     ":native_rules_testsuite.bzl",
     "testsuite",
 )
+load("@rules_cc//cc:defs.bzl", "cc_import")
+
+cc_import(
+    name = "noncanonical_static_archive",
+    static_library = "foo.a",
+)
 
 filegroup(
     name = "test_native_image_configuration_file_directories_configuration_a",

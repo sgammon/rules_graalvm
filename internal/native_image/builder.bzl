@@ -264,14 +264,18 @@ def _configure_cc_deps(ctx, args, direct_inputs):
             search_dir = staged.dirname
 
         if ctx.target_platform_has_constraint(ctx.attr._macos_constraint[platform_common.ConstraintValueInfo]):
-            # Apple's ld rejects GNU ld's `-l:<filename>` exact-archive syntax. The static
-            # archive remains the only `lib<name>.a` in the per-target staged directory, so
-            # its ordinary `-l<name>` spelling remains deterministic.
+            # Apple's ld rejects GNU ld's `-l:<filename>` exact-archive syntax. Its compatible
+            # `-l<name>` spelling can only preserve the staged file identity for the canonical
+            # `lib<name>.a` form; silently accepting `foo.a` would instead search for a
+            # different `libfoo.a` file.
+            if not archive.basename.startswith("lib") or not archive.basename.endswith(".a") or archive.basename == "lib.a":
+                fail(
+                    "macOS cc_deps archives must use a canonical lib<name>.a filename; " +
+                    "got %s from %s. Apple ld cannot select a noncanonical archive by exact " % (archive.basename, dep.label) +
+                    "basename",
+                )
             library_name = archive.basename
-            if library_name.startswith("lib"):
-                library_name = library_name[len("lib"):]
-            if library_name.endswith(".a"):
-                library_name = library_name[:-len(".a")]
+            library_name = library_name[len("lib"):-len(".a")]
             args.add(library_name, format = "-H:NativeLinkerOption=-l%s")
         else:
             # GNU ld supports exact archive selection. All archives share the same search_dir,

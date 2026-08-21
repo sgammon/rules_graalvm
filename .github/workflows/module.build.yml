@@ -261,6 +261,7 @@ jobs:
             target: sample
             action: build
             directory: "./example/integration_tests/bazel9"
+            integration_assertions: true
             labs: false
             skip: false
 
@@ -458,7 +459,12 @@ jobs:
         continue-on-error: ${{ inputs.labs }}
         working-directory: ${{ matrix.directory }}
         shell: bash
-        run: bazel ${{ matrix.action || 'build' }} "${{ matrix.target || '//...' }}"
+        run: |
+          if [[ "${{ matrix.integration_assertions || false }}" == "true" ]]; then
+            RULES_GRAALVM_BAZEL_COMMAND=bazel bash ./integration_test.sh
+          else
+            bazel ${{ matrix.action || 'build' }} "${{ matrix.target || '//...' }}"
+          fi
 
   # Per-target SDK *file* selection. Resolves the linux/aarch64 GraalVM toolchain from this
   # x86_64 host and asserts every SDK file the toolchain provider surfaces originates from that

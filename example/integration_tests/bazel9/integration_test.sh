@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+bazel_command="${RULES_GRAALVM_BAZEL_COMMAND:-bazelisk}"
+
 readonly_home="$(mktemp -d)"
 cleanup() {
     chmod u+w "$readonly_home" 2>/dev/null || true
@@ -16,12 +18,12 @@ if [[ "$(uname -s)" != MINGW* ]]; then
     chmod u-w "$readonly_home"
 fi
 
-env -u GRAALVM_HOME -u JAVA_HOME bazelisk clean --expunge
+env -u GRAALVM_HOME -u JAVA_HOME "$bazel_command" clean --expunge
 env -u GRAALVM_HOME -u JAVA_HOME \
-    bazelisk build --action_env=HOME="$readonly_home" //sample
+    "$bazel_command" build --action_env=HOME="$readonly_home" //sample
 
 action="$(env -u GRAALVM_HOME -u JAVA_HOME \
-    bazelisk aquery --action_env=HOME="$readonly_home" \
+    "$bazel_command" aquery --action_env=HOME="$readonly_home" \
         'mnemonic("NativeImage", //sample:main-native)' --output=text)"
 
 require() {
@@ -49,3 +51,9 @@ reject "GRAALVM_HOME"
 reject "ConfigurationFileDirectories=/"
 reject "ConfigurationFileDirectories=../"
 reject ".cache/org.graalvm.polyglot"
+
+# Test-only seam used by the repository check below: prove CI's runner does not merely build the
+# image and skip the aquery contract.
+if [[ "${RULES_GRAALVM_ASSERT_AQUERY_REGRESSION:-}" == "1" ]]; then
+    require "__intentionally_missing_native_image_aquery_input__"
+fi

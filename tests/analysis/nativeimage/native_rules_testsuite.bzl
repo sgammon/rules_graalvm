@@ -166,6 +166,36 @@ def _test_native_image_configuration_file_directories_mixed_impl(env, target):
         matching.contains("single directory"),
     )
 
+# Test: macOS static archive naming
+# ---
+# Apple ld does not support GNU ld's `-l:<filename>` syntax. Until the rule can preserve an
+# exact noncanonical archive name, it must reject one rather than silently converting `foo.a`
+# into `-lfoo` (which asks Apple ld to locate a different `libfoo.a` file).
+def _test_native_image_rejects_noncanonical_macos_static_archive(name):
+    java_library(
+        name = "%s_java" % name,
+        srcs = ["Main.java"],
+    )
+    native_image(
+        name = "%s_native" % name,
+        main_class = "Main",
+        deps = [":%s_java" % name],
+        cc_deps = [":noncanonical_static_archive"],
+        tags = _HELPER_TAGS,
+    )
+    analysis_test(
+        name = name,
+        impl = _test_native_image_rejects_noncanonical_macos_static_archive_impl,
+        target = "%s_native" % name,
+        expect_failure = True,
+        attr_values = _ANALYSIS_TEST_ATTRS,
+    )
+
+def _test_native_image_rejects_noncanonical_macos_static_archive_impl(env, target):
+    env.expect.that_target(target).failures().contains_predicate(
+        matching.contains("canonical lib<name>.a filename"),
+    )
+
 # Test: `native_image_layer_smoke`
 # ---
 # Verifies that a minimal `native_image_layer` target analyzes successfully and produces a
@@ -296,6 +326,7 @@ def rules_graalvm_nativeimage_testsuite(name):
             _test_native_image_configuration_file_directories,
             _test_native_image_configuration_file_directories_empty,
             _test_native_image_configuration_file_directories_mixed,
+            _test_native_image_rejects_noncanonical_macos_static_archive,
             _test_native_image_layer_smoke,
             _test_native_image_layer_with_directives,
             _test_native_image_consumes_layer,
