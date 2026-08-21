@@ -6,6 +6,10 @@ module(
 )
 
 bazel_dep(
+    name = "rules_cc",
+    version = "0.2.10",
+)
+bazel_dep(
     name = "rules_java",
     version = "8.6.1",
 )

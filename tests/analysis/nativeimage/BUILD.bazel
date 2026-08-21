@@ -3,6 +3,32 @@ load(
     "testsuite",
 )
 
+filegroup(
+    name = "test_native_image_configuration_file_directories_configuration_a",
+    srcs = [
+        "configuration/a/reflect-config.json",
+        "configuration/a/resource-config.json",
+    ],
+)
+
+filegroup(
+    name = "test_native_image_configuration_file_directories_configuration_b",
+    srcs = ["configuration/b/reachability-metadata.json"],
+)
+
+filegroup(
+    name = "test_native_image_configuration_file_directories_empty_files",
+    srcs = [],
+)
+
+filegroup(
+    name = "test_native_image_configuration_file_directories_mixed_files",
+    srcs = [
+        "configuration/a/reflect-config.json",
+        "configuration/b/reachability-metadata.json",
+    ],
+)
+
 testsuite(
     name = "nativeimage",
 )

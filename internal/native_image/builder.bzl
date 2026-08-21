@@ -80,6 +80,67 @@ def _configure_resources(ctx, args, direct_inputs, gvm_toolchain = None):
         args.add(ctx.file.resource_configuration, format = "-H:ResourceConfigurationFiles=%s")
         direct_inputs.append(ctx.file.resource_configuration)
 
+def _is_safe_execution_root_relative_directory(directory):
+    """Whether `directory` is safe to hand to the builder from the exec root."""
+    if not directory or directory == ".":
+        return False
+    if directory.startswith("/") or directory.startswith("\\"):
+        return False
+    for component in directory.split("/"):
+        if component in ["", ".", ".."]:
+            return False
+    return True
+
+def _configuration_directory_for_file(file):
+    """Returns the configuration root represented by a declared file or TreeArtifact."""
+    if file.is_directory:
+        return file.path
+    return file.dirname
+
+def _configure_configuration_file_directories(ctx, args, direct_inputs, path_list_separator):
+    """Declare configuration-directory inputs and emit Native Image's directory option.
+
+    A target may expose one TreeArtifact or one or more files with the same parent. Bazel only
+    makes files (not source directories) available to rules, so accepting a target's complete
+    file set keeps the action hermetic while still giving Native Image the directory it expects.
+    """
+    if not hasattr(ctx.attr, "configuration_file_directories") or not ctx.attr.configuration_file_directories:
+        return
+
+    directories = {}
+    for target in ctx.attr.configuration_file_directories:
+        files = target[DefaultInfo].files.to_list()
+        if not files:
+            fail(
+                "configuration_file_directories target %s resolves to no files; " % target.label +
+                "provide a directory TreeArtifact or files from one directory",
+            )
+
+        target_directories = {}
+        for file in files:
+            directory = _configuration_directory_for_file(file)
+            if not _is_safe_execution_root_relative_directory(directory):
+                fail(
+                    "configuration_file_directories target %s has file %s with unsafe " % (target.label, file.path) +
+                    "execution-root-relative parent %r" % directory,
+                )
+            target_directories[directory] = True
+
+        if len(target_directories) != 1:
+            fail(
+                "configuration_file_directories target %s must resolve to files from a " % target.label +
+                "single directory; found %s" % sorted(target_directories.keys()),
+            )
+
+        directories[target_directories.keys()[0]] = True
+        direct_inputs.extend(files)
+
+    args.add_joined(
+        sorted(directories.keys()),
+        join_with = path_list_separator,
+        format_joined = "-H:ConfigurationFileDirectories=%s",
+    )
+
 def _configure_reflection(ctx, args, direct_inputs, propagated = None):
     """Configure reflection and class-init settings for a Native Image build.
 
@@ -158,9 +219,10 @@ def _configure_cc_deps(ctx, args, direct_inputs):
       2. Emit one `-H:CLibraryPath=<subdir>` — native-image resolves this to an absolute path
          before forwarding to the C toolchain as `-L<abs-path>`, so ld sees a valid search
          directory regardless of where it happens to chdir.
-      3. Emit `-H:NativeLinkerOption=-l:<filename>` for each archive, which tells GNU ld to
-         link that exact file from the search path (bypasses ld's default `lib<name>.{so,a}`
-         resolution order).
+      3. Emit `-H:NativeLinkerOption=-l:<filename>` for each archive on GNU-style linkers,
+         which tells ld to link that exact file from the search path (bypasses its default
+         `lib<name>.{so,a}` resolution order). Apple's ld does not support `-l:<filename>`, so
+         use its compatible `-l<name>` spelling there.
     """
     if not hasattr(ctx.attr, "cc_deps") or not ctx.attr.cc_deps:
         return
@@ -201,11 +263,20 @@ def _configure_cc_deps(ctx, args, direct_inputs):
         if search_dir == None:
             search_dir = staged.dirname
 
-        # Note: emit one -l:<filename> per archive. Using `-l:foo.a` rather than `-lfoo`
-        # forces ld to pick this exact file, not lib<name>.so if both happen to be on the
-        # search path. All archives share the same search_dir (staged subdir), so a single
-        # -H:CLibraryPath entry below covers them.
-        args.add(archive.basename, format = "-H:NativeLinkerOption=-l:%s")
+        if ctx.target_platform_has_constraint(ctx.attr._macos_constraint[platform_common.ConstraintValueInfo]):
+            # Apple's ld rejects GNU ld's `-l:<filename>` exact-archive syntax. The static
+            # archive remains the only `lib<name>.a` in the per-target staged directory, so
+            # its ordinary `-l<name>` spelling remains deterministic.
+            library_name = archive.basename
+            if library_name.startswith("lib"):
+                library_name = library_name[len("lib"):]
+            if library_name.endswith(".a"):
+                library_name = library_name[:-len(".a")]
+            args.add(library_name, format = "-H:NativeLinkerOption=-l%s")
+        else:
+            # GNU ld supports exact archive selection. All archives share the same search_dir,
+            # so a single -H:CLibraryPath entry below covers every -l:<filename> option.
+            args.add(archive.basename, format = "-H:NativeLinkerOption=-l:%s")
 
     if search_dir != None:
         args.add(search_dir, format = "-H:CLibraryPath=%s")
@@ -394,6 +465,7 @@ def _configure_common_build_options(
     _configure_native_compiler(ctx, args, c_compiler_path, gvm_toolchain)
     _configure_reflection(ctx, args, direct_inputs, propagated = propagated)
     _configure_resources(ctx, args, direct_inputs, gvm_toolchain = gvm_toolchain)
+    _configure_configuration_file_directories(ctx, args, direct_inputs, path_list_separator)
     _configure_proxy(ctx, args, direct_inputs)
 
     if ctx.attr.static_zlib != None:
