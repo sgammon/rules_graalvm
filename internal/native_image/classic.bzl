@@ -44,13 +44,17 @@ def _graal_binary_classic_implementation(ctx):
         """)
 
     # resolve the native toolchain
+    is_windows = ctx.configuration.host_path_separator == ";"
     native_toolchain = _resolve_cc_toolchain(
         ctx,
         transitive_inputs,
-        is_windows = ctx.configuration.host_path_separator == ";",
+        is_windows = is_windows,
     )
 
     args = ctx.actions.args()
+    if is_windows:
+        # Keep the linker working directory directly below the action root.
+        args.add("-J-Djava.io.tmpdir=.")
     binary = _prepare_native_image_rule_context(
         ctx,
         args,

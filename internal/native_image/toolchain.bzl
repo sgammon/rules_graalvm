@@ -106,6 +106,8 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
         path_set[tool_dir] = None
 
     paths = sorted(path_set.keys())
+    if "PATH" in env:
+        paths.extend(env["PATH"].split(ctx.configuration.host_path_separator))
     if is_windows:
         # Graal verifies the Visual Studio setup by looking for cl.exe in PATH,
         # which in turn relies on cmd.exe being in PATH.

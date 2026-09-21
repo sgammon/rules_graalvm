@@ -94,6 +94,9 @@ def _graal_binary_implementation(ctx):
         bin_postfix = _BIN_POSTFIX_SO
 
     args = ctx.actions.args().use_param_file("@%s", use_always = False)
+    if is_windows:
+        # Keep the linker working directory directly below the action root.
+        args.add("-J-Djava.io.tmpdir=.")
     binary = _prepare_native_image_rule_context(
         ctx,
         args,
