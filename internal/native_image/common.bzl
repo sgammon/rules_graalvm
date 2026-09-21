@@ -103,6 +103,9 @@ _NATIVE_IMAGE_ATTRS = {
     "data": attr.label_list(
         allow_files = True,
     ),
+    "additional_inputs": attr.label_list(
+        allow_files = True,
+    ),
     "extra_args": attr.string_list(
         mandatory = False,
     ),

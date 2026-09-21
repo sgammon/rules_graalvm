@@ -62,6 +62,7 @@ def native_image(
         static_zlib = None,
         c_compiler_option = [],
         data = [],
+        additional_inputs = [],
         extra_args = [],
         allow_fallback = False,
         check_toolchains = select({
@@ -96,6 +97,8 @@ def native_image(
             `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
         data: Data files to make available during the compilation. No default; optional.
+        additional_inputs: Additional files to make available to the Native Image build action. `$(location)` references
+            to these files in `extra_args` are expanded. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
@@ -118,6 +121,7 @@ def native_image(
         optimization_mode = optimization_mode,
         shared_library = shared_library,
         data = data,
+        additional_inputs = additional_inputs,
         extra_args = extra_args,
         check_toolchains = check_toolchains,
         static_zlib = static_zlib,
@@ -149,6 +153,7 @@ def graal_binary(
         static_zlib = None,
         c_compiler_option = [],
         data = [],
+        additional_inputs = [],
         extra_args = [],
         allow_fallback = False,
         check_toolchains = select({
@@ -183,6 +188,8 @@ def graal_binary(
             `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
         data: Data files to make available during the compilation. No default; optional.
+        additional_inputs: Additional files to make available to the Native Image build action. `$(location)` references
+            to these files in `extra_args` are expanded. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
@@ -205,6 +212,7 @@ def graal_binary(
         optimization_mode = optimization_mode,
         shared_library = shared_library,
         data = data,
+        additional_inputs = additional_inputs,
         extra_args = extra_args,
         static_zlib = static_zlib,
         check_toolchains = check_toolchains,
