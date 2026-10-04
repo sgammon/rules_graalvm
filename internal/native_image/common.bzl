@@ -139,6 +139,11 @@ _NATIVE_IMAGE_ATTRS = {
     "_windows_constraint": attr.label(
         default = Label(_WINDOWS_CONSTRAINT),
     ),
+    "_sysroot_launcher": attr.label(
+        default = Label("//internal/native_image:sysroot_launcher"),
+        executable = True,
+        cfg = "exec",
+    ),
     "_xcode_config": attr.label(
         default = configuration_field(
             fragment = "apple",

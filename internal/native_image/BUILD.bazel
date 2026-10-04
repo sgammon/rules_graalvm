@@ -5,6 +5,10 @@ load(
     "string_flag",
 )
 load(
+    "@rules_java//java:defs.bzl",
+    "java_binary",
+)
+load(
     "//internal/native_image:settings.bzl",
     "DEFAULTS",
     "GraalVMCompilerBackend",
@@ -55,4 +59,12 @@ native_image_settings(
     compiler_backend = DEFAULTS.COMPILER_BACKEND,
     libc = DEFAULTS.LIBC,
     opt = DEFAULTS.BUILD_OPT,
+)
+
+# Runs native-image with the C toolchain's sysroot made absolute: native-image calls the C compiler from its
+# own temporary directory, so an exec-root-relative sysroot cannot be passed as it is.
+java_binary(
+    name = "sysroot_launcher",
+    srcs = ["SysrootLauncher.java"],
+    main_class = "build.bazel.rules_graalvm.SysrootLauncher",
 )
