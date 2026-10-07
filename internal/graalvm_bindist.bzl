@@ -271,106 +271,129 @@ def _graal_bindist_repository_impl(ctx):
 
     else:
         platform, os, archive = _get_platform(ctx, True)
+        if ctx.attr.platform:
+            # a repository for one platform (a remote execution platform, say), whatever the host is
+            platform = ctx.attr.platform
+            os = platform.split("-")[0]
+            archive = "zip" if os == "windows" else "tar.gz"
         version_spec = ctx.attr.version
         distribution = ctx.attr.distribution or Distribution.COMMUNITY
         java_version_spec = ctx.attr.java_version
 
-        # resolves potentially symbolic version strings
-        (java_version, version) = resolve_version_pair(java_version_spec, version_spec)
-
-        # new gvm distribution check
-        _check_version(version, java_version, True)
-        ctx.report_progress("Downloading GraalVM")
-
-        dist_names = {
-            "ce": "ce",
-            "community": "ce",
-            "oracle": "oracle",
-            "gvm": "oracle",
-        }
-        dist_name = dist_names[distribution]
-        if not dist_name:
-            fail("Cannot find distribution name for GraalVM: " + ctx.attr.distribution)
-
-        # resolve & download vm
-        dist_tag = "{dist}-{version}".format(dist = dist_name, version = version)
-        format_args = {
-            "version": version,
-            "platform": platform,
-            "java_version": java_version,
-            "archive": archive,
-        }
-
-        # download graal
-        config = _graal_version_configs.get(dist_tag) or resolve_distribution_artifact(
-            dist_name,
-            platform,
-            version,
-            java_version,
-            strict = True,
-        )
-        if config == None:
-            fail("Unable to locate GraalVM distribution '%s' at version '%s' for platform '%s'" % (
-                dist_name,
-                version,
-                platform,
-            ))
-
-        sha = None
-        prefix = None
-        urls = []
-        if "compatible_with" in config:
-            # new-style config is completely flat
-            sha = config["sha256"]
-
-            # map other properties
-            urls = [config["url"]]
-
-            # an explicit per-entry prefix wins over the computed one; this is
-            # needed for releases whose archives do not follow the usual
-            # `graalvm-community-openjdk-<version>` layout (e.g. the
-            # "Innovation" line of GraalVM releases).
-            if "prefix" in config:
-                prefix = config["prefix"]
-            elif dist_name == Distribution.ORACLE and version in VmReleaseVersionsOracle:
-                prefix = "graalvm-jdk-%s" % (VmReleaseVersionsOracle[version])
-            elif dist_name != Distribution.ORACLE and version in VmReleaseVersions:
-                prefix = "graalvm-community-openjdk-%s" % (VmReleaseVersions[version])
-            else:
-                fail("Unable to determine prefix value for archive '%s' at version '%s'" % (
-                    dist_tag,
-                    version,
-                ))
-
-        else:
-            # old-style config
-            if platform not in config["sha256"]:
-                fail("Platform %s not supported at GraalVM version '%s' (distribution '%s'). Available: %s." % (
+        if ctx.attr.urls:
+            # custom distribution (a fork or mirror): the archive for this platform, verbatim
+            if platform not in ctx.attr.urls:
+                fail("Custom GraalVM distribution has no archive for platform '%s'. Available: %s." % (
                     platform,
-                    version,
-                    distribution,
-                    ", ".join(config["sha256"].keys()),
+                    ", ".join(ctx.attr.urls.keys()),
                 ))
-            if platform in config["sha256"]:
-                sha = config["sha256"][platform]
-            elif ctx.attr.sha256:
-                sha = ctx.attr.sha256
+            java_version = java_version_spec
+            version = version_spec
+            internal_prefix = _graal_v2_archive_internal_prefixes[os]
+            strip_prefix = ctx.attr.strip_prefixes.get(platform, "")
+            ctx.report_progress("Downloading GraalVM %s" % version)
+            ctx.download_and_extract(
+                url = [ctx.attr.urls[platform]],
+                sha256 = ctx.attr.sha256s.get(platform, ""),
+                stripPrefix = "/".join([p for p in [strip_prefix, internal_prefix] if p]),
+            )
+        else:
+            # resolves potentially symbolic version strings
+            (java_version, version) = resolve_version_pair(java_version_spec, version_spec)
 
-            prefix = config["prefix"][os]
-            urls = [url.format(**format_args) for url in config["urls"]]
+            # new gvm distribution check
+            _check_version(version, java_version, True)
+            ctx.report_progress("Downloading GraalVM")
 
-        archive_internal_prefix = _graal_v2_archive_internal_prefixes[os].format(**format_args)
-        effective_prefix = "%s/%s" % (prefix, archive_internal_prefix)
-        dist_label = "GraalVM CE"
-        if dist_name == "oracle":
-            dist_label = "Oracle GraalVM"
-        ctx.report_progress("Downloading %s %s" % (dist_label, version))
+            dist_names = {
+                "ce": "ce",
+                "community": "ce",
+                "oracle": "oracle",
+                "gvm": "oracle",
+            }
+            dist_name = dist_names[distribution]
+            if not dist_name:
+                fail("Cannot find distribution name for GraalVM: " + ctx.attr.distribution)
 
-        ctx.download_and_extract(
-            url = urls,
-            sha256 = sha or ctx.attr.sha256,
-            stripPrefix = effective_prefix,
-        )
+            # resolve & download vm
+            dist_tag = "{dist}-{version}".format(dist = dist_name, version = version)
+            format_args = {
+                "version": version,
+                "platform": platform,
+                "java_version": java_version,
+                "archive": archive,
+            }
+
+            # download graal
+            config = _graal_version_configs.get(dist_tag) or resolve_distribution_artifact(
+                dist_name,
+                platform,
+                version,
+                java_version,
+                strict = True,
+            )
+            if config == None:
+                fail("Unable to locate GraalVM distribution '%s' at version '%s' for platform '%s'" % (
+                    dist_name,
+                    version,
+                    platform,
+                ))
+
+            sha = None
+            prefix = None
+            urls = []
+            if "compatible_with" in config:
+                # new-style config is completely flat
+                sha = config["sha256"]
+
+                # map other properties
+                urls = [config["url"]]
+
+                # an explicit per-entry prefix wins over the computed one; this is
+                # needed for releases whose archives do not follow the usual
+                # `graalvm-community-openjdk-<version>` layout (e.g. the
+                # "Innovation" line of GraalVM releases).
+                if "prefix" in config:
+                    prefix = config["prefix"]
+                elif dist_name == Distribution.ORACLE and version in VmReleaseVersionsOracle:
+                    prefix = "graalvm-jdk-%s" % (VmReleaseVersionsOracle[version])
+                elif dist_name != Distribution.ORACLE and version in VmReleaseVersions:
+                    prefix = "graalvm-community-openjdk-%s" % (VmReleaseVersions[version])
+                else:
+                    fail("Unable to determine prefix value for archive '%s' at version '%s'" % (
+                        dist_tag,
+                        version,
+                    ))
+
+            else:
+                # old-style config
+                if platform not in config["sha256"]:
+                    fail("Platform %s not supported at GraalVM version '%s' (distribution '%s'). Available: %s." % (
+                        platform,
+                        version,
+                        distribution,
+                        ", ".join(config["sha256"].keys()),
+                    ))
+                if platform in config["sha256"]:
+                    sha = config["sha256"][platform]
+                elif ctx.attr.sha256:
+                    sha = ctx.attr.sha256
+
+                prefix = config["prefix"][os]
+                urls = [url.format(**format_args) for url in config["urls"]]
+
+            archive_internal_prefix = _graal_v2_archive_internal_prefixes[os].format(**format_args)
+            effective_prefix = "%s/%s" % (prefix, archive_internal_prefix)
+            dist_label = "GraalVM CE"
+            if dist_name == "oracle":
+                dist_label = "Oracle GraalVM"
+            ctx.report_progress("Downloading %s %s" % (dist_label, version))
+
+            ctx.download_and_extract(
+                url = urls,
+                sha256 = sha or ctx.attr.sha256,
+                stripPrefix = effective_prefix,
+            )
         bin_tail = ""
         shell_tail = ""
         if "windows" in os:
@@ -701,6 +724,33 @@ these toolchain configurations, with aliases from the main GraalVM repository.
 Normally this name is generated and the user does not have to provide it.
 """,
         ),
+        "urls": attr.string_dict(
+            mandatory = False,
+            doc = """
+Custom distribution archives (a fork or a mirror), keyed by platform (`linux-x64`, `linux-aarch64`,
+`macos-aarch64`, `macos-x64`, `windows-x64`). When set, `version` and `java_version` are used verbatim
+and no built-in distribution table is consulted.
+""",
+        ),
+        "platform": attr.string(
+            mandatory = False,
+            doc = """
+Fetch the distribution for this platform (`linux-x64`, `linux-aarch64`, `macos-aarch64`, `macos-x64`, `windows-x64`)
+instead of the host's: one repository per execution platform, with `target_compatible_with` constraining its
+toolchains, lets a client build for remote executors of another OS or architecture.
+""",
+        ),
+        "sha256s": attr.string_dict(
+            mandatory = False,
+            doc = "SHA-256 of each custom distribution archive, keyed like `urls`.",
+        ),
+        "strip_prefixes": attr.string_dict(
+            mandatory = False,
+            doc = """
+Top-level directory of each custom distribution archive, keyed like `urls`; on macOS, the bundle's
+`Contents/Home` is appended.
+""",
+        ),
         "sha256": attr.string(
             mandatory = False,
             doc = """
@@ -833,8 +883,9 @@ toolchain(
 )
 """.format(
         name = name,
-        gvm_toolchain_tags_exec = "",
-        gvm_toolchain_tags_target = "",
+        # native-image does not cross-compile: the builder runs where the image runs
+        gvm_toolchain_tags_exec = ", ".join(['"%s"' % c for c in target_compatible_with]),
+        gvm_toolchain_tags_target = ", ".join(['"%s"' % c for c in target_compatible_with]),
     )
 
     if toolchain:
