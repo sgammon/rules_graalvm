@@ -1,9 +1,11 @@
 "Rules for building native binaries using the GraalVM `native-image` tool."
 
+load("@bazel_skylib//lib:shell.bzl", "shell")
 load(
     "@build_bazel_apple_support//lib:apple_support.bzl",
     "apple_support",
 )
+load("@rules_cc//cc/common:cc_info.bzl", "CcInfo")
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal/native_image:common.bzl",
@@ -33,6 +35,7 @@ def _build_action_message(ctx):
         "s": "size",
         "1": "opt",
         "2": "opt",
+        "3": "opt",
         "default": ctx.attr.debug and "debug" or "default",
     }
     return (_mode_label[ctx.attr.optimization_mode or "default"])
@@ -49,7 +52,7 @@ def _graal_binary_implementation(ctx):
     transitive_inputs = [classpath_depset]
 
     # resolve via toolchains
-    gvm_toolchain = ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm
+    gvm_toolchain = (ctx.attr.graalvm_sdk[platform_common.ToolchainInfo].graalvm if ctx.attr.graalvm_sdk else ctx.toolchains[_GVM_TOOLCHAIN_TYPE].graalvm)
 
     # if a native-image tool is explicitly provided, it should override the one
     # provided by the toolchain, but not the rest of the files it provides
@@ -107,6 +110,41 @@ def _graal_binary_implementation(ctx):
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
 
+    # Native Image resolves CLibraryPath before changing directory for the linker.
+    # Give every archive a unique name so equal basenames from different packages work.
+    archives = {}
+    includes = {}
+    for dep in ctx.attr.cc_deps:
+        compilation = dep[CcInfo].compilation_context
+        headers = compilation.headers.to_list()
+        direct_inputs.extend(headers)
+        for directory in compilation.includes.to_list() + compilation.quote_includes.to_list() + compilation.system_includes.to_list() + [header.dirname for header in headers]:
+            includes[directory] = True
+        for linker_input in dep[CcInfo].linking_context.linker_inputs.to_list():
+            additional = linker_input.additional_inputs
+            direct_inputs.extend(additional.to_list() if type(additional) == "depset" else additional)
+            for flag in linker_input.user_link_flags:
+                args.add(flag, format = "-H:NativeLinkerOption=%s")
+            libraries = linker_input.libraries
+            if type(libraries) == "depset":
+                libraries = libraries.to_list()
+            for library in libraries:
+                archive = library.pic_static_library or library.static_library
+                if archive:
+                    if library.alwayslink:
+                        fail("cc_deps does not yet support alwayslink archives: " + str(archive))
+                    archives[archive] = True
+                elif library.dynamic_library or library.interface_library:
+                    fail("cc_deps requires static archives: " + str(linker_input.owner))
+    for index, archive in enumerate(archives.keys()):
+        name = "dep%d" % index
+        staged = ctx.actions.declare_file(ctx.label.name + ".cc/lib" + name + ".a")
+        ctx.actions.symlink(output = staged, target_file = archive)
+        direct_inputs.append(staged)
+        if index == 0:
+            args.add(staged.dirname, format = "-H:CLibraryPath=%s")
+        args.add(name, format = "-H:NativeLinkerOption=-l%s")
+
     env = native_toolchain.env
 
     # The native image will use the same native encoding (as determined by "sun.jnu.encoding")
@@ -122,8 +160,9 @@ def _graal_binary_implementation(ctx):
         direct_inputs,
         transitive = transitive_inputs,
     )
+    debug_files = [ctx.actions.declare_file(binary.basename + ".debug")] if ctx.attr.debug and is_linux else []
     run_params = {
-        "outputs": [binary],
+        "outputs": [binary] + debug_files,
         "executable": graal,
         "inputs": inputs,
         "mnemonic": "NativeImage",
@@ -134,6 +173,29 @@ def _graal_binary_implementation(ctx):
             .replace("__target__", ctx.attr.shared_library and "[shared lib]" or "[executable]"),
         "toolchain": Label(_GVM_TOOLCHAIN_TYPE),
     }
+
+    if includes or ctx.attr.workspace_tmp:
+        if is_windows:
+            fail("cc_deps header propagation currently requires a POSIX execution platform")
+
+        # Native Image compiles its C queries in a temporary directory. Resolve declared
+        # include paths at action execution, keeping client paths out of action keys.
+        launcher = ctx.actions.declare_file(ctx.label.name + ".native-image.sh")
+        options = ["\"-H:CCompilerOption=-I${PWD}/\"" + shell.quote(directory) for directory in includes.keys()]
+        setup = ""
+        invoke = "exec "
+        if ctx.attr.workspace_tmp:
+            setup = "build_tmp=\"${PWD}/\"" + shell.quote(binary.dirname + "/." + ctx.label.name + ".tmp") + "\nmkdir -p \"$build_tmp\"\ntrap 'rm -rf \"$build_tmp\"' EXIT\n"
+            options += ["\"-J-Djava.io.tmpdir=$build_tmp\"", "\"-H:TempDirectory=$build_tmp\""]
+            invoke = ""
+        ctx.actions.write(launcher, "#!/bin/sh\nset -eu\ncompiler=\"$1\"; shift\n" + setup + invoke + "\"$compiler\" \"$@\" -H:+UnlockExperimentalVMOptions " + " ".join(options) + " -H:-UnlockExperimentalVMOptions\n", is_executable = True)
+        run_params["executable"] = launcher
+        run_params["tools"] = [graal]
+        compiler_arg = ctx.actions.args()
+        compiler_arg.add(graal.executable if type(graal) == "FilesToRunProvider" else graal)
+        arguments = [compiler_arg, args]
+    else:
+        arguments = [args]
 
     graal_actions = _wrap_actions_for_graal(ctx.actions)
     if is_macos:
@@ -156,18 +218,18 @@ def _graal_binary_implementation(ctx):
             apple_fragment = ctx.fragments.apple,
             xcode_config = xcode_config,
             xcode_path_resolve_level = apple_support.xcode_path_resolve_level.args,
-            arguments = [args, xcode_args],
+            arguments = arguments + [xcode_args],
             **run_params
         )
 
     else:
         # run our proxied env shim on all other platforms.
         graal_actions.run(
-            arguments = [args],
+            arguments = arguments,
             **run_params
         )
 
-    return [DefaultInfo(
+    return [OutputGroupInfo(debug_files = depset(debug_files)), DefaultInfo(
         executable = binary,
         files = depset([binary]),
         runfiles = ctx.runfiles(

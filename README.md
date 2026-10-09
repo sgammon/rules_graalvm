@@ -148,6 +148,25 @@ build --java_runtime_version=graalvm_22
 
 <a id="usage-native-image-modern-bazel"></a>
 
+## Declared artifact builds
+
+`native_image` accepts `graalvm_sdk` for a complete SDK override (compiler plus distribution inputs),
+`optimization_mode = "3"`, and `cc_deps` carrying static `CcInfo` archives and declared headers. Header
+include paths are resolved inside the action, including Native Image's temporary C-query compilations.
+Dynamic-only and alwayslink libraries are rejected rather than silently changing linking semantics.
+`workspace_tmp = True` keeps transient object files beside the output and removes them when the action exits;
+it requires POSIX execution. Linux debug builds expose the `.debug` sidecar through the `debug_files` output group.
+
+`load("@rules_graalvm//graalvm:defs.bzl", "web_image")` exposes a Web Image rule with paired JavaScript/Wasm
+outputs. Supply `deps`, `main_class`, and a declared `wasm_as` executable; optional `builder_jars`/`builder_deps`
+create a target-owned builder macro without modifying the SDK. Both rules declare SDK and tool inputs, allowing
+remote execution and action-cache reuse without host installations.
+
+Integration validation in Komodo: CE O3 and CodSpeed images build on Linux RBE; the real native fixture suite
+passes on a Linux benchmark host in uncached, cached, and JIT modes. The Web Image rule builds the interpreter
+proof and its pinned Node test prints the exact hello/42 transcript on RBE. EE SDK selection is verified through
+the action graph. Windows C-dependency/scratch support and Native Image cross-compilation are not claimed.
+
 ## Usage: Native Image
 
 > API docs for [`native_image`](./api/defs.md)

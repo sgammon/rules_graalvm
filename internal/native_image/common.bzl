@@ -22,6 +22,7 @@ _NativeImageOptimization = struct(
     FASTBUILD = "b",
     OPTIMIZED_LEVEL_1 = "1",
     OPTIMIZED_LEVEL_2 = "2",
+    OPTIMIZED_LEVEL_3 = "3",
 )
 
 _DEBUG_CONDITION = select({
@@ -41,6 +42,14 @@ _OPTIMIZATION_MODE_CONDITION = select({
 })
 
 _NATIVE_IMAGE_ATTRS = {
+    "workspace_tmp": attr.bool(
+        doc = "Place Native Image scratch files beside the action outputs, then remove them. Avoids small remote executor /tmp filesystems without caching intermediate object files.",
+    ),
+    "graalvm_sdk": attr.label(
+        doc = "Optional complete graalvm_sdk override, selecting the compiler and all of its declared SDK inputs together.",
+        providers = [platform_common.ToolchainInfo],
+        cfg = "exec",
+    ),
     "deps": attr.label_list(
         providers = [[JavaInfo]],
         mandatory = True,
@@ -82,6 +91,7 @@ _NATIVE_IMAGE_ATTRS = {
             _NativeImageOptimization.FASTBUILD,
             _NativeImageOptimization.OPTIMIZED_LEVEL_1,
             _NativeImageOptimization.OPTIMIZED_LEVEL_2,
+            _NativeImageOptimization.OPTIMIZED_LEVEL_3,
         ],
     ),
     "coverage": attr.bool(
@@ -98,6 +108,10 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
     ),
     "static_zlib": attr.label(
+        providers = [[CcInfo]],
+    ),
+    "cc_deps": attr.label_list(
+        doc = "Static C/C++ libraries linked into the image. Archives are declared action inputs and use a private library search directory.",
         providers = [[CcInfo]],
     ),
     "data": attr.label_list(
