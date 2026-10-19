@@ -581,7 +581,9 @@ workspace(name = \"{name}\")
     # Done.
 
     if hasattr(ctx, "repo_metadata"):
-        return ctx.repo_metadata(reproducible = True)
+        # Installing components and running setup actions invokes the GraalVM Updater, which may
+        # download artifacts that aren't pinned by a checksum.
+        return ctx.repo_metadata(reproducible = not ctx.attr.components and not ctx.attr.setup_actions)
     return None
 
 _graalvm_bindist_repository = repository_rule(
