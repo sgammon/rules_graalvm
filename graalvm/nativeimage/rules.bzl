@@ -33,6 +33,9 @@ _EXEUCTABLE_NAME_CONDITION = select({
 _native_image = rule(
     implementation = _graal_binary_implementation,
     attrs = dicts.add(_NATIVE_IMAGE_ATTRS, **{
+        "cc_toolchain_flags": attr.bool(
+            default = False,
+        ),
         "native_image_tool": attr.label(
             cfg = "exec",
             allow_files = True,
@@ -76,6 +79,7 @@ def native_image(
         shared_library = None,
         static_zlib = None,
         c_compiler_option = [],
+        cc_toolchain_flags = False,
         data = [],
         extra_args = [],
         allow_fallback = False,
@@ -110,6 +114,9 @@ def native_image(
             On Linux, this is used when Graal statically links zlib into the binary, e.g. with
             `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
+        cc_toolchain_flags: Whether to pass the compile and link flags of the resolved C++ toolchain to every
+            C compiler invocation of `native-image`, which is required for hermetic C++ toolchains that don't
+            rely on the host's libc, headers or linker. Not supported on Windows. Defaults to `False`.
         data: Data files to make available during the compilation. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
@@ -140,6 +147,7 @@ def native_image(
         check_toolchains = check_toolchains,
         static_zlib = static_zlib,
         c_compiler_option = c_compiler_option,
+        cc_toolchain_flags = cc_toolchain_flags,
         allow_fallback = allow_fallback,
         executable_name = executable_name,
         native_image_tool = native_image_tool,

@@ -93,16 +93,47 @@ def _graal_binary_implementation(ctx):
     elif (not is_windows and not is_macos) and ctx.attr.shared_library:
         bin_postfix = _BIN_POSTFIX_SO
 
+    c_compiler_path = native_toolchain.c_compiler_path
+    if ctx.attr.cc_toolchain_flags:
+        if is_windows:
+            fail("cc_toolchain_flags is not supported on Windows")
+
+        # Native Image runs the C compiler in its temporary build directory, but the paths in the
+        # toolchain's flags are relative to the execution root.
+        compiler_wrapper = ctx.actions.declare_file(ctx.label.name + "_native_compiler.sh")
+        ctx.actions.write(
+            output = compiler_wrapper,
+            content = """\
+#!/bin/sh
+execroot="${{0%/{wrapper}}}"
+for dir in bazel-out external; do
+  [ -e "$dir" ] || ln -s "$execroot/$dir" "$dir" 2>/dev/null
+done
+exec {compiler} "$@"
+""".format(
+                wrapper = compiler_wrapper.path,
+                compiler = c_compiler_path if c_compiler_path.startswith("/") else "\"$execroot\"/" + c_compiler_path,
+            ),
+            is_executable = True,
+        )
+        direct_inputs.append(compiler_wrapper)
+        c_compiler_path = compiler_wrapper.path
+
     args = ctx.actions.args().use_param_file("@%s", use_always = False)
     binary = _prepare_native_image_rule_context(
         ctx,
         args,
         classpath_depset,
         direct_inputs,
-        native_toolchain.c_compiler_path,
+        c_compiler_path,
         gvm_toolchain,
         bin_postfix = bin_postfix,
     )
+    if ctx.attr.cc_toolchain_flags:
+        # Native Image passes these options to every compiler invocation, which includes linking
+        # the executables that evaluate query code as well as the final image.
+        args.add_all(native_toolchain.compile_flags, format_each = "-H:CCompilerOption=%s")
+        args.add_all(native_toolchain.link_flags, format_each = "-H:CCompilerOption=%s")
 
     if ctx.files.data:
         direct_inputs.extend(ctx.files.data)
