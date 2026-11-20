@@ -17,6 +17,10 @@ load(
     "//internal/native_image:settings.bzl",
     "NativeImageInfo",
 )
+load(
+    "//internal/reachability:reachability.bzl",
+    _reachability_metadata = "reachability_metadata",
+)
 
 _DEFAULT_NATIVE_IMAGE_SETTINGS = Label("@rules_graalvm//internal/native_image:defaults")
 
@@ -85,6 +89,7 @@ def native_image(
         resource_configuration = None,
         proxy_configuration = None,
         profiles = [],
+        resolve_upstream_reachability_metadata = False,
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -119,8 +124,16 @@ def native_image(
         profiles: Profiles to use for profile-guided optimization (PGO) and obtained from a native image compiled with `--pgo-instrument`.
         resource_configuration: Resource configuration file. No default; optional.
         proxy_configuration: Proxy configuration file. No default; optional.
+        resolve_upstream_reachability_metadata: Whether to resolve curated reachability metadata for the Maven coordinates this image transitively depends on; Defaults to `False`.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
+
+    if resolve_upstream_reachability_metadata:
+        _reachability_metadata(
+            name = "%s.reachability" % name,
+            deps = deps,
+        )
+        deps = deps + [":%s.reachability" % name]
 
     _native_image(
         name = name,
