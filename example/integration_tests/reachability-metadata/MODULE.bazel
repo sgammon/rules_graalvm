@@ -43,16 +43,20 @@ register_toolchains("@graalvm//:sdk")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
+    name = "sample_maven",
     artifacts = [
         # commons-logging ships no native-image metadata of its own and discovers its LogFactory
         # implementation reflectively; the curated upstream metadata registers those classes.
         "commons-logging:commons-logging:1.2",
     ],
+    # pinned so that fetching needs no Coursier run (which fails under the Java 8 that
+    # Windows runners default to); regenerate with `REPIN=1 bazel run @sample_maven//:pin`
+    lock_file = "//:maven_install.json",
     repositories = [
         "https://repo1.maven.org/maven2",
     ],
 )
 use_repo(
     maven,
-    "maven",
+    "sample_maven",
 )
