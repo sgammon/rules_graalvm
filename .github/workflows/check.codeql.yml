@@ -12,6 +12,7 @@ name: "CodeQL"
       - tools/**/*.*
   pull_request:
     branches: ["main"]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - docs/**/*.*
       - example/**/*.*
@@ -27,6 +28,8 @@ permissions:
 jobs:
   analyze:
     name: Analyze
+    # skip draft PRs; promoting the PR to ready-for-review runs this
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     permissions:
       actions: read
