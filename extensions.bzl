@@ -73,6 +73,7 @@ def _reachability_metadata_impl(module_ctx):
 
     url = _DEFAULT_REACHABILITY_METADATA_URL
     integrity = _DEFAULT_REACHABILITY_METADATA_INTEGRITY
+
     # only the root module may override the snapshot; a library module overriding it would
     # silently change the metadata every other module in the build sees.
     for mod in module_ctx.modules:
