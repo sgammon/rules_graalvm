@@ -1,6 +1,7 @@
 "Defines common properties shared by modern and legacy Native Image rules."
 
-load("@rules_java//java:defs.bzl", "JavaInfo")
+load("@rules_cc//cc/common:cc_info.bzl", "CcInfo")
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal/native_image:builder.bzl",
     _assemble_native_build_options = "assemble_native_build_options",
@@ -150,7 +151,7 @@ def _prepare_bin_name(
         name,
         bin_postfix = None):
     """Handle postfix for the output binary on various platforms."""
-    if bin_postfix:
+    if bin_postfix and not name.endswith(bin_postfix):
         return "%s%s" % (name, bin_postfix)
     return name
 

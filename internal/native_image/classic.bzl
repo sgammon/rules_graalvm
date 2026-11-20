@@ -1,5 +1,6 @@
 "Legacy ('classic') rules for building with GraalVM on Bazel."
 
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal/native_image:common.bzl",
     _BAZEL_CPP_TOOLCHAIN_TYPE = "BAZEL_CPP_TOOLCHAIN_TYPE",

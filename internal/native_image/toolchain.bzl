@@ -19,6 +19,10 @@ load(
     "@bazel_tools//tools/cpp:toolchain_utils.bzl",
     "find_cpp_toolchain",
 )
+load(
+    "@rules_cc//cc/common:cc_common.bzl",
+    "cc_common",
+)
 
 def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
     """Build a context struct for accessing the native C toolchain.

@@ -51,6 +51,9 @@ TARGET_JAVA_VERSIONS = [
     "20",
     "21",
     "22",
+    "23",
+    "24",
+    "25",
 ]
 
 GRAALVM_KNOWN_RELEASES = [

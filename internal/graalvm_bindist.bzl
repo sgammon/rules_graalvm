@@ -107,6 +107,9 @@ def _check_version(version, java_version, newdist):
 def _toolchain_config_impl(ctx):
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
     ctx.file("BUILD.bazel", ctx.attr.build_file)
+    if hasattr(ctx, "repo_metadata"):
+        return ctx.repo_metadata(reproducible = True)
+    return None
 
 def _graal_updater_path(os):
     cmd = paths.join("bin", "gu")
@@ -323,13 +326,16 @@ def _graal_bindist_repository_impl(ctx):
             # map other properties
             urls = [config["url"]]
 
-            if version in VmReleaseVersions:
-                if dist_name == Distribution.ORACLE:
-                    prefix_version = VmReleaseVersionsOracle[version]
-                    prefix = "graalvm-jdk-%s" % (prefix_version)
-                else:
-                    prefix_version = VmReleaseVersions[version]
-                    prefix = "graalvm-community-openjdk-%s" % (prefix_version)
+            # an explicit per-entry prefix wins over the computed one; this is
+            # needed for releases whose archives do not follow the usual
+            # `graalvm-community-openjdk-<version>` layout (e.g. the
+            # "Innovation" line of GraalVM releases).
+            if "prefix" in config:
+                prefix = config["prefix"]
+            elif dist_name == Distribution.ORACLE and version in VmReleaseVersionsOracle:
+                prefix = "graalvm-jdk-%s" % (VmReleaseVersionsOracle[version])
+            elif dist_name != Distribution.ORACLE and version in VmReleaseVersions:
+                prefix = "graalvm-community-openjdk-%s" % (VmReleaseVersions[version])
             else:
                 fail("Unable to determine prefix value for archive '%s' at version '%s'" % (
                     dist_tag,
@@ -574,6 +580,10 @@ workspace(name = \"{name}\")
     _graal_postinstall_actions(ctx, os)
     # Done.
 
+    if hasattr(ctx, "repo_metadata"):
+        return ctx.repo_metadata(reproducible = True)
+    return None
+
 _graalvm_bindist_repository = repository_rule(
     attrs = {
         "version": attr.string(
@@ -582,6 +592,12 @@ _graalvm_bindist_repository = repository_rule(
 GraalVM engine version, like `23.0.1`. Note that this version aligns with
 OpenJDK release versions only for newer releases; in some cases, the
 `java_version` and `version` differ, and in others they align.
+
+GraalVM's "Innovation" releases carry their own version line and diverge from
+the JDK version they ship: `25.1.3` provides JDK 25.0.3, and `25.2.4` provides
+JDK 25.0.4. Either version may be named here. Note that GraalVM Community only
+publishes Innovation releases as of JDK 25.0.3, so for the community
+distribution a JDK version at or above that always resolves to one.
 
 This version is required in order to properly resolve artifacts for a given
 GraalVM engine version.

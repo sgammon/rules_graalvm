@@ -1,1 +1,1 @@
-build --enable_bzlmod
+build - -enable_bzlmod

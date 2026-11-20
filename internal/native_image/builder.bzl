@@ -1,5 +1,7 @@
 "Logic to assemble `native-image` options."
 
+load("@rules_cc//cc/common:cc_info.bzl", "CcInfo")
+
 def _configure_static_zlib_compile(ctx, args, direct_inputs):
     """Configure a static image compile against hermetic/static zlib.
 
