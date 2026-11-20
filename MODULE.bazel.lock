@@ -184,7 +184,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "8s5FuFebtEoCWx8ocnPZqaG/xvCMwxm0aD/Deq1fypA=",
+        "bzlTransitiveDigest": "mOP9jfaAnmrrs8KRIBc82VC1v/yaX92JzE6978ewc8Y=",
         "usagesDigest": "pKj65Qb9OHtY4/syhMnB7NBVWb5JzlRsDC4OgrnprMY=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
@@ -214,6 +214,11 @@
             "",
             "bazel_skylib",
             "bazel_skylib+"
+          ],
+          [
+            "",
+            "bazel_tools",
+            "bazel_tools"
           ]
         ]
       }

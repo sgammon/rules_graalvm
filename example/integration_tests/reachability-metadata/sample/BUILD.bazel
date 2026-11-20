@@ -3,6 +3,7 @@ load(
     "native_image",
     "reachability_metadata",
 )
+load("@rules_java//java:java_library.bzl", "java_library")
 
 java_library(
     name = "java",

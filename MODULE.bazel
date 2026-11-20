@@ -172,7 +172,7 @@ maven_resolver = use_extension(
 maven_resolver.install(
     name = "rules_graalvm_maven",
     artifacts = [
-        "org.graalvm.buildtools:graalvm-reachability-metadata:1.1.2",
+        "org.graalvm.buildtools:graalvm-reachability-metadata:1.1.19",
     ],
     lock_file = "//:maven_reachability_install.json",
     repositories = MAVEN_REPOSITORIES,

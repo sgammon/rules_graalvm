@@ -65,15 +65,19 @@ graalvm = module_extension(
 # Default pinned snapshot of `oracle/graalvm-reachability-metadata`. Release zips hold the metadata
 # tree (the group directories) at the archive root. Override via the `repository` tag in the root
 # module. Bump when a release that tests newer dependency versions ships.
-_DEFAULT_REACHABILITY_METADATA_URL = "https://github.com/oracle/graalvm-reachability-metadata/releases/download/1.0.3/graalvm-reachability-metadata-1.0.3.zip"
-_DEFAULT_REACHABILITY_METADATA_INTEGRITY = "sha256-FTxgQ+y8eUHu7qXlHBtXqoqpBvrt7bha5TomUbXL2bs="
+_DEFAULT_REACHABILITY_METADATA_URL = "https://github.com/oracle/graalvm-reachability-metadata/releases/download/1.0.23/graalvm-reachability-metadata-1.0.23.zip"
+_DEFAULT_REACHABILITY_METADATA_INTEGRITY = "sha256-Xm4sEzQiTKFYDR0fZ15gCmHdMDXRmcJfhTWU1uww+ws="
 
 def _reachability_metadata_impl(module_ctx):
     """Implementation of the reachability metadata module extension."""
 
     url = _DEFAULT_REACHABILITY_METADATA_URL
     integrity = _DEFAULT_REACHABILITY_METADATA_INTEGRITY
+    # only the root module may override the snapshot; a library module overriding it would
+    # silently change the metadata every other module in the build sees.
     for mod in module_ctx.modules:
+        if not mod.is_root:
+            continue
         for tag in mod.tags.repository:
             if tag.url:
                 url = tag.url
