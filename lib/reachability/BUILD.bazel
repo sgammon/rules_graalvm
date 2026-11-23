@@ -1,0 +1,27 @@
+"Bazel library targets for reachability metadata rules."
+
+load(
+    "@bazel_skylib//:bzl_library.bzl",
+    "bzl_library",
+)
+
+package(default_visibility = [
+    "//docs:__subpackages__",
+    "//lib:__subpackages__",
+])
+
+bzl_library(
+    name = "internals",
+    srcs = ["//internal/reachability:reachability.bzl"],
+    deps = [
+        "@rules_java//java/common",
+    ],
+)
+
+bzl_library(
+    name = "rules",
+    srcs = ["//graalvm/reachability:rules.bzl"],
+    deps = [
+        ":internals",
+    ],
+)

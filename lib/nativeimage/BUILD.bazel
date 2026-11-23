@@ -49,6 +49,7 @@ bzl_library(
         ":settings",
         ":toolchain",
         "//lib:tooling",
+        "//lib/reachability:rules",
         "@bazel_skylib//lib:dicts",
     ],
 )
