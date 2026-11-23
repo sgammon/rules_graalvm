@@ -8,7 +8,7 @@ exposes it as a resource-only library to add to a `native_image`'s `deps`.
     native_image(name = "app", deps = [":app_lib", ":reachability_metadata"])
 """
 
-load("@rules_java//java:defs.bzl", "JavaInfo")
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 
 MavenCoordinatesInfo = provider(
     doc = "Transitive group:artifact:version coordinates collected from maven_coordinates tags.",

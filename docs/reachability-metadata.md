@@ -18,6 +18,10 @@ Gradle/Maven plugins.
 > your dependency graph. Dependencies resolved via [`rules_jvm_external`][3] carry these tags
 > automatically; first-party `java_library` targets do not, and are simply skipped.
 
+> **Requirement: Bzlmod.**
+> The metadata snapshot and the resolver's own Maven dependency are provided by this module's
+> `MODULE.bazel`, so these rules are only available to Bzlmod builds, not `WORKSPACE` builds.
+
 > **Requirement: a JDK 17+ tool runtime.**
 > The resolver runs as a build action using [the canonical GraalVM resolver library][4], which is
 > compiled for JDK 17. Ensure your **tool** Java runtime is JDK 17 or newer.

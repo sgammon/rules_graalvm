@@ -132,6 +132,12 @@ def native_image(
         _reachability_metadata(
             name = "%s.reachability" % name,
             deps = deps,
+            # keep the helper consistent with the image: a `testonly` image may only depend on
+            # `testonly` targets, and `manual`/incompatible images must not leak a buildable target.
+            testonly = kwargs.get("testonly"),
+            tags = kwargs.get("tags"),
+            target_compatible_with = kwargs.get("target_compatible_with"),
+            visibility = ["//visibility:private"],
         )
         deps = deps + [":%s.reachability" % name]
 

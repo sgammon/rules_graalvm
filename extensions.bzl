@@ -1,5 +1,6 @@
 "Defines extensions for use with Bzlmod."
 
+load("@bazel_features//:features.bzl", "bazel_features")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
 load(
     "//graalvm:repositories.bzl",
@@ -91,7 +92,11 @@ def _reachability_metadata_impl(module_ctx):
         integrity = integrity,
         downloaded_file_path = "repository.zip",
     )
-    return module_ctx.extension_metadata(reproducible = True)
+
+    # `reproducible` needs Bazel 7.1+; this module supports 7.0.
+    if bazel_features.external_deps.extension_metadata_has_reproducible:
+        return module_ctx.extension_metadata(reproducible = True)
+    return None
 
 _reachability_repository = tag_class(attrs = {
     "url": attr.string(mandatory = False, doc = "Archive URL of the metadata snapshot; defaults to the pinned release."),

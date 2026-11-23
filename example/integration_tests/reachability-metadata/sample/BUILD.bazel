@@ -37,6 +37,26 @@ native_image(
     deps = [":java"],
 )
 
+# `testonly` must propagate to the generated `.reachability` target, which depends on the same
+# `testonly` library; otherwise this fails analysis.
+java_library(
+    name = "java-testonly",
+    testonly = True,
+    srcs = ["Main.java"],
+    deps = [
+        "@sample_maven//:commons_logging_commons_logging",
+    ],
+)
+
+native_image(
+    name = "sample-testonly",
+    testonly = True,
+    main_class = "Main",
+    resolve_upstream_reachability_metadata = True,
+    tags = ["manual"],
+    deps = [":java-testonly"],
+)
+
 alias(
     name = "sample",
     actual = "sample-with-metadata",

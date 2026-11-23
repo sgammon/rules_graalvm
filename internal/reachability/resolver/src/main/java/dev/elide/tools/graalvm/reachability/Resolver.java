@@ -56,9 +56,9 @@ public final class Resolver {
         }
 
         Path outputPath = output.toAbsolutePath().normalize();
-        Path work = outputPath.resolveSibling("." + outputPath.getFileName() + ".work");
-        deleteTree(work);
-        Files.createDirectories(work);
+        // Scratch space goes in the action's temp dir, not next to the declared output, so no
+        // undeclared files ever land in the output tree.
+        Path work = Files.createTempDirectory("reachability-");
         try {
             Path metadataRoot = unzip(repository, work.resolve("repo"));
 

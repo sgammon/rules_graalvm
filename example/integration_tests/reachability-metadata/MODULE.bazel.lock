@@ -188,7 +188,7 @@
     },
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "S6ofCXZusQn067axBq8DVRDVoBvOeeUOWC3r6C/UVXI=",
+        "bzlTransitiveDigest": "Pd7hKEs0C5xK2OeSBoH34PL83xaIbHdhcpt7lrsv1Rg=",
         "usagesDigest": "f1fiG2ftU8MGjHq+ucFlu08c9dn17J090rYN49A8wwg=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
@@ -214,6 +214,21 @@
           }
         },
         "recordedRepoMappingEntries": [
+          [
+            "bazel_features+",
+            "bazel_features_globals",
+            "bazel_features++version_extension+bazel_features_globals"
+          ],
+          [
+            "bazel_features+",
+            "bazel_features_version",
+            "bazel_features++version_extension+bazel_features_version"
+          ],
+          [
+            "rules_graalvm+",
+            "bazel_features",
+            "bazel_features+"
+          ],
           [
             "rules_graalvm+",
             "bazel_skylib",
