@@ -1,0 +1,3 @@
+load(":bindist_tests.bzl", "bindist_testsuite")
+
+bindist_testsuite(name = "bindist")

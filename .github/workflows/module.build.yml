@@ -22,6 +22,12 @@ name: "Build"
         type: boolean
         default: true
 
+      ## Whether failures are tolerated (`continue-on-error`); required by the `build` job
+      labs:
+        description: "Skip Failures"
+        type: boolean
+        default: false
+
       ## Whether we should run integration tests (main target)
       main:
         description: "Main target"
@@ -266,6 +272,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Upstream Reachability Metadata
+          - label: Reachability Metadata
+            target: sample
+            action: build
+            directory: "./example/integration_tests/reachability-metadata"
+            labs: false
+            skip: false
+
           # Test: Maven Artifacts
           - label: Maven Artifacts
             target: sample
@@ -323,6 +337,16 @@ jobs:
             target: sample
             action: build
             directory: "./example/integration_tests/graalvm-ce-25.2"
+            labs: false
+            skip: ${{ contains(inputs.runner, 'intel') }}
+
+          # Test: GVM CE 25.5 ("25 Innovation 5")
+          # Skipped on Intel macOS: GraalVM stopped shipping macos-x64 archives
+          # as of 25.0.2.
+          - label: GraalVM CE 25.5
+            target: sample
+            action: build
+            directory: "./example/integration_tests/graalvm-ce-25.5"
             labs: false
             skip: ${{ contains(inputs.runner, 'intel') }}
 
