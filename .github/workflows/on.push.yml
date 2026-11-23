@@ -15,6 +15,9 @@ name: "CI"
       - "*.bzl"
       - "*.bazel"
 
+  ## Manual re-runs of the full `main` suite (e.g. after workflow-only changes)
+  workflow_dispatch: {}
+
 concurrency:
   # Cancel previous actions from the same PR: https://stackoverflow.com/a/72408109
   group: ${{ github.workflow }}-${{ github.ref }}

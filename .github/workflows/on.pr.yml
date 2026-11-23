@@ -2,14 +2,19 @@
 name: "PR"
 
 "on":
-  ## Run on PR filings
+  ## Run on PR filings; `ready_for_review` re-runs the full suite when a draft is promoted.
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
+      - .github/workflows/**
       - docs/**/*.*
       - example/**/*.*
       - graalvm/**/*.*
       - internal/**/*.*
       - tools/**/*.*
+      - "*.bzl"
+      - "*.bazel"
+      - MODULE.bazel.lock
 
   ## Run on PR queue check requests
   merge_group: {}
@@ -23,8 +28,37 @@ permissions:
   contents: read
 
 jobs:
+  ## Draft PRs get a single Linux build without integration tests; ready PRs and the merge
+  ## queue get the full OS x integration-test matrix.
+  plan:
+    name: "Plan"
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      draft: ${{ steps.matrix.outputs.draft }}
+    steps:
+      - name: "Plan: Test Matrix"
+        id: matrix
+        shell: bash
+        env:
+          DRAFT: ${{ github.event.pull_request.draft == true }}
+        run: |
+          os() { jq -nc --arg r "$1" --arg l "$2" --arg f "$3" --argjson m "$4" --argjson c "$5" \
+            '{runner: $r, label: $l, flags: $f, main: $m, coverage: $c, labs: false}'; }
+          if [ "$DRAFT" = "true" ]; then
+            include="[$(os ubuntu-latest 'Ubuntu amd64 (draft)' --config=linux false false)]"
+          else
+            include="[$(os ubuntu-latest 'Ubuntu amd64' --config=linux true false),"
+            include+="$(os macos-latest 'macOS arm64' --config=mac true true),"
+            include+="$(os windows-2022 'Windows amd64' --config=windows true false)]"
+          fi
+          echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
+          echo "draft=$DRAFT" >> "$GITHUB_OUTPUT"
+
   dependency-graph:
     name: "Dependency Graph"
+    needs: [plan]
+    if: needs.plan.outputs.draft != 'true'
     continue-on-error: true
     runs-on: ubuntu-latest
     permissions:
@@ -44,7 +78,8 @@ jobs:
   dependency-review:
     name: "Dependency Review"
     runs-on: ubuntu-latest
-    needs: [dependency-graph]
+    needs: [plan, dependency-graph]
+    if: needs.plan.outputs.draft != 'true'
     permissions:
       contents: read
       pull-requests: write
@@ -65,36 +100,11 @@ jobs:
 
   test:
     name: "Tests: ${{ matrix.label }}"
+    needs: [plan]
     uses: ./.github/workflows/module.build.yml
     strategy:
       fail-fast: false
-      matrix:
-        runner: [ubuntu-latest]
-        main: [true]
-        label: ["Ubuntu amd64"]
-        labs: [false]
-        flags: ["--config=linux"]
-        coverage: [false]
-        include:
-          # Bazel 7
-          - runner: ubuntu-latest
-            label: Ubuntu amd64
-            labs: false
-            main: true
-            coverage: false
-            flags: --config=linux
-          - runner: macos-latest
-            label: macOS arm64
-            labs: false
-            main: true
-            coverage: true
-            flags: --config=mac
-          - runner: windows-2022
-            label: Windows amd64
-            labs: false
-            main: true
-            coverage: false
-            flags: --config=windows
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
 
     secrets: inherit
     with:
