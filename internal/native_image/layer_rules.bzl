@@ -4,7 +4,7 @@ load(
     "@build_bazel_apple_support//lib:apple_support.bzl",
     "apple_support",
 )
-load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal:argutil.bzl",
     _experimental_args = "experimental_args",
@@ -58,7 +58,7 @@ def _graal_layer_implementation(ctx):
     # shared between parent and child appears once, and its topological ordering places parent
     # entries ahead of child entries — matching what SVM's layered-image compat check expects.
     local_cp = depset(transitive = [
-        dep[cc_shim.JavaInfo].transitive_runtime_jars
+        dep[JavaInfo].transitive_runtime_jars
         for dep in ctx.attr.deps
     ])
     classpath_depset = depset(transitive = [

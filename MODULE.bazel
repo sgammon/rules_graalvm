@@ -3,6 +3,7 @@
 module(
     name = "rules_graalvm",
     version = "0.12.0",
+    bazel_compatibility = [">=7.0.0"],
 )
 
 ## JVM version to target.
@@ -34,11 +35,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_java",
-    version = "7.1.0",
+    version = "8.6.1",
 )
 bazel_dep(
     name = "rules_cc",
-    version = "0.0.10",
+    version = "0.1.1",
 )
 bazel_dep(
     name = "bazel_skylib",
@@ -48,6 +49,10 @@ bazel_dep(
     name = "apple_support",
     version = "1.15.1",
     repo_name = "build_bazel_apple_support",
+)
+bazel_dep(
+    name = "rules_jvm_external",
+    version = "5.3",
 )
 
 ##
@@ -96,11 +101,6 @@ bazel_dep(
     version = "0.50.0",
     dev_dependency = True,
     repo_name = "bazel_gazelle",
-)
-bazel_dep(
-    name = "rules_jvm_external",
-    version = "5.3",
-    dev_dependency = True,
 )
 bazel_dep(
     name = "stardoc",
@@ -162,11 +162,39 @@ use_repo(
 )
 
 ################################################################################
-# rules_graalvm
+# reachability metadata
 ################################################################################
 
-cc_shim = use_extension("//internal:cc_shim_extensions.bzl", "cc_shim_extension")
-use_repo(cc_shim, "rules_graalvm_cc_shim")
+maven_resolver = use_extension(
+    "@rules_jvm_external//:extensions.bzl",
+    "maven",
+)
+maven_resolver.install(
+    name = "rules_graalvm_maven",
+    artifacts = [
+        "org.graalvm.buildtools:graalvm-reachability-metadata:1.1.19",
+    ],
+    lock_file = "//:maven_reachability_install.json",
+    repositories = MAVEN_REPOSITORIES,
+)
+use_repo(
+    maven_resolver,
+    "rules_graalvm_maven",
+    "unpinned_rules_graalvm_maven",
+)
+
+reachability = use_extension(
+    ":extensions.bzl",
+    "reachability_metadata",
+)
+use_repo(
+    reachability,
+    "graalvm_reachability_metadata",
+)
+
+################################################################################
+# rules_graalvm
+################################################################################
 
 gvm = use_extension(
     ":extensions.bzl",

@@ -104,6 +104,9 @@ def native_image_layer(
     can consume via their `layers` attribute. This enables splitting large applications across
     reusable layers so shared code is built once and reused.
 
+    Layers are not executables, so `main_class`, `shared_library`, `executable_name` and
+    `profiles` are not available on `native_image_layer`.
+
     Args:
         name: Target name; the layer is emitted as a single-file archive at `<name>.nil`.
         deps: `java_library` targets whose classpath content is eligible for inclusion in the
@@ -139,9 +142,6 @@ def native_image_layer(
         resource_configuration: Resource configuration file. Optional.
         proxy_configuration: Proxy configuration file. Optional.
         **kwargs: Forwarded to the underlying rule.
-
-    Attributes NOT available on `native_image_layer` (by design — layers are not executables):
-        `main_class`, `shared_library`, `executable_name`, `profiles`.
     """
     _validate_layers(layers, name)
     _validate_directive_prefixes(directives)

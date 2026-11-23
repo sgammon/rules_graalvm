@@ -188,7 +188,6 @@
     "https://bcr.bazel.build/modules/rules_java/6.3.0/MODULE.bazel": "a97c7678c19f236a956ad260d59c86e10a463badb7eb2eda787490f4c969b963",
     "https://bcr.bazel.build/modules/rules_java/6.4.0/MODULE.bazel": "e986a9fe25aeaa84ac17ca093ef13a4637f6107375f64667a15999f77db6c8f6",
     "https://bcr.bazel.build/modules/rules_java/6.5.2/MODULE.bazel": "1d440d262d0e08453fa0c4d8f699ba81609ed0e9a9a0f02cd10b3e7942e61e31",
-    "https://bcr.bazel.build/modules/rules_java/7.1.0/MODULE.bazel": "30d9135a2b6561c761bd67bd4990da591e6bdc128790ce3e7afd6a3558b2fb64",
     "https://bcr.bazel.build/modules/rules_java/7.10.0/MODULE.bazel": "530c3beb3067e870561739f1144329a21c851ff771cd752a49e06e3dc9c2e71a",
     "https://bcr.bazel.build/modules/rules_java/7.12.2/MODULE.bazel": "579c505165ee757a4280ef83cda0150eea193eed3bef50b1004ba88b99da6de6",
     "https://bcr.bazel.build/modules/rules_java/7.2.0/MODULE.bazel": "06c0334c9be61e6cef2c8c84a7800cef502063269a5af25ceb100b192453d4ab",
@@ -281,10 +280,14 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "Hm7f1BLBpAaWJLiKCPyuL5u35As+9I/hEHokLzihPGQ=",
+        "bzlTransitiveDigest": "jmEwtCD1SmGseolaHSUmffj8fgG0JRToK9KEMDCTcRE=",
         "usagesDigest": "pKj65Qb9OHtY4/syhMnB7NBVWb5JzlRsDC4OgrnprMY=",
         "recordedInputs": [
-          "REPO_MAPPING:,bazel_skylib bazel_skylib+"
+          "REPO_MAPPING:,bazel_features bazel_features+",
+          "REPO_MAPPING:,bazel_skylib bazel_skylib+",
+          "REPO_MAPPING:,bazel_tools bazel_tools",
+          "REPO_MAPPING:bazel_features+,bazel_features_globals bazel_features++version_extension+bazel_features_globals",
+          "REPO_MAPPING:bazel_features+,bazel_features_version bazel_features++version_extension+bazel_features_version"
         ],
         "generatedRepoSpecs": {
           "graalvm_toolchains": {
@@ -380,19 +383,6 @@
               "toolchain_config": "graalvm_toolchains",
               "platform_key": "windows-x64"
             }
-          }
-        }
-      }
-    },
-    "//internal:cc_shim_extensions.bzl%cc_shim_extension": {
-      "general": {
-        "bzlTransitiveDigest": "QZZfMlmz9c8jevjMKhv2Qo+N/CDOgPpNxtsCt5TZH/c=",
-        "usagesDigest": "BsYdoWXctEt+M3+hmhjkmfRTUEDtjdw89nQ7yasBT2g=",
-        "recordedInputs": [],
-        "generatedRepoSpecs": {
-          "rules_graalvm_cc_shim": {
-            "repoRuleId": "@@//internal:cc_shim.bzl%cc_shim_repo",
-            "attributes": {}
           }
         }
       }

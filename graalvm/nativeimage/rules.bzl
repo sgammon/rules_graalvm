@@ -17,6 +17,10 @@ load(
     "//internal/native_image:settings.bzl",
     "NativeImageInfo",
 )
+load(
+    "//internal/reachability:reachability.bzl",
+    _reachability_metadata = "reachability_metadata",
+)
 
 _DEFAULT_NATIVE_IMAGE_SETTINGS = Label("@rules_graalvm//internal/native_image:defaults")
 
@@ -102,6 +106,7 @@ def native_image(
         layers = [],
         emit_intermediate_dir = False,
         emit_obfuscation_mapping = False,
+        resolve_upstream_reachability_metadata = False,
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -146,6 +151,7 @@ def native_image(
         layers: Parent GraalVM Native Image layer(s) to consume via `--layer-use`. Today accepts at most 1 entry. Entries must be `native_image_layer` targets.
         emit_intermediate_dir: If True, preserve native-image's intermediate build directory as a TreeArtifact output (exposed via `OutputGroupInfo(intermediate_dir=...)`) and pass `-H:TempDirectory=<path>` to direct native-image to use it. Enables downstream rules (e.g., staticlib repackers) to consume the intermediate `<image>.o` file.
         emit_obfuscation_mapping: If True, declare `<image-name>.obfuscation-mapping.json` (the obfuscation symbol map native-image writes next to the binary when `-H:AdvancedObfuscation=export-mapping` is set) as an output, exposed via `OutputGroupInfo(obfuscation_mapping=...)`. Not added to `DefaultInfo.files` (the map can be tens of MiB). Opt-in: the caller must also pass `-H:AdvancedObfuscation=export-mapping` in `extra_args` in tandem, or the declared output is never written and the build fails.
+        resolve_upstream_reachability_metadata: Whether to resolve curated reachability metadata for the Maven coordinates this image transitively depends on; Defaults to `False`.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -161,6 +167,19 @@ def native_image(
                 extra_headers,
             ),
         )
+
+    if resolve_upstream_reachability_metadata:
+        _reachability_metadata(
+            name = "%s.reachability" % name,
+            deps = deps,
+            # keep the helper consistent with the image: a `testonly` image may only depend on
+            # `testonly` targets, and `manual`/incompatible images must not leak a buildable target.
+            testonly = kwargs.get("testonly"),
+            tags = kwargs.get("tags"),
+            target_compatible_with = kwargs.get("target_compatible_with"),
+            visibility = ["//visibility:private"],
+        )
+        deps = deps + [":%s.reachability" % name]
 
     _native_image(
         name = name,

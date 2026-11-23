@@ -231,10 +231,6 @@ http_archive(
 # --------------------------------------------------------------------------------------------------------------
 # Setup, Part 1
 
-load("//internal:cc_shim.bzl", "cc_shim_repo")
-
-cc_shim_repo(name = "rules_graalvm_cc_shim")
-
 load("//internal:repositories.bzl", "rules_graalvm_repositories")
 
 rules_graalvm_repositories()

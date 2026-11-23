@@ -1,6 +1,7 @@
 "Defines common properties shared by modern and legacy Native Image rules."
 
-load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
+load("@rules_cc//cc/common:cc_info.bzl", "CcInfo")
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal/native_image:builder.bzl",
     _assemble_native_build_options = "assemble_native_build_options",
@@ -45,7 +46,7 @@ _OPTIMIZATION_MODE_CONDITION = select({
 
 _NATIVE_IMAGE_ATTRS = {
     "deps": attr.label_list(
-        providers = [[cc_shim.JavaInfo]],
+        providers = [[JavaInfo]],
         mandatory = True,
     ),
     "main_class": attr.string(
@@ -101,7 +102,7 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
     ),
     "static_zlib": attr.label(
-        providers = [[cc_shim.CcInfo]],
+        providers = [[CcInfo]],
     ),
     "data": attr.label_list(
         allow_files = True,
@@ -129,7 +130,7 @@ _NATIVE_IMAGE_ATTRS = {
               "`-H:NativeLinkerOption=<archive-path>` so native-image's linker invocation pulls " +
               "it in. Use this to satisfy `@CFunction` / JNI references defined in companion " +
               "Rust / C / C++ libraries (typical `rust_static_library` outputs surface CcInfo).",
-        providers = [[cc_shim.CcInfo]],
+        providers = [[CcInfo]],
         mandatory = False,
     ),
     "cc_deps_dynamic": attr.label_list(
@@ -145,7 +146,7 @@ _NATIVE_IMAGE_ATTRS = {
               "emitted (Windows uses the executable directory by default, so RPATH is " +
               "skipped). Use this for dynamic-image variants where the consumer expects a " +
               "runtime-loaded shared library, not a statically linked archive.",
-        providers = [[cc_shim.CcInfo]],
+        providers = [[CcInfo]],
         mandatory = False,
     ),
     "extra_headers": attr.string_list(
@@ -278,7 +279,7 @@ def _prepare_bin_name(
         name,
         bin_postfix = None):
     """Handle postfix for the output binary on various platforms."""
-    if bin_postfix:
+    if bin_postfix and not name.endswith(bin_postfix):
         return "%s%s" % (name, bin_postfix)
     return name
 

@@ -46,7 +46,8 @@ load(
     "@bazel_tools//tools/cpp:toolchain_utils.bzl",
     "find_cpp_toolchain",
 )
-load("@rules_graalvm_cc_shim//:cc_shim.bzl", "cc_shim")
+load("@rules_cc//cc/common:cc_common.bzl", "cc_common")
+load("@rules_cc//cc/common:cc_info.bzl", "CcInfo")
 
 _SHARED_LIB_SUFFIXES = (".so", ".dylib", ".dll")
 _CANONICAL_ISOLATE_HEADERS = ("graal_isolate.h", "graal_isolate_dynamic.h")
@@ -149,8 +150,6 @@ def build_shared_library_cc_info(ctx, binary, declared_headers):
           must add these to `default_files` so `bazel build` materializes the
           include dir.
     """
-    cc_common = cc_shim.cc_common
-
     include_dir_name = ctx.label.name + "_includes"
     staged_headers = []
     for declared in declared_headers:
@@ -194,7 +193,7 @@ def build_shared_library_cc_info(ctx, binary, declared_headers):
         linker_inputs = depset([linker_input]),
     )
 
-    cc_info = cc_shim.CcInfo(
+    cc_info = CcInfo(
         compilation_context = compilation_context,
         linking_context = linking_context,
     )

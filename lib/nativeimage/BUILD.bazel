@@ -11,8 +11,30 @@ package(default_visibility = [
 ])
 
 bzl_library(
+    name = "action_utils",
+    srcs = ["//internal/native_image:action_utils.bzl"],
+)
+
+bzl_library(
+    name = "argutil",
+    srcs = ["//internal:argutil.bzl"],
+)
+
+bzl_library(
     name = "builder",
     srcs = ["//internal/native_image:builder.bzl"],
+    deps = [
+        ":argutil",
+        "@rules_cc//cc/common",
+    ],
+)
+
+bzl_library(
+    name = "cc_info",
+    srcs = ["//internal/native_image:cc_info.bzl"],
+    deps = [
+        "@rules_cc//cc/common",
+    ],
 )
 
 bzl_library(
@@ -22,6 +44,7 @@ bzl_library(
         ":builder",
         ":common",
         ":toolchain",
+        "@rules_java//java/common",
     ],
 )
 
@@ -30,7 +53,10 @@ bzl_library(
     srcs = ["//internal/native_image:common.bzl"],
     deps = [
         ":builder",
+        ":settings",
         ":toolchain",
+        "@rules_cc//cc/common",
+        "@rules_java//java/common",
     ],
 )
 
@@ -43,6 +69,7 @@ bzl_library(
         ":settings",
         ":toolchain",
         "//lib:tooling",
+        "//lib/reachability:rules",
         "@bazel_skylib//lib:dicts",
     ],
 )
@@ -56,7 +83,15 @@ bzl_library(
     name = "internals",
     srcs = ["//internal/native_image:rules.bzl"],
     deps = [
+        ":action_utils",
+        ":argutil",
+        ":builder",
+        ":cc_info",
+        ":common",
+        ":layer_builder",
+        ":toolchain",
         "@build_bazel_apple_support//:apple_support",
+        "@rules_java//java/common",
     ],
 )
 
@@ -64,6 +99,45 @@ bzl_library(
     name = "toolchain",
     srcs = ["//internal/native_image:toolchain.bzl"],
     deps = [
+        "@bazel_skylib//lib:dicts",
+        "@rules_cc//cc/common",
+    ],
+)
+
+bzl_library(
+    name = "layer_builder",
+    srcs = ["//internal/native_image:layer_builder.bzl"],
+    deps = [
+        ":argutil",
+        ":builder",
+        ":settings",
+    ],
+)
+
+bzl_library(
+    name = "layer_internals",
+    srcs = ["//internal/native_image:layer_rules.bzl"],
+    deps = [
+        ":action_utils",
+        ":argutil",
+        ":builder",
+        ":common",
+        ":layer_builder",
+        ":settings",
+        ":toolchain",
+        "@build_bazel_apple_support//:apple_support",
+        "@rules_java//java/common",
+    ],
+)
+
+bzl_library(
+    name = "layer_rules",
+    srcs = ["//graalvm/nativeimage:layer_rules.bzl"],
+    deps = [
+        ":common",
+        ":layer_builder",
+        ":layer_internals",
+        ":settings",
         "@bazel_skylib//lib:dicts",
     ],
 )
