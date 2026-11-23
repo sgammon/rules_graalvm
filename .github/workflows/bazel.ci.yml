@@ -7,6 +7,7 @@ name: Bazel CI
     branches: [main]
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch: {}
 
 permissions:
@@ -19,6 +20,8 @@ concurrency:
 
 jobs:
   test:
+    # skip draft PRs; promoting the PR to ready-for-review runs this
+    if: github.event.pull_request.draft != true
     uses: bazel-contrib/.github/.github/workflows/bazel.yaml@29e53247c6366e30acbedfc767f58f79fc05836c
     with:
       folders: |

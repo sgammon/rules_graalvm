@@ -275,22 +275,22 @@ def _graal_bindist_repository_impl(ctx):
         distribution = ctx.attr.distribution or Distribution.COMMUNITY
         java_version_spec = ctx.attr.java_version
 
-        # resolves potentially symbolic version strings
-        (java_version, version) = resolve_version_pair(java_version_spec, version_spec)
-
-        # new gvm distribution check
-        _check_version(version, java_version, True)
-        ctx.report_progress("Downloading GraalVM")
-
         dist_names = {
             "ce": "ce",
             "community": "ce",
             "oracle": "oracle",
             "gvm": "oracle",
         }
-        dist_name = dist_names[distribution]
+        dist_name = dist_names.get(distribution)
         if not dist_name:
-            fail("Cannot find distribution name for GraalVM: " + ctx.attr.distribution)
+            fail("Cannot find distribution name for GraalVM: " + distribution)
+
+        # resolves potentially symbolic version strings; `latest` differs per distribution
+        (java_version, version) = resolve_version_pair(java_version_spec, version_spec, dist_name)
+
+        # new gvm distribution check
+        _check_version(version, java_version, True)
+        ctx.report_progress("Downloading GraalVM")
 
         # resolve & download vm
         dist_tag = "{dist}-{version}".format(dist = dist_name, version = version)
@@ -596,10 +596,14 @@ OpenJDK release versions only for newer releases; in some cases, the
 `java_version` and `version` differ, and in others they align.
 
 GraalVM's "Innovation" releases carry their own version line and diverge from
-the JDK version they ship: `25.1.3` provides JDK 25.0.3, and `25.2.4` provides
-JDK 25.0.4. Either version may be named here. Note that GraalVM Community only
-publishes Innovation releases as of JDK 25.0.3, so for the community
-distribution a JDK version at or above that always resolves to one.
+the JDK version they ship: `25.1.3` provides JDK 25.0.3, `25.2.4` provides
+JDK 25.0.4, and `25.5.5.0.3` provides JDK 25.0.5.0.3. Either version may be
+named here. Note that GraalVM Community only publishes Innovation releases as
+of JDK 25.0.3, so for the community distribution a JDK version at or above
+that always resolves to one.
+
+`latest` resolves per distribution: for Java 25 it is GraalVM CE 25.5.5.0.3
+(Innovation 5) for `ce`, and Oracle GraalVM 25.0.4 for `oracle`.
 
 This version is required in order to properly resolve artifacts for a given
 GraalVM engine version.
