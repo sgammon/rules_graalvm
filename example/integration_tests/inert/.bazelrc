@@ -1,1 +1,6 @@
 build --enable_bzlmod
+
+# Compile and run against a hermetic JDK, not the host JDK; GitHub runners now ship JDK 25,
+# which the default JDK 21 javac cannot target.
+build --java_runtime_version=remotejdk_21
+build --tool_java_runtime_version=remotejdk_21
