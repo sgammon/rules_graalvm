@@ -29,6 +29,8 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
 
     Available struct properties:
     - `c_compiler_path`: Resolved path to the C compiler which should be used for the native image build.
+    - `compile_flags`: Flags the C++ toolchain passes to the C compiler.
+    - `link_flags`: Flags the C++ toolchain passes to the linker when linking an executable.
     - `env`: Environment to use; includes an assembled `PATH` for older rule invocations.
     - `execution_requirements`: Resolved link and compile requirements.
 
@@ -125,6 +127,16 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
 
     return struct(
         c_compiler_path = c_compiler_path,
+        compile_flags = cc_common.get_memory_inefficient_command_line(
+            feature_configuration = feature_configuration,
+            action_name = C_COMPILE_ACTION_NAME,
+            variables = compile_variables,
+        ),
+        link_flags = cc_common.get_memory_inefficient_command_line(
+            feature_configuration = feature_configuration,
+            action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
+            variables = link_variables,
+        ),
         env = env,
         execution_requirements = execution_requirements,
     )
