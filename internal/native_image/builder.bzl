@@ -409,11 +409,12 @@ def _configure_common_build_options(
         _configure_native_test_flags(ctx, args)
 
     # extra_args: propagated parent values first, then this rule's (last-wins semantics preserved).
+    # `$(location)` expands against `data` and the build-only `additional_inputs`.
     if propagated and propagated.extra_args:
         for arg in propagated.extra_args:
             expanded_arg = ctx.expand_make_variables(
                 "extra_args",
-                ctx.expand_location(arg, ctx.attr.data),
+                ctx.expand_location(arg, ctx.attr.data + ctx.attr.additional_inputs),
                 {},
             )
             if expanded_arg or not arg:
@@ -422,7 +423,7 @@ def _configure_common_build_options(
     for arg in ctx.attr.extra_args:
         expanded_arg = ctx.expand_make_variables(
             "extra_args",
-            ctx.expand_location(arg, ctx.attr.data),
+            ctx.expand_location(arg, ctx.attr.data + ctx.attr.additional_inputs),
             {},
         )
         if expanded_arg or not arg:

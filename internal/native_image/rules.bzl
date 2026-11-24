@@ -82,7 +82,7 @@ def _graal_binary_implementation(ctx):
         for p in parent_infos
     ] + [local_cp])
 
-    direct_inputs = []
+    direct_inputs = ctx.files.additional_inputs[:]
     transitive_inputs = [classpath_depset]
 
     # Parent `.nil` archives flow into the action inputs via their `transitive_layer_files`

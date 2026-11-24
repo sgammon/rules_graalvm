@@ -66,7 +66,7 @@ def _graal_layer_implementation(ctx):
         for p in parent_infos
     ] + [local_cp])
 
-    direct_inputs = []
+    direct_inputs = ctx.files.additional_inputs[:]
     transitive_inputs = [classpath_depset]
 
     # Resolve GraalVM toolchain.

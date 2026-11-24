@@ -95,6 +95,7 @@ def native_image(
         cc_deps_dynamic = [],
         extra_headers = [],
         data = [],
+        additional_inputs = [],
         extra_args = [],
         allow_fallback = False,
         check_toolchains = _DEFAULT_CHECK_TOOLCHAINS_CONDITION,
@@ -140,6 +141,8 @@ def native_image(
             and is declared as an output of the native-image action; the rule surfaces it via
             `CcInfo.compilation_context.headers`. No default; optional.
         data: Data files to make available during the compilation. No default; optional.
+        additional_inputs: Additional files to make available to the Native Image build action. `$(location)` references
+            to these files in `extra_args` are expanded. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
         check_toolchains: Whether to perform toolchain checks in `native-image`; defaults to `True` on Windows, `False` otherwise.
@@ -195,6 +198,7 @@ def native_image(
         optimization_mode = optimization_mode,
         shared_library = shared_library,
         data = data,
+        additional_inputs = additional_inputs,
         extra_args = extra_args,
         check_toolchains = check_toolchains,
         static_zlib = static_zlib,
