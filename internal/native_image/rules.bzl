@@ -136,7 +136,24 @@ def _graal_binary_implementation(ctx):
     }
 
     graal_actions = _wrap_actions_for_graal(ctx.actions)
-    if is_macos:
+    if native_toolchain.sysroot and not is_windows:
+        # A hermetic C toolchain carries its libc and headers in a sysroot, which its own compile and link
+        # actions pass as a flag. native-image calls the compiler itself, with none of those flags, from its
+        # own temporary directory: the launcher passes the sysroot, made absolute where the action starts.
+        sysroot_params = dict(run_params)
+        sysroot_params.pop("executable")
+        native_image = ctx.attr.native_image_tool[DefaultInfo].files_to_run if graal_attr else graal
+        sysroot_args = ctx.actions.args()
+        sysroot_args.add(native_image.executable.path)
+        sysroot_args.add(native_toolchain.sysroot)
+        graal_actions.run(
+            executable = ctx.executable._sysroot_launcher,
+            arguments = [sysroot_args, args],
+            tools = [native_image],
+            **sysroot_params
+        )
+
+    elif is_macos:
         xcode_args = ctx.actions.args()
 
         # Bazel passes DEVELOPER_DIR and SDKROOT to every locally executed action that sets the
