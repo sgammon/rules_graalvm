@@ -18,6 +18,7 @@ load(
 package(default_visibility = ["//visibility:public"])
 
 exports_files([
+    "layer_rules.bzl",
     "rules.bzl",
 ])
 

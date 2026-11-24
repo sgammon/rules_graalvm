@@ -74,6 +74,20 @@ filegroup(
     ),
 )
 
+# JDK class roots: the module image plus the runtime/compiler class-root jars. Consumers that
+# assemble a custom runtime home (e.g. for a native-image build) need exactly these.
+filegroup(
+    name = "class_roots",
+    srcs = glob(
+        [
+            "lib/modules",
+            "lib/jrt-fs.jar",
+            "lib/ct.sym",
+        ],
+        allow_empty = True,
+    ),
+)
+
 java_runtime(
     name = "jdk",
     srcs = [
@@ -144,6 +158,20 @@ filegroup(
             "lib/missioncontrol/**",
             "lib/visualvm/**",
         ],
+    ),
+)
+
+# JDK class roots: the module image plus the runtime/compiler class-root jars. Consumers that
+# assemble a custom runtime home (e.g. for a native-image build) need exactly these.
+filegroup(
+    name = "class_roots",
+    srcs = glob(
+        [
+            "lib/modules",
+            "lib/jrt-fs.jar",
+            "lib/ct.sym",
+        ],
+        allow_empty = True,
     ),
 )
 

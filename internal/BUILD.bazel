@@ -8,6 +8,7 @@ package(default_visibility = [
 ])
 
 exports_files([
+    "argutil.bzl",
     "config.bzl",
     "deps.bzl",
     "graalvm_bindist.bzl",

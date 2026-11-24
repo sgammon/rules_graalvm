@@ -2,7 +2,10 @@ load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 
 buildifier(
     name = "buildifier.check",
-    exclude_patterns = ["./.git/*"],
+    exclude_patterns = [
+        "./.git/*",
+        "./example/*",
+    ],
     lint_mode = "warn",
     mode = "diff",
 )

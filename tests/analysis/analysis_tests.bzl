@@ -23,6 +23,7 @@ def _test_analysis_time_sanity(name):
         name = name,
         impl = _test_analysis_time_sanity_impl,
         target = name + "_subject",
+        attr_values = {"size": "small"},
     )
 
 def _test_analysis_time_sanity_impl(env, target):

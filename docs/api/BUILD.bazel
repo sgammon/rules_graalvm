@@ -30,6 +30,7 @@ stardoc(
     out = "defs.md",
     input = "//graalvm:defs.bzl",
     deps = [
+        "//lib/nativeimage:layer_rules",
         "//lib/nativeimage:rules",
         "@bazel_skylib//lib:new_sets",
         "@bazel_skylib//lib:paths",

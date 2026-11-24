@@ -1,0 +1,39 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_graalvm//graalvm:defs.bzl", "native_image")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+native_image(
+    name = "libsharedapi",
+    executable_name = "libsharedapi",  # avoid the default %target%-bin suffix; gives clean libsharedapi.so + libsharedapi.h
+    shared_library = True,
+    deps = ["//sample/api"],
+)
+
+cc_binary(
+    name = "shared_consumer",
+    srcs = ["consumer.c"],
+    deps = [":libsharedapi"],
+)
+
+sh_test(
+    name = "shared_roundtrip_test",
+    srcs = ["run_consumer.sh"],
+    args = ["$(rootpath :shared_consumer)"],
+    data = [":shared_consumer"],
+)
+
+cc_binary(
+    name = "dedup_consumer",
+    srcs = ["dedup_consumer.c"],
+    deps = [
+        ":libsharedapi",
+        "//sample/cc2:libsharedapi2",
+    ],
+)
+
+sh_test(
+    name = "dedup_roundtrip_test",
+    srcs = ["run_dedup.sh"],
+    args = ["$(rootpath :dedup_consumer)"],
+    data = [":dedup_consumer"],
+)

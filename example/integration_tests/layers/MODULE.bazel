@@ -1,0 +1,80 @@
+"Integration test: layered native-image build on Bazel 9.1.0 + Oracle GraalVM 25."
+
+module(
+    name = "rules_graalvm_layers_sample",
+    version = "0.0.1",
+)
+
+bazel_dep(
+    name = "rules_cc",
+    version = "0.2.10",
+)
+bazel_dep(
+    name = "rules_shell",
+    version = "0.6.1",
+)
+bazel_dep(
+    name = "rules_java",
+    version = "9.6.1",
+)
+bazel_dep(
+    name = "rules_graalvm",
+    version = "0.0.0",
+)
+local_path_override(
+    module_name = "rules_graalvm",
+    path = "../../..",
+)
+
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+
+_GRAALVM_VERSION = "25.1.0"
+
+_GRAALVM_VERSION_MAJOR = "25.0.2"
+
+_GRAALVM_EA_RELEASE_NUMBER = "23"
+
+_GRAALVM_EA_VERSION = "%s-ea.%s" % (_GRAALVM_VERSION_MAJOR, _GRAALVM_EA_RELEASE_NUMBER)
+
+_GRAALVM_INNER_VERSION = "%s-dev+10.1" % _GRAALVM_VERSION
+
+_GRAALVM_URL_BASE = "https://github.com/graalvm/oracle-graalvm-ea-builds/releases/download/jdk-25e1-%s" % _GRAALVM_EA_VERSION
+
+_GRAALVM_ROOT_PREFIX = "graalvm-%s" % _GRAALVM_INNER_VERSION
+
+gvm.graalvm(
+    name = "graalvm",
+    distribution = "oracle",
+    java_version = "25",
+    maven_resource_bundle = "%s/maven-resource-bundle-%s-ea.%s.zip" % (_GRAALVM_URL_BASE, _GRAALVM_VERSION, _GRAALVM_EA_RELEASE_NUMBER),
+    maven_resource_bundle_sha256 = "0b8fb652357004e959313f6dcc905a0f16b66ee486de2cd6c9c66c8847ed2c9e",
+    sha256_per_platform = {
+        "linux-x64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+        "linux-aarch64": "61e024fcf510c2d794f84da6fb43d734dd841380a3a0811f43cd95e867c4e75b",
+        "macos-aarch64": "0a534f83c039c852cf1511d9f4aa5ee0509cf95a473e70d9a61cff9735315d2a",
+        "windows-x64": "b77632236ad440b7c4e46bad608052d39d20f5e0a0932d008a183e031ef98bbc",
+    },
+    strip_prefix_per_platform = {
+        "linux-x64": _GRAALVM_ROOT_PREFIX,
+        "linux-aarch64": _GRAALVM_ROOT_PREFIX,
+        "macos-aarch64": "%s/Contents/Home" % _GRAALVM_ROOT_PREFIX,
+        "windows-x64": _GRAALVM_ROOT_PREFIX,
+    },
+    url_per_platform = {
+        "linux-x64": "%s/graalvm-jdk-25e1-%s_linux-x64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
+        "linux-aarch64": "%s/graalvm-jdk-25e1-%s_linux-aarch64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
+        "macos-aarch64": "%s/graalvm-jdk-25e1-%s_macos-aarch64_bin.tar.gz" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
+        "windows-x64": "%s/graalvm-jdk-25e1-%s_windows-x64_bin.zip" % (_GRAALVM_URL_BASE, _GRAALVM_EA_VERSION),
+    },
+    version = _GRAALVM_INNER_VERSION,
+)
+use_repo(
+    gvm,
+    "graalvm",
+)
+
+register_toolchains("@graalvm//:jvm")
+
+register_toolchains("@graalvm//:sdk")
+
+register_toolchains("@graalvm//:bootstrap_runtime_toolchain")

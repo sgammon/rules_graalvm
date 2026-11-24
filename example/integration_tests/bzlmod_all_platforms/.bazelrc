@@ -1,0 +1,17 @@
+build --enable_bzlmod
+build --java_runtime_version=graalvm_21
+
+# Remote execution on local Docker
+build:remote-linux-x86 --remote_executor=grpc://localhost:50051
+build:remote-linux-x86 --extra_execution_platforms=//tools/remote:linux_x86_64
+build:remote-linux-x86 --platforms=//tools/remote:linux_x86_64
+build:remote-linux-x86 --spawn_strategy=remote,worker,sandboxed,local
+build:remote-linux-x86 --remote_instance_name=main
+build:remote-linux-x86 --noremote_local_fallback
+
+build:remote-linux-arm --remote_executor=grpc://localhost:50052
+build:remote-linux-arm --extra_execution_platforms=//tools/remote:linux_aarch64
+build:remote-linux-arm --platforms=//tools/remote:linux_aarch64
+build:remote-linux-arm --spawn_strategy=remote,worker,sandboxed,local
+build:remote-linux-arm --remote_instance_name=main
+build:remote-linux-arm --noremote_local_fallback

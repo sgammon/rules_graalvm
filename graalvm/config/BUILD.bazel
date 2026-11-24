@@ -1,0 +1,29 @@
+"Build settings for GraalVM rules — user-tunable knobs consumed by generated SDK repos."
+
+load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
+
+package(default_visibility = ["//visibility:public"])
+
+# Selects which libc the GraalVM JDK static libraries (`lib/static/<plat>/<libc>/`) are taken
+# from when assembling `static_link_libs` for a fully-static native link. Only meaningful on
+# Linux; macOS/Windows ship a single static-lib set and ignore this. Consumers may set it
+# globally (`--@rules_graalvm//graalvm/config:libc=musl`), `select()` on the settings below, or
+# reference the `:static_link_libs_glibc` / `:static_link_libs_musl` SDK targets explicitly.
+string_flag(
+    name = "libc",
+    build_setting_default = "glibc",
+    values = [
+        "glibc",
+        "musl",
+    ],
+)
+
+config_setting(
+    name = "glibc",
+    flag_values = {":libc": "glibc"},
+)
+
+config_setting(
+    name = "musl",
+    flag_values = {":libc": "musl"},
+)

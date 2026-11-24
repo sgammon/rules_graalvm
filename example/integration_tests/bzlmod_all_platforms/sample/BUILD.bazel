@@ -1,0 +1,61 @@
+load(
+    "@rules_graalvm//graalvm:defs.bzl",
+    "native_image",
+)
+load(":sdk_probe.bzl", "sdk_probe")
+
+# Records the SDK files the resolved GraalVM toolchain selects. Under a cross/RBE platform the
+# paths must come from that platform's SDK repo (e.g. `graalvm_linux_x64`), not the host's.
+sdk_probe(name = "sdk_probe")
+
+sh_test(
+    name = "sdk_probe_test",
+    srcs = ["provenance_test.sh"],
+    # Default (host) config: the host platform always folds into the `graalvm` repo (the dedup),
+    # so assert that, plus require the SVM link essentials so a missing-archive regression is
+    # caught here too.
+    args = [
+        "$(rootpath :sdk_probe)",
+        "graalvm",
+        "libjvm,liblibchelper,libffi",
+    ],
+    data = [":sdk_probe"],
+)
+
+java_library(
+    name = "java",
+    srcs = ["Main.java"],
+)
+
+java_binary(
+    name = "main",
+    main_class = "Main",
+    runtime_deps = [
+        ":java",
+    ],
+)
+
+sh_test(
+    name = "main_test",
+    srcs = ["run_bin.sh"],
+    args = ["$(rootpath :main)"],
+    data = [":main"],
+)
+
+native_image(
+    name = "main-native",
+    main_class = "Main",
+    deps = [":java"],
+)
+
+sh_test(
+    name = "main-native_test",
+    srcs = ["run_bin.sh"],
+    args = ["$(rootpath :main-native)"],
+    data = [":main-native"],
+)
+
+alias(
+    name = "sample",
+    actual = "main-native",
+)

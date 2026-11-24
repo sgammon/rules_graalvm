@@ -26,7 +26,10 @@ buildifier(
 
 buildifier(
     name = "buildifier.format",
-    exclude_patterns = ["./.git/*"],
+    exclude_patterns = [
+        "./.git/*",
+        "./example/*",
+    ],
     lint_mode = "fix",
     tags = ["manual"],
 )
