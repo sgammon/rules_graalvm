@@ -1,0 +1,3 @@
+load(":argutil_tests.bzl", "argutil_testsuite")
+
+argutil_testsuite(name = "argutil")

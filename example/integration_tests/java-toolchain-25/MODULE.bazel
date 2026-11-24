@@ -1,0 +1,39 @@
+"Builds Java with GraalVM as the Java toolchain, for a Java version `rules_java` has no compiler for."
+
+module(
+    name = "rules_graalvm_java_toolchain_25_sample",
+    version = "0.0.1",
+)
+
+# `rules_java` 8.6.1 defines Java compilers for 8 to 21 only: without `@graalvm//:java_compiler`,
+# `--java_language_version=25` finds no `@bazel_tools//tools/jdk:toolchain_type` toolchain.
+bazel_dep(
+    name = "rules_java",
+    version = "8.6.1",
+)
+bazel_dep(
+    name = "rules_graalvm",
+    version = "0.0.0",
+)
+local_path_override(
+    module_name = "rules_graalvm",
+    path = "../../..",
+)
+
+gvm = use_extension("@rules_graalvm//:extensions.bzl", "graalvm")
+gvm.graalvm(
+    name = "graalvm",
+    distribution = "ce",
+    java_version = "25",
+    version = "25.0.1",
+)
+use_repo(
+    gvm,
+    "graalvm",
+)
+
+register_toolchains("@graalvm//:jvm")
+
+register_toolchains("@graalvm//:java_compiler")
+
+register_toolchains("@graalvm//:sdk")

@@ -230,6 +230,12 @@ def register_graalvm_toolchains(
         `register_toolchains("@graalvm_toolchains//:jvm")`
         `register_toolchains("@graalvm_toolchains//:sdk")`
 
+    To compile with `--java_language_version` set to a Java version your `rules_java` has no compiler
+    for (`rules_java` covers 8 to 21, and 25 in newer releases), also register the GraalVM-backed
+    Java compiler, which runs javac on the GraalVM JDK:
+
+        `register_toolchains("@graalvm//:java_compiler")`
+
     Args:
         name: Name of the main `graalvm` repository (the `graalvm_repository`).
         register_java_toolchain: Whether to register a Java toolchain; defaults to `True`.

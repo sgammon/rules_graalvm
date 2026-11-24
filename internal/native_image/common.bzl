@@ -23,9 +23,12 @@ _WINDOWS_CONSTRAINT = "@platforms//os:windows"
 # buildifier: disable=name-conventions
 _NativeImageOptimization = struct(
     DEFAULT = "",
+    NONE = "0",
     FASTBUILD = "b",
+    SIZE = "s",
     OPTIMIZED_LEVEL_1 = "1",
     OPTIMIZED_LEVEL_2 = "2",
+    OPTIMIZED_LEVEL_3 = "3",
 )
 
 _DEBUG_CONDITION = select({
@@ -83,9 +86,12 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         values = [
             _NativeImageOptimization.DEFAULT,
+            _NativeImageOptimization.NONE,
             _NativeImageOptimization.FASTBUILD,
+            _NativeImageOptimization.SIZE,
             _NativeImageOptimization.OPTIMIZED_LEVEL_1,
             _NativeImageOptimization.OPTIMIZED_LEVEL_2,
+            _NativeImageOptimization.OPTIMIZED_LEVEL_3,
         ],
     ),
     "coverage": attr.bool(
@@ -218,6 +224,27 @@ _NATIVE_IMAGE_ATTRS = {
         mandatory = False,
         default = False,
     ),
+    "debug_info_file": attr.int(
+        doc = "Whether to declare the separate `<image-name>.debug` file that `-g` builds write on " +
+              "Linux. `1` always declares it, `0` never does, and `-1` (the default) declares it when " +
+              "`debug` is on, the target is Linux, the toolchain's GraalVM is 23.0 or newer (which " +
+              "split debug info out of the binary by default), and `extra_args` does not contain " +
+              "`-H:-StripDebugInfo`. The file is added to the default outputs and runfiles, next to " +
+              "the binary, so `gdb` finds it through `.gnu_debuglink`, and to the `debug_info` " +
+              "output group.",
+        mandatory = False,
+        default = -1,
+        values = [-1, 0, 1],
+    ),
+    "use_apple_support": attr.bool(
+        doc = "On macOS, run `native-image` through `apple_support.run`, which needs a full Xcode " +
+              "installation and passes the Xcode developer dir and SDK root to the C compiler. Set " +
+              "to False to run it like on other platforms, e.g. with a C toolchain from " +
+              "`toolchains_llvm` on machines without Xcode. Ignored elsewhere, and when the C " +
+              "toolchain carries a sysroot (which never uses `apple_support`).",
+        mandatory = False,
+        default = True,
+    ),
     "profiles": attr.label_list(
         allow_files = True,
         mandatory = False,
@@ -269,6 +296,7 @@ _LAYER_EXCLUDED_ATTRS = [
     "executable_name",
     "profiles",
     "extra_headers",
+    "debug_info_file",
 ]
 
 _NATIVE_IMAGE_LAYER_ATTRS = {

@@ -264,6 +264,14 @@ jobs:
             labs: false
             skip: false
 
+          # Test: Java Toolchain (Java 25, via `@graalvm//:java_compiler`)
+          - label: Java Toolchain (25)
+            target: "sample/..."
+            action: build
+            directory: "./example/integration_tests/java-toolchain-25"
+            labs: false
+            skip: false
+
           # Test: Shared Library
           - label: Shared Library
             target: sample
@@ -477,6 +485,54 @@ jobs:
         working-directory: ${{ matrix.directory }}
         shell: bash
         run: bazel ${{ matrix.action || 'build' }} "${{ matrix.target || '//...' }}"
+
+  # Separate debug info (#453). On Linux, GraalVM 23+ writes `-g` debug info to `<image>.debug`
+  # next to the binary instead of into it. The rule declares that file so Bazel keeps it; this
+  # builds the BCR sample with `-c dbg` and checks the file is there and linked from the binary.
+  debug-info:
+    name: "Debug Info (Linux)"
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    continue-on-error: ${{ inputs.labs }}
+    if: inputs.main && (inputs.runner == '' || contains(inputs.runner, 'ubuntu'))
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            bazel.less.build:443
+            bcr.bazel.build:443
+            github.com:443
+            github.com:80
+            global.less.build:443
+            mirror.bazel.build:443
+            objects.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+            releases.bazel.build:443
+            download.oracle.com:443
+            gds.oracle.com:443
+            remote.buildbuddy.io:443
+            objectstorage.*.oraclecloud.com:443
+            www.graalvm.org:443
+            repo1.maven.org:443
+            maven.pkg.st:443
+      - name: "Setup: Checkout"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: "Setup: Bazel"
+        uses: bazel-contrib/setup-bazel@f3f50ea6791b9b0f4c4eeabba4507422426462f5 # 0.8.3
+      - name: "Test: debug build keeps <image>.debug"
+        working-directory: ./example/integration_tests/bzlmod
+        shell: bash
+        run: |
+          bazel build -c dbg //sample:main-native
+          bin="$(bazel cquery -c dbg //sample:main-native --output=files 2>/dev/null | grep -- '-bin$')"
+          dbg="${bin}.debug"
+          test -s "$dbg" || { echo "missing debug info file: $dbg"; ls -la "$(dirname "$bin")"; exit 1; }
+          readelf --string-dump=.gnu_debuglink "$bin" | grep -q "$(basename "$dbg")" \
+            || { echo "$bin does not link $(basename "$dbg")"; exit 1; }
+          echo "ok: $dbg ($(stat -c %s "$dbg") bytes)"
 
   # Per-target SDK *file* selection. Resolves the linux/aarch64 GraalVM toolchain from this
   # x86_64 host and asserts every SDK file the toolchain provider surfaces originates from that

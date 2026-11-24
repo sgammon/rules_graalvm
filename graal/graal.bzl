@@ -91,6 +91,8 @@ def native_image(
         optimization_mode: Behaves the same as `debug`; normally, this flag's state is managed by Bazel. Passing
             `--compilation_mode=fastbuild|opt|dbg` is sufficient to set this flag, or it can be overridden via this
             parameter.
+            Accepted values map to `native-image -O<value>`: `0` (no optimization), `b` (fast build), `s` (size),
+            `1`, `2`, or `3`; an empty string passes no flag.
         shared_library: Build a shared library binary instead of an executable.
         static_zlib: A cc_library or cc_import target that provides zlib as a static library.
             On Linux, this is used when Graal statically links zlib into the binary, e.g. with
@@ -182,6 +184,8 @@ def graal_binary(
         optimization_mode: Behaves the same as `debug`; normally, this flag's state is managed by Bazel. Passing
             `--compilation_mode=fastbuild|opt|dbg` is sufficient to set this flag, or it can be overridden via this
             parameter.
+            Accepted values map to `native-image -O<value>`: `0` (no optimization), `b` (fast build), `s` (size),
+            `1`, `2`, or `3`; an empty string passes no flag.
         shared_library: Build a shared library binary instead of an executable.
         static_zlib: A cc_library or cc_import target that provides zlib as a static library.
             On Linux, this is used when Graal statically links zlib into the binary, e.g. with

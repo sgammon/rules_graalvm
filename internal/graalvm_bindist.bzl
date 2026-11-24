@@ -188,6 +188,7 @@ alias(
     # Users can disable this with `toolchain = False` in graalvm_repository() if they
     # only need GraalVM for native-image and don't want to register it as a Java runtime.
     java_content = ""
+    java_compiler_load = ""
     if ctx.attr.enable_java_toolchain:
         prefix = ctx.attr.toolchain_prefix or "graalvm"
         java_version = ctx.attr.java_version
@@ -230,6 +231,36 @@ alias(
 )
 """.format(host_jdk_entry = host_jdk_entry)
 
+            # Java compiler toolchain for `--java_language_version=<java_version>`. `rules_java` only
+            # defines compilers for the Java releases it knows (8 to 21, plus 25 in newer releases),
+            # so builds targeting any other GraalVM Java version find no compiler at all. This one runs
+            # javac on the GraalVM JDK itself, which always supports `--release <java_version>`.
+            java_compiler_load = """load(
+    "@rules_java//toolchains:default_java_toolchain.bzl",
+    "DEFAULT_TOOLCHAIN_CONFIGURATION",
+    "default_java_toolchain",
+)
+"""
+            java_content += """
+default_java_toolchain(
+    name = "java_compiler",
+    configuration = dict(DEFAULT_TOOLCHAIN_CONFIGURATION, java_runtime = "@{sdk_repo}//:jdk"),
+    source_version = "{version}",
+    target_version = "{version}",
+    exec_compatible_with = [{constraints}],
+    visibility = ["//visibility:public"],
+)
+alias(
+    name = "java_compile_toolchain",
+    actual = ":java_compiler_definition",
+    visibility = ["//visibility:public"],
+)
+""".format(
+                sdk_repo = sdk_repo,
+                version = java_version,
+                constraints = ", ".join(['"%s"' % c for c in _PLATFORM_CONSTRAINTS[host_pk]]),
+            )
+
         if versions.is_at_least("7", versions.get()):
             for pk, repo_name in toolchains:
                 bootstrap_entry_name = "bootstrap_%s" % pk.replace("-", "_")
@@ -256,7 +287,7 @@ alias(
 """.format(host_bootstrap_entry = host_bootstrap_entry)
 
     ctx.file("WORKSPACE", "workspace(name = \"{name}\")\n".format(name = ctx.name))
-    ctx.file("BUILD.bazel", platform_content + gvm_content + java_content)
+    ctx.file("BUILD.bazel", java_compiler_load + platform_content + gvm_content + java_content)
     if hasattr(ctx, "repo_metadata"):
         return ctx.repo_metadata(reproducible = True)
     return None
@@ -788,6 +819,11 @@ alias(
 alias(
     name = "jvm",
     actual = "toolchain",
+)
+alias(
+    name = "java_compiler",
+    actual = "@{repo}//:java_compile_toolchain",
+    visibility = ["//visibility:public"],
 )
 alias(
     name = "toolchain",
