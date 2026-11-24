@@ -184,7 +184,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "J/BqNxy1XlPPuyj6motDf1NoAnOYSA1ROAS+tUuIoJo=",
+        "bzlTransitiveDigest": "Bc6d1zFLW8bnW+cRBgr59AsqdygzhiXcDKQ4JNa7zQs=",
         "usagesDigest": "pKj65Qb9OHtY4/syhMnB7NBVWb5JzlRsDC4OgrnprMY=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},

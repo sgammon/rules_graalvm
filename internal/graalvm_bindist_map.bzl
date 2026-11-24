@@ -2,7 +2,7 @@
 
 # ! THIS FILE IS GENERATED. DO NOT EDIT. !
 
-# Last updated: 2026-07-28 (added GraalVM 25.1 and 25.2, and Oracle GVM 25.0.4)
+# Last updated: 2026-11-23 (added Oracle GraalVM 21.0.12 and 17.0.12)
 
 # To learn how to regenerate this file, consult the contributor docs for
 # the `rules_graalvm` repository: https://github.com/sgammon/rules_graalvm
@@ -121,11 +121,16 @@ _LatestVersions = {
 
 # Per-distribution overrides of `_LatestVersions`. GraalVM Community and Oracle
 # GraalVM diverged at Java 25: Community ships only the Innovation line, whose
-# newest release is ahead of Oracle's newest JDK-update-line build.
+# newest release is ahead of Oracle's newest JDK-update-line build. Oracle keeps
+# shipping JDK 17 and 21 updates, which Community stopped publishing.
 # buildifier: disable=name-conventions
 _LatestVersionsByDistribution = {
     "ce": {
         "25": ("25.0.5.0.3", "25.5.5.0.3"),
+    },
+    "oracle": {
+        "21": ("21.0.12", "21.0.12"),
+        "17": ("17.0.12", "17.0.12"),
     },
 }
 
@@ -184,11 +189,13 @@ _VmReleaseVersionsOracle = {
     "22.0.2": "22.0.2+9.1",
     "22.0.1": "22.0.1+8.1",
     "22.0.0": "22+36.1",
+    "21.0.12": "21.0.12+7.1",
     "21.0.2": "21.0.2+13.1",
     "21.0.1": "21.0.1+12.1",
     "21.0.0": "21+35.1",
     "20.0.2": "20.0.2+9.1",
     "20.0.1": "20.0.1+9.1",
+    "17.0.12": "17.0.12+8.1",
     "17.0.8": "17.0.8+9.1",
     "17.0.7": "17.0.8+9.1",
 }
@@ -1839,6 +1846,56 @@ _GRAALVM_BINDIST = {
             "@rules_graalvm//platform/jvm:java17",
         ],
     },
+    "oracle_17.0.12_linux-aarch64_17.0.12": {
+        # Oracle GraalVM 17.0.12 (Java 17), Linux (arm64), Version 17.0.12
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.12_linux-aarch64_bin.tar.gz",
+        "sha256": "bd991d486b92deb74337b881e0f13a764c9c1e90fc358819080f7321fa5175e8",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java17",
+        ],
+    },
+    "oracle_17.0.12_linux-x64_17.0.12": {
+        # Oracle GraalVM 17.0.12 (Java 17), Linux (amd64), Version 17.0.12
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.12_linux-x64_bin.tar.gz",
+        "sha256": "b6f3dace24cf1960ec790216f4c86f00d4f43df64e4e8b548f6382f04894713f",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java17",
+        ],
+    },
+    "oracle_17.0.12_macos-aarch64_17.0.12": {
+        # Oracle GraalVM 17.0.12 (Java 17), macOS (arm64), Version 17.0.12
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.12_macos-aarch64_bin.tar.gz",
+        "sha256": "4cdfdc6c9395f6773efcd191b6605f1b7c8e1b78ab900ab5cff34720a3feffc5",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java17",
+        ],
+    },
+    "oracle_17.0.12_macos-x64_17.0.12": {
+        # Oracle GraalVM 17.0.12 (Java 17), macOS (amd64), Version 17.0.12
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.12_macos-x64_bin.tar.gz",
+        "sha256": "3ecac1471f3fa95a56c5b75c65db9e60ac4551f56eda09eb9da95e6049ea77d7",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java17",
+        ],
+    },
+    "oracle_17.0.12_windows-x64_17.0.12": {
+        # Oracle GraalVM 17.0.12 (Java 17), Windows (amd64), Version 17.0.12
+        "url": "https://download.oracle.com/graalvm/17/archive/graalvm-jdk-17.0.12_windows-x64_bin.zip",
+        "sha256": "8b978e56dddc0edc60db99794b56975740d9c52293b31549cfc3f7516fc18b43",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java17",
+        ],
+    },
     "oracle_20.0.1_linux-aarch64_23.0.1": {
         # Oracle GraalVM 20.0.1 (Java 20), Linux (arm64), Version 23.0.1
         "url": "https://download.oracle.com/graalvm/20/archive/graalvm-jdk-20.0.1_linux-aarch64_bin.tar.gz",
@@ -2333,6 +2390,46 @@ _GRAALVM_BINDIST = {
         # Oracle GraalVM 21.0.2 (Java 21), Windows (amd64), Version 23.1.2
         "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.2_windows-x64_bin.zip",
         "sha256": "bc5027e506775813131509247424d4af839ad23224a7787b7770ae82eeb3b32d",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:windows",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.12_linux-aarch64_21.0.12": {
+        # Oracle GraalVM 21.0.12 (Java 21), Linux (arm64), Version 21.0.12
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.12_linux-aarch64_bin.tar.gz",
+        "sha256": "e37877e3a67cd5c7be6172e8e26ecae7e5b4c76dd78f1d34f880cb7b985ebfd8",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.12_linux-x64_21.0.12": {
+        # Oracle GraalVM 21.0.12 (Java 21), Linux (amd64), Version 21.0.12
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.12_linux-x64_bin.tar.gz",
+        "sha256": "b007ff64c425f85bbe0e686107044fba6ca5054a7e89271a473767f546aaddc1",
+        "compatible_with": [
+            "@platforms//cpu:x86_64",
+            "@platforms//os:linux",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.12_macos-aarch64_21.0.12": {
+        # Oracle GraalVM 21.0.12 (Java 21), macOS (arm64), Version 21.0.12
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.12_macos-aarch64_bin.tar.gz",
+        "sha256": "a98948c3a1ad037fe2dde5c80b06b214a5f80c120d8fc2453d155508cf677beb",
+        "compatible_with": [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:macos",
+            "@rules_graalvm//platform/jvm:java21",
+        ],
+    },
+    "oracle_21.0.12_windows-x64_21.0.12": {
+        # Oracle GraalVM 21.0.12 (Java 21), Windows (amd64), Version 21.0.12
+        "url": "https://download.oracle.com/graalvm/21/archive/graalvm-jdk-21.0.12_windows-x64_bin.zip",
+        "sha256": "7560971e52b236ddba7a22e7a682a9a185e56a2f6ee9cd6c4ecbb800e9643990",
         "compatible_with": [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
