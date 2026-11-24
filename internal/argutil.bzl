@@ -80,6 +80,38 @@ def gvm_supports_experimental_close(version_string):
         return False
     return major >= _EXPERIMENTAL_CLOSE_MIN_MAJOR
 
+def gvm_splits_debug_info(version_string):
+    """Return True if this GraalVM version writes `-g` debug info to a separate `<image>.debug` file.
+
+    Since GraalVM 23.0 (Oracle GraalVM for JDK 17.0.7 / CE 23.0), `-H:+StripDebugInfo` is the default
+    on Linux: `-g` builds keep the binary stripped and write the DWARF info to `<image-name>.debug`
+    next to it, linked through `.gnu_debuglink`. Older releases embed the info in the binary.
+
+    GraalVM versions are either release-train versions (`23.0.1`, `24.1.0`, `25.0.2`) or, for newer
+    Oracle builds, the JDK version (`17.0.12`, `21.0.12`). Legacy release-train versions run up to
+    `22.x`, so `17.x` is always a JDK version, and `21.x` is one only in the JDK form `21.0.<n>`
+    with `n >= 1` (legacy GraalVM 21 shipped as `21.0.0`, `21.1.0`, ..., `21.3.x`). Unknown
+    versions return False, so no output is declared that an older driver would not write.
+
+    Args:
+      version_string: Version string to check.
+
+    Returns:
+      True if `-g` produces a separate debug info file.
+    """
+    major = parse_gvm_major_version(version_string)
+    if major == None:
+        return False
+    if major >= 23 or major == 17:
+        return True
+    if major == 21:
+        parts = version_string.split(".")
+        if len(parts) < 3 or parts[1] != "0":
+            return False
+        patch = parse_gvm_major_version(parts[2])
+        return patch != None and patch >= 1
+    return False
+
 def _toolchain_version(gvm_toolchain):
     """Extract the version string from a toolchain, handling None and missing field."""
     if gvm_toolchain == None:

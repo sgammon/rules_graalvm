@@ -50,7 +50,7 @@ build --tool_java_language_version=20
 build --extra_toolchains=@graalvm//:bootstrap_runtime_toolchain
 ```
 
-#### Assigning GraalVM as the tooling toolchain
+#### Assigning GraalVM as the runtime toolchain
 
 Set **`java_runtime_version`** to the version matching your GraalVM JDK declared in `graalvm_repository`.
 
@@ -60,3 +60,32 @@ Set **`java_runtime_version`** to the version matching your GraalVM JDK declared
 build --java_language_version=20
 build --java_runtime_version=graalvm_20
 ```
+
+### Compiling for newer Java versions
+
+Bazel compiles Java with a _compiler_ toolchain, separate from the runtime toolchains above. `rules_java` only defines
+compilers for the Java versions it knows about (8 to 21, plus 25 in newer releases), so setting
+`--java_language_version` to any other version fails with `No matching toolchains found for types
+@bazel_tools//tools/jdk:toolchain_type`.
+
+The GraalVM repository provides a compiler for its own Java version, which runs `javac` on the GraalVM JDK. Register it
+alongside the runtime toolchain:
+
+**In your `MODULE.bazel`:**
+
+```starlark
+register_toolchains("@graalvm//:jvm")
+register_toolchains("@graalvm//:java_compiler")
+```
+
+**In a `bazel.rc`:**
+
+```
+build --java_language_version=25
+build --java_runtime_version=graalvm_25
+build --tool_java_language_version=25
+build --tool_java_runtime_version=graalvm_25
+```
+
+The compiler only matches when `--java_language_version` equals the `java_version` of the GraalVM repository, so
+registering it does not affect builds that target other Java versions. See `example/integration_tests/java-toolchain-25` for a complete sample.

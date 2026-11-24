@@ -107,6 +107,8 @@ def native_image(
         layers = [],
         emit_intermediate_dir = False,
         emit_obfuscation_mapping = False,
+        debug_info_file = -1,
+        use_apple_support = True,
         resolve_upstream_reachability_metadata = False,
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
@@ -128,6 +130,8 @@ def native_image(
         optimization_mode: Behaves the same as `debug`; normally, this flag's state is managed by Bazel. Passing
             `--compilation_mode=fastbuild|opt|dbg` is sufficient to set this flag, or it can be overridden via this
             parameter.
+            Accepted values map to `native-image -O<value>`: `0` (no optimization), `b` (fast build), `s` (size),
+            `1`, `2`, or `3`; an empty string passes no flag.
         shared_library: Build a shared library binary instead of an executable.
         static_zlib: A cc_library or cc_import target that provides zlib as a static library.
             On Linux, this is used when Graal statically links zlib into the binary, e.g. with
@@ -154,6 +158,8 @@ def native_image(
         layers: Parent GraalVM Native Image layer(s) to consume via `--layer-use`. Today accepts at most 1 entry. Entries must be `native_image_layer` targets.
         emit_intermediate_dir: If True, preserve native-image's intermediate build directory as a TreeArtifact output (exposed via `OutputGroupInfo(intermediate_dir=...)`) and pass `-H:TempDirectory=<path>` to direct native-image to use it. Enables downstream rules (e.g., staticlib repackers) to consume the intermediate `<image>.o` file.
         emit_obfuscation_mapping: If True, declare `<image-name>.obfuscation-mapping.json` (the obfuscation symbol map native-image writes next to the binary when `-H:AdvancedObfuscation=export-mapping` is set) as an output, exposed via `OutputGroupInfo(obfuscation_mapping=...)`. Not added to `DefaultInfo.files` (the map can be tens of MiB). Opt-in: the caller must also pass `-H:AdvancedObfuscation=export-mapping` in `extra_args` in tandem, or the declared output is never written and the build fails.
+        debug_info_file: Whether to declare the separate `<image-name>.debug` file that `-g` builds write on Linux, so Bazel keeps it next to the binary for `gdb`. `-1` (default) declares it automatically for debug builds on Linux with GraalVM 23 or newer, unless `extra_args` contains `-H:-StripDebugInfo`; `1` always declares it; `0` never does. Exposed in the default outputs, runfiles and `OutputGroupInfo(debug_info=...)`.
+        use_apple_support: On macOS, run `native-image` through `apple_support`, which needs a full Xcode installation. Set to `False` to build without Xcode, e.g. with a `toolchains_llvm` C toolchain. Defaults to `True`.
         resolve_upstream_reachability_metadata: Whether to resolve curated reachability metadata for the Maven coordinates this image transitively depends on; Defaults to `False`.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
@@ -217,5 +223,7 @@ def native_image(
         layers = layers,
         emit_intermediate_dir = emit_intermediate_dir,
         emit_obfuscation_mapping = emit_obfuscation_mapping,
+        debug_info_file = debug_info_file,
+        use_apple_support = use_apple_support,
         **kwargs
     )

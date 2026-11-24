@@ -280,7 +280,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "HWHv0kNBItE5nBZ+4Cj8tBDRLuVkcnnJYPL5H8m6pGo=",
+        "bzlTransitiveDigest": "bpQ2kX17k0f3+yXLsFuxM31C8ibVx5H1y5VUtSeb810=",
         "usagesDigest": "pKj65Qb9OHtY4/syhMnB7NBVWb5JzlRsDC4OgrnprMY=",
         "recordedInputs": [
           "REPO_MAPPING:,bazel_features bazel_features+",

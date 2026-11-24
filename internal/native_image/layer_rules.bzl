@@ -192,7 +192,7 @@ def _graal_layer_implementation(ctx):
     }
 
     graal_actions = _wrap_actions_for_graal(ctx.actions)
-    if is_macos:
+    if is_macos and ctx.attr.use_apple_support:
         xcode_args = ctx.actions.args()
         xcode_args.add(apple_support.path_placeholders.xcode(), format = "-EDEVELOPER_DIR=%s")
         xcode_args.add(apple_support.path_placeholders.sdkroot(), format = "-ESDKROOT=%s")

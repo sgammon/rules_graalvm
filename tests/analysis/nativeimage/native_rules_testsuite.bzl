@@ -10,6 +10,10 @@ load(
     "test_suite",
 )
 load(
+    "@rules_testing//lib:truth.bzl",
+    "matching",
+)
+load(
     "//graalvm:defs.bzl",
     "native_image",
     "native_image_layer",
@@ -180,6 +184,123 @@ def _test_layer_chain_impl(env, target):
         "tests/analysis/nativeimage/test_layer_chain_mid.nil",
     )
 
+# Test: `optimization_mode_levels`
+# ---
+# Verifies that every GraalVM optimization level is accepted and passed through as `-O<level>`
+# (#570).
+def _optimization_mode_test(name, level):
+    java_library(
+        name = "%s_java" % name,
+        srcs = ["Main.java"],
+    )
+    native_image(
+        name = "%s_native" % name,
+        main_class = "Main",
+        deps = [":%s_java" % name],
+        optimization_mode = level,
+        tags = _HELPER_TAGS,
+    )
+    analysis_test(
+        name = name,
+        impl = lambda env, target: env.expect.that_target(target).action_named(
+            "NativeImage",
+        ).contains_at_least_args(["-O%s" % level]),
+        target = "%s_native" % name,
+        attr_values = _ANALYSIS_TEST_ATTRS,
+    )
+
+def _test_optimization_mode_none(name):
+    _optimization_mode_test(name, "0")
+
+def _test_optimization_mode_size(name):
+    _optimization_mode_test(name, "s")
+
+def _test_optimization_mode_level_3(name):
+    _optimization_mode_test(name, "3")
+
+# Test: `debug_info_file_forced`
+# ---
+# Verifies that `debug_info_file = 1` declares `<image-name>.debug` as an output of the build,
+# exposed in the default outputs and the `debug_info` output group, so Bazel keeps it (#453).
+def _test_debug_info_file_forced(name):
+    java_library(
+        name = "%s_java" % name,
+        srcs = ["Main.java"],
+    )
+    native_image(
+        name = "%s_native" % name,
+        main_class = "Main",
+        deps = [":%s_java" % name],
+        debug = True,
+        debug_info_file = 1,
+        tags = _HELPER_TAGS,
+    )
+    analysis_test(
+        name = name,
+        impl = _test_debug_info_file_forced_impl,
+        target = "%s_native" % name,
+        attr_values = _ANALYSIS_TEST_ATTRS,
+    )
+
+def _test_debug_info_file_forced_impl(env, target):
+    debug_file = matching.file_basename_equals("test_debug_info_file_forced_native-bin.debug")
+    env.expect.that_target(target).default_outputs().contains_predicate(debug_file)
+    env.expect.that_target(target).output_group("debug_info").contains_predicate(debug_file)
+    env.expect.that_target(target).action_named("NativeImage").contains_at_least_args(["-g"])
+
+# Test: `debug_info_file_disabled`
+# ---
+# Verifies that `debug_info_file = 0` keeps the `.debug` file out of the declared outputs.
+def _test_debug_info_file_disabled(name):
+    java_library(
+        name = "%s_java" % name,
+        srcs = ["Main.java"],
+    )
+    native_image(
+        name = "%s_native" % name,
+        main_class = "Main",
+        deps = [":%s_java" % name],
+        debug = True,
+        debug_info_file = 0,
+        tags = _HELPER_TAGS,
+    )
+    analysis_test(
+        name = name,
+        impl = _test_debug_info_file_disabled_impl,
+        target = "%s_native" % name,
+        attr_values = _ANALYSIS_TEST_ATTRS,
+    )
+
+def _test_debug_info_file_disabled_impl(env, target):
+    env.expect.that_target(target).default_outputs().not_contains_predicate(
+        matching.file_basename_contains(".debug"),
+    )
+
+# Test: `without_apple_support`
+# ---
+# Verifies that `use_apple_support = False` analyzes and still produces the image (#567).
+def _test_without_apple_support(name):
+    java_library(
+        name = "%s_java" % name,
+        srcs = ["Main.java"],
+    )
+    native_image(
+        name = "%s_native" % name,
+        main_class = "Main",
+        deps = [":%s_java" % name],
+        use_apple_support = False,
+        tags = _HELPER_TAGS,
+    )
+    analysis_test(
+        name = name,
+        impl = _test_without_apple_support_impl,
+        target = "%s_native" % name,
+        attr_values = _ANALYSIS_TEST_ATTRS,
+    )
+
+def _test_without_apple_support_impl(env, target):
+    env.expect.that_target(target).action_named("NativeImage").contains_at_least_args(["-H:Class=Main"])
+
 ## Exports.
 def rules_graalvm_nativeimage_testsuite(name):
     test_suite(
@@ -190,6 +311,12 @@ def rules_graalvm_nativeimage_testsuite(name):
             _test_native_image_layer_with_directives,
             _test_native_image_consumes_layer,
             _test_layer_chain,
+            _test_optimization_mode_none,
+            _test_optimization_mode_size,
+            _test_optimization_mode_level_3,
+            _test_debug_info_file_forced,
+            _test_debug_info_file_disabled,
+            _test_without_apple_support,
         ],
     )
 

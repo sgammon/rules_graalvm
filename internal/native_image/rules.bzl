@@ -8,6 +8,7 @@ load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load(
     "//internal:argutil.bzl",
     _experimental_args = "experimental_args",
+    _gvm_splits_debug_info = "gvm_splits_debug_info",
 )
 load(
     "//internal/native_image:action_utils.bzl",
@@ -56,13 +57,25 @@ _LAYER_AUTO_PROPAGATE = True
 
 def _build_action_message(ctx):
     _mode_label = {
+        "0": "unoptimized",
         "b": "fastbuild",
         "s": "size",
         "1": "opt",
         "2": "opt",
+        "3": "opt",
         "default": ctx.attr.debug and "debug" or "default",
     }
     return (_mode_label[ctx.attr.optimization_mode or "default"])
+
+def _wants_debug_info_file(ctx, is_linux, gvm_toolchain):
+    """Whether to declare the separate `<image-name>.debug` file a `-g` build writes."""
+    if ctx.attr.debug_info_file == 1:
+        return True
+    if ctx.attr.debug_info_file == 0 or not ctx.attr.debug or not is_linux:
+        return False
+    if "-H:-StripDebugInfo" in ctx.attr.extra_args:
+        return False
+    return _gvm_splits_debug_info(getattr(gvm_toolchain, "version", "") or "")
 
 def _graal_binary_implementation(ctx):
     graal_attr = ctx.executable.native_image_tool
@@ -197,6 +210,16 @@ def _graal_binary_implementation(ctx):
     # flag, so this output is opt-in; declared-but-unwritten would fail the action. It is added to
     # `outputs` and surfaced ONLY via `OutputGroupInfo(obfuscation_mapping=...)` (not
     # `default_files`) — the file can be tens of MiB and plain binary consumers shouldn't drag it.
+    # `-g` builds on Linux (GraalVM 23+) write the DWARF info to `<image-name>.debug` next to the
+    # binary instead of into it. Undeclared, Bazel drops the file (it is never copied out of the
+    # sandbox or the remote executor), and gdb finds no symbols. See `debug_info_file`.
+    debug_info = None
+    if _wants_debug_info_file(ctx, is_linux, gvm_toolchain):
+        debug_name = binary.basename
+        if bin_postfix:
+            debug_name = debug_name[0:-(len(bin_postfix))]
+        debug_info = ctx.actions.declare_file(debug_name + ".debug", sibling = binary)
+
     obfuscation_mapping = None
     if ctx.attr.emit_obfuscation_mapping:
         out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
@@ -304,6 +327,8 @@ def _graal_binary_implementation(ctx):
         outputs.append(language_resources_dir)
     if obfuscation_mapping != None:
         outputs.append(obfuscation_mapping)
+    if debug_info != None:
+        outputs.append(debug_info)
     run_params = {
         "outputs": outputs,
         "executable": graal,
@@ -335,7 +360,7 @@ def _graal_binary_implementation(ctx):
             **sysroot_params
         )
 
-    elif is_macos:
+    elif is_macos and ctx.attr.use_apple_support:
         xcode_args = ctx.actions.args()
 
         # Bazel passes DEVELOPER_DIR and SDKROOT to every locally executed action that sets the
@@ -381,6 +406,8 @@ def _graal_binary_implementation(ctx):
         )
 
     default_files = [binary] + runtime_libs + cc_info_staged_headers
+    if debug_info != None:
+        default_files.append(debug_info)
     if intermediate_dir != None:
         default_files.append(intermediate_dir)
     if language_resources_dir != None:
@@ -392,7 +419,7 @@ def _graal_binary_implementation(ctx):
         runfiles = ctx.runfiles(
             collect_data = True,
             collect_default = True,
-            files = runtime_libs,
+            files = runtime_libs + ([debug_info] if debug_info != None else []),
         ),
     )]
     output_groups = {}
@@ -400,6 +427,8 @@ def _graal_binary_implementation(ctx):
         output_groups["intermediate_dir"] = depset([intermediate_dir])
     if language_resources_dir != None:
         output_groups["language_resources"] = depset([language_resources_dir])
+    if debug_info != None:
+        output_groups["debug_info"] = depset([debug_info])
     if obfuscation_mapping != None:
         # Output-group only (deliberately NOT in `default_files`): the map can be tens of MiB.
         output_groups["obfuscation_mapping"] = depset([obfuscation_mapping])

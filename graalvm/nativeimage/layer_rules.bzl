@@ -127,6 +127,8 @@ def native_image_layer(
         debug: Whether to include debug symbols; normally managed by Bazel's `--compilation_mode`.
         optimization_mode: Matches Bazel's build setting; normally managed by
             `--compilation_mode`.
+            Accepted values map to `native-image -O<value>`: `0` (no optimization), `b` (fast build), `s` (size),
+            `1`, `2`, or `3`; an empty string passes no flag.
         static_zlib: `cc_library` / `cc_import` target providing a static zlib (Linux only).
         c_compiler_option: Extra C compiler options.
         native_linker_option: Extra linker options forwarded as `-H:NativeLinkerOption=<value>`. Each entry produces one flag.
