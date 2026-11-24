@@ -125,6 +125,8 @@ def resolve_cc_toolchain(ctx, transitive_inputs, *, is_windows):
 
     return struct(
         c_compiler_path = c_compiler_path,
+        # The C toolchain's sysroot (a hermetic toolchain's libc and headers), or None.
+        sysroot = cc_toolchain.sysroot,
         env = env,
         execution_requirements = execution_requirements,
     )
