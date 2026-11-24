@@ -45,7 +45,7 @@ def _graal_binary_implementation(ctx):
         for dep in ctx.attr.deps
     ])
 
-    direct_inputs = []
+    direct_inputs = ctx.files.additional_inputs[:]
     transitive_inputs = [classpath_depset]
 
     # resolve via toolchains
