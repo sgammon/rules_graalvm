@@ -511,6 +511,9 @@ jobs:
       - name: "Test: per-target SDK file selection (cross-platform)"
         working-directory: ./example/integration_tests/bzlmod_all_platforms
         shell: bash
+        env:
+          # Git Bash on Windows rewrites `//pkg:target` labels into `/pkg:target` paths.
+          MSYS_NO_PATHCONV: "1"
         run: |
           bazel build //sample:sdk_probe \
             --platforms=//tools/remote:linux_aarch64 \

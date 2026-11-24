@@ -1,5 +1,5 @@
 {
-  "lockFileVersion": 24,
+  "lockFileVersion": 28,
   "registryFileHashes": {
     "https://bcr.bazel.build/bazel_registry.json": "8a28e4aff06ee60aed2a8c281907fb8bcbf3b753c91fb5a5c57da3215d5b3497",
     "https://bcr.bazel.build/modules/abseil-cpp/20210324.2/MODULE.bazel": "7cd0312e064fde87c8d1cd79ba06c876bd23630c83466e9500321be55c96ace2",
@@ -193,61 +193,131 @@
       "general": {
         "bzlTransitiveDigest": "NAy+0M15JNVEBb8Tny6t7j3lKqTnsAMjoBB6LJ+C370=",
         "usagesDigest": "RggQggGrrSxE82NbmFqjxH3BgjyNl10vAJoWciFfcqw=",
-        "recordedFileInputs": {},
-        "recordedDirentsInputs": {},
-        "envVariables": {},
+        "recordedInputs": [],
         "generatedRepoSpecs": {
           "androidsdk": {
             "repoRuleId": "@@rules_android+//rules/android_sdk_repository:rule.bzl%_android_sdk_repository",
             "attributes": {}
           }
-        },
-        "recordedRepoMappingEntries": []
+        }
       }
     },
     "@@rules_graalvm+//:extensions.bzl%graalvm": {
       "general": {
-        "bzlTransitiveDigest": "8s5FuFebtEoCWx8ocnPZqaG/xvCMwxm0aD/Deq1fypA=",
-        "usagesDigest": "K3Fhj1rbmyyB1oDiudEuWVhSQSzOJUFHZnwGvODfBDM=",
-        "recordedFileInputs": {},
-        "recordedDirentsInputs": {},
-        "envVariables": {},
+        "bzlTransitiveDigest": "Do4V6W3QspZKRFZorUjgy651dyug1mYab2Yf8eeCiR8=",
+        "usagesDigest": "8gDWSvGNIA5eOpEcQ/qJm6RDNdD1pJwwGVCviHd+Ol4=",
+        "recordedInputs": [
+          "REPO_MAPPING:bazel_features+,bazel_features_globals bazel_features++version_extension+bazel_features_globals",
+          "REPO_MAPPING:bazel_features+,bazel_features_version bazel_features++version_extension+bazel_features_version",
+          "REPO_MAPPING:rules_graalvm+,bazel_features bazel_features+",
+          "REPO_MAPPING:rules_graalvm+,bazel_skylib bazel_skylib+",
+          "REPO_MAPPING:rules_graalvm+,bazel_tools bazel_tools"
+        ],
         "generatedRepoSpecs": {
           "graalvm_toolchains": {
             "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_toolchain_config",
             "attributes": {
-              "build_file": "\nalias(\n    name = \"toolchain_gvm\",\n    actual = \"gvm\",\n    visibility = [\"//visibility:public\"],\n)\ntoolchain(\n    name = \"gvm\",\n    exec_compatible_with = [\n        \n    ],\n    target_compatible_with = [\n        \n    ],\n    toolchain = \"@graalvm//:gvm\",\n    toolchain_type = \"@rules_graalvm//graalvm/toolchain\",\n    visibility = [\"//visibility:public\"],\n)\n\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"graalvm_23\"},\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [],\n    target_settings = [\":prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@graalvm//:jdk\",\n    visibility = [\"//visibility:public\"],\n)\n\n"
+              "sdk_repo": "graalvm",
+              "extra_platforms": [
+                "linux-x64",
+                "linux-aarch64",
+                "macos-x64",
+                "macos-aarch64",
+                "windows-x64"
+              ],
+              "enable_java_toolchain": true,
+              "toolchain_prefix": "",
+              "java_version": "25",
+              "target_compatible_with": []
             }
           },
           "graalvm": {
             "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
             "attributes": {
-              "version": "23.0.1",
-              "java_version": "23",
+              "version": "25.0.1",
+              "java_version": "25",
               "distribution": "ce",
               "components": [],
               "setup_actions": [],
               "enable_toolchain": true,
               "toolchain_config": "graalvm_toolchains"
             }
+          },
+          "graalvm_linux_x64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.0.1",
+              "java_version": "25",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "linux-x64"
+            }
+          },
+          "graalvm_linux_aarch64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.0.1",
+              "java_version": "25",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "linux-aarch64"
+            }
+          },
+          "graalvm_macos_x64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.0.1",
+              "java_version": "25",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "macos-x64"
+            }
+          },
+          "graalvm_macos_aarch64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.0.1",
+              "java_version": "25",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "macos-aarch64"
+            }
+          },
+          "graalvm_windows_x64": {
+            "repoRuleId": "@@rules_graalvm+//internal:graalvm_bindist.bzl%_graalvm_bindist_repository",
+            "attributes": {
+              "version": "25.0.1",
+              "java_version": "25",
+              "distribution": "ce",
+              "components": [],
+              "setup_actions": [],
+              "enable_toolchain": true,
+              "toolchain_config": "graalvm_toolchains",
+              "platform_key": "windows-x64"
+            }
           }
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "rules_graalvm+",
-            "bazel_skylib",
-            "bazel_skylib+"
-          ]
-        ]
+        }
       }
     },
     "@@rules_kotlin+//src/main/starlark/core/repositories:bzlmod_setup.bzl%rules_kotlin_extensions": {
       "general": {
-        "bzlTransitiveDigest": "03Qju4tW0vE+0RBuZGuV2A4Hx6AiSkdNahYvworx2aM=",
+        "bzlTransitiveDigest": "FeODwUnlfjn69LO/TpJF/JGWlMOzmWFh+g8ZGgzJJFU=",
         "usagesDigest": "QI2z8ZUR+mqtbwsf2fLqYdJAkPOHdOV+tF2yVAUgRzw=",
-        "recordedFileInputs": {},
-        "recordedDirentsInputs": {},
-        "envVariables": {},
+        "recordedInputs": [
+          "REPO_MAPPING:rules_kotlin+,bazel_tools bazel_tools"
+        ],
         "generatedRepoSpecs": {
           "com_github_jetbrains_kotlin_git": {
             "repoRuleId": "@@rules_kotlin+//src/main/starlark/core/repositories:compiler.bzl%kotlin_compiler_git_repository",
@@ -295,16 +365,10 @@
               ]
             }
           }
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "rules_kotlin+",
-            "bazel_tools",
-            "bazel_tools"
-          ]
-        ]
+        }
       }
     }
   },
-  "facts": {}
+  "facts": {},
+  "factsVersions": {}
 }
