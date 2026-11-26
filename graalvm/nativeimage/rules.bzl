@@ -125,7 +125,7 @@ def native_image(
             `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
         data: Data files to make available during the compilation. No default; optional.
-        additional_inputs: Additional files to make available to the Native Image build action. `$(location)` references
+        additional_inputs: Additional files to make available to the Native Image build action. `$(execpath LABEL)` references
             to these files in `extra_args` are expanded. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
