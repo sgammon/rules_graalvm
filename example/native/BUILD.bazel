@@ -6,6 +6,7 @@ load(
     "@rules_java//java:defs.bzl",
     "java_binary",
     "java_library",
+    "java_test",
 )
 
 package(default_visibility = [
@@ -34,4 +35,26 @@ native_image(
 alias(
     name = "native",
     actual = "main-native",
+)
+
+native_image(
+    name = "image_directory",
+    executable_name = "hello",
+    extra_args = [
+        "-H:+UnlockExperimentalVMOptions",
+        "-H:+GenerateBuildArtifactsFile",
+        "-H:-UnlockExperimentalVMOptions",
+    ],
+    main_class = "Main",
+    output_directory = True,
+    deps = [":java"],
+)
+
+java_test(
+    name = "image_directory_test",
+    srcs = ["ImageDirectoryTest.java"],
+    args = ["$(rootpath :image_directory)"],
+    data = [":image_directory"],
+    main_class = "ImageDirectoryTest",
+    use_testrunner = False,
 )
