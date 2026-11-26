@@ -37,7 +37,7 @@ def _build_action_message(ctx):
     }
     return (_mode_label[ctx.attr.optimization_mode or "default"])
 
-def _graal_binary_implementation(ctx):
+def _graal_binary_implementation(ctx, output_directory = False):
     graal_attr = ctx.executable.native_image_tool
 
     classpath_depset = depset(transitive = [
@@ -102,6 +102,7 @@ def _graal_binary_implementation(ctx):
         native_toolchain.c_compiler_path,
         gvm_toolchain,
         bin_postfix = bin_postfix,
+        output_directory = output_directory,
     )
 
     if ctx.files.data:
@@ -183,6 +184,9 @@ def _graal_binary_implementation(ctx):
             arguments = [args],
             **run_params
         )
+
+    if output_directory:
+        return [DefaultInfo(files = depset([binary]), runfiles = ctx.runfiles(files = [binary]))]
 
     return [DefaultInfo(
         executable = binary,

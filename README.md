@@ -204,6 +204,8 @@ native_image(
 
 <a id="usage-native-image-legacy-bazel"></a>
 
+For packaging a native image, set `output_directory = True`. The target produces a directory containing the image and the adjacent files written by Native Image. Set `executable_name` to select the image basename inside it. Consumers can declare the directory as a single input and read the tool's build artifact manifest when `-H:+GenerateBuildArtifactsFile` is enabled.
+
 ## Usage: Native Image (legacy API)
 
 > API docs for legacy [`native_image`](./api/legacy.md) rule

@@ -34,34 +34,41 @@ _EXEUCTABLE_NAME_CONDITION = select({
     "//conditions:default": "%target%-bin",
 })
 
-_native_image = rule(
-    implementation = _graal_binary_implementation,
-    attrs = dicts.add(_NATIVE_IMAGE_ATTRS, **{
-        "native_image_tool": attr.label(
-            cfg = "exec",
-            allow_files = True,
-            executable = True,
-            mandatory = False,
-        ),
-        "native_image_settings": attr.label_list(
-            providers = [[NativeImageInfo]],
-            mandatory = False,
-            default = [_DEFAULT_NATIVE_IMAGE_SETTINGS],
-        ),
-    }),
-    executable = True,
-    fragments = [
-        "apple",
-        "cpp",
-        "java",
-        "platform",
-        "xcode",
-    ],
-    toolchains = [
-        _BAZEL_CPP_TOOLCHAIN_TYPE,
-        _GVM_TOOLCHAIN_TYPE,
-    ],
-)
+def _directory_implementation(ctx):
+    return _graal_binary_implementation(ctx, output_directory = True)
+
+def _image_rule(implementation, executable):
+    return rule(
+        implementation = implementation,
+        attrs = dicts.add(_NATIVE_IMAGE_ATTRS, **{
+            "native_image_tool": attr.label(
+                cfg = "exec",
+                allow_files = True,
+                executable = True,
+                mandatory = False,
+            ),
+            "native_image_settings": attr.label_list(
+                providers = [[NativeImageInfo]],
+                mandatory = False,
+                default = [_DEFAULT_NATIVE_IMAGE_SETTINGS],
+            ),
+        }),
+        executable = executable,
+        fragments = [
+            "apple",
+            "cpp",
+            "java",
+            "platform",
+            "xcode",
+        ],
+        toolchains = [
+            _BAZEL_CPP_TOOLCHAIN_TYPE,
+            _GVM_TOOLCHAIN_TYPE,
+        ],
+    )
+
+_native_image = _image_rule(_graal_binary_implementation, executable = True)
+_native_image_directory = _image_rule(_directory_implementation, executable = False)
 
 # Exports.
 def native_image(
@@ -91,6 +98,7 @@ def native_image(
         proxy_configuration = None,
         profiles = [],
         resolve_upstream_reachability_metadata = False,
+        output_directory = False,
         **kwargs):
     """Generates and compiles a GraalVM native image from a Java library target.
 
@@ -117,7 +125,7 @@ def native_image(
             `-H:+StaticExecutableWithDynamicLibC`.
         c_compiler_option: Extra C compiler options to pass through `native-image`. No default; optional.
         data: Data files to make available during the compilation. No default; optional.
-        additional_inputs: Additional files to make available to the Native Image build action. `$(location)` references
+        additional_inputs: Additional files to make available to the Native Image build action. `$(execpath LABEL)` references
             to these files in `extra_args` are expanded. No default; optional.
         extra_args: Extra `native-image` args to pass. Last wins. No default; optional.
         allow_fallback: Whether to allow fall-back to a partial native image; defaults to `False`.
@@ -128,6 +136,7 @@ def native_image(
         resource_configuration: Resource configuration file. No default; optional.
         proxy_configuration: Proxy configuration file. No default; optional.
         resolve_upstream_reachability_metadata: Whether to resolve curated reachability metadata for the Maven coordinates this image transitively depends on; Defaults to `False`.
+        output_directory: Return the complete Native Image output directory, including generated headers, libraries, and requested reports. The target is a directory artifact for packaging. executable_name selects the image basename.
         **kwargs: Extra keyword arguments are passed to the underlying `native_image` rule.
     """
 
@@ -144,7 +153,8 @@ def native_image(
         )
         deps = deps + [":%s.reachability" % name]
 
-    _native_image(
+    image_rule = _native_image_directory if output_directory else _native_image
+    image_rule(
         name = name,
         deps = deps,
         main_class = main_class,

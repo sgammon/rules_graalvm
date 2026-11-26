@@ -170,11 +170,20 @@ def _prepare_native_image_rule_context(
         direct_inputs,
         c_compiler_path,
         gvm_toolchain = None,
-        bin_postfix = None):
+        bin_postfix = None,
+        output_directory = False):
     """Prepare a `native-image` build context."""
 
     out_bin_name = ctx.attr.executable_name.replace("%target%", ctx.attr.name)
-    binary = ctx.actions.declare_file(_prepare_bin_name(out_bin_name, bin_postfix))
+    filename = _prepare_bin_name(out_bin_name, bin_postfix)
+    if output_directory:
+        if not filename or filename in (".", "..") or "/" in filename or "\\" in filename:
+            fail("executable_name must be a basename for a Native Image output directory")
+        output = ctx.actions.declare_directory(ctx.label.name + ".image")
+        binary = struct(basename = filename, dirname = output.path)
+    else:
+        output = ctx.actions.declare_file(filename)
+        binary = output
 
     # TODO: This check really should be on the exec platform, not the target platform, but that
     # requires going through a separate rule. Since GraalVM doesn't support cross-compilation, the
@@ -195,7 +204,7 @@ def _prepare_native_image_rule_context(
         gvm_toolchain,
         bin_postfix,
     )
-    return binary
+    return output
 
 ## Exports.
 
